@@ -11,16 +11,18 @@ async function deployDAOonly() {
 
 
   // MoonlitNFT constructor argument
-  const name = "testdao";
-  const description = "description";
+  const title = "Test";
+  const subtitle = "Subtitle";
+  const genre = "Fiction";
   const author_address = "0x1e1a88bdEf16b1906b85c31c625baEf8EAabBA98";
   const author_name = "0xAuthor";
   const ipfsLink = "ipfsLink";
-  const editor = "0xc5F490B1629f6D6580F33bF53CEe23eF52cEF89C";
+  const initialMintPrice = hre.ethers.utils.parseUnits("0.05", 18);
+  const firstEditionMax = 3;
 
   // deploy DAO contract
   const MoonlitDaoFactory = await hre.ethers.getContractFactory("MoonlitDao");
-  const MoonlitDao = await MoonlitDaoFactory.deploy(name, description, author_address, author_name, ipfsLink, editor);
+  const MoonlitDao = await MoonlitDaoFactory.deploy(title, subtitle, genre, author_address, author_name, ipfsLink, initialMintPrice, firstEditionMax);
   await MoonlitDao.deployed();
   console.log(`DAO contract deployed to: ${MoonlitDao.address} at ${hre.ethers.network}`);
 
@@ -32,7 +34,7 @@ async function deployDAOonly() {
   console.log('Verifying...')
   await Promise.all([hre.run("verify:verify", {
     address: MoonlitDao.address,
-    constructorArguments: [name, description, author_address, author_name, ipfsLink, editor]
+    constructorArguments: [title, subtitle, genre, author_address, author_name, ipfsLink, initialMintPrice, firstEditionMax]
   })
   ])
 }
