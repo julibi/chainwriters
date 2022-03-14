@@ -12,11 +12,13 @@ contract MoonlitDao is AccessControlEnumerable {
   string public AUTHOR_NAME;
   string public IPFSLINK;
 
-  struct authorShare {
+  struct AuthorShare {
     uint256 share;
     uint256 shareInMatic;
     bool hasWithdrawnShare;
-  }  
+  }
+
+  AuthorShare author = AuthorShare(0, 0, false);
 
   struct contribution {
     address shareRecipient;
@@ -24,11 +26,11 @@ contract MoonlitDao is AccessControlEnumerable {
     uint256 shareInMatic;
     bool hasWithdrawnShare;
   }
-  bool public authorHasWithdrawnShare = false;
+
   bool public shareSentToMoonlit = false;
   mapping(uint256 => contribution) public contributors;
   uint8 public contributorIndex = 0;
-  bool public soldOut = false;
+  bool public investingFinished = false;
   
   uint256 public MAX_PER_WALLET = 5;
   uint256 public INITIAL_MINT_PRICE;
@@ -60,7 +62,7 @@ contract MoonlitDao is AccessControlEnumerable {
   
 
   modifier whenInvestingFinished {
-      require(soldOut, "Investing still running");
+      require(investingFinished, "Investing still running");
       _;
   }
 
@@ -72,20 +74,20 @@ contract MoonlitDao is AccessControlEnumerable {
     totalSupply = totalSupply + _amount;
 
     if (totalSupply + _amount == FIRST_EDITION_MAX) {
-      soldOut = true;
-      distributeShares();
+      investingFinished = true;
+      calculateShares();
     }
   }
 
-  function distributeShares() internal {
+  function calculateShares() internal {
     uint256 shareAuthor = 85;
+    uint256 balanceTotal = address(this).balance;
     for(uint256 i = 0; i < contributorIndex; i++) {
       shareAuthor = shareAuthor - contributors[contributorIndex].share;
+      contributors[contributorIndex].shareInMatic = balanceTotal * contributors[contributorIndex].share / 100;
     }
-
-    uint256 balanceTotal = address(this).balance;
-    // do the percentage calculation
-    payable(_to).transfer(balance);
+    author.share = shareAuthor;
+    author.shareInMatic = balanceTotal * shareAuthor / 100;
   }
 
   function addContributor(address _contributor, uint256 _share) external {
@@ -104,14 +106,29 @@ contract MoonlitDao is AccessControlEnumerable {
 
   function withdrawShareAuthor(address _to) external whenInvestingFinished {
     require(msg.sender == AUTHOR_ADDRESS, 'Not author');
-    require(!authorHasWithdrawnShare, 'Share already withdrawn');
-  
-
+    require(!author.hasWithdrawnShare, 'Share already withdrawn');
+    withdraw(_to, author.shareInMatic);
+    author.hasWithdrawnShare = true;
   }
 
-  // function withdrawShareContributor(address _to) external whenInvestingFinished {
-    
-  // }
+  function withdrawShareContributor(address _to) external whenInvestingFinished {
+    bool canWithdraw = false;
+    for(uint256 i = 0; i < contributorIndex; i++) {
+      if (msg.sender == contributors[contributorIndex].shareRecipient) {
+        if (!contributors[contributorIndex].hasWithdrawnShare) {
+          canWithdraw = true;
+        }
+      }
+    }
+    require(canWithdraw, "Cannot withdraw");
+    withdraw(_to, author.shareInMatic);
+    author.hasWithdrawnShare = true;
+  }
+
+  function withdraw(address _to, uint256 _amount) internal {
+    require(_to != address(0), "Cannot withdraw to the 0 address");
+    payable(_to).transfer(_amount);
+  }
 }
 
 // this could be a factory for a ERC 1155 - the ids could be the editions
