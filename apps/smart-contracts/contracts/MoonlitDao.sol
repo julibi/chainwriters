@@ -4,6 +4,8 @@ pragma solidity ^0.8.9;
 import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
 
 contract MoonlitDao is AccessControlEnumerable {
+  bytes32 public constant AUTHOR_ROLE = keccak256("AUTHOR_ROLE");
+
   mapping(address => uint256) public investments;
   string public TITLE;
   string public SUBTITLE;
@@ -19,7 +21,7 @@ contract MoonlitDao is AccessControlEnumerable {
   }
 
   AuthorShare public author = AuthorShare(0, 0, false);
-
+ 
   struct contribution {
     address shareRecipient;
     uint256 share;
@@ -33,12 +35,14 @@ contract MoonlitDao is AccessControlEnumerable {
   bool public investingFinished = false;
   
   uint256 public MAX_PER_WALLET = 5;
-  uint256 public INITIAL_MINT_PRICE;
+  uint256 public MINT_PRICE;
   uint256 public FIRST_EDITION_MAX;
   uint256 public totalSupply = 0;
   // 15% always go to the DAO 
   uint256 public totalSharePercentage = 15;
   address constant public MOONLIT_FOUNDATION_ADDRESS = 0xc5F490B1629f6D6580F33bF53CEe23eF52cEF89C;
+
+  bool public refundEnabled = false;
 
   constructor(
       string memory _title,
@@ -50,14 +54,16 @@ contract MoonlitDao is AccessControlEnumerable {
       uint256 _initialMintPrice,
       uint256 _firstEditionMax
     ) {
+        // is it ok to give MOONLIT_FOUNDATION_ADDRESS DEFAULT_ADMIN_ROLE and they have the ability to freeze the contract?
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _setupRole(AUTHOR_ROLE, msg.sender);
         TITLE = _title;
         SUBTITLE = _subtitle;
         GENRE = _genre;
         AUTHOR_ADDRESS = _author_address;
         AUTHOR_NAME = _author_name;
         IPFSLINK = _ipfsLink;
-        INITIAL_MINT_PRICE = _initialMintPrice;
+        MINT_PRICE = _initialMintPrice;
         FIRST_EDITION_MAX = _firstEditionMax;
     }
   
@@ -67,10 +73,15 @@ contract MoonlitDao is AccessControlEnumerable {
       _;
   }
 
+  modifier whenRefundEnabled {
+    require(refundEnabled, "Refund not enabled");
+    _;
+  }
+
   function deposit(uint256 _amount) public payable {
     require((investments[msg.sender] + _amount) <= MAX_PER_WALLET, "Exceeds max per wallet.");
     require(totalSupply + _amount <= FIRST_EDITION_MAX, "Investment exceeds cap.");
-    require(INITIAL_MINT_PRICE * _amount <= msg.value, "Value sent is not sufficient.");
+    require(MINT_PRICE * _amount <= msg.value, "Value sent is not sufficient.");
     investments[msg.sender] = investments[msg.sender] + _amount;
     totalSupply = totalSupply + _amount;
 
@@ -94,7 +105,7 @@ contract MoonlitDao is AccessControlEnumerable {
     withdraw(MOONLIT_FOUNDATION_ADDRESS, moonlitFoundationShareInMatic);
   }
 
-  function addContributor(address _contributor, uint256 _share) external {
+  function addContributor(address _contributor, uint256 _share) external onlyRole(AUTHOR_ROLE) {
     // PUT BACK this check
     // require(msg.sender == AUTHOR_ADDRESS, "Not author");
     // in theory user can put the same contributor 3 times - we don't care
@@ -108,16 +119,18 @@ contract MoonlitDao is AccessControlEnumerable {
     contributorIndex = contributorIndex + 1;
   }
 
-  // only main author
-  // function enableRefund() external {
+  function enableRefund() external onlyRole(AUTHOR_ROLE) {
+    require(totalSupply < FIRST_EDITION_MAX, "First edition sold out, no refund possible");
+    refundEnabled = true;
+  }
 
-  // }
+  function claimRefund() external whenRefundEnabled {
+    require(investments[msg.sender] > 0, "Nothing to refund");
+    uint256 refundAmountMatic = MINT_PRICE * investments[msg.sender];
+    withdraw(msg.sender, refundAmountMatic);
+  }
 
-  // function claimRefund() external whenRefundEnabled {
-
-  // }
-
-  function withdrawShareAuthor(address _to) external whenInvestingFinished {
+  function withdrawShareAuthor(address _to) external whenInvestingFinished onlyRole(AUTHOR_ROLE) {
     require(msg.sender == AUTHOR_ADDRESS, 'Not author');
     require(!author.hasWithdrawnShare, 'Share already withdrawn');
     withdraw(_to, author.shareInMatic);
