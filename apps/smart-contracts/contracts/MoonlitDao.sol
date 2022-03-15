@@ -77,6 +77,7 @@ contract MoonlitDao is AccessControlEnumerable {
     if (totalSupply == FIRST_EDITION_MAX) {
       investingFinished = true;
       calculateShares();
+      // trigger the function that creates a erc1155
     }
   }
 
@@ -107,6 +108,15 @@ contract MoonlitDao is AccessControlEnumerable {
     contributorIndex = contributorIndex + 1;
   }
 
+  // only main author
+  // function enableRefund() external {
+
+  // }
+
+  // function claimRefund() external whenRefundEnabled {
+
+  // }
+
   function withdrawShareAuthor(address _to) external whenInvestingFinished {
     require(msg.sender == AUTHOR_ADDRESS, 'Not author');
     require(!author.hasWithdrawnShare, 'Share already withdrawn');
@@ -133,6 +143,9 @@ contract MoonlitDao is AccessControlEnumerable {
     payable(_to).transfer(_amount);
   }
 }
+
+// ROLE("MAIN_AUTHOR")
+// Contributor struct should have "jobs description" inside contributr struct
 
 // this could be a factory for a ERC 1155 - the ids could be the editions
 // remix deployment constructor arguments
