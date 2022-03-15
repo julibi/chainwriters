@@ -18,7 +18,7 @@ contract MoonlitDao is AccessControlEnumerable {
     bool hasWithdrawnShare;
   }
 
-  AuthorShare author = AuthorShare(0, 0, false);
+  AuthorShare public author = AuthorShare(0, 0, false);
 
   struct contribution {
     address shareRecipient;
@@ -38,6 +38,7 @@ contract MoonlitDao is AccessControlEnumerable {
   uint256 public totalSupply = 0;
   // 15% always go to the DAO 
   uint256 public totalSharePercentage = 15;
+  address constant public MOONLIT_FOUNDATION_ADDRESS = 0xc5F490B1629f6D6580F33bF53CEe23eF52cEF89C;
 
   constructor(
       string memory _title,
@@ -73,7 +74,7 @@ contract MoonlitDao is AccessControlEnumerable {
     investments[msg.sender] = investments[msg.sender] + _amount;
     totalSupply = totalSupply + _amount;
 
-    if (totalSupply + _amount == FIRST_EDITION_MAX) {
+    if (totalSupply == FIRST_EDITION_MAX) {
       investingFinished = true;
       calculateShares();
     }
@@ -82,12 +83,14 @@ contract MoonlitDao is AccessControlEnumerable {
   function calculateShares() internal {
     uint256 shareAuthor = 85;
     uint256 balanceTotal = address(this).balance;
+    uint256 moonlitFoundationShareInMatic = balanceTotal * 15 / 100;
     for(uint256 i = 0; i < contributorIndex; i++) {
-      shareAuthor = shareAuthor - contributors[contributorIndex].share;
-      contributors[contributorIndex].shareInMatic = balanceTotal * contributors[contributorIndex].share / 100;
+      shareAuthor = shareAuthor - contributors[i].share;
+      contributors[i].shareInMatic = balanceTotal * contributors[i].share / 100;
     }
     author.share = shareAuthor;
     author.shareInMatic = balanceTotal * shareAuthor / 100;
+    withdraw(MOONLIT_FOUNDATION_ADDRESS, moonlitFoundationShareInMatic);
   }
 
   function addContributor(address _contributor, uint256 _share) external {
@@ -114,15 +117,15 @@ contract MoonlitDao is AccessControlEnumerable {
   function withdrawShareContributor(address _to) external whenInvestingFinished {
     bool canWithdraw = false;
     for(uint256 i = 0; i < contributorIndex; i++) {
-      if (msg.sender == contributors[contributorIndex].shareRecipient) {
-        if (!contributors[contributorIndex].hasWithdrawnShare) {
+      if (msg.sender == contributors[i].shareRecipient) {
+        if (!contributors[i].hasWithdrawnShare) {
           canWithdraw = true;
+          withdraw(_to, contributors[i].shareInMatic);
+          contributors[i].hasWithdrawnShare = true;
         }
       }
     }
     require(canWithdraw, "Cannot withdraw");
-    withdraw(_to, author.shareInMatic);
-    author.hasWithdrawnShare = true;
   }
 
   function withdraw(address _to, uint256 _amount) internal {
