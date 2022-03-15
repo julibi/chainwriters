@@ -1,8 +1,37 @@
-//SPDX-License-Identifier: Unlicense
-pragma solidity ^0.8.9;
-
-
 interface IMoonlitDao {
-    function greet() external view returns (string memory);
-    function setGreet() external;
+  function AUTHOR_ADDRESS (  ) external view returns ( address );
+  function AUTHOR_NAME (  ) external view returns ( string );
+  function AUTHOR_ROLE (  ) external view returns ( bytes32 );
+  function DEFAULT_ADMIN_ROLE (  ) external view returns ( bytes32 );
+  function FIRST_EDITION_MAX (  ) external view returns ( uint256 );
+  function GENRE (  ) external view returns ( string );
+  function IPFSLINK (  ) external view returns ( string );
+  function MAX_PER_WALLET (  ) external view returns ( uint256 );
+  function MINT_PRICE (  ) external view returns ( uint256 );
+  function MOONLIT_FOUNDATION_ADDRESS (  ) external view returns ( address );
+  function SUBTITLE (  ) external view returns ( string );
+  function TITLE (  ) external view returns ( string );
+  function addContributor ( address _contributor, uint256 _share ) external;
+  function author (  ) external view returns ( uint256 share, uint256 shareInMatic, bool hasWithdrawnShare );
+  function claimRefund (  ) external;
+  function contributorIndex (  ) external view returns ( uint8 );
+  function contributors ( uint256 ) external view returns ( address shareRecipient, uint256 share, uint256 shareInMatic, bool hasWithdrawnShare );
+  function deposit ( uint256 _amount ) external;
+  function enableRefund (  ) external;
+  function getRoleAdmin ( bytes32 role ) external view returns ( bytes32 );
+  function getRoleMember ( bytes32 role, uint256 index ) external view returns ( address );
+  function getRoleMemberCount ( bytes32 role ) external view returns ( uint256 );
+  function grantRole ( bytes32 role, address account ) external;
+  function hasRole ( bytes32 role, address account ) external view returns ( bool );
+  function investingFinished (  ) external view returns ( bool );
+  function investments ( address ) external view returns ( uint256 );
+  function refundEnabled (  ) external view returns ( bool );
+  function renounceRole ( bytes32 role, address account ) external;
+  function revokeRole ( bytes32 role, address account ) external;
+  function shareSentToMoonlit (  ) external view returns ( bool );
+  function supportsInterface ( bytes4 interfaceId ) external view returns ( bool );
+  function totalSharePercentage (  ) external view returns ( uint256 );
+  function totalSupply (  ) external view returns ( uint256 );
+  function withdrawShareAuthor ( address _to ) external;
+  function withdrawShareContributor ( address _to ) external;
 }

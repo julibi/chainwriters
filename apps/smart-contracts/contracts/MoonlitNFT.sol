@@ -1,116 +1,63 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
 
-import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/utils/Counters.sol";
-import "erc721a/contracts/ERC721A.sol";
-import "../interfaces/IMoonlitDao.sol";
+import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Burnable.sol";
+import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
+import "./interfaces/IMoonlitDao.sol";
 
-contract MoonlitNFT is ERC721A, AccessControlEnumerable, Ownable {
-    uint256 public MAX_NFTS;
-    bool public METADATA_FROZEN;
-    string public NAME;
-    address public AUTHOR;
-    uint256 public MAX_PER_MINT;
-    uint256 public mintPrice;
-    string public baseUri;
-    IMoonlitDao public MoonlitDao;
+contract MoonlitNFT is ERC1155, AccessControl, ERC1155Burnable, ERC1155Supply {
+    bytes32 public constant URI_SETTER_ROLE = keccak256("URI_SETTER_ROLE");
+    bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
+    IMoonlitDao public mlDaoInstance;
+    address public constant AUTHOR; 
+    string public constant TITLE;
+    uint256 public edition;
 
-    event SetBaseUri(string indexed baseUri);
-
-    constructor(
-      address _mld,
-      string memory _name,
-      uint256 _maxNfts,
-      address _author,
-      string memory _baseUri
-    ) ERC721A("MoonlitNFT", "MNLT") {
-        // author should be admin
-        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
-        MoonlitDao = IMoonlitDao(_mld);
-        NAME = _name;
-        AUTHOR = _author;
-        MAX_NFTS = _maxNfts;
-        baseUri = _baseUri;
-        mintPrice = 0.001 ether; 
-        MAX_PER_MINT = 5;
-        METADATA_FROZEN = false;
+    constructor(IMoonlitDao _mlDaoInstance, uint256 _edition) ERC1155("") {
+        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _grantRole(URI_SETTER_ROLE, msg.sender);
+        _grantRole(MINTER_ROLE, msg.sender);
+        mlDaoInstance = _mlDaoInstance;
+        AUTHOR = mlDaoInstance.AUTHOR_ADDRESS;
+        TITLE = mlDaoInstance.TITLE;
+        edition = _edition;
     }
 
-    modifier whenMetadataNotFrozen {
-      require(!METADATA_FROZEN, "Metadata already frozen.");
-      _;
+    function setURI(string memory newuri) public onlyRole(URI_SETTER_ROLE) {
+        _setURI(newuri);
     }
 
-    // ------------------
-    // Explicit overrides
-    // ------------------
+    function mint(address account, uint256 id, uint256 amount, bytes memory data)
+        public
+        onlyRole(MINTER_ROLE)
+    {
+        _mint(account, edition, amount, data);
+    }
+
+    function mintBatch(address to, uint256[] memory ids, uint256[] memory amounts, bytes memory data)
+        public
+        onlyRole(MINTER_ROLE)
+    {
+        _mintBatch(to, [edition], amounts, data);
+    }
+
+    // The following functions are overrides required by Solidity.
+
+    function _beforeTokenTransfer(address operator, address from, address to, uint256[] memory ids, uint256[] memory amounts, bytes memory data)
+        internal
+        override(ERC1155, ERC1155Supply)
+    {
+        super._beforeTokenTransfer(operator, from, to, ids, amounts, data);
+    }
+
     function supportsInterface(bytes4 interfaceId)
         public
         view
-        override(ERC721A, AccessControlEnumerable)
+        override(ERC1155, AccessControl)
         returns (bool)
     {
         return super.supportsInterface(interfaceId);
-    }
-
-    function tokenURI(uint256 _tokenId) public view override(ERC721A) returns (string memory) {
-      require(_exists(_tokenId), "Token does not exist.");
-      return baseUri;
-    }
-
-    // ------------------
-    // Functions for the owner
-    // ------------------
-
-    function setBaseUri(string memory _baseUri) external onlyRole(DEFAULT_ADMIN_ROLE) whenMetadataNotFrozen {
-      baseUri = _baseUri;
-      emit SetBaseUri(baseUri);
-    }
-
-    function freezeMetadata() external onlyRole(DEFAULT_ADMIN_ROLE) whenMetadataNotFrozen {
-      METADATA_FROZEN = true;
-    }
-
-    function setMintPrice(uint256 _mintPrice) external onlyRole(DEFAULT_ADMIN_ROLE) {
-      mintPrice = _mintPrice;
-    }
-
-    // Withdrawing
-    // dao contract is calling it and inside dao, the distribution of gains is done
-    function withdraw(address _to) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        require(_to != address(0), "Cannot withdraw to the 0 address");
-        uint256 balance = address(this).balance;
-        payable(_to).transfer(balance);
-    }
-
-    function withdrawTokens(
-        IERC20 token,
-        address receiver,
-        uint256 amount
-    ) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        require(receiver != address(0), "Cannot withdraw tokens to the 0 address");
-        token.transfer(receiver, amount);
-    }
-
-    // ------------------
-    // Functions for external minting
-    // ------------------
-
-    // External
-
-    function mintNFTs(uint256 amount) external payable {
-      require(totalSupply() + amount <= MAX_NFTS, "Purchase would exceed cap");
-      require(amount <= MAX_PER_MINT, "Amount exceeds max per mint");
-      _mint(amount);
-    }
-
-    // Internal
-
-    function _mint(uint256 amount) internal {
-      require(mintPrice * amount <= msg.value, "Ether value sent is not correct");
-      _safeMint(msg.sender, amount);
     }
 }

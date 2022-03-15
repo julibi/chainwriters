@@ -2,6 +2,7 @@
 pragma solidity ^0.8.9;
 
 import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
+import "./MoonlitNFT.sol";
 
 contract MoonlitDao is AccessControlEnumerable {
   bytes32 public constant AUTHOR_ROLE = keccak256("AUTHOR_ROLE");
@@ -103,6 +104,13 @@ contract MoonlitDao is AccessControlEnumerable {
     author.share = shareAuthor;
     author.shareInMatic = balanceTotal * shareAuthor / 100;
     withdraw(MOONLIT_FOUNDATION_ADDRESS, moonlitFoundationShareInMatic);
+
+    // create the NFT contract or unlock
+    createCollection();
+  }
+
+  function createCollection() internal {
+    MoonlitNFT collection = new MoonlitNFT(this, 1);
   }
 
   function addContributor(address _contributor, uint256 _share) external onlyRole(AUTHOR_ROLE) {
@@ -157,7 +165,6 @@ contract MoonlitDao is AccessControlEnumerable {
   }
 }
 
-// ROLE("MAIN_AUTHOR")
 // Contributor struct should have "jobs description" inside contributr struct
 
 // this could be a factory for a ERC 1155 - the ids could be the editions
