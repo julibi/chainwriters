@@ -14,7 +14,7 @@ async function deployDAOonly() {
   const title = "Test";
   const subtitle = "Subtitle";
   const genre = "Fiction";
-  const author_address = "0x1e1a88bdEf16b1906b85c31c625baEf8EAabBA98";
+  const author_address = "0xc5F490B1629f6D6580F33bF53CEe23eF52cEF89C";
   const author_name = "0xAuthor";
   const ipfsLink = "ipfsLink";
   const initialMintPrice = hre.ethers.utils.parseUnits("0.05", 18);

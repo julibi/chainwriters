@@ -44,3 +44,17 @@ npx hardhat verify --network ropsten DEPLOYED_CONTRACT_ADDRESS "Hello, Hardhat!"
 # Performance optimizations
 
 For faster runs of your tests and scripts, consider skipping ts-node's type checking by setting the environment variable `TS_NODE_TRANSPILE_ONLY` to `1` in hardhat's environment. For more details see [the documentation](https://hardhat.org/guides/typescript.html#performance-optimizations).
+
+# Tips
+
+When you run into an error like this:
+
+```
+[Error: ENOENT: no such file or directory, open '/Users/hyun-kyungyi/elbstack/chainwriters/apps/smart-contracts/artifacts/build-info/ea17654ae42ed5600238694dff0706ba.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/hyun-kyungyi/elbstack/chainwriters/apps/smart-contracts/artifacts/build-info/ea17654ae42ed5600238694dff0706ba.json'
+}
+```
+run `npx hardhat clean`
