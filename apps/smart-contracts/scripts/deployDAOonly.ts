@@ -18,7 +18,7 @@ async function deployDAOonly() {
   const author_name = "0xAuthor";
   const ipfsLink = "ipfsLink";
   const initialMintPrice = hre.ethers.utils.parseUnits("0.05", 18);
-  const firstEditionMax = 3;
+  const firstEditionMax = 2;
 
   // deploy DAO contract
   const MoonlitDaoFactory = await hre.ethers.getContractFactory("MoonlitDao");

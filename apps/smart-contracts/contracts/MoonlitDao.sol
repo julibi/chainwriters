@@ -45,6 +45,7 @@ contract MoonlitDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
   bool public investingFinished = false;
   bool public shareSentToMoonlit = false;
   bool public refundEnabled = false;
+  // bool public paused = true;
 
   modifier whenInvestingFinished {
     require(investingFinished, "Investing still running");
@@ -55,6 +56,11 @@ contract MoonlitDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
     require(refundEnabled, "Refund not enabled");
     _;
   }
+
+  // modifier whenUnpaused {
+  //   require(!paused, "Paused");
+  //   _;
+  // }
 
   constructor(
       string memory _title,
@@ -89,7 +95,6 @@ contract MoonlitDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
     if (fundedAmount == currentEditionMax) {
       investingFinished = true;
       calculateShares();
-      // trigger the function that creates a erc1155
     }
   }
 
@@ -97,6 +102,7 @@ contract MoonlitDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
     require(investments[msg.sender] > 0, "Nothing to refund");
     uint256 refundAmountMatic = MINT_PRICE * investments[msg.sender];
     withdraw(msg.sender, refundAmountMatic);
+    investments[msg.sender] = 0;
   }
 
   function withdrawShareContributor(address _to) external whenInvestingFinished {
@@ -113,24 +119,24 @@ contract MoonlitDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
     require(canWithdraw, "Cannot withdraw");
   }
 
-  function claimGenesisEditionNFT(address account)
+  function claimGenesisEditionNFT()
     public
     whenInvestingFinished
   {
-    require(investments[account] > 0, "Cannot claim");
-    _mint(account, 1, investments[account], "");
+    require(investments[msg.sender] > 0, "Cannot claim");
+    _mint(msg.sender, 1, investments[msg.sender], "");
+    investments[msg.sender] = 0;
   }
 
-  function mint(address account, uint256 _amount)
+  function mint(address _account, uint256 _amount)
     external
     payable
   {
     require(currentEdition != 1, "Cannot mint during Genesis NFT claiming");
-   
-    require(address(msg.sender).balance + _amount <= MAX_PER_WALLET, "Exceeds max per wallet.");
+    require(balanceOf(_account, currentEdition) + _amount <= MAX_PER_WALLET, "Exceeds max per wallet.");
     require(totalSupply(currentEdition) + _amount <= currentEditionMax, "Amount exceeds cap.");
-    require(msg.value >= currentEditionMintPrice, "Value sent is not sufficient.");
-    _mint(account, currentEdition, _amount, "");
+    require(msg.value >= currentEditionMintPrice * _amount, "Value sent is not sufficient.");
+    _mint(_account, currentEdition, _amount, "");
   }
 
   // ------------------
@@ -161,7 +167,15 @@ contract MoonlitDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
   // Functions for the author
   // ------------------
 
+  // function startAndDistributeInitialNFTs() onlyRole(AUTHOR_ROLE) {
+  //   // how do we make sure the author gets a few nfts for his himself/community? From 1700 he should get 20 for himself,
+  //   // also the contributors should get something
+  //   // but it depends on how big the collection is
+  //   pause = false;
+  // }
+
   function addContributor(address _contributor, uint256 _share) external onlyRole(AUTHOR_ROLE) {
+    require(fundedAmount == 0, "Contributors can only be added until investing starts");
     // in theory user can put the same contributor 3 times - we don't care
     require(_contributor != address(0), "Contribut cannot be 0 address");
     require(contributorIndex < 3, "Contributors already set");
@@ -178,7 +192,8 @@ contract MoonlitDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
   }
 
   function enableRefund() external onlyRole(AUTHOR_ROLE) {
-    require(fundedAmount < currentEditionMax, "Refund impossible, all spots for funding taken.");
+    require(fundedAmount < currentEditionMax, "Refund impossible, all spots for funding taken");
+    require(currentEdition == 1, "Refund impossible");
     refundEnabled = true;
   }
 
@@ -190,14 +205,19 @@ contract MoonlitDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
   }
 
   function enableNextEdition(uint256 _maxNftAmountOfNewEdition, uint256 _newEditionMintPrice) public onlyRole(AUTHOR_ROLE) {
+    if (currentEdition == 1) {
+      require(investingFinished, "Investing must finish first");
+    } else {
     // what if some nfts are sent to zero address? Is there a case that prevents this check from being true?
-    require(totalSupply(currentEdition) == currentEditionMax, "Current edition needs to sellout first");
+      require(totalSupply(currentEdition) == currentEditionMax, "Current edition needs to sellout first");
+    }
     require(_maxNftAmountOfNewEdition < 10000, "Max Amount too big");
     currentEdition = currentEdition + 1;
     currentEditionMax = _maxNftAmountOfNewEdition;
     currentEditionMintPrice = _newEditionMintPrice;
   }
 
+  // !! REMOVE !!
   // only for development
   function withdrawAll() external onlyRole(AUTHOR_ROLE) {
     uint256 balance = address(this).balance;
@@ -226,8 +246,16 @@ contract MoonlitDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
       return super.supportsInterface(interfaceId);
   }
 }
-// BEWARE - that a contributor can take her time until she withdraws the fund - meanwhile users can
-  // mint nfts and the value locked keeps rising...
-// Contributor struct should have "jobs description" inside contributr struct
+
+// - royalties
+// - what should happen after investing successfully finishes? We could open the astronaut's club for the project, where they vote
+//   what to do with the money (this would be a seperate contract that where the funds in the DAO are being governed)
+    // - vote on what the NFT should be used for?
+    // - vote on how to spend the money
+    // - vote on when to close down the nft selling
+// - when refunding the ipfs link should be deleted ? no but when posting the ipfs text always put down the author address - so even if some other "author"
+//   picks up the text again, he cannot sell it as his/her own 
+// - BEWARE - when doing a final distribution, consider if there is an amount for contributors that has not been withdrawn yet
+// - should Contributor struct should have "jobs description" ?
 // remix deployment constructor arguments
 // "Test" "Subtitle" "Fiction" "0xc5F490B1629f6D6580F33bF53CEe23eF52cEF89C" "0xAuthor" "ipfsLink" 50000000000000000 3
