@@ -4,19 +4,19 @@ pragma solidity ^0.8.9;
 import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
-// import "./interfaces/IMoonlitFactory.sol";
+// import "../interfaces/IMoonlitFactory.sol";
+
+// should it be ownable?
 
 contract MoonlitDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
   bytes32 public constant AUTHOR_ROLE = keccak256("AUTHOR_ROLE"); 
   // IMoonlitFactory public factory;
-  address public factory;
   
   struct Project {
     string title;
     string subtitle;
     string genre;
     address author_address;
-    string author_name;
     string ipfsLink;
   }
 
@@ -33,7 +33,7 @@ contract MoonlitDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
     bool hasWithdrawnShare;
   }
 
-  Project public project = Project("", "", "", address(0), "", "");
+  Project public project = Project("", "", "", address(0), "");
   AuthorShare public author = AuthorShare(0, 0, false);
   mapping(address => uint256) public investments;
   mapping(uint256 => contribution) public contributors;
@@ -73,12 +73,10 @@ contract MoonlitDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
       string memory _subtitle,
       string memory _genre,
       address _author_address,
-      string memory _author_name,
       string memory _ipfsLink,
       uint256 _initialMintPrice,
-      uint256 _firstEditionMax,
+      uint256 _firstEditionMax
       // IMoonlitFactory _factory
-      address _factoryAddress
     ) ERC1155("") {
         // is it ok to give MOONLIT_FOUNDATION_ADDRESS DEFAULT_ADMIN_ROLE and they have the ability to freeze the contract?
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
@@ -88,10 +86,9 @@ contract MoonlitDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
         project.subtitle = _subtitle;
         project.genre = _genre;
         project.author_address = _author_address;
-        project.author_name = _author_name;
         MINT_PRICE = _initialMintPrice;
         currentEditionMax = _firstEditionMax;
-        factory = _factoryAddress;
+        // factory = _factory;
   }
 
   function deposit(uint256 _amount) public payable {
@@ -162,7 +159,7 @@ contract MoonlitDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
     }
     author.share = shareAuthor;
     author.shareInMatic = balanceTotal * shareAuthor / 100;
-    withdraw(address(factory), moonlitFoundationShareInMatic);
+    // withdraw(address(factory), moonlitFoundationShareInMatic);
 
     // create the NFT contract or unlock
   }

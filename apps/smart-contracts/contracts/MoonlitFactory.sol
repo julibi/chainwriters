@@ -1,13 +1,13 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.9;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "./MoonlitDao.sol";
+import "../interfaces/IMoonlitFactory.sol";
 
-// contract MoonlitFactory is IMoonlitFactory, Ownable {
-contract MoonlitFactory is Ownable {
+contract MoonlitFactory is IMoonlitFactory {
+  address public owner = 0x3269a7ebE0FAEdDB5028C90Be247e2d39d5C72c5;
   uint256 public firstEditionMax;
-  address[] public override moonlitDaos;
+  address[] public moonlitDaos;
   event DaoInstantiated(address indexed caller, address indexed dao);
 
   constructor(uint256 _firstEditionMax){
@@ -15,35 +15,32 @@ contract MoonlitFactory is Ownable {
   }
 
   function createDao(
-    string memory _title,
-    string memory _subtitle,
-    string memory _genre,
-    string memory _author_name,
-    string memory _ipfsLink,
+    string calldata _title,
+    string calldata _subtitle,
+    string calldata _genre,
+    string calldata _ipfsLink,
     uint256 _initialMintPrice
-  ) public payable {
+  ) public returns (address) {
       MoonlitDao moonlitDao = new MoonlitDao(
         _title,
         _subtitle,
         _genre,
         msg.sender,
-        _author_name,
         _ipfsLink,
         _initialMintPrice,
-        firstEditionMax,
-        // this
-        address(this)
+        firstEditionMax
       );
       moonlitDaos.push(address(moonlitDao));
       emit DaoInstantiated(msg.sender, address(moonlitDao));
       return address(moonlitDao);
   }
 
-  function setFirstEditionMax(uint256 _amount) onlyOwner {
+  function setFirstEditionMax(uint256 _amount) public {
+    require(msg.sender == owner, "Only for owner");
     firstEditionMax = _amount;
   }
 
-  function moonlitDaosLength() external override view returns (uint) {
+  function moonlitDaosLength() external view returns (uint) {
     return moonlitDaos.length;
   }
 }
