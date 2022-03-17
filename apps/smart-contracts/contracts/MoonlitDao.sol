@@ -4,18 +4,22 @@ pragma solidity ^0.8.9;
 import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
+// import "./interfaces/IMoonlitFactory.sol";
 
 contract MoonlitDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
-  bytes32 public constant AUTHOR_ROLE = keccak256("AUTHOR_ROLE");
-
-  string public TITLE;
-  string public SUBTITLE;
-  string public GENRE;
-  address public AUTHOR_ADDRESS;
-  string public AUTHOR_NAME;
-  string public IPFSLINK;
-  address constant public MOONLIT_FOUNDATION_ADDRESS = 0xc5F490B1629f6D6580F33bF53CEe23eF52cEF89C;
+  bytes32 public constant AUTHOR_ROLE = keccak256("AUTHOR_ROLE"); 
+  // IMoonlitFactory public factory;
+  address public factory;
   
+  struct Project {
+    string title;
+    string subtitle;
+    string genre;
+    address author_address;
+    string author_name;
+    string ipfsLink;
+  }
+
   struct AuthorShare {
     uint256 share;
     uint256 shareInMatic;
@@ -29,14 +33,16 @@ contract MoonlitDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
     bool hasWithdrawnShare;
   }
 
-  uint256 public MAX_PER_WALLET = 5;
-  uint256 public MINT_PRICE;
-  uint256 public fundedAmount = 0;
-
+  Project public project = Project("", "", "", address(0), "", "");
   AuthorShare public author = AuthorShare(0, 0, false);
   mapping(address => uint256) public investments;
   mapping(uint256 => contribution) public contributors;
   uint8 public contributorIndex = 0;
+
+  uint256 public MAX_PER_WALLET = 5;
+  uint256 public MINT_PRICE;
+  uint256 public fundedAmount = 0;
+
   uint256 public currentEdition = 1;
   uint256 public currentEditionMax;
   uint256 public currentEditionMintPrice;
@@ -70,19 +76,22 @@ contract MoonlitDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
       string memory _author_name,
       string memory _ipfsLink,
       uint256 _initialMintPrice,
-      uint256 _firstEditionMax
+      uint256 _firstEditionMax,
+      // IMoonlitFactory _factory
+      address _factoryAddress
     ) ERC1155("") {
         // is it ok to give MOONLIT_FOUNDATION_ADDRESS DEFAULT_ADMIN_ROLE and they have the ability to freeze the contract?
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _setupRole(AUTHOR_ROLE, msg.sender);
         _setURI(_ipfsLink);
-        TITLE = _title;
-        SUBTITLE = _subtitle;
-        GENRE = _genre;
-        AUTHOR_ADDRESS = _author_address;
-        AUTHOR_NAME = _author_name;
+        project.title = _title;
+        project.subtitle = _subtitle;
+        project.genre = _genre;
+        project.author_address = _author_address;
+        project.author_name = _author_name;
         MINT_PRICE = _initialMintPrice;
         currentEditionMax = _firstEditionMax;
+        factory = _factoryAddress;
   }
 
   function deposit(uint256 _amount) public payable {
@@ -153,7 +162,7 @@ contract MoonlitDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
     }
     author.share = shareAuthor;
     author.shareInMatic = balanceTotal * shareAuthor / 100;
-    withdraw(MOONLIT_FOUNDATION_ADDRESS, moonlitFoundationShareInMatic);
+    withdraw(address(factory), moonlitFoundationShareInMatic);
 
     // create the NFT contract or unlock
   }
@@ -198,7 +207,6 @@ contract MoonlitDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
   }
 
   function withdrawShareAuthor(address _to) external whenInvestingFinished onlyRole(AUTHOR_ROLE) {
-    require(msg.sender == AUTHOR_ADDRESS, 'Not author');
     require(!author.hasWithdrawnShare, 'Share already withdrawn');
     withdraw(_to, author.shareInMatic);
     author.hasWithdrawnShare = true;
