@@ -4,13 +4,12 @@ pragma solidity ^0.8.9;
 import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
-// import "../interfaces/IMoonlitFactory.sol";
 
 // should it be ownable?
 
 contract MoonlitDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
   bytes32 public constant AUTHOR_ROLE = keccak256("AUTHOR_ROLE"); 
-  // IMoonlitFactory public factory;
+  address public factory;
   
   struct Project {
     string title;
@@ -24,9 +23,11 @@ contract MoonlitDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
     uint256 share;
     uint256 shareInMatic;
     bool hasWithdrawnShare;
+    uint256 genesisEditionReserved;
+    bool hasClaimedGenesis;
   }
 
-  struct contribution {
+  struct Contribution {
     address shareRecipient;
     uint256 share;
     uint256 shareInMatic;
@@ -34,13 +35,13 @@ contract MoonlitDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
   }
 
   Project public project = Project("", "", "", address(0), "");
-  AuthorShare public author = AuthorShare(0, 0, false);
+  AuthorShare public author = AuthorShare(0, 0, false, 1, false);
   mapping(address => uint256) public investments;
-  mapping(uint256 => contribution) public contributors;
+  mapping(uint256 => Contribution) public contributors;
   uint8 public contributorIndex = 0;
 
   uint256 public MAX_PER_WALLET = 5;
-  uint256 public MINT_PRICE;
+  uint256 public INITIAL_MINT_PRICE;
   uint256 public fundedAmount = 0;
 
   uint256 public currentEdition = 1;
@@ -63,42 +64,39 @@ contract MoonlitDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
     _;
   }
 
-  // modifier whenUnpaused {
-  //   require(!paused, "Paused");
-  //   _;
-  // }
+    modifier isBeforeInvesting {
+    require(fundedAmount == 0, "Invested has already started");
+    _;
+  }
 
   constructor(
       string memory _title,
-      string memory _subtitle,
-      string memory _genre,
       address _author_address,
       string memory _ipfsLink,
       uint256 _initialMintPrice,
-      uint256 _firstEditionMax
-      // IMoonlitFactory _factory
+      uint256 _firstEditionMax,
+      address _factory
     ) ERC1155("") {
         // is it ok to give MOONLIT_FOUNDATION_ADDRESS DEFAULT_ADMIN_ROLE and they have the ability to freeze the contract?
-        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
-        _setupRole(AUTHOR_ROLE, msg.sender);
+        _setupRole(DEFAULT_ADMIN_ROLE, _author_address);
+        _setupRole(AUTHOR_ROLE, _author_address);
         _setURI(_ipfsLink);
         project.title = _title;
-        project.subtitle = _subtitle;
-        project.genre = _genre;
         project.author_address = _author_address;
-        MINT_PRICE = _initialMintPrice;
+        INITIAL_MINT_PRICE = _initialMintPrice;
         currentEditionMax = _firstEditionMax;
-        // factory = _factory;
+        factory = _factory;
   }
 
-  function deposit(uint256 _amount) public payable {
-    require((investments[msg.sender] + _amount) <= MAX_PER_WALLET, "Exceeds max per wallet.");
-    require(fundedAmount + _amount <= currentEditionMax, "Investment exceeds cap.");
-    require(MINT_PRICE * _amount <= msg.value, "Value sent is not sufficient.");
+  function deposit(uint256 _amount) external payable {
+    require(currentEdition == 1, "Deposit impossible");
+    require((investments[msg.sender] + _amount) <= MAX_PER_WALLET, "Exceeds max per wallet");
+    require((fundedAmount + _amount) <= (currentEditionMax - author.genesisEditionReserved), "Investor list full");
+    require(INITIAL_MINT_PRICE * _amount <= msg.value, "Value sent not sufficient");
     investments[msg.sender] = investments[msg.sender] + _amount;
     fundedAmount = fundedAmount + _amount;
 
-    if (fundedAmount == currentEditionMax) {
+    if (fundedAmount == (currentEditionMax - author.genesisEditionReserved)) {
       investingFinished = true;
       calculateShares();
     }
@@ -106,7 +104,7 @@ contract MoonlitDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
 
   function claimRefund() external whenRefundEnabled {
     require(investments[msg.sender] > 0, "Nothing to refund");
-    uint256 refundAmountMatic = MINT_PRICE * investments[msg.sender];
+    uint256 refundAmountMatic = INITIAL_MINT_PRICE * investments[msg.sender];
     withdraw(msg.sender, refundAmountMatic);
     investments[msg.sender] = 0;
   }
@@ -126,12 +124,18 @@ contract MoonlitDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
   }
 
   function claimGenesisEditionNFT()
-    public
+    external
     whenInvestingFinished
   {
-    require(investments[msg.sender] > 0, "Cannot claim");
-    _mint(msg.sender, 1, investments[msg.sender], "");
-    investments[msg.sender] = 0;
+    if (msg.sender == project.author_address) {
+      require(!author.hasClaimedGenesis, "Already claimed");
+      _mint(msg.sender, 1, author.genesisEditionReserved, "");
+      author.hasClaimedGenesis = true;
+    } else {
+      require(investments[msg.sender] > 0, "Cannot claim");
+      _mint(msg.sender, 1, investments[msg.sender], "");
+      investments[msg.sender] = 0;
+    }
   }
 
   function mint(address _account, uint256 _amount)
@@ -139,15 +143,23 @@ contract MoonlitDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
     payable
   {
     require(currentEdition != 1, "Cannot mint during Genesis NFT claiming");
-    require(balanceOf(_account, currentEdition) + _amount <= MAX_PER_WALLET, "Exceeds max per wallet.");
-    require(totalSupply(currentEdition) + _amount <= currentEditionMax, "Amount exceeds cap.");
-    require(msg.value >= currentEditionMintPrice * _amount, "Value sent is not sufficient.");
+    require((balanceOf(_account, currentEdition) + _amount) <= MAX_PER_WALLET, "Exceeds max per wallet.");
+    require((totalSupply(currentEdition) + _amount) <= currentEditionMax, "Amount exceeds cap.");
+    require(msg.value >= currentEditionMintPrice * _amount, "Value sent not sufficient.");
     _mint(_account, currentEdition, _amount, "");
   }
 
   // ------------------
   // Internal functions
   // ------------------
+
+  function setGenre(string memory _genre) internal {
+    project.genre = _genre;
+  }
+
+  function setSubtitle(string memory _subtitle) internal {
+    project.subtitle = _subtitle;
+  }
 
   function calculateShares() internal {
     uint256 shareAuthor = 85;
@@ -159,7 +171,7 @@ contract MoonlitDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
     }
     author.share = shareAuthor;
     author.shareInMatic = balanceTotal * shareAuthor / 100;
-    // withdraw(address(factory), moonlitFoundationShareInMatic);
+    withdraw(factory, moonlitFoundationShareInMatic);
 
     // create the NFT contract or unlock
   }
@@ -173,15 +185,12 @@ contract MoonlitDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
   // Functions for the author
   // ------------------
 
-  // function startAndDistributeInitialNFTs() onlyRole(AUTHOR_ROLE) {
-  //   // how do we make sure the author gets a few nfts for his himself/community? From 1700 he should get 20 for himself,
-  //   // also the contributors should get something
-  //   // but it depends on how big the collection is
-  //   pause = false;
-  // }
-
-  function addContributor(address _contributor, uint256 _share) external onlyRole(AUTHOR_ROLE) {
-    require(fundedAmount == 0, "Contributors can only be added until investing starts");
+  function setProjectData(string calldata _subtitle, string calldata _genre) external onlyRole(AUTHOR_ROLE) isBeforeInvesting {
+    setSubtitle(_subtitle);
+    setGenre(_genre);
+  }
+ 
+  function addContributor(address _contributor, uint256 _share) external onlyRole(AUTHOR_ROLE) isBeforeInvesting {
     // in theory user can put the same contributor 3 times - we don't care
     require(_contributor != address(0), "Contribut cannot be 0 address");
     require(contributorIndex < 3, "Contributors already set");
@@ -193,14 +202,14 @@ contract MoonlitDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
     contributorIndex = contributorIndex + 1;
   }
 
-  function setURI(string memory newuri) public onlyRole(AUTHOR_ROLE) {
-    _setURI(newuri);
+  function setMaxGenesisClaimableAuthor(uint256 _amount) public onlyRole(AUTHOR_ROLE) isBeforeInvesting {
+    require(_amount < currentEditionMax, "Too many");
+    
+    author.genesisEditionReserved = _amount;
   }
 
-  function enableRefund() external onlyRole(AUTHOR_ROLE) {
-    require(fundedAmount < currentEditionMax, "Refund impossible, all spots for funding taken");
-    require(currentEdition == 1, "Refund impossible");
-    refundEnabled = true;
+  function setURI(string memory newuri) public onlyRole(AUTHOR_ROLE) isBeforeInvesting {
+    _setURI(newuri);
   }
 
   function withdrawShareAuthor(address _to) external whenInvestingFinished onlyRole(AUTHOR_ROLE) {
@@ -220,6 +229,12 @@ contract MoonlitDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
     currentEdition = currentEdition + 1;
     currentEditionMax = _maxNftAmountOfNewEdition;
     currentEditionMintPrice = _newEditionMintPrice;
+  }
+
+  function enableRefund() external onlyRole(AUTHOR_ROLE) {
+    require(currentEdition == 1, "Refund impossible");
+    require(fundedAmount < (currentEditionMax - author.genesisEditionReserved), "Refund impossible, all spots for funding taken");
+    refundEnabled = true;
   }
 
   // !! REMOVE !!

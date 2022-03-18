@@ -58,3 +58,7 @@ When you run into an error like this:
 }
 ```
 run `npx hardhat clean`
+
+For generating Interfaces
+
+run `yarn hardhat gen-interface <contractname>`
