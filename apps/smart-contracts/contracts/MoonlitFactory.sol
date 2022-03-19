@@ -9,7 +9,14 @@ contract MoonlitFactory is IMoonlitFactory {
   uint256 public firstEditionMin = 1;
   uint256 public firstEditionMax = 1700;
   address[] public moonlitDaos;
-  event DaoInstantiated(address indexed caller, address indexed dao);
+  event DaoInstantiated(
+    address indexed caller,
+    address indexed dao,
+    string title,
+    string ipfsLink,
+    uint256 initialMintPrice,
+    uint256 firstEditionAmount
+  );
 
   modifier onlyOwner {
     require(msg.sender == owner, "Only for owner");
@@ -26,6 +33,7 @@ contract MoonlitFactory is IMoonlitFactory {
     uint256 _initialMintPrice,
     uint256 _firstEditionAmount
   ) public returns (address) {
+    // add check to not allow an ipfsLink that already exists
     require(_firstEditionAmount > firstEditionMin && _firstEditionAmount < firstEditionMax, "Invalid first edition amount");
     MoonlitDao moonlitDao = new MoonlitDao(
       _title,
@@ -36,7 +44,13 @@ contract MoonlitFactory is IMoonlitFactory {
       address(this)
     );
     moonlitDaos.push(address(moonlitDao));
-    emit DaoInstantiated(msg.sender, address(moonlitDao));
+    emit DaoInstantiated(
+      msg.sender,
+      address(moonlitDao),
+      _title,
+      _ipfsLink,
+      _initialMintPrice,
+      _firstEditionAmount);
     return address(moonlitDao);
   }
 

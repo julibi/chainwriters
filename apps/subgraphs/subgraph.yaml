@@ -1,0 +1,26 @@
+specVersion: 0.0.2
+description: Chainwriters graph
+repository: https://github.com/julibi/chainwriters
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: MoonlitFactory
+    network: mumbai
+    source:
+      address: "0xE007426C930389dC7416AE386d51D99c3Cbf8485"
+      abi: MoonlitFactory
+      startBlock: 10085807
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - DaoInstantiated
+      abis:
+        - name: MoonlitFactory
+          file: ./abis/MoonlitFactory.json
+      eventHandlers:
+        - event: DaoInstantiated(indexed address,indexed address,string,string,uint256,uint256)
+          handler: handleDaoInstantiated
+      file: ./src/mapping.ts
