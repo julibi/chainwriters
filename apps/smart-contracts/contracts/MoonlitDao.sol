@@ -53,6 +53,7 @@ contract MoonlitDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
   bool public shareSentToMoonlit = false;
   bool public refundEnabled = false;
   // bool public paused = true;
+  event FundingEnded(bool finished);
 
   modifier whenInvestingFinished {
     require(investingFinished, "Investing still running");
@@ -98,6 +99,7 @@ contract MoonlitDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
 
     if (fundedAmount == (currentEditionMax - author.genesisEditionReserved)) {
       investingFinished = true;
+      emit FundingEnded(true);
       calculateShares();
     }
   }

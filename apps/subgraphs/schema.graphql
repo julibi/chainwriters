@@ -2,8 +2,8 @@ type Dao @entity {
   id: ID!
   author: Bytes!
   address: Bytes!
+  createdAt: BigInt!
   title: String!
   ipfsLink: String!
-  initialMintPrice: BigInt!
-  firstEditionAmount: BigInt!
+  fundingEnded: Boolean!
 }

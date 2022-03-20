@@ -18,10 +18,10 @@ export class Dao extends Entity {
 
     this.set("author", Value.fromBytes(Bytes.empty()));
     this.set("address", Value.fromBytes(Bytes.empty()));
+    this.set("createdAt", Value.fromBigInt(BigInt.zero()));
     this.set("title", Value.fromString(""));
     this.set("ipfsLink", Value.fromString(""));
-    this.set("initialMintPrice", Value.fromBigInt(BigInt.zero()));
-    this.set("firstEditionAmount", Value.fromBigInt(BigInt.zero()));
+    this.set("fundingEnded", Value.fromBoolean(false));
   }
 
   save(): void {
@@ -68,6 +68,15 @@ export class Dao extends Entity {
     this.set("address", Value.fromBytes(value));
   }
 
+  get createdAt(): BigInt {
+    let value = this.get("createdAt");
+    return value!.toBigInt();
+  }
+
+  set createdAt(value: BigInt) {
+    this.set("createdAt", Value.fromBigInt(value));
+  }
+
   get title(): string {
     let value = this.get("title");
     return value!.toString();
@@ -86,21 +95,12 @@ export class Dao extends Entity {
     this.set("ipfsLink", Value.fromString(value));
   }
 
-  get initialMintPrice(): BigInt {
-    let value = this.get("initialMintPrice");
-    return value!.toBigInt();
+  get fundingEnded(): boolean {
+    let value = this.get("fundingEnded");
+    return value!.toBoolean();
   }
 
-  set initialMintPrice(value: BigInt) {
-    this.set("initialMintPrice", Value.fromBigInt(value));
-  }
-
-  get firstEditionAmount(): BigInt {
-    let value = this.get("firstEditionAmount");
-    return value!.toBigInt();
-  }
-
-  set firstEditionAmount(value: BigInt) {
-    this.set("firstEditionAmount", Value.fromBigInt(value));
+  set fundingEnded(value: boolean) {
+    this.set("fundingEnded", Value.fromBoolean(value));
   }
 }
