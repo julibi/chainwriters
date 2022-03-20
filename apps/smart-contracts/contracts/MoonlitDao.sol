@@ -192,6 +192,7 @@ contract MoonlitDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
     setGenre(_genre);
   }
  
+  // add role of contributor
   function addContributor(address _contributor, uint256 _share) external onlyRole(AUTHOR_ROLE) isBeforeInvesting {
     // in theory user can put the same contributor 3 times - we don't care
     require(_contributor != address(0), "Contribut cannot be 0 address");
