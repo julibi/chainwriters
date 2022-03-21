@@ -4,11 +4,11 @@ repository: https://github.com/julibi/chainwriters
 schema:
   file: ./schema.graphql
 dataSources:
-  - kind: ethereum
+  - kind: ethereum/contract
     name: MoonlitFactory
     network: mumbai
     source:
-      address: "0xE007426C930389dC7416AE386d51D99c3Cbf8485"
+      address: "0x41C753F317C96d62650acd26FA9A973ab59905E0"
       abi: MoonlitFactory
       startBlock: 10085807
     mapping:
@@ -16,11 +16,41 @@ dataSources:
       apiVersion: 0.0.5
       language: wasm/assemblyscript
       entities:
-        - DaoInstantiated
+        - Dao
       abis:
         - name: MoonlitFactory
           file: ./abis/MoonlitFactory.json
+        - name: MoonlitDao
+          file: ./abis/MoonlitDao.json
       eventHandlers:
         - event: DaoInstantiated(indexed address,indexed address,string,string,uint256,uint256)
           handler: handleDaoInstantiated
       file: ./src/mapping.ts
+templates: 
+  - kind: ethereum/contract
+    name: MoonlitDao
+    network: mumbai
+    source:
+      abi: MoonlitDao
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      file: ./src/mapping.ts
+      entities:
+        - Dao
+        - Contributor
+      abis:
+        - name: MoonlitDao
+          file: ./abis/MoonlitDao.json
+      eventHandlers:
+        - event: FundingEnded(bool)
+          handler: handleFundingEnded
+        - event: GenreSet(string)
+          handler: handleGenreSet
+        - event: SubtitleSet(string)
+          handler: handleSubtitleSet
+        - event: URISet(string)
+          handler: handleURISet
+        - event: ContributorAdded(address,uint256,string)
+          handler: handleContributorAdded

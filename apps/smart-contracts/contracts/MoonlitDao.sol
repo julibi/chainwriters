@@ -16,7 +16,7 @@ contract MoonlitDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
     string subtitle;
     string genre;
     address author_address;
-    string ipfsLink;
+    bytes ipfsLink;
   }
 
   struct AuthorShare {
@@ -54,6 +54,10 @@ contract MoonlitDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
   bool public refundEnabled = false;
   // bool public paused = true;
   event FundingEnded(bool finished);
+  event GenreSet(string newGenre);
+  event SubtitleSet(string newSubtitle);
+  event URISet(string ipfsHash);
+  event ContributorAdded(address contributor, uint256 share, string role);
 
   modifier whenInvestingFinished {
     require(investingFinished, "Investing still running");
@@ -155,14 +159,6 @@ contract MoonlitDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
   // Internal functions
   // ------------------
 
-  function setGenre(string memory _genre) internal {
-    project.genre = _genre;
-  }
-
-  function setSubtitle(string memory _subtitle) internal {
-    project.subtitle = _subtitle;
-  }
-
   function calculateShares() internal {
     uint256 shareAuthor = 85;
     uint256 balanceTotal = address(this).balance;
@@ -186,11 +182,6 @@ contract MoonlitDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
   // ------------------
   // Functions for the author
   // ------------------
-
-  function setProjectData(string calldata _subtitle, string calldata _genre) external onlyRole(AUTHOR_ROLE) isBeforeInvesting {
-    setSubtitle(_subtitle);
-    setGenre(_genre);
-  }
  
   // add role of contributor
   function addContributor(address _contributor, uint256 _share) external onlyRole(AUTHOR_ROLE) isBeforeInvesting {
@@ -203,6 +194,17 @@ contract MoonlitDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
     contributors[contributorIndex].hasWithdrawnShare = false;
     totalSharePercentage = totalSharePercentage + _share;
     contributorIndex = contributorIndex + 1;
+    emit ContributorAdded(_contributor, _share, "");
+  }
+
+  function setGenre(string memory _genre) external onlyRole(AUTHOR_ROLE) {
+    project.genre = _genre;
+    emit GenreSet(_genre);
+  }
+
+  function setSubtitle(string memory _subtitle) external onlyRole(AUTHOR_ROLE) {
+    project.subtitle = _subtitle;
+    emit SubtitleSet(_subtitle);
   }
 
   function setMaxGenesisClaimableAuthor(uint256 _amount) public onlyRole(AUTHOR_ROLE) isBeforeInvesting {
@@ -211,8 +213,10 @@ contract MoonlitDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
     author.genesisEditionReserved = _amount;
   }
 
-  function setURI(string memory newuri) public onlyRole(AUTHOR_ROLE) isBeforeInvesting {
-    _setURI(newuri);
+  function setHash(string memory _ipfsHash) public onlyRole(AUTHOR_ROLE) isBeforeInvesting {
+    // ipfshash is bytes but uri is string...
+    _setURI(_ipfsHash);
+    emit URISet(_ipfsHash);
   }
 
   function withdrawShareAuthor(address _to) external whenInvestingFinished onlyRole(AUTHOR_ROLE) {

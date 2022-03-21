@@ -6,4 +6,14 @@ type Dao @entity {
   title: String!
   ipfsLink: String!
   fundingEnded: Boolean!
+  subtitle: String
+  genre: String
+  contributors: [Contributor!]
+}
+
+type Contributor @entity {
+  id: ID!
+  address: Bytes!
+  share: BigInt!
+  role: String
 }

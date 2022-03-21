@@ -1,5 +1,6 @@
 import { DaoInstantiated } from "../generated/MoonlitFactory/MoonlitFactory"
-import { Dao } from "../generated/schema"
+import { FundingEnded, GenreSet, SubtitleSet, URISet, ContributorAdded } from "../generated/templates/MoonlitDao"
+import { Contributor, Dao } from "../generated/schema"
 
 export function handleDaoInstantiated(event: DaoInstantiated): void {
   let dao = new Dao(event.params.dao.toHex())
@@ -10,4 +11,46 @@ export function handleDaoInstantiated(event: DaoInstantiated): void {
   dao.ipfsLink = event.params.ipfsLink
   dao.fundingEnded = false
   dao.save()
+}
+
+
+export function handleFundingEnded(event: FundingEnded): void {
+  let dao = Dao.load(event.address.toHexString())
+  if (!dao) return
+  dao.fundingEnded = true
+  dao.save()
+}
+
+export function handleGenreSet(event: GenreSet): void {
+  let dao = Dao.load(event.address.toHexString())
+  if (!dao) return
+  dao.genre = event.params.newGenre
+  dao.save()
+}
+
+export function handleSubtitleSet(event: SubtitleSet): void {
+  let dao = Dao.load(event.address.toHexString())
+  if (!dao) return
+  dao.subtitle = event.params.newSubtitle
+  dao.save()
+}
+
+export function handleURISet(event: URISet): void {
+  let dao = Dao.load(event.address.toHexString())
+  if (!dao) return
+  dao.ipfsLink = event.params.ipfsHash
+  dao.save()
+}
+
+export function handleContributorAdded(event: ContributorAdded): void {
+  let dao = Dao.load(event.address.toHexString())
+  if (!dao) return
+  let contributor = new Contributor(event.params.contributor + "-" + event.transaction.hash.toHex() + "-" + event.logIndex.toString())
+  contributor.address = event.params.contributor
+  contributor.share = event.params.share
+  contributor.role = ""
+  if (!dao.contributors) {
+    throw new Error(`dao.contributors: ${dao.contributors}  - contributor: ${contributor}`);
+  }
+  // wip
 }
