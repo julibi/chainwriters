@@ -8,12 +8,13 @@ type Dao @entity {
   fundingEnded: Boolean!
   subtitle: String
   genre: String
-  contributors: [Contributor!]
+  # TODO how to make contributor an array of contribution with its dao being dao
+  contribution: [Contribution!]
 }
-
-type Contributor @entity {
+type Contribution @entity {
   id: ID!
   address: Bytes!
   share: BigInt!
   role: String
+  dao: Bytes!
 }

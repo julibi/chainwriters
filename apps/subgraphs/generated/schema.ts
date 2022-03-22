@@ -138,8 +138,8 @@ export class Dao extends Entity {
     }
   }
 
-  get contributors(): Array<string> | null {
-    let value = this.get("contributors");
+  get contribution(): Array<string> | null {
+    let value = this.get("contribution");
     if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
@@ -147,39 +147,40 @@ export class Dao extends Entity {
     }
   }
 
-  set contributors(value: Array<string> | null) {
+  set contribution(value: Array<string> | null) {
     if (!value) {
-      this.unset("contributors");
+      this.unset("contribution");
     } else {
-      this.set("contributors", Value.fromStringArray(<Array<string>>value));
+      this.set("contribution", Value.fromStringArray(<Array<string>>value));
     }
   }
 }
 
-export class Contributor extends Entity {
+export class Contribution extends Entity {
   constructor(id: string) {
     super();
     this.set("id", Value.fromString(id));
 
     this.set("address", Value.fromBytes(Bytes.empty()));
     this.set("share", Value.fromBigInt(BigInt.zero()));
+    this.set("dao", Value.fromBytes(Bytes.empty()));
   }
 
   save(): void {
     let id = this.get("id");
-    assert(id != null, "Cannot save Contributor entity without an ID");
+    assert(id != null, "Cannot save Contribution entity without an ID");
     if (id) {
       assert(
         id.kind == ValueKind.STRING,
-        "Cannot save Contributor entity with non-string ID. " +
+        "Cannot save Contribution entity with non-string ID. " +
           'Considering using .toHex() to convert the "id" to a string.'
       );
-      store.set("Contributor", id.toString(), this);
+      store.set("Contribution", id.toString(), this);
     }
   }
 
-  static load(id: string): Contributor | null {
-    return changetype<Contributor | null>(store.get("Contributor", id));
+  static load(id: string): Contribution | null {
+    return changetype<Contribution | null>(store.get("Contribution", id));
   }
 
   get id(): string {
@@ -224,5 +225,14 @@ export class Contributor extends Entity {
     } else {
       this.set("role", Value.fromString(<string>value));
     }
+  }
+
+  get dao(): Bytes {
+    let value = this.get("dao");
+    return value!.toBytes();
+  }
+
+  set dao(value: Bytes) {
+    this.set("dao", Value.fromBytes(value));
   }
 }

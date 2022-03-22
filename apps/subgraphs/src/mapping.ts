@@ -1,6 +1,6 @@
 import { DaoInstantiated } from "../generated/MoonlitFactory/MoonlitFactory"
 import { FundingEnded, GenreSet, SubtitleSet, URISet, ContributorAdded } from "../generated/templates/MoonlitDao/MoonlitDao"
-import { Contributor, Dao } from "../generated/schema"
+import { Contribution, Dao } from "../generated/schema"
 
 export function handleDaoInstantiated(event: DaoInstantiated): void {
   let dao = new Dao(event.params.dao.toHex())
@@ -42,20 +42,13 @@ export function handleURISet(event: URISet): void {
   dao.save()
 }
 
-
-// change this. just save the contributor and its project in one and in dao filter for contributions of a project
 export function handleContributorAdded(event: ContributorAdded): void {
   let dao = Dao.load(event.address.toHexString())
   if (!dao) return
-  let contributor = new Contributor(event.params.contributor.toHex() + "-" + event.transaction.hash.toHex() + "-" + event.logIndex.toString())
-  contributor.address = event.params.contributor
-  contributor.share = event.params.share
-  contributor.role = ""
-  // if (dao.contributors) {
-  //   const index = dao.contributors.length
-  //   dao.contributors[index] = contributor
-  // } else {
-  //   dao.contributors = [contributor]
-  // }
-  // dao.save()
+  let contribution = new Contribution(event.params.contributor.toHex() + "-" + event.transaction.hash.toHex() + "-" + event.logIndex.toString())
+  contribution.address = event.params.contributor
+  contribution.share = event.params.share
+  contribution.role = ""
+  contribution.dao = event.address
+  contribution.save()
 }
