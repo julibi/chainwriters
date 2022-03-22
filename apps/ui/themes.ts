@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+
 export const BG_LIGHT = '#222632';
 export const BG_NORMAL = '#1B1E28';
 export const BG_DARK = '#0E1018';
@@ -15,6 +16,16 @@ export const BaseButton = styled.button`
   color: ${PLAIN_WHITE};
   border-radius: ${BASE_BORDER_RADIUS};
   box-shadow: ${BASE_BOX_SHADOW};
+
+  :hover {
+    cursor: pointer;
+  }
+`;
+
+export const PrimaryButton = styled.button`
+  background-color: ${PLAIN_WHITE};
+  color: ${BG_NORMAL};
+  border-radius: ${BASE_BORDER_RADIUS};
 
   :hover {
     cursor: pointer;

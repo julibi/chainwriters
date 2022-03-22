@@ -20,7 +20,7 @@ export const queryDaos = gql`
 `;
 
 export function Index() {
-  const {account} = useWeb3React();
+  const { account } = useWeb3React();
   // const hasTried = useEagerConnect();
   const fetchDaos = async () => {
     const {
@@ -42,7 +42,7 @@ export function Index() {
   return (
     <div>
       <h1>MOONLIT</h1>
-      {!account && <WalletConnection onSuccessfulConnection={() => alert("YAS, connected")}/>}
+      <WalletConnection />
     </div>
   );
 }
