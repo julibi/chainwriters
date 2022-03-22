@@ -1,13 +1,16 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useWeb3React } from '@web3-react/core';
 import { injected, walletconnect } from '../connectors'; 
+import BaseModal from './BaseModal';
+import { BaseButton } from '../themes';
 
 interface WalletConnectionTypes {
   onSuccessfulConnection: () => void;
 }
 
 const WalletConnection = ({ onSuccessfulConnection }: WalletConnectionTypes) => {
-  const { activate } = useWeb3React();
+  const [showConnectModal, setShowConnectModal] = useState(false);
+  const { activate, account } = useWeb3React();
   const handleMetaMaskClick = async() => {
     try {
       await activate(injected, undefined, true);
@@ -27,9 +30,16 @@ const WalletConnection = ({ onSuccessfulConnection }: WalletConnectionTypes) => 
   };
   return (
     <div>
-      <h2>WalletConnection</h2>
-      <button onClick={handleMetaMaskClick}>CONNECT WITH METAMASK</button>
-      <button onClick={handleWalletConnectClick}>CONNECT WITH WALLETCONNECT</button>
+      { !account && <BaseButton onClick={() => setShowConnectModal(true)}>Connect</BaseButton>}
+      {showConnectModal && 
+        <BaseModal onClose={() => setShowConnectModal(false)}>
+          <>
+            <h2>Connect To Your Wallet</h2>
+            <BaseButton onClick={handleMetaMaskClick}>METAMASK</BaseButton>
+            <BaseButton onClick={handleWalletConnectClick}>WALLETCONNECT</BaseButton>
+          </>
+        </BaseModal>
+      }
     </div>
   );
 }
