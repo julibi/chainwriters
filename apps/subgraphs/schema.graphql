@@ -16,4 +16,5 @@ type Contributor @entity {
   address: Bytes!
   share: BigInt!
   role: String
+  project: Bytes!
 }
