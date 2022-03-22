@@ -1,6 +1,6 @@
 import { ReactChild } from 'react';
 import styled from 'styled-components';
-import { BG_DARK, BG_LIGHT, BaseButton } from '../themes';
+import { BASE_BOX_SHADOW, BASE_BORDER_RADIUS, BaseButton } from '../themes';
 
 const Root = styled.div`
   position: fixed;
@@ -41,7 +41,7 @@ const Root = styled.div`
 
 const Content = styled.div`
   position: relative;
-  border-radius: .5em;
+  border-radius: ${BASE_BORDER_RADIUS};
   max-width: 600px;
   padding: 1em;
   opacity: 1;
@@ -49,15 +49,13 @@ const Content = styled.div`
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  box-shadow:
-    -5px -6px 9px rgba(128,128,128,0.1),
-    10px 10px 10px rgba(0,0,0,0.2);
+  box-shadow: ${BASE_BOX_SHADOW}
 `;
 
 const CloseButton = styled(BaseButton)`
   position: absolute;
-  top: .4rem;
-  right: .4rem;
+  top: 1rem;
+  right: 1rem;
 
   :hover {
     cursor: pointer;

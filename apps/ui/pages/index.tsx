@@ -5,7 +5,6 @@ import gql from 'graphql-tag';
 import { useEagerConnect } from '../hooks/useEagerConnect';
 import WalletConnection from '../components/WalletConnection';
 import client from '../apolloclient';
-import styled from 'styled-components';
 
 // TODO use useQuery instead!
 export const queryDaos = gql`
