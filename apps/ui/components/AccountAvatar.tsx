@@ -1,5 +1,12 @@
-import React, { useEffect, useRef } from 'react';
-import Jazzicon from '@metamask/jazzicon';
+import React, { useEffect, useRef } from 'react'
+import styled from 'styled-components'
+import Jazzicon from '@metamask/jazzicon'
+
+const Avatar = styled.div`
+  display: flex;
+  align-items: center;
+  height: 100%;
+`;
 
 export interface JazzIcon {
   address: string | undefined | null;
@@ -16,7 +23,7 @@ const AccountAvatar = ({ address } : JazzIcon) => {
 
   return (
     <div>
-      <div ref={ref as any} />
+      <Avatar ref={ref as any} />
     </div>
   )
 }

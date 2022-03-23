@@ -15,6 +15,10 @@ const ConnectionModalOpener = styled(PrimaryButton)`
   font-weight: bold;
 `;
 
+const Item = styled.div`
+  margin-inline-end: 1rem;
+`;
+
 export interface WalletIndicatorProps {
   address: string | undefined | null;
   chain: number | undefined | null;
@@ -34,7 +38,7 @@ const WalletIndicator = ({
       const addressLength = address.length;
       const cut = addressLength - 5;
       const addressEnd = address.substring(addressLength, cut);
-      return <div>{`${addressStart}...${addressEnd}`}</div>;
+      return <Item>{`${addressStart}...${addressEnd}`}</Item>;
     }
     return;
   };
@@ -42,9 +46,9 @@ const WalletIndicator = ({
   const getNetwork = (chain): ReactElement => {
     if (chain) {
       if (supportedChainIds.includes(chain)) {
-        return <div>{supportedChainMapping[chain]?.name}</div>;
+        return <Item>{supportedChainMapping[chain]?.name}</Item>;
       } else {
-        return <div>{'False Network'}</div>;
+        return <Item>{'False Network'}</Item>;
       }
     } else {
       return (

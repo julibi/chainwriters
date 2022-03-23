@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
-import Image from 'next/image';
-import { useWeb3React } from '@web3-react/core';
-import styled from 'styled-components';
-import { injected, walletconnect } from '../connectors'; 
-import BaseModal from './BaseModal';
-import WalletIndicator from './WalletIndicator';
-import { BaseButton } from '../themes';
+import Image from 'next/image'
+import { useWeb3React } from '@web3-react/core'
+import styled from 'styled-components'
+import { injected, walletconnect } from '../connectors'
+import BaseModal from './BaseModal'
+import WalletIndicator from './WalletIndicator'
+import { BaseButton } from '../themes'
 
 const ContentWrapper = styled.div`
   margin: 2rem;
