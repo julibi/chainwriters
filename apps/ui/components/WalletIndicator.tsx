@@ -1,8 +1,8 @@
-import React, { ReactElement } from 'react';
-import styled from 'styled-components';
-import AccountAvatar from './AccountAvatar';
-import { supportedChainIds, supportedChainMapping } from '../connectors';
-import { PrimaryButton } from '../themes';
+import React, { ReactElement } from 'react'
+import styled from 'styled-components'
+import AccountAvatar from './AccountAvatar'
+import { supportedChainIds, supportedChainMapping } from '../connectors'
+import { PrimaryButton } from '../themes'
 
 const Root = styled.div`
   display: flex;

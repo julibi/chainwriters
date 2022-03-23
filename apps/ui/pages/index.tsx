@@ -1,10 +1,10 @@
-import { useEffect } from 'react';
-import { useWeb3React } from '@web3-react/core';
-import gql from 'graphql-tag';
+import { useEffect } from 'react'
+import { useWeb3React } from '@web3-react/core'
+import gql from 'graphql-tag'
 // import { useQuery } from '@apollo/client';
-import { useEagerConnect } from '../hooks/useEagerConnect';
-import WalletConnection from '../components/WalletConnection';
-import client from '../apolloclient';
+import { useEagerConnect } from '../hooks/useEagerConnect'
+import WalletConnection from '../components/WalletConnection'
+import client from '../apolloclient'
 
 // TODO use useQuery instead!
 export const queryDaos = gql`
@@ -39,6 +39,7 @@ export function Index() {
   useEffect(() => {
     fetchDaos();
   }, []);
+
   return (
     <div>
       <h1>MOONLIT</h1>

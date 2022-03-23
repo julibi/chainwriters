@@ -1,13 +1,15 @@
-import { AppProps } from 'next/app';
-import Head from 'next/head';
-import { Web3ReactProvider } from '@web3-react/core';
+import { AppProps } from 'next/app'
+import Head from 'next/head'
+import { Web3ReactProvider } from '@web3-react/core'
+import { createGlobalStyle} from "styled-components"
 import {
   ExternalProvider,
   JsonRpcFetchFunc,
   Web3Provider,
-} from '@ethersproject/providers';
-import { createGlobalStyle, ThemeProvider } from "styled-components";
-import { BG_NORMAL, PLAIN_WHITE } from "../themes";
+} from '@ethersproject/providers'
+import Layout from '../components/Layout'
+import { BG_NORMAL, PLAIN_WHITE } from "../themes"
+import './styles.css'
 
 const GlobalStyle = createGlobalStyle`
 html{
@@ -24,7 +26,6 @@ html{
   }
 `;
 
-import './styles.css';
 function getLibrary(
   provider: ExternalProvider | JsonRpcFetchFunc
 ): Web3Provider {
@@ -32,18 +33,21 @@ function getLibrary(
   library.pollingInterval = 12000;
   return library;
 }
+
 function CustomApp({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
         <title>MOONLIT</title>
       </Head>
-      <main className="app">
-        <GlobalStyle />
-        <Web3ReactProvider getLibrary={getLibrary}>
-          <Component {...pageProps} />
-        </Web3ReactProvider>
-      </main>
+      <GlobalStyle />
+      <Web3ReactProvider getLibrary={getLibrary}>
+        <main className="app">
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+        </main>
+      </Web3ReactProvider>
     </>
   );
 }

@@ -1,8 +1,18 @@
-import React from 'react'
+import React, { ReactChild } from 'react'
+import Footer from './Footer'
+import Navbar from './Navbar'
 
-const Layout = () => {
+interface LayoutProps {
+  children: ReactChild;
+}
+
+const Layout = ({ children }: LayoutProps) => {
   return (
-    <div>Layout</div>
+    <div>
+      <Navbar />
+      {children}
+      <Footer />
+    </div>
   )
 }
 
