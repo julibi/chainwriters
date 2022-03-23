@@ -93,7 +93,8 @@ const Navbar = () => {
   const hasTried = useEagerConnect();
   const isMobile = useDeviceDetect();
   const [isBurgerMenuOpen, setIsBurgerMenuOpen] = useState(false);
-
+  
+  // TODO WALLET CONNECTION ON MOBILE!
   if (isMobile) {
     return (
       <RootMobile>
