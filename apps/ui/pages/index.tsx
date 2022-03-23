@@ -1,9 +1,7 @@
 import { useEffect } from 'react'
 import { useWeb3React } from '@web3-react/core'
 import gql from 'graphql-tag'
-// import { useQuery } from '@apollo/client';
-import { useEagerConnect } from '../hooks/useEagerConnect'
-import WalletConnection from '../components/WalletConnection'
+// import { useQuery } from '@apollo/client'
 import client from '../apolloclient'
 
 // TODO use useQuery instead!
@@ -42,8 +40,7 @@ export function Index() {
 
   return (
     <div>
-      <h1>MOONLIT</h1>
-      <WalletConnection />
+      <h1>MOONLIT HOMEPAGE</h1>
     </div>
   );
 }
