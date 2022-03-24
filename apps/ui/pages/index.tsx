@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { toast } from 'react-toastify';
 import { useWeb3React } from '@web3-react/core'
 import gql from 'graphql-tag'
 // import { useQuery } from '@apollo/client'
@@ -36,6 +37,7 @@ export function Index() {
   
   useEffect(() => {
     fetchDaos();
+    toast.success("Hello I am toast!");
   }, []);
 
   return (

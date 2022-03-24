@@ -10,6 +10,7 @@ import {
 import Layout from '../components/Layout'
 import { BG_NORMAL, PLAIN_WHITE } from "../themes"
 import './styles.css'
+import ToastContainer from '../components/ToastContainer'
 
 const GlobalStyle = createGlobalStyle`
 html{
@@ -43,6 +44,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
       <GlobalStyle />
       <Web3ReactProvider getLibrary={getLibrary}>
         <main className="app">
+         <ToastContainer />
           <Layout>
             <Component {...pageProps} />
           </Layout>

@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
-import Image from 'next/image'
+import { toast } from 'react-toastify';
 import { useWeb3React } from '@web3-react/core'
+import Image from 'next/image'
 import styled from 'styled-components'
 import { injected, walletconnect } from '../connectors'
 import BaseModal from './BaseModal'
@@ -33,7 +34,7 @@ const WalletConnection = () => {
       await activate(injected, undefined, true);
       setShowConnectModal(false);
     } catch(e) {
-      console.log("Whoops, something went wrong trying to connect to Metamask")
+      toast.error("Whoops, MetaMask connection failed.")
     }
   };
 
