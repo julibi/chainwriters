@@ -8,11 +8,11 @@ const Root = styled.div`
   display: flex;
   justify-content: space-evenly;
   max-width: 320px;
-`;
-
+  `;
+  
 const ConnectionModalOpener = styled(PrimaryButton)`
+  font-family: 'Roboto Mono Bold';
   padding: 1rem;
-  font-weight: bold;
 
   @media (max-width: 768px) {
     padding: 0.5rem;

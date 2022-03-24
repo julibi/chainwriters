@@ -20,13 +20,13 @@ const NavList = styled.ul`
   display: flex;
   margin: 2rem;
   align-items: center;
+  font-family: 'Roboto Mono';
 `;
 
 const NavListItem = styled.li`
   list-style-type: none;
   margin-inline-end: 1rem;
   text-transform: uppercase;
-
   display: flex;
   flex-direction: row;
   align-items: center;

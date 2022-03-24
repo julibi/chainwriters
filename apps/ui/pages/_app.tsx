@@ -24,6 +24,41 @@ html{
   body{
     background-color: ${BG_NORMAL};
     color: ${PLAIN_WHITE};
+    font-family: 'Nunito Sans';
+    @font-face {
+      font-family: "Roboto Mono";
+      src: url("/fonts/RobotoMono/RobotoMono-Regular.ttf");
+      font-style: variable;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "Roboto Mono Bold";
+      src: url("/fonts/RobotoMono/RobotoMono-Bold.ttf");
+      font-style: variable;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "Nunito Sans";
+      src: url("/fonts/NunitoSans/NunitoSans-Regular.ttf");
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "Nunito Sans Bold";
+      src: url("/fonts/NunitoSans/NunitoSans-Bold.ttf");
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "Nunito Sans Black";
+      src: url("/fonts/NunitoSans/NunitoSans-Black.ttf");
+      font-style: normal;
+      font-display: swap;
+    }
   }
 `;
 

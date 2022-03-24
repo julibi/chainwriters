@@ -1,7 +1,8 @@
 import { useEffect } from 'react'
-import { toast } from 'react-toastify';
+import { toast } from 'react-toastify'
 import { useWeb3React } from '@web3-react/core'
 import gql from 'graphql-tag'
+import styled from 'styled-components'
 // import { useQuery } from '@apollo/client'
 import client from '../apolloclient'
 

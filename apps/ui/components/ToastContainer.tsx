@@ -40,7 +40,7 @@ export default styled(ToastContainer)`
     justify-content: space-between;
     max-height: 800px;
     overflow: hidden;
-    font-family: sans-serif;
+    font-family: 'Nunito Sans', sans-serif;
     cursor: pointer;
     direction: ltr;
   }
@@ -138,7 +138,7 @@ export default styled(ToastContainer)`
     transform-origin: left;
   }
   .Toastify__progress-bar--animated {
-    animation: Toastify__trackProgress linear 10 forwards;
+    animation: Toastify__trackProgress linear 1 forwards;
   }
   .Toastify__progress-bar--controlled {
     transition: transform 0.2s;
