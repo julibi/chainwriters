@@ -60,7 +60,6 @@ const ProjectItem = ({title, author, mintPrice, fundedAmount}: ProjectItemTypes)
 }
 
 const ProjectHeader = ({title, author, mintPrice, fundedAmount}: ProjectItemTypes) => {
-  console.log('ProjectHeader');
   return (
     <RootHeader>
       <Title>{title}</Title>

@@ -1,25 +1,11 @@
 import { useEffect } from 'react'
 import { toast } from 'react-toastify'
 import { useWeb3React } from '@web3-react/core'
-import gql from 'graphql-tag'
 import styled from 'styled-components'
-// import { useQuery } from '@apollo/client'
-import client from '../apolloclient'
 import { ProjectItem, ProjectHeader } from '../components/ProjectItem'
 import Typewriter from '../components/Typewriter'
-
-// TODO use useQuery instead!
-export const queryDaos = gql`
-  query exampleQuery {
-    daos {
-      id
-      author
-      address
-      createdAt
-      title
-    }
-  }
-`;
+import { BASE_BORDER_RADIUS, BASE_BOX_SHADOW } from '../themes'
+import { useFetchTopProject } from '../state/projects/hooks'
 
 const Root = styled.div``;
 
@@ -36,6 +22,20 @@ const HeaderIllustration = styled.div`
 const TypedTextWrapper = styled.div`
   flex: 1;
   min-height: 650px;
+`;
+
+const SectionTitleWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+`;
+
+const SectionTitle = styled.h2`
+  text-align: center;
+  text-transform: uppercase;
+  font-family: 'Roboto Mono Bold';
+  border-radius: ${BASE_BORDER_RADIUS};
+  box-shadow: ${BASE_BOX_SHADOW};
+  padding: 1rem;
 `;
 
 const ProjectList = styled.section`
@@ -78,37 +78,25 @@ const mockProjects = [
 export function Index() {
   const { account } = useWeb3React();
   // const hasTried = useEagerConnect();
-  const fetchDaos = async () => {
-    const {
-      data: { daos }
-    } = await client.query({
-      query: queryDaos,
-    });
-  
-    if (!daos.length) {
-      return [];
-    }
-    console.log({ daos });
-    return daos;
-  };
-  
-  useEffect(() => {
-    fetchDaos();
-  }, []);
+  const { loading, error, data  } = useFetchTopProject();
+  console.log({ loading, error, data })
 
   return (
     <Root>
       <HeaderSection>
-        <HeaderIllustration></HeaderIllustration>
+        <HeaderIllustration />
         <TypedTextWrapper>
           <Typewriter typedText={'This is MOONLIT. On the left, imagine seeing a nice logo or animated illustration :)'} />
         </TypedTextWrapper>
       </HeaderSection>
+      <SectionTitleWrapper>
+        <SectionTitle>TOP PROJECTS</SectionTitle>
+      </SectionTitleWrapper>
       <ProjectList>
         <ProjectHeader
           title={'Title'}
           author={'Author'}
-          mintPrice={'Mint Price'}
+          mintPrice={'Mint Price (MATIC)'}
           fundedAmount={'Funded Amount'}
         />
         {mockProjects.map(({title, author, mintPrice, fundedAmount}, idx) =>
