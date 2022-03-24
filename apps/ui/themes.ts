@@ -4,6 +4,7 @@ export const BG_LIGHT = '#222632';
 export const BG_NORMAL = '#1B1E28';
 export const BG_DARK = '#0E1018';
 export const PLAIN_WHITE = '#FFF';
+export const PINK = '#F50A48';
 
 export const BASE_BORDER_RADIUS = '.5em';
 export const BASE_BOX_SHADOW = `

@@ -25,6 +25,7 @@ html{
     background-color: ${BG_NORMAL};
     color: ${PLAIN_WHITE};
     font-family: 'Nunito Sans';
+  
     @font-face {
       font-family: "Roboto Mono";
       src: url("/fonts/RobotoMono/RobotoMono-Regular.ttf");

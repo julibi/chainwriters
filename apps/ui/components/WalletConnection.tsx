@@ -34,7 +34,7 @@ const WalletConnection = () => {
       await activate(injected, undefined, true);
       setShowConnectModal(false);
     } catch(e) {
-      toast.error("Whoops, MetaMask connection failed.")
+      toast.error('Connection to MetaMask failed.');
     }
   };
 
@@ -43,7 +43,7 @@ const WalletConnection = () => {
       await activate(walletconnect, undefined, true);
       setShowConnectModal(false);
     } catch(e) {
-      console.log("Whoops, something went wrong trying to connect with walletconnect")
+      toast.error('Connection with WalletConnect failed.');
     }
   };
   return (

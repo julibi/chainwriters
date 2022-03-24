@@ -25,7 +25,7 @@ const NavList = styled.ul`
 
 const NavListItem = styled.li`
   list-style-type: none;
-  margin-inline-end: 1rem;
+  margin-inline-end: 4rem;
   text-transform: uppercase;
   display: flex;
   flex-direction: row;
