@@ -12,6 +12,7 @@ const Root = styled.div`
 `;
 
 const RootMobile = styled(Root)`
+  align-items: center;
   margin: 1rem;
 `;
 
@@ -98,6 +99,7 @@ const Navbar = () => {
   if (isMobile) {
     return (
       <RootMobile>
+        {isMobile && !isBurgerMenuOpen && <WalletConnection />}
         <BurgerButton onClick={() => setIsBurgerMenuOpen(!isBurgerMenuOpen)}>
           <BurgerLine
             style={

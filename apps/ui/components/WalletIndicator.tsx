@@ -13,6 +13,11 @@ const Root = styled.div`
 const ConnectionModalOpener = styled(PrimaryButton)`
   padding: 1rem;
   font-weight: bold;
+
+  @media (max-width: 768px) {
+    padding: 0.5rem;
+    margin-inline-end: 1rem;
+  }
 `;
 
 const Item = styled.div`

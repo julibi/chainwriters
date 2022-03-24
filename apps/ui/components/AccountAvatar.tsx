@@ -6,6 +6,11 @@ const Avatar = styled.div`
   display: flex;
   align-items: center;
   height: 100%;
+
+  
+  @media (max-width: 768px) {
+    display: none;
+  }
 `;
 
 export interface JazzIcon {
