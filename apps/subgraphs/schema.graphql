@@ -6,6 +6,9 @@ type Dao @entity {
   title: String!
   ipfsLink: String!
   fundingEnded: Boolean!
+  firstEditionMax: BigInt!
+  fundedAmount: BigInt!
+  mintPrice: BigInt!
   subtitle: String
   genre: String
   # TODO how to make contributor an array of contribution with its dao being dao

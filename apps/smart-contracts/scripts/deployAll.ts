@@ -20,8 +20,8 @@ async function deployAll() {
   console.log(`Factory contract deployed to: ${MoonlitFactory.address}`);
   
   // // Dao arguments
-  const title = "Test";
-  const ipfsLink = "ipfsLink";
+  const title = "My little Phony";
+  const ipfsLink = "phonyipfsLink";
   const initialMintPrice = hre.ethers.utils.parseUnits("0.05", 18);
   const firstEditionMax = 4;
   

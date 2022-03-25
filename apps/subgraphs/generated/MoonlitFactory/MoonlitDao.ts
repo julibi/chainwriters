@@ -62,6 +62,24 @@ export class ContributorAdded__Params {
   }
 }
 
+export class Deposited extends ethereum.Event {
+  get params(): Deposited__Params {
+    return new Deposited__Params(this);
+  }
+}
+
+export class Deposited__Params {
+  _event: Deposited;
+
+  constructor(event: Deposited) {
+    this._event = event;
+  }
+
+  get fundedAmount(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+}
+
 export class FundingEnded extends ethereum.Event {
   get params(): FundingEnded__Params {
     return new FundingEnded__Params(this);

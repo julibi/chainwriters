@@ -22,6 +22,9 @@ export class Dao extends Entity {
     this.set("title", Value.fromString(""));
     this.set("ipfsLink", Value.fromString(""));
     this.set("fundingEnded", Value.fromBoolean(false));
+    this.set("firstEditionMax", Value.fromBigInt(BigInt.zero()));
+    this.set("fundedAmount", Value.fromBigInt(BigInt.zero()));
+    this.set("mintPrice", Value.fromBigInt(BigInt.zero()));
   }
 
   save(): void {
@@ -102,6 +105,33 @@ export class Dao extends Entity {
 
   set fundingEnded(value: boolean) {
     this.set("fundingEnded", Value.fromBoolean(value));
+  }
+
+  get firstEditionMax(): BigInt {
+    let value = this.get("firstEditionMax");
+    return value!.toBigInt();
+  }
+
+  set firstEditionMax(value: BigInt) {
+    this.set("firstEditionMax", Value.fromBigInt(value));
+  }
+
+  get fundedAmount(): BigInt {
+    let value = this.get("fundedAmount");
+    return value!.toBigInt();
+  }
+
+  set fundedAmount(value: BigInt) {
+    this.set("fundedAmount", Value.fromBigInt(value));
+  }
+
+  get mintPrice(): BigInt {
+    let value = this.get("mintPrice");
+    return value!.toBigInt();
+  }
+
+  set mintPrice(value: BigInt) {
+    this.set("mintPrice", Value.fromBigInt(value));
   }
 
   get subtitle(): string | null {

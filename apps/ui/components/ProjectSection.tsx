@@ -1,33 +1,37 @@
 import React from 'react'
 import styled from 'styled-components'
-import { SectionTitleWrapper, SectionTitle, ProjectList } from '../components/ProjectSection'
-import { ProjectHeader, ProjectItem } from '../components/ProjectItem'
-import { useFetchAllProject } from '../state/projects/hooks'
-import { BASE_BORDER_RADIUS, BASE_BOX_SHADOW, BG_NORMAL } from '../themes'
+import { useFetchTopProjects } from '../state/projects/hooks';
+import { BASE_BORDER_RADIUS, BASE_BOX_SHADOW } from '../themes'
+import { ProjectItem, ProjectHeader } from './ProjectItem'
 
-const Root = styled.div`
+export const SectionTitleWrapper = styled.div`
   display: flex;
-  flex-direction: column;
+  justify-content: center;
 `;
 
-const SearchInput = styled.input`
+export const SectionTitle = styled.h2`
+  text-align: center;
+  text-transform: uppercase;
   font-family: 'Roboto Mono Bold';
   border-radius: ${BASE_BORDER_RADIUS};
   box-shadow: ${BASE_BOX_SHADOW};
   padding: 1rem;
-  background-color: ${BG_NORMAL};
 `;
 
-const Projects = () => {
-  const { loading, error, data, refetch } = useFetchAllProject();
+export const ProjectList = styled.section`
+  display: flex;
+  flex-direction: column;
+  padding: 3rem;
+`;
+
+const ProjectSection = () => {
+  const { loading, error, data } = useFetchTopProjects();
   return (
-    <Root>
+    <>
       <SectionTitleWrapper>
-        <SectionTitle>PROJECTS</SectionTitle>
+        <SectionTitle>TOP PROJECTS</SectionTitle>
       </SectionTitleWrapper>
       <ProjectList>
-        
-        <SearchInput />
         <ProjectHeader
           title={'Title'}
           author={'Author'}
@@ -45,8 +49,8 @@ const Projects = () => {
           />
         ))}
       </ProjectList>
-    </Root>
+    </>
   );
 }
 
-export default Projects
+export default ProjectSection

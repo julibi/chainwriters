@@ -1,7 +1,7 @@
 import { InjectedConnector } from '@web3-react/injected-connector';
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector';
 
-const RPC_URLS: { [chainId: number]: string } = {
+export const RPC_URLS: { [chainId: number]: string } = {
   // TODO key into env file
   137: "",
   80001: "https://polygon-mumbai.g.alchemy.com/v2/qDySFLl1Qjz8TO4sYO16cguTRQqUxt6s",

@@ -1,5 +1,5 @@
 import { DaoInstantiated } from "../generated/MoonlitFactory/MoonlitFactory"
-import { FundingEnded, GenreSet, SubtitleSet, URISet, ContributorAdded } from "../generated/templates/MoonlitDao/MoonlitDao"
+import { Deposited, FundingEnded, GenreSet, SubtitleSet, URISet, ContributorAdded } from "../generated/templates/MoonlitDao/MoonlitDao"
 import { Contribution, Dao } from "../generated/schema"
 
 export function handleDaoInstantiated(event: DaoInstantiated): void {
@@ -9,7 +9,16 @@ export function handleDaoInstantiated(event: DaoInstantiated): void {
   dao.createdAt = event.block.timestamp
   dao.title = event.params.title
   dao.ipfsLink = event.params.ipfsLink
+  dao.firstEditionMax = event.params.firstEditionAmount
+  dao.mintPrice = event.params.initialMintPrice
   dao.fundingEnded = false
+  dao.save()
+}
+
+export function handleDeposited(event: Deposited):void {
+  let dao = Dao.load(event.address.toHexString())
+  if (!dao) return
+  dao.fundedAmount = event.params.fundedAmount
   dao.save()
 }
 

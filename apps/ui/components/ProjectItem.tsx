@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
+import { useRouter } from 'next/router'
 import { BASE_BORDER_RADIUS, BASE_BOX_SHADOW, PINK } from '../themes';
 
 const Root = styled.div`
@@ -12,6 +13,10 @@ const Root = styled.div`
 
   border-radius: ${BASE_BORDER_RADIUS};
   box-shadow: ${BASE_BOX_SHADOW}
+
+  :hover {
+    cursor: pointer;
+  }
 `;
 
 const Title = styled.div`
@@ -44,13 +49,20 @@ const HeaderTitle = styled(Title)`
 interface ProjectItemTypes {
   title: string;
   author: string;
+  address?: string;
   mintPrice: string;
   fundedAmount: number | string;
 }
 
-const ProjectItem = ({title, author, mintPrice, fundedAmount}: ProjectItemTypes) => {
+const ProjectItem = ({title, author, address, mintPrice, fundedAmount}: ProjectItemTypes) => {
+  const router = useRouter();
+  const handleClick = (e) => {
+    e.preventDefault()
+    router.push(`projects/${address}`)
+  }
+
   return (
-    <Root>
+    <Root onClick={handleClick}>
       <Title>{title}</Title>
       <Author>{author}</Author>
       <MintPrice>{mintPrice}</MintPrice>

@@ -53,6 +53,7 @@ contract MoonlitDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
   bool public shareSentToMoonlit = false;
   bool public refundEnabled = false;
   // bool public paused = true;
+  event Deposited(uint256 fundedAmount);
   event FundingEnded(bool finished);
   event GenreSet(string newGenre);
   event SubtitleSet(string newSubtitle);
@@ -100,7 +101,7 @@ contract MoonlitDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
     require(INITIAL_MINT_PRICE * _amount <= msg.value, "Value sent not sufficient");
     investments[msg.sender] = investments[msg.sender] + _amount;
     fundedAmount = fundedAmount + _amount;
-
+    emit Deposited(fundedAmount);
     if (fundedAmount == (currentEditionMax - author.genesisEditionReserved)) {
       investingFinished = true;
       emit FundingEnded(true);
@@ -273,6 +274,11 @@ contract MoonlitDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
       return super.supportsInterface(interfaceId);
   }
 }
+
+// project name is not visible on dao contract ...
+
+// the issue with genesisEditionReserved for author - he could take all and market them himself - we don't want that
+// make it a fixed amount in percentage? 
 
 // - royalties
 // - what should happen after investing successfully finishes? We could open the astronaut's club for the project, where they vote
