@@ -8,8 +8,13 @@ export const PINK = '#F50A48';
 
 export const BASE_BORDER_RADIUS = '.5em';
 export const BASE_BOX_SHADOW = `
-  -5px -6px 9px rgba(128,128,128,0.1),
+  -5px -6px 9px rgba(125,125,125,0.1),
   10px 10px 10px rgba(0,0,0,0.2);
+`;
+
+export const INSET_BASE_BOX_SHADOW = `
+  inset -5px -6px 9px rgba(125,125,125,0.1),
+  inset 10px 10px 10px rgba(0,0,0,0.2);
 `;
 
 export const BaseButton = styled.button`
@@ -20,6 +25,9 @@ export const BaseButton = styled.button`
 
   :hover {
     cursor: pointer;
+  }
+  :active {
+    box-shadow: ${INSET_BASE_BOX_SHADOW};
   }
 `;
 
