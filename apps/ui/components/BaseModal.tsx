@@ -1,6 +1,6 @@
 import { ReactChild } from 'react';
 import styled from 'styled-components';
-import { BASE_BOX_SHADOW, BASE_BORDER_RADIUS, BaseButton } from '../themes';
+import { BASE_BOX_SHADOW, BASE_BORDER_RADIUS, BaseButton, BG_NORMAL } from '../themes';
 
 const Root = styled.div`
   position: fixed;
@@ -43,6 +43,7 @@ const Content = styled.div`
   position: relative;
   border-radius: ${BASE_BORDER_RADIUS};
   max-width: 600px;
+  background-color: ${BG_NORMAL};
   padding: 1em;
   opacity: 1;
   display: flex;
