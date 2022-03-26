@@ -1,14 +1,17 @@
 import React from 'react'
+import Image from 'next/image'
 import styled from 'styled-components'
 import { useRouter } from 'next/router'
-import { BASE_BORDER_RADIUS, BASE_BOX_SHADOW, PINK } from '../themes';
+import { BASE_BORDER_RADIUS, BASE_BOX_SHADOW, PINK, PLAIN_WHITE } from '../themes';
+import { truncateAddress } from './WalletIndicator';
 
 const Root = styled.div`
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: space-between;
-  width: 100%;
-  margin-block: 1rem;
+  width: 260px;
+  height: 400px;
+  margin: 1rem;
   padding: 1rem;
 
   border-radius: ${BASE_BORDER_RADIUS};
@@ -19,31 +22,30 @@ const Root = styled.div`
   }
 `;
 
-const Title = styled.div`
-  flex: 3;
-  margin-inline-end: 1rem;
-`;
-const Author = styled.div`
-  flex: 3;
-  margin-inline-end: 1rem;
-`;
-const MintPrice = styled.div`
-  flex: 2;
-  margin-inline-end: 1rem;
-`;
-const FundedAmount = styled.div`
-  flex: 2;
-  margin-inline-end: 1rem;
+const ImageWrapper = styled.div`
+  flex: 1;
 `;
 
-const RootHeader = styled(Root)`
+const InfoWrapper = styled.div`
+  flex: 1;
+  font-family: 'Roboto Mono Bold', Serif;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+`;
+
+const Title = styled.h4`
   color: ${PINK};
-  font-family: 'Roboto Mono Bold';
-  text-transform: uppercase;  
 `;
 
-const HeaderTitle = styled(Title)`
+const Flex = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
 
+const Label = styled.span`
+  color: ${PLAIN_WHITE};
+  font-family: 'Nunito Sans', Sans-serif;
 `;
 
 interface ProjectItemTypes {
@@ -63,23 +65,26 @@ const ProjectItem = ({title, author, address, mintPrice, fundedAmount}: ProjectI
 
   return (
     <Root onClick={handleClick}>
-      <Title>{title}</Title>
-      <Author>{author}</Author>
-      <MintPrice>{mintPrice}</MintPrice>
-      <FundedAmount>{fundedAmount}</FundedAmount>
+      <ImageWrapper>
+        <Image src={'/Livi.png'} height={'100%'} width={'100%'} alt={'Project Image'}/>
+      </ImageWrapper>
+      <InfoWrapper>
+        <Title>{title}</Title>
+        <Flex>
+          <Label>Author</Label>
+          <div>{truncateAddress(author)}</div>
+        </Flex>
+        <Flex>
+          <Label>Funded Amount</Label>
+          <div>{mintPrice}</div>
+        </Flex>
+        <Flex>
+          <Label>Mint Price</Label>
+          <div>{fundedAmount}</div>
+        </Flex>
+      </InfoWrapper>
     </Root>
   )
 }
 
-const ProjectHeader = ({title, author, mintPrice, fundedAmount}: ProjectItemTypes) => {
-  return (
-    <RootHeader>
-      <Title>{title}</Title>
-      <Author>{author}</Author>
-      <MintPrice>{mintPrice}</MintPrice>
-      <FundedAmount>{fundedAmount}</FundedAmount>
-    </RootHeader>
-  );
-};
-
-export { ProjectHeader, ProjectItem };
+export { ProjectItem };

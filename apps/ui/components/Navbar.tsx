@@ -4,7 +4,7 @@ import styled, { ThemeProvider } from 'styled-components'
 import WalletConnection from '../components/WalletConnection'
 import { useDeviceDetect } from '../hooks/useDeviceDetect'
 import { useEagerConnect } from '../hooks/useEagerConnect'
-import { BG_NORMAL } from '../themes'
+import { BG_NORMAL, PINK } from '../themes'
 
 const Root = styled.div`
   display: flex;
@@ -33,7 +33,7 @@ const NavListItem = styled.li`
 `;
 
 const StyledLink = styled.a`
-  color: white;
+  color: #F50A48;
   text-decoration: none;
   font-size: 20px;
   font-weight: 500;

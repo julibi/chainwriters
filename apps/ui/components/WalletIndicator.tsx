@@ -31,22 +31,23 @@ export interface WalletIndicatorProps {
   showLoading: boolean;
 }
 
+export const truncateAddress = (address: string) => {
+  if (address) {
+    const addressStart = address.substring(0, 6);
+    const addressLength = address.length;
+    const cut = addressLength - 5;
+    const addressEnd = address.substring(addressLength, cut);
+    return `${addressStart}...${addressEnd}`;
+  }
+  return;
+};
+
 const WalletIndicator = ({
   address,
   chain,
   handleClick,
   showLoading = false,
 }: WalletIndicatorProps) => {
-  const truncateAddress = () => {
-    if (address) {
-      const addressStart = address.substring(0, 6);
-      const addressLength = address.length;
-      const cut = addressLength - 5;
-      const addressEnd = address.substring(addressLength, cut);
-      return <Item>{`${addressStart}...${addressEnd}`}</Item>;
-    }
-    return;
-  };
 
   const getNetwork = (chain): ReactElement => {
     if (chain) {
@@ -77,7 +78,8 @@ const WalletIndicator = ({
           {address &&
             chain &&
             supportedChainIds.includes(chain) &&
-            truncateAddress()}
+            <Item>{truncateAddress(address)}</Item>
+          }
           {chain && supportedChainIds.includes(chain) && (
             <AccountAvatar address={address} />
           )}

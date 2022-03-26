@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import { useFetchTopProjects } from '../state/projects/hooks';
 import { BASE_BORDER_RADIUS, BASE_BOX_SHADOW } from '../themes'
-import { ProjectItem, ProjectHeader } from './ProjectItem'
+import { ProjectItem } from './ProjectItem'
 
 export const SectionTitleWrapper = styled.div`
   display: flex;
@@ -18,9 +18,11 @@ export const SectionTitle = styled.h2`
   padding: 1rem;
 `;
 
-export const ProjectList = styled.section`
+const ProjectList = styled.section`
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  justify-content: center;
+  flex-wrap: wrap;
   padding: 3rem;
 `;
 
@@ -32,12 +34,6 @@ const ProjectSection = () => {
         <SectionTitle>TOP PROJECTS</SectionTitle>
       </SectionTitleWrapper>
       <ProjectList>
-        <ProjectHeader
-          title={'Title'}
-          author={'Author'}
-          mintPrice={'Mint Price (MATIC)'}
-          fundedAmount={'Funded Amount'}
-        />
         {data?.daos.map(({ title, author, address }, idx) => (
           <ProjectItem
             key={idx}

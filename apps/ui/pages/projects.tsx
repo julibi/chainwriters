@@ -1,8 +1,8 @@
 import React from 'react'
 import Image from 'next/image'
 import styled from 'styled-components'
-import { SectionTitleWrapper, SectionTitle, ProjectList } from '../components/ProjectSection'
-import { ProjectHeader, ProjectItem } from '../components/ProjectItem'
+import { SectionTitleWrapper, SectionTitle } from '../components/ProjectSection'
+import { ProjectItem } from '../components/ProjectItem'
 import { useFetchAllProject } from '../state/projects/hooks'
 import Dropdown from '../components/Dropdown'
 import { BASE_BORDER_RADIUS, PLAIN_WHITE, BG_NORMAL, INSET_BASE_BOX_SHADOW, BaseButton } from '../themes'
@@ -12,10 +12,15 @@ const Root = styled.div`
   flex-direction: column;
 `;
 
+const Content = styled.div`
+  padding: 3rem;
+`;
+
 const Filtering = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 0 4rem;
 `;
 
 const Search = styled.div`
@@ -44,6 +49,16 @@ const SearchInput = styled.input`
   outline: none;
 `;
 
+const ProjectItems = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  padding: 3rem;
+`;
+
+// TODO: use grid
+
 const Projects = () => {
   const { loading, error, data, refetch } = useFetchAllProject();
 
@@ -52,33 +67,39 @@ const Projects = () => {
       <SectionTitleWrapper>
         <SectionTitle>PROJECTS</SectionTitle>
       </SectionTitleWrapper>
-      <ProjectList>
-      <Filtering>
-        <Search>
-          <SearchInput />
-          <SearchButton>
-            <Image src={'/SearchIcon.svg'} height={'16px'} width={'20px'} alt='SearchIcon'/>
-          </SearchButton>
-        </Search>
-        <Dropdown />
+      <Content>
+        <Filtering>
+          <Search>
+            <SearchInput />
+            <SearchButton>
+              <Image src={'/SearchIcon.svg'} height={'16px'} width={'20px'} alt='SearchIcon'/>
+            </SearchButton>
+          </Search>
+          <Dropdown />
         </Filtering>
-        <ProjectHeader
-          title={'Title'}
-          author={'Author'}
-          mintPrice={'Mint Price (MATIC)'}
-          fundedAmount={'Funded Amount'}
-        />
-        {data?.daos.map(({ title, author, address }, idx) => (
-          <ProjectItem
-            key={idx}
-            address={address}
-            title={title}
-            author={author}
-            mintPrice={'25'}
-            fundedAmount={15}
-          />
-        ))}
-      </ProjectList>
+        <ProjectItems>
+          {data?.daos.map(({ title, author, address }, idx) => (
+            <>
+              <ProjectItem
+              key={idx}
+              address={address}
+              title={title}
+              author={author}
+              mintPrice={'25'}
+              fundedAmount={15}
+              />
+              {/* <ProjectItem
+              key={idx}
+              address={address}
+              title={title}
+              author={author}
+              mintPrice={'25'}
+              fundedAmount={15}
+              /> */}
+            </>
+            ))}
+        </ProjectItems>
+      </Content>
     </Root>
   );
 }
