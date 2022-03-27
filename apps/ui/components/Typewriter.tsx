@@ -8,7 +8,11 @@ interface TypewriterTypes {
 
 const Root = styled.h1`
   font-family: 'Roboto Mono Bold', Serif;
-  font-size: 72px;
+  font-size: 65px;
+
+  @media (max-width: 900px) {
+    font-size: 42px;
+  }
 `;
 
 const Typewriter = ({ typedText }: TypewriterTypes) => {

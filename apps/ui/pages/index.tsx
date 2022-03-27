@@ -4,6 +4,7 @@ import { useWeb3React } from '@web3-react/core'
 import styled from 'styled-components'
 import Typewriter from '../components/Typewriter'
 import ProjectSection from '../components/ProjectSection'
+import { useDeviceDetect } from '../hooks/useDeviceDetect'
 
 const Root = styled.div``;
 
@@ -12,22 +13,22 @@ const HeaderSection = styled.section`
   padding: 3rem;
 `;
 
-const HeaderIllustration = styled.div`
-  height: 600px;
-  flex: 1;
-`;
-
 const TypedTextWrapper = styled.div`
   flex: 1;
-  min-height: 650px;
+  height: 600px;
+  width: 800px;
+`;
+
+const Blocker = styled.div`
+  flex: 1;
+  height: 600px;
 `;
 
 const Moon = styled.div`
-  // background-color: #F2F2F2;
   background-color: #1B1E28;
   position: absolute;
   top: calc(10% - 150px);
-  left: -5%;
+  left: -10%;
   width: 700px;
   height: 700px;
   border-radius: 50%;
@@ -40,19 +41,28 @@ const Moon = styled.div`
     0 0 100px #fff,
     -10px 0 80px #BADCEE,
     10px 0 80px #1B1E28;
+
+
+  @media (max-width: 900px) {
+    width: 300px;
+    height: 300px;
+
+    top: calc(-25%);
+    left: -30%;
+  }
 `;
 
 
 export function Index() {
   const { account } = useWeb3React();
+  const isMobile = useDeviceDetect();
   // const hasTried = useEagerConnect();
 
   return (
     <Root>
       <HeaderSection>
-        <HeaderIllustration>
-          <Moon />
-        </HeaderIllustration>
+        <Moon />
+        {!isMobile && <Blocker />}
         <TypedTextWrapper>
           <Typewriter typedText={'This is MOONLIT. On the left, imagine seeing a nice logo or animated illustration :)'} />
         </TypedTextWrapper>

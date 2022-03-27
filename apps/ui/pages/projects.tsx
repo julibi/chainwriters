@@ -81,7 +81,7 @@ const Projects = () => {
           </Search>
           <Dropdown />
         </Filtering>
-        {loading && !data && <Loading height={520} />}
+        {loading && !data && <Loading height={530} />}
         <ProjectItems>
           {data?.daos.map(({ title, author, address }, idx) => (
             <ProjectItem
