@@ -6,6 +6,7 @@ import { ProjectItem } from '../components/ProjectItem'
 import { useFetchAllProject } from '../state/projects/hooks'
 import Dropdown from '../components/Dropdown'
 import { BASE_BORDER_RADIUS, PLAIN_WHITE, BG_NORMAL, INSET_BASE_BOX_SHADOW, BaseButton } from '../themes'
+import Loading from '../components/Loading';
 
 const Root = styled.div`
   display: flex;
@@ -52,9 +53,12 @@ const SearchInput = styled.input`
 const ProjectItems = styled.div`
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: flex-start;
   flex-wrap: wrap;
   padding: 3rem;
+
+  // display: grid;
+  // grid-template-columns: 1fr 1fr 1fr;
 `;
 
 // TODO: use grid
@@ -66,6 +70,7 @@ const Projects = () => {
     <Root>
       <SectionTitleWrapper>
         <SectionTitle>PROJECTS</SectionTitle>
+        <Loading />
       </SectionTitleWrapper>
       <Content>
         <Filtering>
