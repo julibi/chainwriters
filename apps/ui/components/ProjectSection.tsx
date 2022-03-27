@@ -17,6 +17,10 @@ export const SectionTitle = styled.h2`
   border-radius: ${BASE_BORDER_RADIUS};
   box-shadow: ${BASE_BOX_SHADOW};
   padding: 1rem;
+  
+  @media (max-width: 900px) {
+    margin-block-start: 1rem;
+  }
 `;
 
 const ProjectList = styled.section`

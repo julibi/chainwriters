@@ -19,7 +19,7 @@ const Root = styled.div`
 
   :hover {
     cursor: pointer;
-  }
+  }  
 `;
 
 const ImageWrapper = styled.div`

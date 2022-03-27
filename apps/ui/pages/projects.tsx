@@ -22,6 +22,13 @@ const Filtering = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 0 4rem;
+
+  @media (max-width: 900px) {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0;   
+    margin: 0 0 1rem 1rem;
+  }
 `;
 
 const Search = styled.div`
@@ -35,6 +42,10 @@ const SearchButton = styled(BaseButton)`
   margin-inline-end: 1rem;
   display: flex;
   align-items: center;
+
+  @media (max-width: 900px) {
+    margin: 0;
+  }
 `;
 
 const SearchInput = styled.input`
@@ -48,6 +59,10 @@ const SearchInput = styled.input`
   color: ${PLAIN_WHITE};
   background-color: ${BG_NORMAL};
   outline: none;
+
+  @media (max-width: 900px) {
+    width: 200px;
+  }
 `;
 
 const ProjectItems = styled.div`
@@ -57,11 +72,15 @@ const ProjectItems = styled.div`
   flex-wrap: wrap;
   padding: 3rem;
 
-  // display: grid;
-  // grid-template-columns: 1fr 1fr 1fr;
+  @media (max-width: 900px) {
+    flex-direction: column;
+    justify-content: center;
+    padding: 0;
+
+  }
 `;
 
-// TODO: use grid
+// TODO: use grid ?
 
 const Projects = () => {
   const { loading, error, data, refetch } = useFetchAllProject();
