@@ -6,13 +6,18 @@ const Root = styled.div`
   display: flex;
 `;
 
-const Dot = styled.span`
+interface Props {
+  index: number;
+}
+
+const Dot = styled.span<Props>`
   height: 40px;
   width: 40px;
   margin: 0 15px;
   border-radius: 40px;
-  box-shadow: ${INSET_BASE_BOX_SHADOW};
-  animation: animate 7s linear infinite;
+  box-shadow: ${BASE_BOX_SHADOW};
+  animation: animate 3s linear infinite;
+  animation-delay: calc(0.5s * ${p => p.index});
 
   @keyframes animate {
     0% {
@@ -27,11 +32,9 @@ const Dot = styled.span`
 const Loading = () => {
   return (
     <Root>
-      <Dot />
-      <Dot />
-      <Dot />
-      <Dot />
-      <Dot />
+      <Dot index={0} />
+      <Dot index={1} />
+      <Dot index={2} />
     </Root>
   )
 }
