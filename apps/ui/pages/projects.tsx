@@ -70,7 +70,6 @@ const Projects = () => {
     <Root>
       <SectionTitleWrapper>
         <SectionTitle>PROJECTS</SectionTitle>
-        <Loading />
       </SectionTitleWrapper>
       <Content>
         <Filtering>
@@ -82,27 +81,18 @@ const Projects = () => {
           </Search>
           <Dropdown />
         </Filtering>
+        {loading && !data && <Loading height={520} />}
         <ProjectItems>
           {data?.daos.map(({ title, author, address }, idx) => (
-            <>
-              <ProjectItem
+            <ProjectItem
               key={idx}
               address={address}
               title={title}
               author={author}
               mintPrice={'25'}
               fundedAmount={15}
-              />
-              {/* <ProjectItem
-              key={idx}
-              address={address}
-              title={title}
-              author={author}
-              mintPrice={'25'}
-              fundedAmount={15}
-              /> */}
-            </>
-            ))}
+            />
+          ))}
         </ProjectItems>
       </Content>
     </Root>

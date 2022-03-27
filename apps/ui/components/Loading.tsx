@@ -2,15 +2,22 @@ import React from 'react'
 import styled from 'styled-components'
 import { BASE_BOX_SHADOW, INSET_BASE_BOX_SHADOW } from '../themes';
 
-const Root = styled.div`
-  display: flex;
-`;
+interface LoadingProps {
+  height: number;
+}
 
-interface Props {
+interface DotProps {
   index: number;
 }
 
-const Dot = styled.span<Props>`
+const Root = styled.div<LoadingProps>`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: ${p => p.height}px;
+`;
+
+const Dot = styled.span<DotProps>`
   height: 40px;
   width: 40px;
   margin: 0 15px;
@@ -29,9 +36,10 @@ const Dot = styled.span<Props>`
   }
 `;
 
-const Loading = () => {
+const Loading = ({height}: LoadingProps) => {
+  console.log({ height });
   return (
-    <Root>
+    <Root height={height}>
       <Dot index={0} />
       <Dot index={1} />
       <Dot index={2} />

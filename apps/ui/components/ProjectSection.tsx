@@ -2,6 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import { useFetchTopProjects } from '../state/projects/hooks';
 import { BASE_BORDER_RADIUS, BASE_BOX_SHADOW } from '../themes'
+import Loading from './Loading';
 import { ProjectItem } from './ProjectItem'
 
 export const SectionTitleWrapper = styled.div`
@@ -33,6 +34,7 @@ const ProjectSection = () => {
       <SectionTitleWrapper>
         <SectionTitle>TOP PROJECTS</SectionTitle>
       </SectionTitleWrapper>
+      {loading && !data && <Loading height={530} />}
       <ProjectList>
         {data?.daos.map(({ title, author, address }, idx) => (
           <ProjectItem
