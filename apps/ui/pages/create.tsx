@@ -1,5 +1,6 @@
 import React, { MouseEvent, useState } from 'react'
 import styled from 'styled-components'
+import { create } from 'ipfs-http-client';
 import Checkbox from '../components/Checkbox';
 import CreateProgressBar from '../components/CreateProgressBar';
 import { BaseInput, BASE_BORDER_RADIUS, BASE_BOX_SHADOW, BG_NORMAL, INSET_BASE_BOX_SHADOW, PLAIN_WHITE } from '../themes';
@@ -101,16 +102,28 @@ const SubmitButton = styled.input`
 `;
 
 const Create = () => {
-  const [currentStep, setCurrentStep] = useState(1);
+// @ts-ignore
+  const client = create('https://ipfs.infura.io:5001/api/v0');
+  const [currentStep, setCurrentStep] = useState(0);
   const [title, setTitle] = useState('');
   const [text, setText] = useState('');
+  const [textIPFS, setTextIPFS] = useState('');
   const [agreed, setAgreed] = useState(false);
-  const handleSubmitStep = (e: MouseEvent,step: number) => {
-    setCurrentStep(currentStep + 1);
+  const [firstEdMintPrice, setFirstEdMintPrice] = useState('');
+  const [firstEdMaxAmount, setFirstEdMaxAmount] = useState('');
+  const [imageIPFS, setImageIPFS] = useState('');
+  const handleSubmitStep = async(e: MouseEvent) => {
     e.preventDefault();
-    if (step === 1) {
-      console.log('Finished Step 1!');
+
+    if (currentStep === 0) {
+      const added = await client.add(text);
+      const url = `https://ipfs.infura.io/ipfs/${added.path}`;
+      if (!added.path) return;
+      setTextIPFS(url);
+      console.log({url});
     }
+
+    setCurrentStep(currentStep + 1);
   };
 
   const handleTitle = (value: string) => {
@@ -127,6 +140,74 @@ const Create = () => {
     setAgreed(!agreed);
   };
 
+  const handlePrice = (value: string) => {
+    setFirstEdMintPrice(value);
+  };
+
+  const handleAmount = (value: string) => {
+    setFirstEdMaxAmount(value);
+  };
+
+  const Part1Form = () => {
+    return (
+      <>
+        <Title>
+          <BlockSpan>Title</BlockSpan>
+          <StyledInput
+            value={title}
+            onChange={(e) => handleTitle(e.target.value)}
+          />
+        </Title>
+        <Text>
+          <BlockSpan>Text</BlockSpan>
+          <TextInput
+            value={text}
+            onChange={(e) => handleText(e.target.value)}
+          />
+        </Text>
+        <Checkbox
+          description={
+            'I am aware that any form of plagiarism or hateful content can be banned from them Moonlit Foundation at any time. And other law content text.'
+          }
+          onClick={toggleAgreed}
+        />
+        <SubmitButton
+          type="submit"
+          value="Continue"
+          disabled={!agreed || text.length < 1 || title.length < 1}
+        />
+      </>
+    );
+  };
+
+  const Part2Form = () => {
+    return (
+      <>
+        <StyledLabel>
+          <BlockSpan>Price Per Funding Spot (MATIC)</BlockSpan>
+          <StyledInput
+            value={firstEdMintPrice}
+            onChange={(e) => handlePrice(e.target.value)}
+          />
+        </StyledLabel>
+        <StyledLabel>
+          <BlockSpan>Max Funding Spot (MATIC)</BlockSpan>
+          <StyledInput
+            value={firstEdMaxAmount}
+            onChange={(e) => handleAmount(e.target.value)}
+          />
+        </StyledLabel>
+        <StyledLabel>
+          <BlockSpan>Cover Image</BlockSpan>
+          <StyledInput
+            value={'BLA'}
+            onChange={() => {console.log('BLA')}}
+          />
+        </StyledLabel>
+      </>
+    );
+  };
+
   return (
     <Root>
       <ProgressBarWrapper>
@@ -135,20 +216,9 @@ const Create = () => {
       <FormWrapper>
 
       {/* @ts-ignore */}
-        <StyledForm onSubmit={(e:MouseEvent) => handleSubmitStep(e, currentStep)}>
-          <Title>
-            <BlockSpan>Title</BlockSpan>
-            <StyledInput value={title} onChange={(e) => handleTitle(e.target.value)} />
-          </Title>
-          <Text>
-            <BlockSpan>Text</BlockSpan>
-            <TextInput value={text} onChange={(e) => handleText(e.target.value)} />
-          </Text>
-          <Checkbox
-            description={"I am aware that any form of plagiarism or hateful content can be banned from them Moonlit Foundation at any time. And other law content text."}
-            onClick={toggleAgreed}
-            />
-          <SubmitButton type="submit" value="Continue" disabled={!agreed || (text.length < 1) || (title.length < 1)} />
+        <StyledForm onSubmit={(e:MouseEvent) => handleSubmitStep(e)}>
+        {currentStep === 0 && Part1Form()}
+        {currentStep === 1 && Part2Form()}
         </StyledForm>
       </FormWrapper>
     </Root>

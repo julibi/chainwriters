@@ -78,7 +78,7 @@ const Checkbox = ({description, onClick}: RootProps) => {
     <Root>
       <StyledLabel>
         <StyledInput
-          type="checkbox"
+          type='checkbox'
           checked={checked}
           readonly
         />   
@@ -88,6 +88,7 @@ const Checkbox = ({description, onClick}: RootProps) => {
             onClick();
           }}
           checked={checked}
+          type='button'
         >{checked && <InnerCircleBox />}</CheckBox>
         <BlockSpan>{description}</BlockSpan>
       </StyledLabel>
