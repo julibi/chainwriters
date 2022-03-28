@@ -22,6 +22,7 @@ export const BaseButton = styled.button`
   color: ${PLAIN_WHITE};
   border-radius: ${BASE_BORDER_RADIUS};
   box-shadow: ${BASE_BOX_SHADOW};
+  padding: 1rem;
 
   :hover {
     cursor: pointer;
@@ -39,4 +40,15 @@ export const PrimaryButton = styled.button`
   :hover {
     cursor: pointer;
   }
+`;
+
+export const BaseInput = styled.input`
+  font-family: 'Nunito Sans Bold', sans-serif;
+  border-radius: ${BASE_BORDER_RADIUS};
+  box-shadow: ${INSET_BASE_BOX_SHADOW};
+  padding: 1rem;
+  color: ${PLAIN_WHITE};
+  background-color: ${BG_NORMAL};
+  outline: none;
+
 `;

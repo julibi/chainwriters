@@ -5,7 +5,7 @@ import { SectionTitleWrapper, SectionTitle } from '../components/ProjectSection'
 import { ProjectItem } from '../components/ProjectItem'
 import { useFetchAllProject } from '../state/projects/hooks'
 import Dropdown from '../components/Dropdown'
-import { BASE_BORDER_RADIUS, PLAIN_WHITE, BG_NORMAL, INSET_BASE_BOX_SHADOW, BaseButton } from '../themes'
+import { BASE_BORDER_RADIUS, PLAIN_WHITE, BG_NORMAL, INSET_BASE_BOX_SHADOW, BaseButton, BaseInput } from '../themes'
 import Loading from '../components/Loading';
 
 const Root = styled.div`
@@ -48,17 +48,11 @@ const SearchButton = styled(BaseButton)`
   }
 `;
 
-const SearchInput = styled.input`
-  font-family: 'Nunito Sans Bold', sans-serif;
-  border-radius: ${BASE_BORDER_RADIUS};
-  box-shadow: ${INSET_BASE_BOX_SHADOW};
+const SearchInput = styled(BaseInput)`
   margin-inline-end: 1rem;
   padding: 1rem;
   width: 350px;
   height: 50px;
-  color: ${PLAIN_WHITE};
-  background-color: ${BG_NORMAL};
-  outline: none;
 
   @media (max-width: 900px) {
     width: 200px;
