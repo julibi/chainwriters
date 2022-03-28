@@ -22,6 +22,7 @@ const Options = styled.div`
   position: absolute;
   top: 70px;
   left: 0;
+  z-index: 1;
   background-color: ${BG_NORMAL};
   border-radius: ${BASE_BORDER_RADIUS};
   box-shadow: ${BASE_BOX_SHADOW};

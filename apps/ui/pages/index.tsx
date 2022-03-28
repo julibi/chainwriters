@@ -5,6 +5,7 @@ import styled from 'styled-components'
 import Typewriter from '../components/Typewriter'
 import ProjectSection from '../components/ProjectSection'
 import { useDeviceDetect } from '../hooks/useDeviceDetect'
+import Checkbox from '../components/Checkbox'
 
 const Root = styled.div``;
 
