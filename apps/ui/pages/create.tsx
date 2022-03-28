@@ -1,13 +1,27 @@
 import React, { MouseEvent, useState } from 'react'
 import styled from 'styled-components'
 import Checkbox from '../components/Checkbox';
+import CreateProgressBar from '../components/CreateProgressBar';
 import { BaseInput, BASE_BORDER_RADIUS, BASE_BOX_SHADOW, BG_NORMAL, INSET_BASE_BOX_SHADOW, PLAIN_WHITE } from '../themes';
 
 const Root = styled.div`
   display: flex;
+  flex-direction: column;
   justify-content: center;
-  // somehow no margin bottom?
-  margin: 3rem 0;
+  align-items: center;
+`;
+
+const ProgressBarWrapper = styled.div`
+  width: 90%;
+  max-width:1200px;
+  display: flex;
+  justify-content: center;
+  margin-block-end: 2rem;
+`;
+
+const FormWrapper = styled.div`
+  display: flex;
+  justify-content: center;
 `;
 
 const StyledForm = styled.form`
@@ -87,10 +101,12 @@ const SubmitButton = styled.input`
 `;
 
 const Create = () => {
+  const [currentStep, setCurrentStep] = useState(1);
   const [title, setTitle] = useState('');
   const [text, setText] = useState('');
   const [agreed, setAgreed] = useState(false);
   const handleSubmitStep = (e: MouseEvent,step: number) => {
+    setCurrentStep(currentStep + 1);
     e.preventDefault();
     if (step === 1) {
       console.log('Finished Step 1!');
@@ -113,22 +129,28 @@ const Create = () => {
 
   return (
     <Root>
+      <ProgressBarWrapper>
+        <CreateProgressBar currentStep={currentStep}/>
+      </ProgressBarWrapper>
+      <FormWrapper>
+
       {/* @ts-ignore */}
-      <StyledForm onSubmit={(e:MouseEvent) => handleSubmitStep(e, 1)}>
-        <Title>
-          <BlockSpan>Title</BlockSpan>
-          <StyledInput value={title} onChange={(e) => handleTitle(e.target.value)} />
-        </Title>
-        <Text>
-          <BlockSpan>Text</BlockSpan>
-          <TextInput value={text} onChange={(e) => handleText(e.target.value)} />
-        </Text>
-        <Checkbox
-          description={"I am aware that any form of plagiarism or hateful content can be banned from them Moonlit Foundation at any time. And other law content text."}
-          onClick={toggleAgreed}
-        />
-        <SubmitButton type="submit" value="Submit" disabled={!agreed || (text.length < 1) || (title.length < 1)} />
-      </StyledForm>
+        <StyledForm onSubmit={(e:MouseEvent) => handleSubmitStep(e, currentStep)}>
+          <Title>
+            <BlockSpan>Title</BlockSpan>
+            <StyledInput value={title} onChange={(e) => handleTitle(e.target.value)} />
+          </Title>
+          <Text>
+            <BlockSpan>Text</BlockSpan>
+            <TextInput value={text} onChange={(e) => handleText(e.target.value)} />
+          </Text>
+          <Checkbox
+            description={"I am aware that any form of plagiarism or hateful content can be banned from them Moonlit Foundation at any time. And other law content text."}
+            onClick={toggleAgreed}
+            />
+          <SubmitButton type="submit" value="Continue" disabled={!agreed || (text.length < 1) || (title.length < 1)} />
+        </StyledForm>
+      </FormWrapper>
     </Root>
   );
 }
