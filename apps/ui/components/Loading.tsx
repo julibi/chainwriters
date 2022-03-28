@@ -37,7 +37,6 @@ const Dot = styled.span<DotProps>`
 `;
 
 const Loading = ({height}: LoadingProps) => {
-  console.log({ height });
   return (
     <Root height={height}>
       <Dot index={0} />

@@ -2,16 +2,28 @@ import React, { useState } from 'react'
 import styled from 'styled-components'
 import { BaseButton, BASE_BORDER_RADIUS, BASE_BOX_SHADOW, BG_NORMAL, INSET_BASE_BOX_SHADOW, PINK, PLAIN_WHITE } from '../themes';
 
+interface RootProps {
+  description?: string;
+  onClick: () => void;
+}
 
 interface InputProps {
   type: string;
   checked: boolean;
+  readonly: boolean;
 }
 
-interface CheckBoxProps {
+interface CheckBoxProps extends RootProps{
   checked: boolean;
-  onClick: () => void;
 }
+
+const Root = styled.div`
+  margin-block-end: 2rem;
+`;
+
+const StyledLabel = styled.div`
+  display: flex;
+`;
 
 const StyledInput = styled.input.attrs({ type: 'checkbox' })<InputProps>`
   // Hide checkbox visually but remain accessible to screen readers.
@@ -43,7 +55,6 @@ const CheckBox = styled(BaseButton)<CheckBoxProps>`
   }
 `;
 
-
 const InnerCircleBox = styled.div`
   border-radius: 3px;
   height: 10px;
@@ -51,25 +62,36 @@ const InnerCircleBox = styled.div`
   background-color: ${BG_NORMAL};
 `;
 
-const Checkbox = () => {
+const BlockSpan = styled.span`
+  display: inline-block;
+  margin-inline-start: 1rem;
+`;
+
+const Checkbox = ({description, onClick}: RootProps) => {
   const [checked, setChecked] = useState(false);
 
-  const handleChange = () => {
+  const toggleChecked = () => {
     setChecked(!checked);
   };
 
   return (
-    <div>
-      <label>
+    <Root>
+      <StyledLabel>
         <StyledInput
           type="checkbox"
           checked={checked}
-          
-        />
-        <CheckBox onClick={handleChange} checked={checked}>{checked && <InnerCircleBox />}</CheckBox>
-        My Checkbox Value
-      </label>
-    </div>
+          readonly
+        />   
+        <CheckBox
+          onClick={() => {
+            toggleChecked();
+            onClick();
+          }}
+          checked={checked}
+        >{checked && <InnerCircleBox />}</CheckBox>
+        <BlockSpan>{description}</BlockSpan>
+      </StyledLabel>
+    </Root>
   );
 };
 

@@ -16,7 +16,6 @@ const ProjectDetailView = () => {
 
   const callGetProjectDetails = useCallback(async(projectAddress: string) => {
     const result = await getProjectDetails(projectAddress);
-    console.log({ result });
   }, [getProjectDetails]);
 
   useEffect(() => {

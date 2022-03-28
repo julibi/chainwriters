@@ -1,16 +1,21 @@
 import React, { MouseEvent, useState } from 'react'
 import styled from 'styled-components'
+import Checkbox from '../components/Checkbox';
 import { BaseInput, BASE_BORDER_RADIUS, BASE_BOX_SHADOW, BG_NORMAL, INSET_BASE_BOX_SHADOW, PLAIN_WHITE } from '../themes';
 
 const Root = styled.div`
   display: flex;
   justify-content: center;
-  margin-block-start: 3rem;
+  // somehow no margin bottom?
+  margin: 3rem 0;
 `;
 
 const StyledForm = styled.form`
   width: 90%;
   max-width: 1200px;
+  border-radius: ${BASE_BORDER_RADIUS};
+  box-shadow: ${BASE_BOX_SHADOW};
+  padding: 3rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -44,7 +49,7 @@ const StyledInput = styled(BaseInput)`
 `;
 
 const TextInput = styled.textarea`
-  height: 800px;
+  height: 600px;
   font-family: 'Nunito Sans', sans-serif;
   font-size: 14px;
   line-height: 170%;
@@ -62,6 +67,7 @@ const SubmitButton = styled.input`
   border-radius: ${BASE_BORDER_RADIUS};
   box-shadow: ${BASE_BOX_SHADOW};
   padding: 1rem;
+  margin-block-end: 3rem;
 
   :hover {
     cursor: pointer;
@@ -70,11 +76,20 @@ const SubmitButton = styled.input`
   :active {
     box-shadow: ${INSET_BASE_BOX_SHADOW};
   }
+
+  :disabled {
+    color: grey;
+
+    :hover {
+      cursor: default;
+    }
+  }
 `;
 
 const Create = () => {
   const [title, setTitle] = useState('');
   const [text, setText] = useState('');
+  const [agreed, setAgreed] = useState(false);
   const handleSubmitStep = (e: MouseEvent,step: number) => {
     e.preventDefault();
     if (step === 1) {
@@ -83,11 +98,17 @@ const Create = () => {
   };
 
   const handleTitle = (value: string) => {
+    // TODO validation - does the title exist already from the same author?
     setTitle(value);
   };
 
   const handleText = (value: string) => {
+    // TODO was this text already uploaded?
     setText(value);
+  };
+
+  const toggleAgreed = () => {
+    setAgreed(!agreed);
   };
 
   return (
@@ -102,7 +123,11 @@ const Create = () => {
           <BlockSpan>Text</BlockSpan>
           <TextInput value={text} onChange={(e) => handleText(e.target.value)} />
         </Text>
-        <SubmitButton type="submit" value="Submit" />
+        <Checkbox
+          description={"I am aware that any form of plagiarism or hateful content can be banned from them Moonlit Foundation at any time. And other law content text."}
+          onClick={toggleAgreed}
+        />
+        <SubmitButton type="submit" value="Submit" disabled={!agreed || (text.length < 1) || (title.length < 1)} />
       </StyledForm>
     </Root>
   );
