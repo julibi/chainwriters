@@ -34,6 +34,7 @@ const WalletConnection = () => {
       await activate(injected, undefined, true);
       setShowConnectModal(false);
     } catch(e) {
+      // TODO be more precise e.g. wrong chain...
       toast.error('Connection to MetaMask failed.');
     }
   };
@@ -43,6 +44,7 @@ const WalletConnection = () => {
       await activate(walletconnect, undefined, true);
       setShowConnectModal(false);
     } catch(e) {
+      // TODO be more precise e.g. wrong chain...
       toast.error('Connection with WalletConnect failed.');
     }
   };

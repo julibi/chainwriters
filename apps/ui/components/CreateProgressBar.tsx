@@ -40,7 +40,6 @@ const CreateProgressBar = ({currentStep}: CreateProgressBarProps) => {
       <Fill>{currentStep >= 1 && <Inside />}</Fill>
       <Fill>{currentStep >= 2 && <Inside />}</Fill>
       <Fill>{currentStep >= 3 && <Inside />}</Fill>
-      <Fill>{currentStep >= 4 && <Inside />}</Fill>
     </Root>
   )
 }

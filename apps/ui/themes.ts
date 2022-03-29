@@ -50,5 +50,10 @@ export const BaseInput = styled.input`
   color: ${PLAIN_WHITE};
   background-color: ${BG_NORMAL};
   outline: none;
-
+  
+  ::-webkit-outer-spin-button,
+  ::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
 `;
