@@ -1,4 +1,5 @@
 import React, { MouseEvent, useCallback, useMemo, useState } from 'react'
+import Link from 'next/link'
 import styled from 'styled-components'
 import { create } from 'ipfs-http-client'
 import { toast } from 'react-toastify'
@@ -7,7 +8,17 @@ import { useWeb3React } from '@web3-react/core';
 import Checkbox from '../components/Checkbox'
 import CreateProgressBar from '../components/CreateProgressBar'
 import useFactoryContract from '../hooks/useFactoryContract'
-import { BaseInput, BASE_BORDER_RADIUS, BASE_BOX_SHADOW, BG_NORMAL, INSET_BASE_BOX_SHADOW, PINK, PLAIN_WHITE } from '../themes'
+import {
+  BaseButton,
+  BaseInput,
+  BASE_BORDER_RADIUS,
+  BASE_BOX_SHADOW,
+  BG_NORMAL,
+  INSET_BASE_BOX_SHADOW,
+  PINK,
+  PLAIN_WHITE,
+  StyledLink,
+} from '../themes';
 import ToastLink from '../components/ToastLink'
 import Loading from '../components/Loading'
 
@@ -127,6 +138,14 @@ const FadeIn = styled.div`
   }
 `;
 
+const LoadingWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 500px;
+`;
+
 const ReviewItemWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -141,6 +160,42 @@ const ReviewItem = styled.p`
   color: ${PINK};
 `;
 
+const Content = styled.div`
+  display: flex;
+
+  @media (max-width: 900px) {
+    flex-direciont: column;
+  }
+`;
+
+const DaoCard = styled.div`
+  flex: 1;
+  margin-inline-end: 3rem;
+`;
+
+const AdditionalInputs = styled.div`
+  flex: 1;
+`;
+
+
+const Info = styled.p`
+  text-transform: none;
+`;
+
+const AdditionalInputWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
+
+const AdditionalInput = styled(StyledInput)`
+  flex: 3;
+  margin-inline-end: 1rem;
+`;
+
+const AdditionalInputSubmit = styled(BaseButton)`
+  flex: 1;
+`;
+          
 const Create = () => {
   const { chainId } = useWeb3React();
   const FactoryContract = useFactoryContract();
@@ -157,6 +212,13 @@ const Create = () => {
   const [imageIPFS, setImageIPFS] = useState('');
   const [loading, setLoading] = useState(false); 
   const [genre, setGenre] = useState(''); 
+  const [daoAddress, setDaoAddress] = useState<string>(''); 
+
+  const [contributor1, setContributor1] = useState<string>(''); 
+  const [contributor2, setContributor2] = useState<string>(''); 
+  const [contributor3, setContributor3] = useState<string>('');
+  const [subtitle, setSubtitle] = useState<string>('');
+  const [authorMaxClaimable, setAuthorMaxClaimable] = useState<number>(0);
 
   const uploadText = useCallback(async() => {
     try {
@@ -188,6 +250,7 @@ const Create = () => {
       );
       FactoryContract.provider.once(hash, (transaction) => {
         const newDaoAddress = transaction.logs[0].address;
+        setDaoAddress(newDaoAddress);
         toast.success(
           <ToastLink
             hash={hash}
@@ -212,6 +275,10 @@ const Create = () => {
     if (currentStep === 1) {
       await createDao();
       return;
+    }
+
+    if (currentStep === 2) {
+      // route user to account - to see his newly created project there and manage it
     }
 
     setCurrentStep(currentStep + 1);
@@ -241,6 +308,26 @@ const Create = () => {
 
   const handleGenre = (value: string) => {
     setGenre(value);
+  };
+
+  const handleContributor1 = (value: string) => {
+    setContributor1(value);
+  };
+
+  const handleContributor2 = (value: string) => {
+    setContributor2(value);
+  };
+
+  const handleContributor3 = (value: string) => {
+    setContributor3(value);
+  };
+
+  const handleSubtitle = (value: string) => {
+    setSubtitle(value);
+  };
+
+  const handleAuthorMaxClaimable = (value: string) => {
+    setAuthorMaxClaimable(Number(value));
   };
 
   const isButtonDisabled = useMemo(() => {
@@ -346,10 +433,10 @@ const Create = () => {
           </>
         }
         {loading &&
-          <div>
-            <Loading height={500} />
-            <ReviewItem>{`We're creating the Smart Contract for you. This take a minute. Be patient and don't refresh the page plz`}</ReviewItem>
-          </div>
+          <LoadingWrapper>
+            <Loading height={200} />
+            <ReviewItem>{`We're creating the Smart Contract for you. This takes a minute. Be patient and don't refresh the page plz :)`}</ReviewItem>
+          </LoadingWrapper>
         }
       </FadeIn>
     );
@@ -358,19 +445,104 @@ const Create = () => {
   const Part3Form = () => {
     return (
       <FadeIn>
-        <ShortInput>
-          <BlockSpan>Genre</BlockSpan>
-          <StyledInput
-            value={genre}
-            onChange={(e) => handleGenre(e.target.value)}
-          />
-        </ShortInput>
-        {/* TODO: you basically have lots of submit buttons here... */}
-        <SubmitButton
-          type="submit"
-          value="Continue"
-          disabled={isButtonDisabled}
-        />
+        <Content>
+          <DaoCard>
+            <ReviewItemWrapper>
+              <BlockSpan>Address of your Project</BlockSpan>
+              <ReviewItem style={{'marginBlockEnd': '1rem'}}>{daoAddress}</ReviewItem>
+              <Info>You can manage your newly created project from
+                {/* TODO: opens in new tab */}
+                <Link href={`/account/${daoAddress}`} passHref>
+                  <StyledLink style={{ 'fontSize': '16px' }} target="_blank" rel="noopener noreferrer"> here</StyledLink>
+                </Link>
+              </Info>              
+            </ReviewItemWrapper>
+            <ReviewItemWrapper>
+              <BlockSpan>Title</BlockSpan>
+              <ReviewItem>{title}</ReviewItem>
+            </ReviewItemWrapper>
+            <ReviewItemWrapper>
+              <BlockSpan>Text</BlockSpan>
+              <ReviewItem>{text}</ReviewItem>
+            </ReviewItemWrapper>
+            <ReviewItemWrapper>
+              <BlockSpan>Price Per Funding Spot (MATIC)</BlockSpan>
+              <ReviewItem>{firstEdMaxAmount}</ReviewItem>
+            </ReviewItemWrapper>
+            <ReviewItemWrapper>
+              <BlockSpan>Max Funding Spot (MATIC)</BlockSpan>
+              <ReviewItem>{firstEdMintPrice}</ReviewItem>
+            </ReviewItemWrapper>
+          </DaoCard>
+          <AdditionalInputs>
+            <StyledLabel>
+              <BlockSpan>Genre</BlockSpan>
+              <AdditionalInputWrapper>
+                <AdditionalInput
+                  value={genre}
+                  onChange={(e) => handleGenre(e.target.value)}
+                  />
+                <AdditionalInputSubmit>Set</AdditionalInputSubmit>
+              </AdditionalInputWrapper>
+            </StyledLabel>
+            <StyledLabel>
+              <BlockSpan>Contributor 1</BlockSpan>
+              <AdditionalInputWrapper>
+                <AdditionalInput
+                  value={genre}
+                  onChange={(e) => handleContributor1(e.target.value)}
+                />
+                <AdditionalInputSubmit>Set</AdditionalInputSubmit>
+              </AdditionalInputWrapper>
+            </StyledLabel>
+            <StyledLabel>
+              <BlockSpan>Contributor 2</BlockSpan>
+              <AdditionalInputWrapper>
+                <AdditionalInput
+                  value={genre}
+                  onChange={(e) => handleContributor2(e.target.value)}
+                />
+                <AdditionalInputSubmit>Set</AdditionalInputSubmit>
+              </AdditionalInputWrapper>
+            </StyledLabel>
+            <StyledLabel>
+              <BlockSpan>Contributor 3</BlockSpan>
+              <AdditionalInputWrapper>
+                <AdditionalInput
+                  value={genre}
+                  onChange={(e) => handleContributor3(e.target.value)}
+                />
+                <AdditionalInputSubmit>Set</AdditionalInputSubmit>
+              </AdditionalInputWrapper>
+            </StyledLabel>
+            <StyledLabel>
+              <BlockSpan>Subtitle</BlockSpan>
+              <AdditionalInputWrapper>
+                <AdditionalInput
+                  value={genre}
+                  onChange={(e) => handleSubtitle(e.target.value)}
+                />
+                <AdditionalInputSubmit>Set</AdditionalInputSubmit>
+              </AdditionalInputWrapper>
+            </StyledLabel>
+            <StyledLabel>
+              <BlockSpan>Max 1st Edition NFTs claimable by You</BlockSpan>
+              <AdditionalInputWrapper>
+                <AdditionalInput
+                  value={genre}
+                  onChange={(e) => handleAuthorMaxClaimable(e.target.value)}
+                />
+                <AdditionalInputSubmit>Set</AdditionalInputSubmit>
+              </AdditionalInputWrapper>
+            </StyledLabel>
+            {/* TODO: you basically have lots of submit buttons here... */}
+            <SubmitButton
+              type="submit"
+              value="Finish"
+              disabled={isButtonDisabled}
+            />
+          </AdditionalInputs>
+        </Content>
       </FadeIn>
     );
   };

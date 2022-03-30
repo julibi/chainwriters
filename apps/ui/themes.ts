@@ -57,3 +57,10 @@ export const BaseInput = styled.input`
     margin: 0;
   }
 `;
+
+export const StyledLink = styled.a`
+  color: #F50A48;
+  text-decoration: none;
+  font-size: 20px;
+  font-weight: 500;
+`;

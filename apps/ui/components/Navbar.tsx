@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
 import Link from 'next/link'
-import styled, { ThemeProvider } from 'styled-components'
+import styled from 'styled-components'
 import WalletConnection from '../components/WalletConnection'
 import { useDeviceDetect } from '../hooks/useDeviceDetect'
 import { useEagerConnect } from '../hooks/useEagerConnect'
-import { BG_NORMAL, PINK } from '../themes'
+import { BG_NORMAL, StyledLink } from '../themes'
 
 const Root = styled.div`
   display: flex;
@@ -31,14 +31,6 @@ const NavListItem = styled.li`
   flex-direction: row;
   align-items: center;
 `;
-
-const StyledLink = styled.a`
-  color: #F50A48;
-  text-decoration: none;
-  font-size: 20px;
-  font-weight: 500;
-`;
-
 
 const BurgerButton = styled.button`
   position: relative;
