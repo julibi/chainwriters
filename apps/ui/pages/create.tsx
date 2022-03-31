@@ -22,6 +22,9 @@ import {
 import ToastLink from '../components/ToastLink'
 import Loading from '../components/Loading'
 import useDaoContract from '../state/useDaoContract'
+import useCreateSetGenre from '../state/projects/create/hooks'
+import SuccessToast from '../components/SuccessToast'
+import PendingToast from '../components/PendingToast'
 
 const Root = styled.div`
   display: flex;
@@ -45,7 +48,7 @@ const FormWrapper = styled.div`
   max-width: 1200px;
 `;
 
-const StyledForm = styled.form`
+const Form = styled.div`
   width: 90%;
   max-width: 1200px;
   border-radius: ${BASE_BORDER_RADIUS};
@@ -87,15 +90,18 @@ const BlockSpan = styled.span`
 
 const StyledInput = styled(BaseInput)`
   display: inline-block;
+  margin-block-end: 1rem;
 `;
 
 const TextInput = styled.textarea`
   height: 600px;
+  width: 100%;
   font-family: 'Nunito Sans', sans-serif;
   font-size: 14px;
   line-height: 170%;
   border-radius: ${BASE_BORDER_RADIUS};
   box-shadow: ${INSET_BASE_BOX_SHADOW};
+  margin-block-end: 2rem;
   padding: 1rem;
   color: ${PLAIN_WHITE};
   background-color: ${BG_NORMAL};
@@ -105,12 +111,12 @@ const TextInput = styled.textarea`
 const SubmitButton = styled.input`
   font-family: 'Roboto Mono';
   text-transform: uppercase;
+  text-align: center;
   color: ${PLAIN_WHITE};
   background-color: ${BG_NORMAL};
   border-radius: ${BASE_BORDER_RADIUS};
   box-shadow: ${BASE_BOX_SHADOW};
   padding: 1rem;
-  margin-block-end: 3rem;
 
   :hover {
     cursor: pointer;
@@ -196,11 +202,35 @@ const AdditionalInput = styled(StyledInput)`
 const AdditionalInputSubmit = styled(BaseButton)`
   flex: 1;
 `;
+
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 300px;
+`;
+
+const InputName = styled.h2`
+  text-align: center;
+  text-transform: uppercase;
+  font-family: 'Roboto Mono Bold';
+  border-radius: ${BASE_BORDER_RADIUS};
+
+  padding: 1rem;
+  display: inline-block;
+  margin-block-end: 1rem;
+`;
+
+const InputDescription = styled.p`
+  margin-block-end: 2rem;
+  display: inline-block;
+`;
           
 const Create = () => {
   const { chainId } = useWeb3React();
   const FactoryContract = useFactoryContract();
-// @ts-ignore
+  // @ts-ignore
   const client = create('https://ipfs.infura.io:5001/api/v0');
   const [currentStep, setCurrentStep] = useState(0);
   const [title, setTitle] = useState('');
@@ -211,100 +241,57 @@ const Create = () => {
   const [firstEdMintPrice, setFirstEdMintPrice] = useState('0');
   const [firstEdMaxAmount, setFirstEdMaxAmount] = useState(0);
   const [imageIPFS, setImageIPFS] = useState('');
-  const [loading, setLoading] = useState(false); 
-  const [genre, setGenre] = useState(''); 
-  const [daoAddress, setDaoAddress] = useState<string>(''); 
+  const [loading, setLoading] = useState(false);
+  const [genre, setGenre] = useState('');
+  const [daoAddress, setDaoAddress] = useState<string>('');
+  const [creatingDao, setCreatingDao] = useState<boolean>(false);
 
-  const [contributor1, setContributor1] = useState<string>(''); 
-  const [contributor2, setContributor2] = useState<string>(''); 
+  const [contributor1, setContributor1] = useState<string>('');
+  const [contributor2, setContributor2] = useState<string>('');
   const [contributor3, setContributor3] = useState<string>('');
   const [subtitle, setSubtitle] = useState<string>('');
   const [authorMaxClaimable, setAuthorMaxClaimable] = useState<number>(0);
   const getDaoContract = useDaoContract();
-  const uploadText = useCallback(async() => {
+  const createSetGenre = useCreateSetGenre();
+  const uploadText = useCallback(async () => {
     try {
       const added = await client.add(text);
-      const url = `https://ipfs.infura.io/ipfs/${added.path}`;    
+      const url = `https://ipfs.infura.io/ipfs/${added.path}`;
       setTextIPFS(url);
-      console.log({url});
+      console.log({ url });
       return added.path;
     } catch (e) {
-      console.log({e});
+      console.log({ e });
       toast.error('Something went wrong while uploading your text to ipfs.');
     }
   }, [client, text]);
 
-  const createDao = async() => {
-    setLoading(true);
+  const createDao = async () => {
+    setCreatingDao(true);
     const ipfsHash = await uploadText();
     const mintPrice = parseEther(firstEdMintPrice);
 
     try {
-      const Tx = await FactoryContract.createDao(title, ipfsHash, mintPrice, firstEdMaxAmount);
-      const { hash } = Tx;
-      toast.info(
-        <ToastLink
-          hash={hash}
-          chainId={chainId}
-          message={'Pending transaction...'}
-        />
+      const Tx = await FactoryContract.createDao(
+        title,
+        ipfsHash,
+        mintPrice,
+        firstEdMaxAmount
       );
+      const { hash } = Tx;
+      PendingToast(chainId, hash);
       FactoryContract.provider.once(hash, (transaction) => {
         const newDaoAddress = transaction.logs[0].address;
         setDaoAddress(newDaoAddress);
-        toast.success(
-          <ToastLink
-            hash={hash}
-            chainId={chainId}
-            message={'Success!'}
-          />
-        );
-        setLoading(false);
+        SuccessToast(chainId, hash);
+        setCreatingDao(false);
         setCurrentStep(currentStep + 1);
       });
-    } catch(e) {
-      setLoading(false);
-      console.log({e});
+    } catch (e) {
+      setCreatingDao(false);
+      console.log({ e });
       toast.error(e.reason ?? 'Something went wrong.');
     }
-
-  };
-
-  const handleSubmitStep = async(e: MouseEvent) => {
-    e.preventDefault();
-
-    if (currentStep === 1) {
-      await createDao();
-      return;
-    }
-
-    if (currentStep === 2) {
-      // route user to account - to see his newly created project there and manage it
-    }
-
-    setCurrentStep(currentStep + 1);
-  };
-
-  const handleTitle = (value: string) => {
-    // TODO validation - does the title exist already from the same author?
-    setTitle(value);
-  };
-
-  const handleText = (value: string) => {
-    // TODO was this text already uploaded?
-    setText(value);
-  };
-
-  const toggleAgreed = () => {
-    setAgreed(!agreed);
-  };
-
-  const handlePrice = (value: string) => {
-    setFirstEdMintPrice(value);
-  };
-
-  const handleAmount = (value: string) => {
-    setFirstEdMaxAmount(Number(value));
   };
 
   const handleGenre = (value: string) => {
@@ -331,117 +318,166 @@ const Create = () => {
     setAuthorMaxClaimable(Number(value));
   };
 
-  const isButtonDisabled = useMemo(() => {
-    if (currentStep === 0) {
-      if (text.length < 1 || title.length < 1 || firstEdMaxAmount < 2 || Number(firstEdMintPrice) < 0.01) {
-        return true;
-      } else {
-        return false;
-      }
-    }
-    if (currentStep === 1) {
-      if (!agreed) {
-        return true;
-      } else {
-        return false;
-      }
-    }
-  }, [
-    currentStep,
-    agreed,
-    text,
-    title,
-    firstEdMaxAmount,
-    firstEdMintPrice
-  ]);
-
-  const Part1Form = () => {
-    return (
-      <FadeIn>
-        <ShortInput>
-          <BlockSpan>Title</BlockSpan>
-          <StyledInput
-            value={title}
-            onChange={(e) => handleTitle(e.target.value)}
-          />
-        </ShortInput>
-        <Text>
-          <BlockSpan>Text</BlockSpan>
-          <TextInput
-            value={text}
-            onChange={(e) => handleText(e.target.value)}
-          />
-        </Text>
-        <ShortInput>
-          <BlockSpan>Price Per Funding Spot (MATIC)</BlockSpan>
-          {/* TODO validation so that it is 0.1 and not 0,1 */}
-          <StyledInput
-            value={firstEdMintPrice}
-            onChange={(e) => handlePrice(e.target.value)}
-            placeholder={'50'}
-          />
-        </ShortInput>
-        <ShortInput>
-          <BlockSpan>Max Funding Spot (MATIC)</BlockSpan>
-          <StyledInput
-            value={firstEdMaxAmount}
-            onChange={(e) => handleAmount(e.target.value)}
-            placeholder={'2000'}
-          />
-        </ShortInput>
-        <SubmitButton
-          type="submit"
-          value="Continue"
-          disabled={isButtonDisabled}
+  const NameForm = () => (
+    <FadeIn>
+      <Wrapper>
+        <InputName>TITLE</InputName>
+        <InputDescription>What is the title of your project?</InputDescription>
+        <StyledInput
+          value={title}
+          onChange={(e) =>
+            // TODO validation - does the title exist already from the same author?
+            setTitle(e.target.value)
+          }
         />
+        <SubmitButton
+          onClick={() => setCurrentStep(currentStep + 1)}
+          value="Continue"
+          disabled={title.length < 1}
+        />
+      </Wrapper>
+    </FadeIn>
+  );
+
+  const TextForm = () => (
+    <FadeIn>
+      <Wrapper>
+        <InputName>TEXT</InputName>
+        <InputDescription>
+          Type in the main text of your project. The material all this magic is
+          about.
+        </InputDescription>
+        {/* TODO was this text already uploaded? */}
+        <TextInput value={text} onChange={(e) => setText(e.target.value)} />
+        <SubmitButton
+          onClick={() => setCurrentStep(currentStep + 1)}
+          value="Continue"
+          disabled={text.length < 1}
+        />
+      </Wrapper>
+    </FadeIn>
+  );
+
+  const AmountForm = () => (
+    <FadeIn>
+      <Wrapper>
+        <InputName>EARLY SUPPORTER AMOUNT TO REACH</InputName>
+        <InputDescription>
+          How many people do you want to push your project? The number you
+          specify here is the amount of people that need to fund your project,
+          in order for your project to turn it into an NFT Collection. These
+          people - including you – can then claim an NFT of the Collection...
+        </InputDescription>
+        <StyledInput
+          value={firstEdMaxAmount}
+          onChange={(e) => setFirstEdMaxAmount(Number(e.target.value))}
+          placeholder={'2000'}
+        />
+        <SubmitButton
+          onClick={() => setCurrentStep(currentStep + 1)}
+          value="Continue"
+          disabled={firstEdMaxAmount < 2}
+        />
+      </Wrapper>
+    </FadeIn>
+  );
+
+  const PriceForm = () => (
+    <FadeIn>
+      <Wrapper>
+        <InputName>PRICE PER FUNDING SPOT (MATIC)</InputName>
+        <InputDescription>
+          With this number you specify the Matic Price someone needs to pay to
+          get a spot as a supporter. It can also be regarded as the price for a
+          Genesis Edition NFT of your project.
+        </InputDescription>
+        {/* TODO validation so that it is 0.1 and not 0,1 */}
+        <StyledInput
+          value={firstEdMintPrice}
+          onChange={(e) =>  setFirstEdMintPrice(e.target.value)}
+          placeholder={'50'}
+        />
+        <SubmitButton
+          onClick={() => setCurrentStep(currentStep + 1)}
+          value="Continue"
+          disabled={Number(firstEdMintPrice) < 0.01}
+        />
+      </Wrapper>
+    </FadeIn>
+  );
+
+  const ReviewForm = () => {
+    return (
+      <FadeIn>
+        <>
+          <ReviewItemWrapper>
+            <BlockSpan>Title</BlockSpan>
+            <ReviewItem>{title}</ReviewItem>
+          </ReviewItemWrapper>
+          <ReviewItemWrapper>
+            <BlockSpan>Text</BlockSpan>
+            <ReviewItem>{text}</ReviewItem>
+          </ReviewItemWrapper>
+          <ReviewItemWrapper>
+            <BlockSpan>Price Per Funding Spot (MATIC)</BlockSpan>
+            <ReviewItem>{firstEdMaxAmount}</ReviewItem>
+          </ReviewItemWrapper>
+          <ReviewItemWrapper>
+            <BlockSpan>Max Funding Spot (MATIC)</BlockSpan>
+            <ReviewItem>{firstEdMintPrice}</ReviewItem>
+          </ReviewItemWrapper>
+          <Checkbox
+            // TODO: contract - should be able to freeze a contract or destruct 
+            description='I am aware that any form of plagiarism or hateful content can be banned from the platfom at any time. Other lawyer gibberish.'
+            onClick={() => setAgreed(!agreed)}
+          />
+          <SubmitButton
+            disabled={!agreed}
+            style={{ marginBlockEnd: '0' }}
+            value="Create Project"
+            onClick={createDao}
+          />
+        </>
       </FadeIn>
     );
   };
 
-  const Part2Form = () => {
-    return (
-      <FadeIn>
-        {!loading && 
-          <>
-            <ReviewItemWrapper>
-              <BlockSpan>Title</BlockSpan>
-              <ReviewItem>{title}</ReviewItem>
-            </ReviewItemWrapper>
-            <ReviewItemWrapper>
-              <BlockSpan>Text</BlockSpan>
-              <ReviewItem>{text}</ReviewItem>
-            </ReviewItemWrapper>
-            <ReviewItemWrapper>
-              <BlockSpan>Price Per Funding Spot (MATIC)</BlockSpan>
-              <ReviewItem>{firstEdMaxAmount}</ReviewItem>
-            </ReviewItemWrapper>
-            <ReviewItemWrapper>
-              <BlockSpan>Max Funding Spot (MATIC)</BlockSpan>
-              <ReviewItem>{firstEdMintPrice}</ReviewItem>
-            </ReviewItemWrapper>
-            <Checkbox
-              description={
-                'I am aware that any form of plagiarism or hateful content can be banned from them Moonlit Foundation at any time. And other law content text.'
-              }
-              onClick={toggleAgreed}
-            />
-            <SubmitButton
-              style={{'marginBlockEnd': '0' }}
-              type="submit"
-              value="Create Project"
-              disabled={isButtonDisabled}
-            />
-          </>
-        }
-        {loading &&
-          <LoadingWrapper>
-            <Loading height={200} />
-            <ReviewItem>{`We're creating the Smart Contract for you. This takes a minute. Be patient and don't refresh the page plz :)`}</ReviewItem>
-          </LoadingWrapper>
-        }
-      </FadeIn>
-    );
-  };
+  const Waiting = () => (
+    <FadeIn>
+      <LoadingWrapper>
+        <Loading height={200} />
+        <ReviewItem>
+          {`We're creating the Smart Contract for you.
+            This takes a minute. Be patient and don't refresh the page plz :)`}
+        </ReviewItem>
+      </LoadingWrapper>
+    </FadeIn>
+  );
+
+  // TODO make congrats screen look nice and special
+  const Congrats = () => (
+    <FadeIn>
+      <Wrapper>
+        <InputName>Congratulations!</InputName>
+        <InputDescription>
+          The Dao smart contract for your project was created!
+          The address is:
+        </InputDescription>
+        <ReviewItem style={{ marginBlockEnd: '1rem' }}>
+          {daoAddress}
+        </ReviewItem>
+
+        <InputDescription style={{ textAlign: 'center', maxWidth: 500 }}>
+          {`We will guide you to the page, where you can see a dashboard of your project, in a minute. But first let's configure some more things. All of them are OPTIONAL, so you can skip them if you like.`}
+        </InputDescription>
+
+        <SubmitButton
+          onClick={() => setCurrentStep(currentStep + 1)}
+          value="Continue"
+        />
+      </Wrapper>
+    </FadeIn>
+  );
 
   const Part3Form = () => {
     return (
@@ -449,20 +485,10 @@ const Create = () => {
         <Content>
           <DaoCard>
             <ReviewItemWrapper>
-              <BlockSpan>Address of your Project</BlockSpan>
-              <ReviewItem style={{'marginBlockEnd': '1rem'}}>{daoAddress}</ReviewItem>
-              <Info>You can manage your newly created project from
-                {/* TODO: opens in new tab */}
-                <Link href={`/account/${daoAddress}`} passHref>
-                  <StyledLink style={{ 'fontSize': '16px' }} target="_blank" rel="noopener noreferrer"> here</StyledLink>
-                </Link>
-              </Info>              
-            </ReviewItemWrapper>
-            <ReviewItemWrapper>
               <BlockSpan>Title</BlockSpan>
               <ReviewItem>{title}</ReviewItem>
             </ReviewItemWrapper>
-            <ReviewItemWrapper style={{ 'lineBreak': 'anywhere'}} >
+            <ReviewItemWrapper style={{ lineBreak: 'anywhere' }}>
               <BlockSpan>Text</BlockSpan>
               <ReviewItem>{text}</ReviewItem>
             </ReviewItemWrapper>
@@ -482,13 +508,21 @@ const Create = () => {
                 <AdditionalInput
                   value={genre}
                   onChange={(e) => handleGenre(e.target.value)}
-                  />
-                <AdditionalInputSubmit onClick={() => {
-                  console.log({daoAddress});
-                  const test = getDaoContract(daoAddress);
-                  console.log({test});
-
-                }}>Set</AdditionalInputSubmit>
+                />
+                <AdditionalInputSubmit
+                  onClick={async () => {
+                    const daoContract = getDaoContract(daoAddress);
+                    await createSetGenre(
+                      daoContract,
+                      genre,
+                      setLoading,
+                      PendingToast,
+                      SuccessToast
+                    );
+                  }}
+                >
+                  {loading ? <Loading height={50} /> : 'Set'}
+                </AdditionalInputSubmit>
               </AdditionalInputWrapper>
             </StyledLabel>
             <StyledLabel>
@@ -543,32 +577,33 @@ const Create = () => {
             </StyledLabel>
             {/* TODO: you basically have lots of submit buttons here... */}
             <SubmitButton
-              type="submit"
+              // type="submit"
               value="Finish"
-              disabled={isButtonDisabled}
             />
           </AdditionalInputs>
         </Content>
       </FadeIn>
     );
   };
-  
+
   return (
     <Root>
-      <ProgressBarWrapper>
+      {/* <ProgressBarWrapper>
         <CreateProgressBar currentStep={currentStep}/>
-      </ProgressBarWrapper>
+      </ProgressBarWrapper> */}
       <FormWrapper>
-
-      {/* @ts-ignore */}
-        <StyledForm onSubmit={(e:MouseEvent) => handleSubmitStep(e)}>
-          {currentStep === 0 && Part1Form()}
-          {currentStep === 1 && Part2Form()}
-          {currentStep === 2 && Part3Form()}
-        </StyledForm>
+        <Form>
+          {currentStep === 0 && !creatingDao && NameForm()}
+          {currentStep === 1 && !creatingDao && TextForm()}
+          {currentStep === 2 && !creatingDao && AmountForm()}
+          {currentStep === 3 && !creatingDao && PriceForm()}
+          {currentStep === 4 && !creatingDao && ReviewForm()}
+          {creatingDao && <Waiting />}
+          {currentStep === 5 && !creatingDao && Congrats()}
+        </Form>
       </FormWrapper>
     </Root>
   );
-}
+};;;
 
 export default Create
