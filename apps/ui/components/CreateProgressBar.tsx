@@ -33,8 +33,6 @@ interface CreateProgressBarProps {
 }
 
 const CreateProgressBar = ({currentStep}: CreateProgressBarProps) => {
-  console.log({currentStep});
-
   return (
     <Root>
       <Fill>{currentStep >= 1 && <Inside />}</Fill>

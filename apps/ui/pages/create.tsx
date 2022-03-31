@@ -21,6 +21,7 @@ import {
 } from '../themes';
 import ToastLink from '../components/ToastLink'
 import Loading from '../components/Loading'
+import useDaoContract from '../state/useDaoContract'
 
 const Root = styled.div`
   display: flex;
@@ -219,7 +220,7 @@ const Create = () => {
   const [contributor3, setContributor3] = useState<string>('');
   const [subtitle, setSubtitle] = useState<string>('');
   const [authorMaxClaimable, setAuthorMaxClaimable] = useState<number>(0);
-
+  const getDaoContract = useDaoContract();
   const uploadText = useCallback(async() => {
     try {
       const added = await client.add(text);
@@ -461,7 +462,7 @@ const Create = () => {
               <BlockSpan>Title</BlockSpan>
               <ReviewItem>{title}</ReviewItem>
             </ReviewItemWrapper>
-            <ReviewItemWrapper>
+            <ReviewItemWrapper style={{ 'lineBreak': 'anywhere'}} >
               <BlockSpan>Text</BlockSpan>
               <ReviewItem>{text}</ReviewItem>
             </ReviewItemWrapper>
@@ -482,7 +483,12 @@ const Create = () => {
                   value={genre}
                   onChange={(e) => handleGenre(e.target.value)}
                   />
-                <AdditionalInputSubmit>Set</AdditionalInputSubmit>
+                <AdditionalInputSubmit onClick={() => {
+                  console.log({daoAddress});
+                  const test = getDaoContract(daoAddress);
+                  console.log({test});
+
+                }}>Set</AdditionalInputSubmit>
               </AdditionalInputWrapper>
             </StyledLabel>
             <StyledLabel>
