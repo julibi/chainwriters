@@ -108,7 +108,7 @@ const TextInput = styled.textarea`
   outline: none;
 `;
 
-const SubmitButton = styled.input`
+const SubmitButton = styled(BaseButton)`
   font-family: 'Roboto Mono';
   text-transform: uppercase;
   text-align: center;
@@ -226,6 +226,10 @@ const InputDescription = styled.p`
   margin-block-end: 2rem;
   display: inline-block;
 `;
+
+const FlexContainer = styled.div`
+  display: flex;
+`;
           
 const Create = () => {
   const { chainId } = useWeb3React();
@@ -294,8 +298,26 @@ const Create = () => {
     }
   };
 
-  const handleGenre = (value: string) => {
-    setGenre(value);
+  const handleSetGenre = async() => {
+    const daoContract = getDaoContract(daoAddress);
+
+
+      createSetGenre(
+        daoContract,
+        genre,
+        setLoading,
+        PendingToast,
+        (x, y, z) => {
+          setCurrentStep(currentStep + 1);
+          // @ts-ignore
+          return <SuccessToast chainId={x} hash={y} customMessage={z} />
+        }
+      )
+      .then(() => {
+       console.log('Something went right');
+      })
+      .catch(e => toast.error('Something went wrong'));
+  
   };
 
   const handleContributor1 = (value: string) => {
@@ -332,9 +354,10 @@ const Create = () => {
         />
         <SubmitButton
           onClick={() => setCurrentStep(currentStep + 1)}
-          value="Continue"
           disabled={title.length < 1}
-        />
+        >
+          {'Continue'}
+        </SubmitButton>
       </Wrapper>
     </FadeIn>
   );
@@ -351,9 +374,10 @@ const Create = () => {
         <TextInput value={text} onChange={(e) => setText(e.target.value)} />
         <SubmitButton
           onClick={() => setCurrentStep(currentStep + 1)}
-          value="Continue"
           disabled={text.length < 1}
-        />
+        >
+          {'Continue'}
+        </SubmitButton>
       </Wrapper>
     </FadeIn>
   );
@@ -375,9 +399,10 @@ const Create = () => {
         />
         <SubmitButton
           onClick={() => setCurrentStep(currentStep + 1)}
-          value="Continue"
           disabled={firstEdMaxAmount < 2}
-        />
+        >
+          {'Continue'}
+        </SubmitButton>
       </Wrapper>
     </FadeIn>
   );
@@ -399,9 +424,10 @@ const Create = () => {
         />
         <SubmitButton
           onClick={() => setCurrentStep(currentStep + 1)}
-          value="Continue"
           disabled={Number(firstEdMintPrice) < 0.01}
-        />
+        >
+          {'Continue'}
+        </SubmitButton>
       </Wrapper>
     </FadeIn>
   );
@@ -434,9 +460,10 @@ const Create = () => {
           <SubmitButton
             disabled={!agreed}
             style={{ marginBlockEnd: '0' }}
-            value="Create Project"
             onClick={createDao}
-          />
+          >
+            {'Create Project'}
+          </SubmitButton>
         </>
       </FadeIn>
     );
@@ -473,118 +500,78 @@ const Create = () => {
 
         <SubmitButton
           onClick={() => setCurrentStep(currentStep + 1)}
-          value="Continue"
-        />
+        >
+          {'Continue'}
+        </SubmitButton>
       </Wrapper>
     </FadeIn>
   );
 
-  const Part3Form = () => {
-    return (
-      <FadeIn>
-        <Content>
-          <DaoCard>
-            <ReviewItemWrapper>
-              <BlockSpan>Title</BlockSpan>
-              <ReviewItem>{title}</ReviewItem>
-            </ReviewItemWrapper>
-            <ReviewItemWrapper style={{ lineBreak: 'anywhere' }}>
-              <BlockSpan>Text</BlockSpan>
-              <ReviewItem>{text}</ReviewItem>
-            </ReviewItemWrapper>
-            <ReviewItemWrapper>
-              <BlockSpan>Price Per Funding Spot (MATIC)</BlockSpan>
-              <ReviewItem>{firstEdMaxAmount}</ReviewItem>
-            </ReviewItemWrapper>
-            <ReviewItemWrapper>
-              <BlockSpan>Max Funding Spot (MATIC)</BlockSpan>
-              <ReviewItem>{firstEdMintPrice}</ReviewItem>
-            </ReviewItemWrapper>
-          </DaoCard>
-          <AdditionalInputs>
-            <StyledLabel>
-              <BlockSpan>Genre</BlockSpan>
-              <AdditionalInputWrapper>
-                <AdditionalInput
-                  value={genre}
-                  onChange={(e) => handleGenre(e.target.value)}
-                />
-                <AdditionalInputSubmit
-                  onClick={async () => {
-                    const daoContract = getDaoContract(daoAddress);
-                    await createSetGenre(
-                      daoContract,
-                      genre,
-                      setLoading,
-                      PendingToast,
-                      SuccessToast
-                    );
-                  }}
-                >
-                  {loading ? <Loading height={50} /> : 'Set'}
-                </AdditionalInputSubmit>
-              </AdditionalInputWrapper>
-            </StyledLabel>
-            <StyledLabel>
-              <BlockSpan>Contributor 1</BlockSpan>
-              <AdditionalInputWrapper>
-                <AdditionalInput
-                  value={genre}
-                  onChange={(e) => handleContributor1(e.target.value)}
-                />
-                <AdditionalInputSubmit>Set</AdditionalInputSubmit>
-              </AdditionalInputWrapper>
-            </StyledLabel>
-            <StyledLabel>
-              <BlockSpan>Contributor 2</BlockSpan>
-              <AdditionalInputWrapper>
-                <AdditionalInput
-                  value={genre}
-                  onChange={(e) => handleContributor2(e.target.value)}
-                />
-                <AdditionalInputSubmit>Set</AdditionalInputSubmit>
-              </AdditionalInputWrapper>
-            </StyledLabel>
-            <StyledLabel>
-              <BlockSpan>Contributor 3</BlockSpan>
-              <AdditionalInputWrapper>
-                <AdditionalInput
-                  value={genre}
-                  onChange={(e) => handleContributor3(e.target.value)}
-                />
-                <AdditionalInputSubmit>Set</AdditionalInputSubmit>
-              </AdditionalInputWrapper>
-            </StyledLabel>
-            <StyledLabel>
-              <BlockSpan>Subtitle</BlockSpan>
-              <AdditionalInputWrapper>
-                <AdditionalInput
-                  value={genre}
-                  onChange={(e) => handleSubtitle(e.target.value)}
-                />
-                <AdditionalInputSubmit>Set</AdditionalInputSubmit>
-              </AdditionalInputWrapper>
-            </StyledLabel>
-            <StyledLabel>
-              <BlockSpan>Max 1st Edition NFTs claimable by You</BlockSpan>
-              <AdditionalInputWrapper>
-                <AdditionalInput
-                  value={genre}
-                  onChange={(e) => handleAuthorMaxClaimable(e.target.value)}
-                />
-                <AdditionalInputSubmit>Set</AdditionalInputSubmit>
-              </AdditionalInputWrapper>
-            </StyledLabel>
-            {/* TODO: you basically have lots of submit buttons here... */}
-            <SubmitButton
-              // type="submit"
-              value="Finish"
-            />
-          </AdditionalInputs>
-        </Content>
-      </FadeIn>
-    );
-  };
+  const GenreForm = () => (
+    <FadeIn>
+      <Wrapper>
+        <InputName>GENRE</InputName>
+        <InputDescription>
+          If you specify the Genre, it makes it easier for people to find your project. Also, you are giving more information for possible readers and supporters.
+        </InputDescription>
+        <StyledInput
+          value={genre}
+          onChange={(e) => setGenre(e.target.value)}
+          placeholder={'Fiction'}
+          disabled={loading}
+        />
+        <FlexContainer>
+          <SubmitButton
+            style={{marginInlineEnd: '1rem'}}
+            onClick={() => setCurrentStep(currentStep + 1)}
+            disabled={loading}
+          >
+            {'Skip'}
+          </SubmitButton>
+          <SubmitButton
+            onClick={handleSetGenre}
+            disabled={loading}
+          >
+            {loading ? <Loading height={10} /> : 'Set Genre'}
+          </SubmitButton>
+        </FlexContainer>
+      </Wrapper>
+    </FadeIn>
+  );
+
+  const SubTitleForm = () => (
+    <FadeIn>
+      <Wrapper>
+        <InputName>SUBTITLE</InputName>
+        <InputDescription>
+          Does your text have a subtitle?
+        </InputDescription>
+        <StyledInput
+          value={genre}
+          onChange={(e) => setSubtitle(e.target.value)}
+          placeholder={'Fiction'}
+          disabled={loading}
+        />
+        <FlexContainer>
+          <SubmitButton
+            style={{marginInlineEnd: '1rem'}}
+            onClick={() => setCurrentStep(currentStep + 1)}
+            disabled={loading}
+          >
+            {'Skip'}
+          </SubmitButton>
+          <SubmitButton
+            onClick={() => {}}
+            disabled={loading}
+          >
+            {loading ? <Loading height={20} /> : 'Set Subtitle'}
+          </SubmitButton>
+        </FlexContainer>
+      </Wrapper>
+    </FadeIn>
+
+  );
+
 
   return (
     <Root>
@@ -600,6 +587,8 @@ const Create = () => {
           {currentStep === 4 && !creatingDao && ReviewForm()}
           {creatingDao && <Waiting />}
           {currentStep === 5 && !creatingDao && Congrats()}
+          {currentStep === 6 && !creatingDao && GenreForm()}
+          {currentStep === 7 && !creatingDao && SubTitleForm()}
         </Form>
       </FormWrapper>
     </Root>
