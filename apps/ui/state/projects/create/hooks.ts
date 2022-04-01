@@ -84,14 +84,16 @@ export const useCreateSetContributors = () => {
   const { chainId } = useWeb3React();
   return async (
     daoContract: any,
-    contributors: ContributorsMapping,
+    contributor: Contributor,
     loadingFunc: (x: boolean) => void,
     onLoad: (chainId: number, hash: string, message: string) => void,
     onSuccess: (chainId: number, hash: string, message: string) => void
   ) => {
     loadingFunc(true);
+      
     try {
-      const Tx = await daoContract.addContributor(contributors[0]);
+      // TODO: multicall?
+      const Tx = await daoContract.addContributor(contributor.address, contributor.share);
       const { hash } = Tx;
       onLoad(chainId, hash, 'Pending transaction...');
 

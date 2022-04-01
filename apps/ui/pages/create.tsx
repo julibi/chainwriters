@@ -3,7 +3,7 @@ import Link from 'next/link'
 import styled from 'styled-components'
 import { create } from 'ipfs-http-client'
 import { toast } from 'react-toastify'
-import { parseEther } from 'ethers/lib/utils'
+import { formatEther, parseEther } from 'ethers/lib/utils'
 import { useWeb3React } from '@web3-react/core';
 import Checkbox from '../components/Checkbox'
 import CreateProgressBar from '../components/CreateProgressBar'
@@ -22,7 +22,7 @@ import {
 import ToastLink from '../components/ToastLink'
 import Loading from '../components/Loading'
 import useDaoContract from '../state/useDaoContract'
-import { useCreateSetAuthorMaxClaimable, useCreateSetContributors, useCreateSetGenre, useCreateSetSubtilte, useCreateSetSubtitle } from '../state/projects/create/hooks'
+import { useCreateSetAuthorMaxClaimable, useCreateSetContributors, useCreateSetGenre, useCreateSetSubtitle } from '../state/projects/create/hooks'
 import SuccessToast from '../components/SuccessToast'
 import PendingToast from '../components/PendingToast'
 
@@ -235,9 +235,6 @@ export interface Contributor {
   address: string;
   share: number;
 }
-export interface ContributorsMapping {
-  [index: number]: Contributor;
-}
 
 const Create = () => {
   const { chainId } = useWeb3React();
@@ -257,8 +254,6 @@ const Create = () => {
   const [genre, setGenre] = useState('');
   const [daoAddress, setDaoAddress] = useState<string>('');
   const [creatingDao, setCreatingDao] = useState<boolean>(false);
-
-  const [contributors, setContributors] = useState<ContributorsMapping>({});
   
   const [subtitle, setSubtitle] = useState<string>('');
   const [authorMaxClaimable, setAuthorMaxClaimable] = useState<number>(0);
@@ -268,7 +263,8 @@ const Create = () => {
   const createSetAuthorMaxClaimable = useCreateSetAuthorMaxClaimable();
   const createSetContributors = useCreateSetContributors();
   const daoContract = useMemo(() => daoAddress ? getDaoContract(daoAddress) : null, [daoAddress, getDaoContract]);
-
+  const [contributor, setContributor] = useState({address: '', share: 0});
+  const [contributorIndex, setContributorIndex] = useState<number>(0);
   const uploadText = useCallback(async () => {
     try {
       const added = await client.add(text);
@@ -371,25 +367,33 @@ const Create = () => {
     });
 }, [daoContract, createSetAuthorMaxClaimable, authorMaxClaimable, setLoading, currentStep]);
 
+const allContributors = useMemo(async() => {
+  const contributorIndex = await daoContract.contributorIndex();
+  const contribs = await Promise.all([...Array(contributorIndex)].map(async(_, i) =>  await daoContract.contributors(i)));
+  return { contributorIndex, contribs };
+}, [daoContract]);
+
   const handleSetContributors = useCallback(async() => {
     createSetContributors(
       daoContract,
-      contributors,
+      contributor,
       setLoading,
       PendingToast,
       (x, y, z) => {
-        setCurrentStep(currentStep + 1);
+        contributorIndex == 2 && setCurrentStep(currentStep + 1);
         // @ts-ignore
         return <SuccessToast chainId={x} hash={y} customMessage={z} />
       }
     )
     // eslint-disable-next-line @typescript-eslint/no-empty-function
-    .then(() => {})
+    .then(() => {
+    })
     .catch((e) => {
       console.log({e});
       toast.error('Something went wrong');
     });
-  }, [daoContract, createSetContributors, contributors, setLoading, currentStep]);
+    await allContributors;
+  }, [daoContract, createSetContributors, setLoading, currentStep, fetchContributors, contributorIndex]);
 
   const NameForm = () => (
     <FadeIn>
@@ -653,7 +657,6 @@ const Create = () => {
       </Wrapper>
     </FadeIn>
   );
-  console.log({ contributors })
   const ContributorsForm = () => (
     <FadeIn>
       <Wrapper>
@@ -662,38 +665,15 @@ const Create = () => {
           {`Do you want to set contributors like Editors, Translators, Cover Artists etc.? You can input their address and role and most importantly what share of the funds they will be able to withdraw, once the Genesis Edition sells out. The should be set as a number between 0 and 100. A contributor with a share of 10, will be able to withdraw 10% of the funding. You can specify up to 3. Keep in mind that the total of shares should be deducted from you own share. So when an editor is getting 10%, you will be left with 90%. WARNING: This is irreversible.`}
         </InputDescription>
         <StyledInput
-          value={contributors[0].address}
-          onChange={(e) => setContributors({ ...contributors, ...{ share: contributors[0].share, address: e.target.value } })}
+          value={contributor.address}
+          onChange={(e) => setContributor({ ...contributor, address: e.target.value })}
           placeholder={'0x123'}
           disabled={loading}
         />
         <StyledInput
-          value={contributors[0].share}
-          onChange={(e) => {console.log(e)}}
-          placeholder={'10%'}
-          disabled={loading}
-        />
-        <StyledInput
-          value={contributors[1].address}
-          onChange={(e) => {console.log(e)}}
-          placeholder={'0x123'}
-          disabled={loading}
-        />
-        <StyledInput
-          value={contributors[1].share}
-          onChange={(e) => {console.log(e)}}
-          placeholder={'10%'}
-          disabled={loading}
-        />
-        <StyledInput
-          value={contributors[2].address}
-          onChange={(e) => {console.log(e)}}
-          placeholder={'0x123'}
-          disabled={loading}
-        />
-        <StyledInput
-          value={contributors[2].share}
-          onChange={(e) => {console.log(e)}}
+          // TODO only full numbers
+          value={contributor.share}
+          onChange={(e) => setContributor({ ...contributor, share: Number(e.target.value) })}
           placeholder={'10%'}
           disabled={loading}
         />
@@ -706,8 +686,8 @@ const Create = () => {
             {'Skip'}
           </SubmitButton>
           <SubmitButton
-            onClick={() => handleSetContributors}
-            disabled={loading}
+            onClick={handleSetContributors}
+            disabled={loading || contributorIndex == 2}
           >
             {loading ? <Loading height={20} /> : 'Set Contributors'}
           </SubmitButton>
