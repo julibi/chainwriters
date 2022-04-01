@@ -22,7 +22,7 @@ import {
 import ToastLink from '../components/ToastLink'
 import Loading from '../components/Loading'
 import useDaoContract from '../state/useDaoContract'
-import useCreateSetGenre from '../state/projects/create/hooks'
+import { useCreateSetAuthorMaxClaimable, useCreateSetContributors, useCreateSetGenre, useCreateSetSubtilte, useCreateSetSubtitle } from '../state/projects/create/hooks'
 import SuccessToast from '../components/SuccessToast'
 import PendingToast from '../components/PendingToast'
 
@@ -230,7 +230,15 @@ const InputDescription = styled.p`
 const FlexContainer = styled.div`
   display: flex;
 `;
-          
+ 
+export interface Contributor {
+  address: string;
+  share: number;
+}
+export interface ContributorsMapping {
+  [index: number]: Contributor;
+}
+
 const Create = () => {
   const { chainId } = useWeb3React();
   const FactoryContract = useFactoryContract();
@@ -250,13 +258,17 @@ const Create = () => {
   const [daoAddress, setDaoAddress] = useState<string>('');
   const [creatingDao, setCreatingDao] = useState<boolean>(false);
 
-  const [contributor1, setContributor1] = useState<string>('');
-  const [contributor2, setContributor2] = useState<string>('');
-  const [contributor3, setContributor3] = useState<string>('');
+  const [contributors, setContributors] = useState<ContributorsMapping>({});
+  
   const [subtitle, setSubtitle] = useState<string>('');
   const [authorMaxClaimable, setAuthorMaxClaimable] = useState<number>(0);
   const getDaoContract = useDaoContract();
   const createSetGenre = useCreateSetGenre();
+  const createSetSubtitle = useCreateSetSubtitle();
+  const createSetAuthorMaxClaimable = useCreateSetAuthorMaxClaimable();
+  const createSetContributors = useCreateSetContributors();
+  const daoContract = useMemo(() => daoAddress ? getDaoContract(daoAddress) : null, [daoAddress, getDaoContract]);
+
   const uploadText = useCallback(async () => {
     try {
       const added = await client.add(text);
@@ -298,10 +310,7 @@ const Create = () => {
     }
   };
 
-  const handleSetGenre = async() => {
-    const daoContract = getDaoContract(daoAddress);
-
-
+  const handleSetGenre = useCallback(async() => {
       createSetGenre(
         daoContract,
         genre,
@@ -310,35 +319,77 @@ const Create = () => {
         (x, y, z) => {
           setCurrentStep(currentStep + 1);
           // @ts-ignore
+          return <SuccessToast chainId={x} hash={y} customMessage={z} />;
+        }
+      )       
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        .then(() => {})
+        .catch((e) => {
+          console.log({e});
+          toast.error('Something went wrong');
+        });
+  }, [daoContract, createSetGenre, genre, setLoading, currentStep]);
+
+  const handleSetSubtitle = useCallback(async() => {
+      createSetSubtitle(
+        daoContract,
+        subtitle,
+        setLoading,
+        PendingToast,
+        (x, y, z) => {
+          setCurrentStep(currentStep + 1);
+          // @ts-ignore
           return <SuccessToast chainId={x} hash={y} customMessage={z} />
         }
       )
-      .then(() => {
-       console.log('Something went right');
-      })
-      .catch(e => toast.error('Something went wrong'));
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      .then(() => {})
+      .catch((e) => {
+        console.log({e});
+        toast.error('Something went wrong');
+      });
+  }, [daoContract, createSetSubtitle, subtitle, setLoading, currentStep]);
   
-  };
+  const handleSetAuthorMaxClaimable = useCallback(async() => {
+    console.log({ authorMaxClaimable });
+    createSetAuthorMaxClaimable(
+      daoContract,
+      authorMaxClaimable,
+      setLoading,
+      PendingToast,
+      (x, y, z) => {
+        setCurrentStep(currentStep + 1);
+        // @ts-ignore
+        return <SuccessToast chainId={x} hash={y} customMessage={z} />
+      }
+    )
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    .then(() => {})
+    .catch((e) => {
+      console.log({e});
+      toast.error('Something went wrong');
+    });
+}, [daoContract, createSetAuthorMaxClaimable, authorMaxClaimable, setLoading, currentStep]);
 
-  const handleContributor1 = (value: string) => {
-    setContributor1(value);
-  };
-
-  const handleContributor2 = (value: string) => {
-    setContributor2(value);
-  };
-
-  const handleContributor3 = (value: string) => {
-    setContributor3(value);
-  };
-
-  const handleSubtitle = (value: string) => {
-    setSubtitle(value);
-  };
-
-  const handleAuthorMaxClaimable = (value: string) => {
-    setAuthorMaxClaimable(Number(value));
-  };
+  const handleSetContributors = useCallback(async() => {
+    createSetContributors(
+      daoContract,
+      contributors,
+      setLoading,
+      PendingToast,
+      (x, y, z) => {
+        setCurrentStep(currentStep + 1);
+        // @ts-ignore
+        return <SuccessToast chainId={x} hash={y} customMessage={z} />
+      }
+    )
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    .then(() => {})
+    .catch((e) => {
+      console.log({e});
+      toast.error('Something went wrong');
+    });
+  }, [daoContract, createSetContributors, contributors, setLoading, currentStep]);
 
   const NameForm = () => (
     <FadeIn>
@@ -547,9 +598,8 @@ const Create = () => {
           Does your text have a subtitle?
         </InputDescription>
         <StyledInput
-          value={genre}
+          value={subtitle}
           onChange={(e) => setSubtitle(e.target.value)}
-          placeholder={'Fiction'}
           disabled={loading}
         />
         <FlexContainer>
@@ -561,7 +611,7 @@ const Create = () => {
             {'Skip'}
           </SubmitButton>
           <SubmitButton
-            onClick={() => {}}
+            onClick={handleSetSubtitle}
             disabled={loading}
           >
             {loading ? <Loading height={20} /> : 'Set Subtitle'}
@@ -569,7 +619,101 @@ const Create = () => {
         </FlexContainer>
       </Wrapper>
     </FadeIn>
+  );
 
+  const AuthorMaxClaimableForm = () => (
+    <FadeIn>
+      <Wrapper>
+        <InputName>AMOUNT CLAIMABLE BY YOU</InputName>
+        <InputDescription>
+          {`You as an author can reserve an amount of your project's genesis edition NFTs for yourself. Determine the amount.`}
+        </InputDescription>
+        <StyledInput
+          value={authorMaxClaimable}
+          // validation, needs to be smaller than total amount
+          onChange={(e) => setAuthorMaxClaimable(Number(e.target.value))}
+          placeholder={'10'}
+          disabled={loading}
+        />
+        <FlexContainer>
+          <SubmitButton
+            style={{marginInlineEnd: '1rem'}}
+            onClick={() => setCurrentStep(currentStep + 1)}
+            disabled={loading}
+          >
+            {'Skip'}
+          </SubmitButton>
+          <SubmitButton
+            onClick={handleSetAuthorMaxClaimable}
+            disabled={loading}
+          >
+            {loading ? <Loading height={20} /> : 'Set Reserved Amount'}
+          </SubmitButton>
+        </FlexContainer>
+      </Wrapper>
+    </FadeIn>
+  );
+  console.log({ contributors })
+  const ContributorsForm = () => (
+    <FadeIn>
+      <Wrapper>
+        <InputName>CONTRIBUTORS</InputName>
+        <InputDescription>
+          {`Do you want to set contributors like Editors, Translators, Cover Artists etc.? You can input their address and role and most importantly what share of the funds they will be able to withdraw, once the Genesis Edition sells out. The should be set as a number between 0 and 100. A contributor with a share of 10, will be able to withdraw 10% of the funding. You can specify up to 3. Keep in mind that the total of shares should be deducted from you own share. So when an editor is getting 10%, you will be left with 90%. WARNING: This is irreversible.`}
+        </InputDescription>
+        <StyledInput
+          value={contributors[0].address}
+          onChange={(e) => setContributors({ ...contributors, ...{ share: contributors[0].share, address: e.target.value } })}
+          placeholder={'0x123'}
+          disabled={loading}
+        />
+        <StyledInput
+          value={contributors[0].share}
+          onChange={(e) => {console.log(e)}}
+          placeholder={'10%'}
+          disabled={loading}
+        />
+        <StyledInput
+          value={contributors[1].address}
+          onChange={(e) => {console.log(e)}}
+          placeholder={'0x123'}
+          disabled={loading}
+        />
+        <StyledInput
+          value={contributors[1].share}
+          onChange={(e) => {console.log(e)}}
+          placeholder={'10%'}
+          disabled={loading}
+        />
+        <StyledInput
+          value={contributors[2].address}
+          onChange={(e) => {console.log(e)}}
+          placeholder={'0x123'}
+          disabled={loading}
+        />
+        <StyledInput
+          value={contributors[2].share}
+          onChange={(e) => {console.log(e)}}
+          placeholder={'10%'}
+          disabled={loading}
+        />
+        <FlexContainer>
+          <SubmitButton
+            style={{ marginInlineEnd: '1rem' }}
+            onClick={() => setCurrentStep(currentStep + 1)}
+            disabled={loading}
+          >
+            {'Skip'}
+          </SubmitButton>
+          <SubmitButton
+            onClick={() => handleSetContributors}
+            disabled={loading}
+          >
+            {loading ? <Loading height={20} /> : 'Set Contributors'}
+          </SubmitButton>
+        </FlexContainer>
+      </Wrapper>
+    </FadeIn>
   );
 
 
@@ -589,10 +733,12 @@ const Create = () => {
           {currentStep === 5 && !creatingDao && Congrats()}
           {currentStep === 6 && !creatingDao && GenreForm()}
           {currentStep === 7 && !creatingDao && SubTitleForm()}
+          {currentStep === 8 && !creatingDao && AuthorMaxClaimableForm()}
+          {currentStep === 9 && !creatingDao && ContributorsForm()}
         </Form>
       </FormWrapper>
     </Root>
   );
-};;;
+};
 
 export default Create
