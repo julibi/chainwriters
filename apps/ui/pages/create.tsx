@@ -25,6 +25,8 @@ import useDaoContract from '../state/useDaoContract'
 import { useCreateSetAuthorMaxClaimable, useCreateSetContributors, useCreateSetGenre, useCreateSetSubtitle } from '../state/projects/create/hooks'
 import SuccessToast from '../components/SuccessToast'
 import PendingToast from '../components/PendingToast'
+import { truncateAddress } from '../components/WalletIndicator'
+import { isNonNullChain } from 'typescript'
 
 const Root = styled.div`
   display: flex;
@@ -225,6 +227,7 @@ const InputName = styled.h2`
 const InputDescription = styled.p`
   margin-block-end: 2rem;
   display: inline-block;
+  text-align: center;
 `;
 
 const FlexContainer = styled.div`
@@ -237,9 +240,34 @@ export interface Contributor {
 }
 
 
-const ContribList = styled.ul``;
+const ContribList = styled.ul`
+  padding: 0;
+  list-style-type: none;
+  width: 100%;
+`;
 
-const ContribItem = styled.li``;
+const ContribItem = styled.li`
+  display: flex;
+  justify-content: space-between;
+`;
+
+const SpecialShare = styled.span`
+  width: 100%;
+  justify-content: space-between;
+  display: flex;
+  margin-block-end: 1rem;
+`;
+
+const CTAContainer = styled.div`
+`;
+
+const ContribInputContainer = styled.div`
+  margin-block-end: 1rem;
+`;
+
+const ContribButtonContainer = styled(FlexContainer)`
+  justify-content: space-between;
+`;
 
 const Create = () => {
   const { chainId } = useWeb3React();
@@ -268,9 +296,11 @@ const Create = () => {
   const createSetAuthorMaxClaimable = useCreateSetAuthorMaxClaimable();
   const createSetContributors = useCreateSetContributors();
   const daoContract = useMemo(() => daoAddress ? getDaoContract(daoAddress) : null, [daoAddress, getDaoContract]);
-  const [contributor, setContributor] = useState({address: '', share: 0});
+  const contribInitialState = {address: '', share: 0};
+  const [contributor, setContributor] = useState(contribInitialState);
   const [contributorList, setContributorList] = useState([]);
   const [contributorIndex, setContributorIndex] = useState<number>(0);
+  const [shareSelf, setShareSelf] = useState<number>(85);
   const uploadText = useCallback(async () => {
     try {
       const added = await client.add(text);
@@ -353,7 +383,6 @@ const Create = () => {
   }, [daoContract, createSetSubtitle, subtitle, setLoading, currentStep]);
   
   const handleSetAuthorMaxClaimable = useCallback(async() => {
-    console.log({ authorMaxClaimable });
     createSetAuthorMaxClaimable(
       daoContract,
       authorMaxClaimable,
@@ -387,16 +416,17 @@ const allContributors = useMemo(async() => {
       setLoading,
       PendingToast,
       (x, y, z) => {
+        setContributor(contribInitialState);
+        setContributorIndex(contributorIndex + 1);
+        setContributorList([...contributorList, contributor]);
+        setShareSelf(shareSelf - 15 - contributor.share);
         contributorIndex == 2 && setCurrentStep(currentStep + 1);
         // @ts-ignore
         return <SuccessToast chainId={x} hash={y} customMessage={z} />
       }
     )
     // eslint-disable-next-line @typescript-eslint/no-empty-function
-    .then(() => {
-      setContributorIndex(contributorIndex + 1);
-      setContributorList([...contributorList, contributor]);
-    })
+    .then(() => {})
     .catch((e) => {
       console.log({e});
       toast.error('Something went wrong');
@@ -545,6 +575,7 @@ const allContributors = useMemo(async() => {
     </FadeIn>
   );
 
+  // TODO address is tx hash, not dao address
   // TODO make congrats screen look nice and special
   const Congrats = () => (
     <FadeIn>
@@ -673,60 +704,80 @@ const allContributors = useMemo(async() => {
         <InputDescription>
           {`Do you want to set contributors like Editors, Translators, Cover Artists etc.? You can input their address and role and most importantly what share of the funds they will be able to withdraw, once the Genesis Edition sells out. The should be set as a number between 0 and 100. A contributor with a share of 10, will be able to withdraw 10% of the funding. You can specify up to 3. Keep in mind that the total of shares should be deducted from you own share. So when an editor is getting 10%, you will be left with 90%. WARNING: This is irreversible.`}
         </InputDescription>
-        {contributorList.length && (
-          <ContribList>
-            {contributorList.map((item, idx) => (
-              <div key={idx}>
-                <ContribItem>Contributor: {item.address}</ContribItem>
-                <ContribItem>Share: {item.share}</ContribItem>
-              </div>
-            ))}
-          </ContribList>
-        )}
-        <StyledInput
-          value={contributor.address}
-          onChange={(e) =>
-            setContributor({ ...contributor, address: e.target.value })
-          }
-          placeholder={'0x123'}
-          disabled={loading}
-        />
-        <StyledInput
-          // TODO only full numbers
-          value={contributor.share}
-          onChange={(e) =>
-            setContributor({ ...contributor, share: Number(e.target.value) })
-          }
-          placeholder={'10%'}
-          disabled={loading}
-        />
-        <FlexContainer>
-          <SubmitButton
-            style={{ marginInlineEnd: '1rem' }}
-            onClick={() => setCurrentStep(currentStep + 1)}
-            disabled={loading}
-          >
-            {'Skip'}
-          </SubmitButton>
-          <SubmitButton
-            onClick={handleSetContributors}
-            disabled={loading || contributorIndex == 2}
-          >
-            {loading ? <Loading height={20} /> : 'Set Contributors'}
-          </SubmitButton>{' '}
-          {contributorIndex > 0 && contributorIndex < 3 && (
+        <CTAContainer>
+          {contributorList.length ? (
+            <ContribList>
+              {contributorList.map((item, idx) => (
+                <div key={idx}>
+                  <ContribItem>
+                    <span>Contributor {idx+1}:</span>
+                    <span>{truncateAddress(item.address)}</span>
+                  </ContribItem>
+                  <ContribItem>
+                    <span>Share:</span>
+                    <span>{item.share} %</span>
+                  </ContribItem>
+                </div>
+              ))}
+            </ContribList>
+          ) : null}
+          <SpecialShare>
+            <span>Moonlit Foundation share:</span>
+            <span>15 %</span>
+          </SpecialShare>
+          <SpecialShare>
+            <span>Your share:</span>
+            <span>{shareSelf} %</span>
+          </SpecialShare>
+          <ContribInputContainer>
+            <StyledInput
+              value={contributor.address}
+              onChange={(e) =>
+                setContributor({ ...contributor, address: e.target.value })
+              }
+              placeholder={'0x123'}
+              disabled={loading}
+            />
+            <StyledInput
+              // TODO only full numbers
+              // TODO it should disable entering a number that - added with other share exceeds 100%
+              value={contributor.share}
+              onChange={(e) =>
+                setContributor({
+                  ...contributor,
+                  share: Number(e.target.value),
+                })
+              }
+              placeholder={'10%'}
+              disabled={loading}
+              style={{ marginInlineStart: '1rem' }}
+            />
+          </ContribInputContainer>
+          <ContribButtonContainer>
             <SubmitButton
+              style={{ marginInlineEnd: '1rem' }}
               onClick={() => setCurrentStep(currentStep + 1)}
               disabled={loading}
             >
-              {loading ? <Loading height={20} /> : 'Continue'}
+              {contributorIndex > 0 ? 'Continue' : 'Skip'}
             </SubmitButton>
-          )}
-        </FlexContainer>
+            <SubmitButton
+              onClick={handleSetContributors}
+              disabled={loading || contributorIndex == 2}
+            >
+              {loading ? <Loading height={20} /> : 'Set Contributors'}
+            </SubmitButton>{' '}
+          </ContribButtonContainer>
+        </CTAContainer>
       </Wrapper>
     </FadeIn>
   );
 
+  const YourFinished = () => {
+    return(
+      <div>You're finished </div>
+    );
+  };
 
   return (
     <Root>
@@ -746,6 +797,7 @@ const allContributors = useMemo(async() => {
           {currentStep === 7 && !creatingDao && SubTitleForm()}
           {currentStep === 8 && !creatingDao && AuthorMaxClaimableForm()}
           {currentStep === 9 && !creatingDao && ContributorsForm()}
+          {currentStep === 10 && !creatingDao && YourFinished()}
         </Form>
       </FormWrapper>
     </Root>

@@ -87,7 +87,8 @@ export const useCreateSetContributors = () => {
     contributor: Contributor,
     loadingFunc: (x: boolean) => void,
     onLoad: (chainId: number, hash: string, message: string) => void,
-    onSuccess: (chainId: number, hash: string, message: string) => void
+    onSuccess: (chainId: number, hash: string, message: string) => void,
+    onError?: (chainId: number, hash: string, message: string) => void
   ) => {
     loadingFunc(true);
       
@@ -103,7 +104,8 @@ export const useCreateSetContributors = () => {
       });
     } catch (e) {
       loadingFunc(false);
-      toast.error(e.reason ?? 'Something went wrong.');
+      // TODO: error is too big for toast - do error mapping
+      onError ?? toast.error(e.data.message ?? 'Something went wrong.');
     }
   };
 };
