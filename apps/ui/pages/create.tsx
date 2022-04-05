@@ -1,10 +1,10 @@
-import React, { MouseEvent, useCallback, useMemo, useState } from 'react'
+import React, { FormEvent, MouseEvent, useCallback, useMemo, useState } from 'react'
 import Link from 'next/link'
 import styled from 'styled-components'
 import { create } from 'ipfs-http-client'
 import { toast } from 'react-toastify'
 import { formatEther, parseEther } from 'ethers/lib/utils'
-import { useWeb3React } from '@web3-react/core';
+import { useWeb3React } from '@web3-react/core'
 import Checkbox from '../components/Checkbox'
 import CreateProgressBar from '../components/CreateProgressBar'
 import useFactoryContract from '../hooks/useFactoryContract'
@@ -19,14 +19,14 @@ import {
   PLAIN_WHITE,
   StyledLink,
 } from '../themes';
-import ToastLink from '../components/ToastLink'
 import Loading from '../components/Loading'
 import useDaoContract from '../state/useDaoContract'
 import { useCreateSetAuthorMaxClaimable, useCreateSetContributors, useCreateSetGenre, useCreateSetSubtitle } from '../state/projects/create/hooks'
 import SuccessToast from '../components/SuccessToast'
 import PendingToast from '../components/PendingToast'
 import { truncateAddress } from '../components/WalletIndicator'
-import { isNonNullChain } from 'typescript'
+import InputField from '../components/InputField'
+
 
 const Root = styled.div`
   display: flex;
@@ -84,14 +84,13 @@ const BlockSpan = styled.span`
   margin-block-end: 1rem;
 `;
 
-// interface StyledInputProps {
-//   placeholder?: string | number;
-//   value: string | number;
-//   onChange: (e) => void;
-// } 
-
 const StyledInput = styled(BaseInput)`
   display: inline-block;
+  margin-block-end: 1rem;
+`;
+
+const StyledInputError = styled.span`
+  color: ${PINK};
   margin-block-end: 1rem;
 `;
 
@@ -402,12 +401,18 @@ const Create = () => {
     });
 }, [daoContract, createSetAuthorMaxClaimable, authorMaxClaimable, setLoading, currentStep]);
 
+// could fetch from graph?
 const allContributors = useMemo(async() => {
   if (!daoContract) return null;
   const contributorIndex = await daoContract.contributorIndex();
   const contribs = await Promise.all([...Array(contributorIndex)].map(async(_, i) =>  await daoContract.contributors(i)));
   return { contributorIndex, contribs };
 }, [daoContract]);
+
+const totalShares = useMemo(() => {
+  const sum = contributorList.reduce((partialSum, a) => partialSum + a, 0);
+  return sum + contributor.share + 15; // 6
+}, [contributor, contributorList]);
 
   const handleSetContributors = useCallback(async() => {
     createSetContributors(
@@ -439,12 +444,13 @@ const allContributors = useMemo(async() => {
       <Wrapper>
         <InputName>TITLE</InputName>
         <InputDescription>What is the title of your project?</InputDescription>
-        <StyledInput
+        <InputField
           value={title}
-          onChange={(e) =>
+          onChange={(e: FormEvent<HTMLInputElement>) =>
             // TODO validation - does the title exist already from the same author?
             setTitle(e.target.value)
           }
+          error={(title.length < 1) && 'At least 1 character.'}
         />
         <SubmitButton
           onClick={() => setCurrentStep(currentStep + 1)}
@@ -625,7 +631,7 @@ const allContributors = useMemo(async() => {
           </SubmitButton>
           <SubmitButton
             onClick={handleSetGenre}
-            disabled={loading}
+            disabled={loading || (genre.length < 3)}
           >
             {loading ? <Loading height={10} /> : 'Set Genre'}
           </SubmitButton>
@@ -656,7 +662,7 @@ const allContributors = useMemo(async() => {
           </SubmitButton>
           <SubmitButton
             onClick={handleSetSubtitle}
-            disabled={loading}
+            disabled={loading || (subtitle.length < 1)}
           >
             {loading ? <Loading height={20} /> : 'Set Subtitle'}
           </SubmitButton>
@@ -689,7 +695,7 @@ const allContributors = useMemo(async() => {
           </SubmitButton>
           <SubmitButton
             onClick={handleSetAuthorMaxClaimable}
-            disabled={loading}
+            disabled={loading || authorMaxClaimable == 0 || authorMaxClaimable >= firstEdMaxAmount}
           >
             {loading ? <Loading height={20} /> : 'Set Reserved Amount'}
           </SubmitButton>
@@ -763,7 +769,7 @@ const allContributors = useMemo(async() => {
             </SubmitButton>
             <SubmitButton
               onClick={handleSetContributors}
-              disabled={loading || contributorIndex == 2}
+              disabled={loading || contributorIndex == 2 || totalShares > 100}
             >
               {loading ? <Loading height={20} /> : 'Set Contributors'}
             </SubmitButton>{' '}
