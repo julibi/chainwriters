@@ -236,6 +236,11 @@ export interface Contributor {
   share: number;
 }
 
+
+const ContribList = styled.ul``;
+
+const ContribItem = styled.li``;
+
 const Create = () => {
   const { chainId } = useWeb3React();
   const FactoryContract = useFactoryContract();
@@ -264,6 +269,7 @@ const Create = () => {
   const createSetContributors = useCreateSetContributors();
   const daoContract = useMemo(() => daoAddress ? getDaoContract(daoAddress) : null, [daoAddress, getDaoContract]);
   const [contributor, setContributor] = useState({address: '', share: 0});
+  const [contributorList, setContributorList] = useState([]);
   const [contributorIndex, setContributorIndex] = useState<number>(0);
   const uploadText = useCallback(async () => {
     try {
@@ -368,6 +374,7 @@ const Create = () => {
 }, [daoContract, createSetAuthorMaxClaimable, authorMaxClaimable, setLoading, currentStep]);
 
 const allContributors = useMemo(async() => {
+  if (!daoContract) return null;
   const contributorIndex = await daoContract.contributorIndex();
   const contribs = await Promise.all([...Array(contributorIndex)].map(async(_, i) =>  await daoContract.contributors(i)));
   return { contributorIndex, contribs };
@@ -387,13 +394,15 @@ const allContributors = useMemo(async() => {
     )
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     .then(() => {
+      setContributorIndex(contributorIndex + 1);
+      setContributorList([...contributorList, contributor]);
     })
     .catch((e) => {
       console.log({e});
       toast.error('Something went wrong');
     });
     await allContributors;
-  }, [daoContract, createSetContributors, setLoading, currentStep, fetchContributors, contributorIndex]);
+  }, [daoContract, createSetContributors, setLoading, currentStep, contributorIndex]);
 
   const NameForm = () => (
     <FadeIn>
@@ -664,16 +673,30 @@ const allContributors = useMemo(async() => {
         <InputDescription>
           {`Do you want to set contributors like Editors, Translators, Cover Artists etc.? You can input their address and role and most importantly what share of the funds they will be able to withdraw, once the Genesis Edition sells out. The should be set as a number between 0 and 100. A contributor with a share of 10, will be able to withdraw 10% of the funding. You can specify up to 3. Keep in mind that the total of shares should be deducted from you own share. So when an editor is getting 10%, you will be left with 90%. WARNING: This is irreversible.`}
         </InputDescription>
+        {contributorList.length && (
+          <ContribList>
+            {contributorList.map((item, idx) => (
+              <div key={idx}>
+                <ContribItem>Contributor: {item.address}</ContribItem>
+                <ContribItem>Share: {item.share}</ContribItem>
+              </div>
+            ))}
+          </ContribList>
+        )}
         <StyledInput
           value={contributor.address}
-          onChange={(e) => setContributor({ ...contributor, address: e.target.value })}
+          onChange={(e) =>
+            setContributor({ ...contributor, address: e.target.value })
+          }
           placeholder={'0x123'}
           disabled={loading}
         />
         <StyledInput
           // TODO only full numbers
           value={contributor.share}
-          onChange={(e) => setContributor({ ...contributor, share: Number(e.target.value) })}
+          onChange={(e) =>
+            setContributor({ ...contributor, share: Number(e.target.value) })
+          }
           placeholder={'10%'}
           disabled={loading}
         />
@@ -690,7 +713,15 @@ const allContributors = useMemo(async() => {
             disabled={loading || contributorIndex == 2}
           >
             {loading ? <Loading height={20} /> : 'Set Contributors'}
-          </SubmitButton>
+          </SubmitButton>{' '}
+          {contributorIndex > 0 && contributorIndex < 3 && (
+            <SubmitButton
+              onClick={() => setCurrentStep(currentStep + 1)}
+              disabled={loading}
+            >
+              {loading ? <Loading height={20} /> : 'Continue'}
+            </SubmitButton>
+          )}
         </FlexContainer>
       </Wrapper>
     </FadeIn>
