@@ -1,9 +1,9 @@
-import React, { FormEvent, MouseEvent, useCallback, useMemo, useState } from 'react'
+import React, { FormEvent, useCallback, useMemo, useState } from 'react'
 import Link from 'next/link'
 import styled from 'styled-components'
 import { create } from 'ipfs-http-client'
 import { toast } from 'react-toastify'
-import { formatEther, parseEther } from 'ethers/lib/utils'
+import { parseEther } from 'ethers/lib/utils'
 import { useWeb3React } from '@web3-react/core'
 import Checkbox from '../components/Checkbox'
 import CreateProgressBar from '../components/CreateProgressBar'
@@ -17,7 +17,6 @@ import {
   INSET_BASE_BOX_SHADOW,
   PINK,
   PLAIN_WHITE,
-  StyledLink,
 } from '../themes';
 import Loading from '../components/Loading'
 import useDaoContract from '../state/useDaoContract'
@@ -25,7 +24,7 @@ import { useCreateSetAuthorMaxClaimable, useCreateSetContributors, useCreateSetG
 import SuccessToast from '../components/SuccessToast'
 import PendingToast from '../components/PendingToast'
 import { truncateAddress } from '../components/WalletIndicator'
-import InputField from '../components/InputField'
+import InputField, { StyledInputError } from '../components/InputField'
 
 
 const Root = styled.div`
@@ -86,11 +85,6 @@ const BlockSpan = styled.span`
 
 const StyledInput = styled(BaseInput)`
   display: inline-block;
-  margin-block-end: 1rem;
-`;
-
-const StyledInputError = styled.span`
-  color: ${PINK};
   margin-block-end: 1rem;
 `;
 
@@ -300,6 +294,8 @@ const Create = () => {
   const [contributorList, setContributorList] = useState([]);
   const [contributorIndex, setContributorIndex] = useState<number>(0);
   const [shareSelf, setShareSelf] = useState<number>(85);
+  const [showInputError, setShowInputError] = useState<boolean>(false);
+  
   const uploadText = useCallback(async () => {
     try {
       const added = await client.add(text);
@@ -409,11 +405,6 @@ const allContributors = useMemo(async() => {
   return { contributorIndex, contribs };
 }, [daoContract]);
 
-const totalShares = useMemo(() => {
-  const sum = contributorList.reduce((partialSum, a) => partialSum + a, 0);
-  return sum + contributor.share + 15; // 6
-}, [contributor, contributorList]);
-
   const handleSetContributors = useCallback(async() => {
     createSetContributors(
       daoContract,
@@ -424,7 +415,6 @@ const totalShares = useMemo(() => {
         setContributor(contribInitialState);
         setContributorIndex(contributorIndex + 1);
         setContributorList([...contributorList, contributor]);
-        setShareSelf(shareSelf - 15 - contributor.share);
         contributorIndex == 2 && setCurrentStep(currentStep + 1);
         // @ts-ignore
         return <SuccessToast chainId={x} hash={y} customMessage={z} />
@@ -445,12 +435,12 @@ const totalShares = useMemo(() => {
         <InputName>TITLE</InputName>
         <InputDescription>What is the title of your project?</InputDescription>
         <InputField
-          value={title}
+          error={title.length < 1 && 'At least 1 character.'}
           onChange={(e: FormEvent<HTMLInputElement>) =>
             // TODO validation - does the title exist already from the same author?
             setTitle(e.target.value)
           }
-          error={(title.length < 1) && 'At least 1 character.'}
+          value={title}
         />
         <SubmitButton
           onClick={() => setCurrentStep(currentStep + 1)}
@@ -472,6 +462,7 @@ const totalShares = useMemo(() => {
         </InputDescription>
         {/* TODO was this text already uploaded? */}
         <TextInput value={text} onChange={(e) => setText(e.target.value)} />
+        <StyledInputError>{text.length < 1 ? 'At least 1 character.' : ' '}</StyledInputError>
         <SubmitButton
           onClick={() => setCurrentStep(currentStep + 1)}
           disabled={text.length < 1}
@@ -492,10 +483,11 @@ const totalShares = useMemo(() => {
           in order for your project to turn it into an NFT Collection. These
           people - including you – can then claim an NFT of the Collection...
         </InputDescription>
-        <StyledInput
+        <InputField
           value={firstEdMaxAmount}
           onChange={(e) => setFirstEdMaxAmount(Number(e.target.value))}
           placeholder={'2000'}
+          error={(firstEdMaxAmount < 2) && 'At least 2.'}
         />
         <SubmitButton
           onClick={() => setCurrentStep(currentStep + 1)}
@@ -516,11 +508,12 @@ const totalShares = useMemo(() => {
           get a spot as a supporter. It can also be regarded as the price for a
           Genesis Edition NFT of your project.
         </InputDescription>
-        {/* TODO validation so that it is 0.1 and not 0,1 */}
-        <StyledInput
-          value={firstEdMintPrice}
-          onChange={(e) =>  setFirstEdMintPrice(e.target.value)}
+        {/* TODO validation so that it is 0.1 and not 0,1 */ }
+        <InputField
+          error={(Number(firstEdMintPrice) < 0.01) && 'At least 0.01 Matic.'}
+          onChange={(e) => setFirstEdMintPrice(e.target.value)}
           placeholder={'50'}
+          value={firstEdMintPrice}
         />
         <SubmitButton
           onClick={() => setCurrentStep(currentStep + 1)}
@@ -615,11 +608,12 @@ const totalShares = useMemo(() => {
         <InputDescription>
           If you specify the Genre, it makes it easier for people to find your project. Also, you are giving more information for possible readers and supporters.
         </InputDescription>
-        <StyledInput
-          value={genre}
+        <InputField
+          disabled={loading}
+          error={genre.length < 3 && 'At least 3 characters.'}
           onChange={(e) => setGenre(e.target.value)}
           placeholder={'Fiction'}
-          disabled={loading}
+          value={genre}
         />
         <FlexContainer>
           <SubmitButton
@@ -647,10 +641,11 @@ const totalShares = useMemo(() => {
         <InputDescription>
           Does your text have a subtitle?
         </InputDescription>
-        <StyledInput
-          value={subtitle}
-          onChange={(e) => setSubtitle(e.target.value)}
+        <InputField
           disabled={loading}
+          error={subtitle.length < 3 && 'At least 3 characters.'}
+          onChange={(e) => setSubtitle(e.target.value)}
+          value={subtitle}
         />
         <FlexContainer>
           <SubmitButton
@@ -678,12 +673,13 @@ const totalShares = useMemo(() => {
         <InputDescription>
           {`You as an author can reserve an amount of your project's genesis edition NFTs for yourself. Determine the amount.`}
         </InputDescription>
-        <StyledInput
-          value={authorMaxClaimable}
+        <InputField
           // validation, needs to be smaller than total amount
+          disabled={loading}
+          error={authorMaxClaimable >= firstEdMaxAmount && 'Must be smaller than Max Amount.'}
           onChange={(e) => setAuthorMaxClaimable(Number(e.target.value))}
           placeholder={'10'}
-          disabled={loading}
+          value={authorMaxClaimable}
         />
         <FlexContainer>
           <SubmitButton
@@ -703,6 +699,7 @@ const totalShares = useMemo(() => {
       </Wrapper>
     </FadeIn>
   );
+
   const ContributorsForm = () => (
     <FadeIn>
       <Wrapper>
@@ -716,7 +713,7 @@ const totalShares = useMemo(() => {
               {contributorList.map((item, idx) => (
                 <div key={idx}>
                   <ContribItem>
-                    <span>Contributor {idx+1}:</span>
+                    <span>Contributor {idx + 1}:</span>
                     <span>{truncateAddress(item.address)}</span>
                   </ContribItem>
                   <ContribItem>
@@ -736,28 +733,40 @@ const totalShares = useMemo(() => {
             <span>{shareSelf} %</span>
           </SpecialShare>
           <ContribInputContainer>
-            <StyledInput
-              value={contributor.address}
+            <InputField
+              disabled={loading}
               onChange={(e) =>
                 setContributor({ ...contributor, address: e.target.value })
               }
               placeholder={'0x123'}
-              disabled={loading}
+              value={contributor.address}
+              // TODO: validation: is not an address.
             />
-            <StyledInput
-              // TODO only full numbers
-              // TODO it should disable entering a number that - added with other share exceeds 100%
-              value={contributor.share}
-              onChange={(e) =>
+            <InputField
+              disabled={loading}
+              onChange={(e) => {
+                const inputVal = Number(e.target.value.replace(/[^0-9]/g, ''));
+                const otherShares =
+                  contributorList.reduce((partialSum, a) => partialSum + a.share, 0) +
+                  inputVal;
+
+                setShareSelf(85 - otherShares);
                 setContributor({
                   ...contributor,
-                  share: Number(e.target.value),
-                })
-              }
+                  share: inputVal,
+                });
+                setShowInputError((85 - otherShares) < 0);
+              }}
               placeholder={'10%'}
-              disabled={loading}
               style={{ marginInlineStart: '1rem' }}
+              value={contributor.share}
+              // TODO only full numbers
             />
+            <StyledInputError style={{ display: 'flex' }}>
+              {showInputError
+                ? 'Share too high.'
+                : ''}
+            </StyledInputError>
           </ContribInputContainer>
           <ContribButtonContainer>
             <SubmitButton
@@ -769,7 +778,7 @@ const totalShares = useMemo(() => {
             </SubmitButton>
             <SubmitButton
               onClick={handleSetContributors}
-              disabled={loading || contributorIndex == 2 || totalShares > 100}
+              disabled={loading || contributorIndex == 3 || shareSelf <= 0}
             >
               {loading ? <Loading height={20} /> : 'Set Contributors'}
             </SubmitButton>{' '}

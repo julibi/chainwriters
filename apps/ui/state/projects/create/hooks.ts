@@ -91,7 +91,7 @@ export const useCreateSetContributors = () => {
     onError?: (chainId: number, hash: string, message: string) => void
   ) => {
     loadingFunc(true);
-      
+
     try {
       // TODO: multicall?
       const Tx = await daoContract.addContributor(contributor.address, contributor.share);

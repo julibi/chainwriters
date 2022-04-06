@@ -7,7 +7,7 @@ export const StyledInput = styled(BaseInput)`
   margin-block-end: 1rem;
 `;
 
-const StyledInputError = styled.span`
+export const StyledInputError = styled.span`
   color: ${PINK};
   margin-block-end: 1rem;
 `;
@@ -15,14 +15,23 @@ const StyledInputError = styled.span`
 interface InputFieldTypes {
   value: string | number;
   onChange: (e: FormEvent<HTMLInputElement>) => void;
+  disabled?: boolean;
   error?: string;
+  placeholder?: string;
+  style?: any;
 }
 
-const InputField = ({ value, onChange, error }: InputFieldTypes) => {
+const InputField = ({ disabled = false, value, onChange, error, placeholder = '', style }: InputFieldTypes) => {
   return (
     <>
-      <StyledInput value={value} onChange={onChange} />
-      <StyledInputError>{error ?? ''}</StyledInputError>
+      <StyledInput
+        disabled={disabled}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        style={style}
+      />
+      <StyledInputError>{error ?? ' '}</StyledInputError>
     </>
   );
 };
