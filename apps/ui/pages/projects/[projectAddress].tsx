@@ -6,8 +6,11 @@ import styled from 'styled-components'
 import Loading from '../../components/Loading'
 import { useGetProjectDetails } from '../../state/projects/hooks'
 import { SectionTitle } from '../../components/ProjectSection'
-import { BASE_BORDER_RADIUS, BASE_BOX_SHADOW, PLAIN_WHITE } from '../../themes'
+import { BASE_BORDER_RADIUS, BASE_BOX_SHADOW, INSET_BASE_BOX_SHADOW, PINK, PLAIN_WHITE } from '../../themes'
+import timestampConverter from '../../utils/timestampConverter'
+import Circle from '../../components/Circle'
 
+import { PieChart } from 'react-minimal-pie-chart';
 
 // TODO
 // author view
@@ -36,6 +39,7 @@ const Root = styled.div`
 const MainInfoWrapper = styled.section`
   display: flex;
   width: 90%;
+  max-width: 1200px;
   color: ${PLAIN_WHITE};
 `;
 
@@ -76,6 +80,30 @@ const FlexWrapper = styled.div`
   justify-content: space-between;
 `;
 
+const OuterPie = styled.div`
+  width: 242px;
+  height: 242px;
+  border-radius: 50%;
+  padding: 70px;
+  box-shadow: ${BASE_BOX_SHADOW};
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const InnerPie = styled.div`
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  box-shadow: ${INSET_BASE_BOX_SHADOW};
+  position: relative;
+`;
+
+const StyledCircle = styled(Circle)`
+
+`;
+
 const ProjectDetailView = () => {
   const router = useRouter();
   const { projectAddress } = router.query;
@@ -94,7 +122,6 @@ const ProjectDetailView = () => {
     }
   }, [projectAddress, callGetProjectDetails]);
 
-
   return (
     <Root>
       {!daoData && <Loading height={530} />}
@@ -102,16 +129,22 @@ const ProjectDetailView = () => {
         <MainInfoWrapper>
           <InfoLeft>
             <Title>{daoData.title}</Title>
-            {daoData.subtitle &&<Info>{daoData.subtitle}</Info>}
+            {daoData.subtitle && <Info>{daoData.subtitle}</Info>}
             <FlexWrapper>
               <Info>{daoData.genre ?? 'Unknown Genre'}</Info>
               {/* var date = new Date(unix_timestamp * 1000); */}
-              <Info>{`Created: ${daoData.createdAt}`}</Info>
+              <Info>{`Created: ${timestampConverter(daoData.createdAt)}`}</Info>
             </FlexWrapper>
             <FlexWrapper>
               <Info>{`First Edition Max: ${daoData.firstEditionMax}`}</Info>
-              <Info>{`Price Per Spot: ${formatEther(daoData.mintPrice)} MATIC`}</Info>
+              <Info>{`Price Per Spot: ${formatEther(
+                daoData.mintPrice
+              )} MATIC`}</Info>
             </FlexWrapper>
+            <OuterPie>
+              <StyledCircle />
+              <InnerPie />
+            </OuterPie>
           </InfoLeft>
           <InfoRight>
             <Image
