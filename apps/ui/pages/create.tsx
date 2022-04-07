@@ -1,5 +1,4 @@
 import React, { FormEvent, useCallback, useMemo, useState } from 'react'
-import Link from 'next/link'
 import styled from 'styled-components'
 import { create } from 'ipfs-http-client'
 import { toast } from 'react-toastify'
@@ -10,7 +9,6 @@ import CreateProgressBar from '../components/CreateProgressBar'
 import useFactoryContract from '../hooks/useFactoryContract'
 import {
   BaseButton,
-  BaseInput,
   BASE_BORDER_RADIUS,
   BASE_BOX_SHADOW,
   BG_NORMAL,
@@ -20,7 +18,12 @@ import {
 } from '../themes';
 import Loading from '../components/Loading'
 import useDaoContract from '../state/useDaoContract'
-import { useCreateSetAuthorMaxClaimable, useCreateSetContributors, useCreateSetGenre, useCreateSetSubtitle } from '../state/projects/create/hooks'
+import {
+  useCreateSetAuthorMaxClaimable,
+  useCreateSetContributors,
+  useCreateSetGenre,
+  useCreateSetSubtitle,
+} from '../state/projects/create/hooks';
 import SuccessToast from '../components/SuccessToast'
 import PendingToast from '../components/PendingToast'
 import { truncateAddress } from '../components/WalletIndicator'
@@ -32,6 +35,7 @@ const Root = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  margin-block-start: 3rem;
 `;
 
 const ProgressBarWrapper = styled.div`
@@ -47,6 +51,7 @@ const FormWrapper = styled.div`
   justify-content: center;
   width: 90%;
   max-width: 1200px;
+  margin-block-start: 1rem;
 `;
 
 const Form = styled.div`
@@ -61,29 +66,7 @@ const Form = styled.div`
   align-items: flex-start;
 `;
 
-const StyledLabel = styled.label`
-  display: flex;
-  flex-direction: column;
-  text-transform: uppercase;
-  font-family: 'Roboto Mono';
-  margin-block-end: 2rem;
-`;
-
-const ShortInput = styled(StyledLabel)`
-  width: 50%;
-  max-width: 400px;
-`;
-
-const Text = styled(StyledLabel)`
-  width: 100%;
-`;
-
 const BlockSpan = styled.span`
-  display: inline-block;
-  margin-block-end: 1rem;
-`;
-
-const StyledInput = styled(BaseInput)`
   display: inline-block;
   margin-block-end: 1rem;
 `;
@@ -162,42 +145,6 @@ const ReviewItem = styled.p`
   color: ${PINK};
 `;
 
-const Content = styled.div`
-  display: flex;
-
-  @media (max-width: 900px) {
-    flex-direciont: column;
-  }
-`;
-
-const DaoCard = styled.div`
-  flex: 1;
-  margin-inline-end: 3rem;
-`;
-
-const AdditionalInputs = styled.div`
-  flex: 1;
-`;
-
-
-const Info = styled.p`
-  text-transform: none;
-`;
-
-const AdditionalInputWrapper = styled.div`
-  display: flex;
-  justify-content: space-between;
-`;
-
-const AdditionalInput = styled(StyledInput)`
-  flex: 3;
-  margin-inline-end: 1rem;
-`;
-
-const AdditionalInputSubmit = styled(BaseButton)`
-  flex: 1;
-`;
-
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -232,7 +179,6 @@ export interface Contributor {
   share: number;
 }
 
-
 const ContribList = styled.ul`
   padding: 0;
   list-style-type: none;
@@ -252,10 +198,13 @@ const SpecialShare = styled.span`
 `;
 
 const CTAContainer = styled.div`
+  padding: 1rem;
 `;
 
 const ContribInputContainer = styled.div`
   margin-block-end: 1rem;
+  display: flex;
+  flex-direction: column;
 `;
 
 const ContribButtonContainer = styled(FlexContainer)`
@@ -268,6 +217,7 @@ const Create = () => {
   // @ts-ignore
   const client = create('https://ipfs.infura.io:5001/api/v0');
   const [currentStep, setCurrentStep] = useState(0);
+  const [subStep, setSubStep] = useState(0);
   const [title, setTitle] = useState('');
   const [text, setText] = useState('');
   // need it for state? We are returning the hash after upload...
@@ -344,7 +294,7 @@ const Create = () => {
         setLoading,
         PendingToast,
         (x, y, z) => {
-          setCurrentStep(currentStep + 1);
+          setSubStep(subStep + 1);
           // @ts-ignore
           return <SuccessToast chainId={x} hash={y} customMessage={z} />;
         }
@@ -355,7 +305,7 @@ const Create = () => {
           console.log({e});
           toast.error('Something went wrong');
         });
-  }, [daoContract, createSetGenre, genre, setLoading, currentStep]);
+  }, [daoContract, createSetGenre, genre, setLoading, subStep]);
 
   const handleSetSubtitle = useCallback(async() => {
       createSetSubtitle(
@@ -364,7 +314,7 @@ const Create = () => {
         setLoading,
         PendingToast,
         (x, y, z) => {
-          setCurrentStep(currentStep + 1);
+          setSubStep(subStep + 1);
           // @ts-ignore
           return <SuccessToast chainId={x} hash={y} customMessage={z} />
         }
@@ -384,7 +334,7 @@ const Create = () => {
       setLoading,
       PendingToast,
       (x, y, z) => {
-        setCurrentStep(currentStep + 1);
+        setSubStep(subStep + 1);
         // @ts-ignore
         return <SuccessToast chainId={x} hash={y} customMessage={z} />
       }
@@ -415,7 +365,7 @@ const allContributors = useMemo(async() => {
         setContributor(contribInitialState);
         setContributorIndex(contributorIndex + 1);
         setContributorList([...contributorList, contributor]);
-        contributorIndex == 2 && setCurrentStep(currentStep + 1);
+        contributorIndex == 2 && setSubStep(subStep + 1);
         // @ts-ignore
         return <SuccessToast chainId={x} hash={y} customMessage={z} />
       }
@@ -552,7 +502,7 @@ const allContributors = useMemo(async() => {
           />
           <SubmitButton
             disabled={!agreed}
-            style={{ marginBlockEnd: '0' }}
+            style={{ marginBlockEnd: '0', minWidth: '182px' }}
             onClick={createDao}
           >
             {'Create Project'}
@@ -584,16 +534,17 @@ const allContributors = useMemo(async() => {
           The Dao smart contract for your project was created!
           The address is:
         </InputDescription>
-        <ReviewItem style={{ marginBlockEnd: '1rem' }}>
+        <ReviewItem style={{ marginBlockEnd: '1rem', overflowWrap: 'anywhere' }}>
           {daoAddress}
         </ReviewItem>
-
         <InputDescription style={{ textAlign: 'center', maxWidth: 500 }}>
           {`We will guide you to the page, where you can see a dashboard of your project, in a minute. But first let's configure some more things. All of them are OPTIONAL, so you can skip them if you like.`}
         </InputDescription>
-
         <SubmitButton
-          onClick={() => setCurrentStep(currentStep + 1)}
+          onClick={() => {
+            setCurrentStep(currentStep + 1);
+            setSubStep(subStep + 1);
+          }}
         >
           {'Continue'}
         </SubmitButton>
@@ -618,7 +569,7 @@ const allContributors = useMemo(async() => {
         <FlexContainer>
           <SubmitButton
             style={{marginInlineEnd: '1rem'}}
-            onClick={() => setCurrentStep(currentStep + 1)}
+            onClick={() => setSubStep(subStep + 1)}
             disabled={loading}
           >
             {'Skip'}
@@ -626,8 +577,9 @@ const allContributors = useMemo(async() => {
           <SubmitButton
             onClick={handleSetGenre}
             disabled={loading || (genre.length < 3)}
+            style={{ minWidth: '182px' }}
           >
-            {loading ? <Loading height={10} /> : 'Set Genre'}
+            {loading ? <Loading height={20} dotHeight={20} /> : 'Set Genre'}
           </SubmitButton>
         </FlexContainer>
       </Wrapper>
@@ -650,7 +602,7 @@ const allContributors = useMemo(async() => {
         <FlexContainer>
           <SubmitButton
             style={{marginInlineEnd: '1rem'}}
-            onClick={() => setCurrentStep(currentStep + 1)}
+            onClick={() => setSubStep(subStep + 1)}
             disabled={loading}
           >
             {'Skip'}
@@ -658,8 +610,9 @@ const allContributors = useMemo(async() => {
           <SubmitButton
             onClick={handleSetSubtitle}
             disabled={loading || (subtitle.length < 1)}
+            style={{ minWidth: '182px' }}
           >
-            {loading ? <Loading height={20} /> : 'Set Subtitle'}
+            {loading ? <Loading height={20} dotHeight={20} /> : 'Set Subtitle'}
           </SubmitButton>
         </FlexContainer>
       </Wrapper>
@@ -684,7 +637,7 @@ const allContributors = useMemo(async() => {
         <FlexContainer>
           <SubmitButton
             style={{marginInlineEnd: '1rem'}}
-            onClick={() => setCurrentStep(currentStep + 1)}
+            onClick={() => setSubStep(subStep + 1)}
             disabled={loading}
           >
             {'Skip'}
@@ -692,8 +645,9 @@ const allContributors = useMemo(async() => {
           <SubmitButton
             onClick={handleSetAuthorMaxClaimable}
             disabled={loading || authorMaxClaimable == 0 || authorMaxClaimable >= firstEdMaxAmount}
+            style={{ minWidth: '182px' }}
           >
-            {loading ? <Loading height={20} /> : 'Set Reserved Amount'}
+            {loading ? <Loading height={20} dotHeight={20} /> : 'Set Reserved Amount'}
           </SubmitButton>
         </FlexContainer>
       </Wrapper>
@@ -734,6 +688,7 @@ const allContributors = useMemo(async() => {
           </SpecialShare>
           <ContribInputContainer>
             <InputField
+              label={'Contributor Address:'}
               disabled={loading}
               onChange={(e) =>
                 setContributor({ ...contributor, address: e.target.value })
@@ -743,6 +698,7 @@ const allContributors = useMemo(async() => {
               // TODO: validation: is not an address.
             />
             <InputField
+              label={'Contributor Share in %:'}
               disabled={loading}
               onChange={(e) => {
                 const inputVal = Number(e.target.value.replace(/[^0-9]/g, ''));
@@ -758,7 +714,6 @@ const allContributors = useMemo(async() => {
                 setShowInputError((85 - otherShares) < 0);
               }}
               placeholder={'10%'}
-              style={{ marginInlineStart: '1rem' }}
               value={contributor.share}
               // TODO only full numbers
             />
@@ -771,7 +726,7 @@ const allContributors = useMemo(async() => {
           <ContribButtonContainer>
             <SubmitButton
               style={{ marginInlineEnd: '1rem' }}
-              onClick={() => setCurrentStep(currentStep + 1)}
+              onClick={() => setSubStep(subStep + 1)}
               disabled={loading}
             >
               {contributorIndex > 0 ? 'Continue' : 'Skip'}
@@ -779,8 +734,9 @@ const allContributors = useMemo(async() => {
             <SubmitButton
               onClick={handleSetContributors}
               disabled={loading || contributorIndex == 3 || shareSelf <= 0}
+              style={{ minWidth: '182px' }}
             >
-              {loading ? <Loading height={20} /> : 'Set Contributors'}
+              {loading ? <Loading height={20} dotHeight={20} /> : 'Set Contributors'}
             </SubmitButton>{' '}
           </ContribButtonContainer>
         </CTAContainer>
@@ -789,16 +745,23 @@ const allContributors = useMemo(async() => {
   );
 
   const YourFinished = () => {
-    return(
-      <div>You're finished </div>
+    return (
+      <FadeIn>
+        <Wrapper>
+          <InputName>DONE!</InputName>
+          <InputDescription>
+            {`You have completed configuring your Project's DAO Contract`}
+          </InputDescription>
+        </Wrapper>
+      </FadeIn>
     );
   };
 
   return (
     <Root>
-      {/* <ProgressBarWrapper>
-        <CreateProgressBar currentStep={currentStep}/>
-      </ProgressBarWrapper> */}
+      <ProgressBarWrapper>
+        <CreateProgressBar currentStep={currentStep} />
+      </ProgressBarWrapper>
       <FormWrapper>
         <Form>
           {currentStep === 0 && !creatingDao && NameForm()}
@@ -808,11 +771,11 @@ const allContributors = useMemo(async() => {
           {currentStep === 4 && !creatingDao && ReviewForm()}
           {creatingDao && <Waiting />}
           {currentStep === 5 && !creatingDao && Congrats()}
-          {currentStep === 6 && !creatingDao && GenreForm()}
-          {currentStep === 7 && !creatingDao && SubTitleForm()}
-          {currentStep === 8 && !creatingDao && AuthorMaxClaimableForm()}
-          {currentStep === 9 && !creatingDao && ContributorsForm()}
-          {currentStep === 10 && !creatingDao && YourFinished()}
+          {currentStep === 6 && subStep === 1 && !creatingDao && GenreForm()}
+          {currentStep === 6 && subStep === 2 && !creatingDao && SubTitleForm()}
+          {currentStep === 6 && subStep === 3 && !creatingDao && AuthorMaxClaimableForm()}
+          {currentStep === 6 && subStep === 4 && !creatingDao && ContributorsForm()}
+          {currentStep === 6 && subStep === 5 && !creatingDao && YourFinished()}
         </Form>
       </FormWrapper>
     </Root>

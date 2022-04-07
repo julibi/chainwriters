@@ -4,10 +4,12 @@ import { BASE_BOX_SHADOW, INSET_BASE_BOX_SHADOW } from '../themes';
 
 interface LoadingProps {
   height: number;
+  dotHeight?: number;
 }
 
 interface DotProps {
   index: number;
+  dotHeight: number;
 }
 
 const Root = styled.div<LoadingProps>`
@@ -18,8 +20,8 @@ const Root = styled.div<LoadingProps>`
 `;
 
 const Dot = styled.span<DotProps>`
-  height: 40px;
-  width: 40px;
+  height: ${p => p.dotHeight}px;
+  width: ${p => p.dotHeight}px;
   margin: 0 15px;
   border-radius: 40px;
   box-shadow: ${BASE_BOX_SHADOW};
@@ -36,12 +38,12 @@ const Dot = styled.span<DotProps>`
   }
 `;
 
-const Loading = ({height}: LoadingProps) => {
+const Loading = ({height, dotHeight = 40}: LoadingProps) => {
   return (
-    <Root height={height}>
-      <Dot index={0} />
-      <Dot index={1} />
-      <Dot index={2} />
+    <Root height={height} dotHeight={dotHeight}>
+      <Dot index={0} dotHeight={dotHeight} />
+      <Dot index={1} dotHeight={dotHeight} />
+      <Dot index={2} dotHeight={dotHeight} />
     </Root>
   )
 }

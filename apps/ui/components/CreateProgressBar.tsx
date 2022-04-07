@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { BASE_BORDER_RADIUS, BASE_BOX_SHADOW, BG_DARK, INSET_BASE_BOX_SHADOW, PINK } from '../themes';
+import { BG_DARK, PINK } from '../themes';
 
 const Root = styled.div`
   display: flex;
@@ -21,8 +21,8 @@ const Fill = styled.div`
 `;
 
 const Inside = styled.div`
-  height: 70%;
-  width: 98%;
+  height: 85%;
+  width: 97%;
   background-color: ${PINK};
   border-radius: .8rem; 
   box-shadow: 0px 0px 50px 4px ${PINK};
@@ -35,9 +35,13 @@ interface CreateProgressBarProps {
 const CreateProgressBar = ({currentStep}: CreateProgressBarProps) => {
   return (
     <Root>
+      <Fill>{currentStep >= 0 && <Inside />}</Fill>
       <Fill>{currentStep >= 1 && <Inside />}</Fill>
       <Fill>{currentStep >= 2 && <Inside />}</Fill>
       <Fill>{currentStep >= 3 && <Inside />}</Fill>
+      <Fill>{currentStep >= 4 && <Inside />}</Fill>
+      <Fill>{currentStep >= 5 && <Inside />}</Fill>
+      <Fill>{currentStep >= 6 && <Inside />}</Fill>
     </Root>
   )
 }
