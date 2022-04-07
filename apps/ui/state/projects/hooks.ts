@@ -56,9 +56,9 @@ export const GET_ONE_DAO = gql`
       genre
       subtitle
       createdAt
-      # fundedAmount
-      # firstEditionMax
-      # mintPrice
+      fundedAmount
+      firstEditionMax
+      mintPrice
     }
   }
 `;
@@ -108,19 +108,25 @@ export const useGetProjectDetails = () => {
           methodName: "contributors",
           methodParameters: [1]
         },
+        {
+          reference: "contributor3",
+          methodName: "contributors",
+          methodParameters: [2]
+        },
         
       ]
     };
     const results = await multicall.call(multicallContext);
+    const addressLow = address.toLowerCase();
     // not using useQuery here, because we have to wait for the the var `address`,
     // and int main body or custom hook it cannot be present from the start
     const {
-      data: { daos }
+      data: { dao }
     } = await client.query({
       query: GET_ONE_DAO,
-      variables: { address }
+      variables: { address: addressLow }
     });
     // TODO - also fetch all contributors of that project
-    return { results, daos };
+    return { results, dao };
   };
 };

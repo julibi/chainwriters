@@ -1,4 +1,5 @@
 import React, { FormEvent, useCallback, useMemo, useState } from 'react'
+import { useRouter } from 'next/router'
 import styled from 'styled-components'
 import { create } from 'ipfs-http-client'
 import { toast } from 'react-toastify'
@@ -212,6 +213,7 @@ const ContribButtonContainer = styled(FlexContainer)`
 `;
 
 const Create = () => {
+  const router = useRouter();
   const { chainId } = useWeb3React();
   const FactoryContract = useFactoryContract();
   // @ts-ignore
@@ -750,8 +752,15 @@ const allContributors = useMemo(async() => {
         <Wrapper>
           <InputName>DONE!</InputName>
           <InputDescription>
-            {`You have completed configuring your Project's DAO Contract`}
+            {`You have completed configuring your Project's DAO Contract. Visit your newly created Project page.`}
           </InputDescription>
+          <SubmitButton onClick={(e) => {
+              e.preventDefault()
+              router.push(`projects/${daoAddress}`)
+            }}
+          >
+            SEE PROJECT
+          </SubmitButton>
         </Wrapper>
       </FadeIn>
     );
