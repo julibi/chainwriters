@@ -10,11 +10,12 @@ const StyledSVG = styled.svg`
 
 const MyCircle = styled.circle`
   fill: none;
-  stroke: ${PINK};
+  stroke: url(#GradientColor);
   stroke-width: 70px;
   stroke-dasharray: 502px;
   stroke-dashoffset: 502px;
   animation: anim 1s ease-in forwards;
+  animation-delay: 0.5s;
 
   @keyframes anim {
     100% {
@@ -33,8 +34,8 @@ const Circle = () => {
       >
       <defs>
         <linearGradient id="GradientColor">
-          <stop offset="0%" stopColor="#e91e63" />
-          <stop offset="100%" stopColor="#673ab7" />
+          <stop offset="0%" stopColor="#673ab7" />
+          <stop offset="100%" stopColor={PINK} />
         </linearGradient>
       </defs>
       <MyCircle cx="120" cy="120" r="80"  />

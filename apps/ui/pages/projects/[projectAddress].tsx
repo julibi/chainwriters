@@ -41,6 +41,13 @@ const MainInfoWrapper = styled.section`
   width: 90%;
   max-width: 1200px;
   color: ${PLAIN_WHITE};
+  
+  animation: fadein 2s;
+
+  @keyframes fadein {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+  }
 `;
 
 const InfoLeft = styled.div`
@@ -80,7 +87,7 @@ const FlexWrapper = styled.div`
   justify-content: space-between;
 `;
 
-const OuterPie = styled.div`
+const Pie = styled.div`
   width: 242px;
   height: 242px;
   border-radius: 50%;
@@ -92,16 +99,23 @@ const OuterPie = styled.div`
   align-items: center;
 `;
 
-const InnerPie = styled.div`
-  width: 70px;
-  height: 70px;
+const PieHole = styled.div`
+  width: 78px;
+  height: 78px;
   border-radius: 50%;
   box-shadow: ${INSET_BASE_BOX_SHADOW};
   position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const PieHoleData = styled.div`
+  text-align: center;
 `;
 
 const StyledCircle = styled(Circle)`
-
+  box-shadow: 0px 0px 50px 4px ${PINK};
 `;
 
 const ProjectDetailView = () => {
@@ -141,10 +155,12 @@ const ProjectDetailView = () => {
                 daoData.mintPrice
               )} MATIC`}</Info>
             </FlexWrapper>
-            <OuterPie>
+            <Pie>
               <StyledCircle />
-              <InnerPie />
-            </OuterPie>
+              <PieHole>
+                <PieHoleData>{`${daoData.fundedAmount}/${daoData.firstEditionMax} Spots Taken`}</PieHoleData>
+              </PieHole>
+            </Pie>
           </InfoLeft>
           <InfoRight>
             <Image
