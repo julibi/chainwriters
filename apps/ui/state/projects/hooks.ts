@@ -1,6 +1,5 @@
 import { gql, useQuery } from '@apollo/client'
-import { useCallback } from 'react';
-import { ContractCallContext, Multicall } from 'ethereum-multicall'
+import { Multicall } from 'ethereum-multicall'
 import client from '../../apolloclient'
 import { JsonRpcProvider } from '@ethersproject/providers'
 import { RPC_URLS } from '../../connectors'

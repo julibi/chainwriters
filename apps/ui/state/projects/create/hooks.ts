@@ -1,6 +1,6 @@
 import { useWeb3React } from '@web3-react/core'
 import { toast } from 'react-toastify'
-import { Contributor, ContributorsMapping } from 'apps/ui/pages/create';
+import { Contributor } from '../../../pages/create';
 
 export const useCreateSetGenre = () => {
   const { chainId } = useWeb3React();
