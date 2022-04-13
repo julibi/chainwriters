@@ -8,9 +8,9 @@ dataSources:
     name: MoonlitFactory
     network: mumbai
     source:
-      address: "0xeF6818c57010a3E7718e52Fe7C3538D57a8D1c09"
+      address: "0x5B6636472ae8CBAA441DB10c8Cf7ceE3d029046a"
       abi: MoonlitFactory
-      startBlock: 10362000
+      startBlock: 25915255
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -48,11 +48,15 @@ templates:
           handler: handleDeposited
         - event: FundingEnded(bool)
           handler: handleFundingEnded
+        - event: ImgSet(string)
+          handler: handleImgHashSet
+        - event: BlurbSet(string)
+          handler: handleBlurbHashSet
         - event: GenreSet(string)
           handler: handleGenreSet
         - event: SubtitleSet(string)
           handler: handleSubtitleSet
-        - event: URISet(string)
-          handler: handleURISet
+        - event: TextSet(string)
+          handler: handleTextSet
         - event: ContributorAdded(address,uint256,string)
           handler: handleContributorAdded

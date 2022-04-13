@@ -13,7 +13,7 @@ contract MoonlitFactory is IMoonlitFactory {
     address indexed caller,
     address indexed dao,
     string title,
-    string ipfsLink,
+    string textIpfsHash,
     uint256 initialMintPrice,
     uint256 firstEditionAmount
   );
@@ -29,7 +29,7 @@ contract MoonlitFactory is IMoonlitFactory {
 
   function createDao(
     string calldata _title,
-    string calldata _ipfsLink,
+    string calldata _textIpfsHash,
     uint256 _initialMintPrice,
     uint256 _firstEditionAmount
   ) public returns (address) {
@@ -38,7 +38,7 @@ contract MoonlitFactory is IMoonlitFactory {
     MoonlitDao moonlitDao = new MoonlitDao(
       _title,
       msg.sender,
-      _ipfsLink,
+      _textIpfsHash,
       _initialMintPrice,
       _firstEditionAmount,
       address(this)
@@ -48,7 +48,7 @@ contract MoonlitFactory is IMoonlitFactory {
       msg.sender,
       address(moonlitDao),
       _title,
-      _ipfsLink,
+      _textIpfsHash,
       _initialMintPrice,
       _firstEditionAmount);
     return address(moonlitDao);

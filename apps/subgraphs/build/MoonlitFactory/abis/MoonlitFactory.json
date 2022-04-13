@@ -28,7 +28,7 @@
       {
         "indexed": false,
         "internalType": "string",
-        "name": "ipfsLink",
+        "name": "textIpfsHash",
         "type": "string"
       },
       {
@@ -56,7 +56,7 @@
       },
       {
         "internalType": "string",
-        "name": "_ipfsLink",
+        "name": "_textIpfsHash",
         "type": "string"
       },
       {

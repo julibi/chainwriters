@@ -2,7 +2,7 @@
 pragma solidity ^0.8.9;
 
 interface IMoonlitFactory {
-  function createDao ( string calldata _title, string calldata _ipfsLink, uint256 _initialMintPrice, uint256 _firstEditionAmount ) external returns ( address );
+  function createDao ( string calldata _title, string calldata _textIpfsHash, uint256 _initialMintPrice, uint256 _firstEditionAmount ) external returns ( address );
   function firstEditionMax (  ) external view returns ( uint256 );
   function firstEditionMin (  ) external view returns ( uint256 );
   function moonlitDaos ( uint256 ) external view returns ( address );

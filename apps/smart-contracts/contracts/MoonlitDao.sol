@@ -6,6 +6,8 @@ import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
 
 // should it be ownable?
+// Doo : what about the metadata
+// _setURI(_ipfsHash);
 
 contract MoonlitDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
   bytes32 public constant AUTHOR_ROLE = keccak256("AUTHOR_ROLE"); 
@@ -16,7 +18,9 @@ contract MoonlitDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
     string subtitle;
     string genre;
     address author_address;
-    bytes ipfsLink;
+    string textIpfsHash;
+    string imgIpfsHash;
+    string blurbIpfsHash;
   }
 
   struct AuthorShare {
@@ -34,7 +38,7 @@ contract MoonlitDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
     bool hasWithdrawnShare;
   }
 
-  Project public project = Project("", "", "", address(0), "");
+  Project public project = Project("", "", "", address(0), "", "", "");
   AuthorShare public author = AuthorShare(0, 0, false, 1, false);
   mapping(address => uint256) public investments;
   mapping(uint256 => Contribution) public contributors;
@@ -55,9 +59,11 @@ contract MoonlitDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
   // bool public paused = true;
   event Deposited(uint256 fundedAmount);
   event FundingEnded(bool finished);
+  event ImgSet(string imgHash);
+  event BlurbSet(string blurbHash);
   event GenreSet(string newGenre);
   event SubtitleSet(string newSubtitle);
-  event URISet(string ipfsHash);
+  event TextSet(string textHash);
   event ContributorAdded(address contributor, uint256 share, string role);
 
   modifier whenInvestingFinished {
@@ -71,14 +77,14 @@ contract MoonlitDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
   }
 
     modifier isBeforeInvesting {
-    require(fundedAmount == 0, "Invested has already started");
+    require(fundedAmount == 0, "Investing has already started");
     _;
   }
 
   constructor(
       string memory _title,
       address _author_address,
-      string memory _ipfsLink,
+      string memory _textIpfsHash,
       uint256 _initialMintPrice,
       uint256 _firstEditionMax,
       address _factory
@@ -86,7 +92,7 @@ contract MoonlitDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
         // is it ok to give MOONLIT_FOUNDATION_ADDRESS DEFAULT_ADMIN_ROLE and they have the ability to freeze the contract?
         _setupRole(DEFAULT_ADMIN_ROLE, _author_address);
         _setupRole(AUTHOR_ROLE, _author_address);
-        _setURI(_ipfsLink);
+        project.textIpfsHash = _textIpfsHash;
         project.title = _title;
         project.author_address = _author_address;
         INITIAL_MINT_PRICE = _initialMintPrice;
@@ -198,6 +204,21 @@ contract MoonlitDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
     emit ContributorAdded(_contributor, _share, "");
   }
 
+  function setTextIpfsHash(string memory _ipfsHash) public onlyRole(AUTHOR_ROLE) isBeforeInvesting {
+    project.textIpfsHash = _ipfsHash; 
+    emit TextSet(_ipfsHash);
+  }
+
+  function setImgIpfsHash(string calldata _imgHash) external onlyRole(AUTHOR_ROLE) {
+    project.imgIpfsHash = _imgHash;
+    emit ImgSet(_imgHash);
+  }
+
+  function setBlurbIpfsHash(string calldata _blurbHash) external onlyRole(AUTHOR_ROLE) {
+    project.blurbIpfsHash = _blurbHash;
+    emit BlurbSet(_blurbHash);
+  }
+
   function setGenre(string memory _genre) external onlyRole(AUTHOR_ROLE) {
     project.genre = _genre;
     emit GenreSet(_genre);
@@ -212,12 +233,6 @@ contract MoonlitDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
     require(_amount < currentEditionMax, "Too many");
     
     author.genesisEditionReserved = _amount;
-  }
-
-  function setHash(string memory _ipfsHash) public onlyRole(AUTHOR_ROLE) isBeforeInvesting {
-    // ipfshash is bytes but uri is string...
-    _setURI(_ipfsHash);
-    emit URISet(_ipfsHash);
   }
 
   function withdrawShareAuthor(address _to) external whenInvestingFinished onlyRole(AUTHOR_ROLE) {

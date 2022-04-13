@@ -35,7 +35,7 @@ export class DaoInstantiated__Params {
     return this._event.parameters[2].value.toString();
   }
 
-  get ipfsLink(): string {
+  get textIpfsHash(): string {
     return this._event.parameters[3].value.toString();
   }
 
@@ -55,7 +55,7 @@ export class MoonlitFactory extends ethereum.SmartContract {
 
   createDao(
     _title: string,
-    _ipfsLink: string,
+    _textIpfsHash: string,
     _initialMintPrice: BigInt,
     _firstEditionAmount: BigInt
   ): Address {
@@ -64,7 +64,7 @@ export class MoonlitFactory extends ethereum.SmartContract {
       "createDao(string,string,uint256,uint256):(address)",
       [
         ethereum.Value.fromString(_title),
-        ethereum.Value.fromString(_ipfsLink),
+        ethereum.Value.fromString(_textIpfsHash),
         ethereum.Value.fromUnsignedBigInt(_initialMintPrice),
         ethereum.Value.fromUnsignedBigInt(_firstEditionAmount)
       ]
@@ -75,7 +75,7 @@ export class MoonlitFactory extends ethereum.SmartContract {
 
   try_createDao(
     _title: string,
-    _ipfsLink: string,
+    _textIpfsHash: string,
     _initialMintPrice: BigInt,
     _firstEditionAmount: BigInt
   ): ethereum.CallResult<Address> {
@@ -84,7 +84,7 @@ export class MoonlitFactory extends ethereum.SmartContract {
       "createDao(string,string,uint256,uint256):(address)",
       [
         ethereum.Value.fromString(_title),
-        ethereum.Value.fromString(_ipfsLink),
+        ethereum.Value.fromString(_textIpfsHash),
         ethereum.Value.fromUnsignedBigInt(_initialMintPrice),
         ethereum.Value.fromUnsignedBigInt(_firstEditionAmount)
       ]
@@ -226,7 +226,7 @@ export class CreateDaoCall__Inputs {
     return this._call.inputValues[0].value.toString();
   }
 
-  get _ipfsLink(): string {
+  get _textIpfsHash(): string {
     return this._call.inputValues[1].value.toString();
   }
 

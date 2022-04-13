@@ -20,7 +20,7 @@ export class Dao extends Entity {
     this.set("address", Value.fromBytes(Bytes.empty()));
     this.set("createdAt", Value.fromBigInt(BigInt.zero()));
     this.set("title", Value.fromString(""));
-    this.set("ipfsLink", Value.fromString(""));
+    this.set("textIpfsHash", Value.fromString(""));
     this.set("fundingEnded", Value.fromBoolean(false));
     this.set("firstEditionMax", Value.fromBigInt(BigInt.zero()));
     this.set("fundedAmount", Value.fromBigInt(BigInt.zero()));
@@ -89,13 +89,13 @@ export class Dao extends Entity {
     this.set("title", Value.fromString(value));
   }
 
-  get ipfsLink(): string {
-    let value = this.get("ipfsLink");
+  get textIpfsHash(): string {
+    let value = this.get("textIpfsHash");
     return value!.toString();
   }
 
-  set ipfsLink(value: string) {
-    this.set("ipfsLink", Value.fromString(value));
+  set textIpfsHash(value: string) {
+    this.set("textIpfsHash", Value.fromString(value));
   }
 
   get fundingEnded(): boolean {
@@ -132,6 +132,40 @@ export class Dao extends Entity {
 
   set mintPrice(value: BigInt) {
     this.set("mintPrice", Value.fromBigInt(value));
+  }
+
+  get imgIpfsHash(): string | null {
+    let value = this.get("imgIpfsHash");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set imgIpfsHash(value: string | null) {
+    if (!value) {
+      this.unset("imgIpfsHash");
+    } else {
+      this.set("imgIpfsHash", Value.fromString(<string>value));
+    }
+  }
+
+  get blurbIpfsHash(): string | null {
+    let value = this.get("blurbIpfsHash");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set blurbIpfsHash(value: string | null) {
+    if (!value) {
+      this.unset("blurbIpfsHash");
+    } else {
+      this.set("blurbIpfsHash", Value.fromString(<string>value));
+    }
   }
 
   get subtitle(): string | null {

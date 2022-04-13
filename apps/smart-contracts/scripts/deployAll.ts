@@ -21,12 +21,12 @@ async function deployAll() {
   
   // // Dao arguments
   const title = "My little Phony";
-  const ipfsLink = "phonyipfsLink";
+  const textIpfsHash = "QmTw3pWBQinwuHS57FcWyUGBpvGqLHQZkn1eKjp89XXyFg";
   const initialMintPrice = hre.ethers.utils.parseUnits("0.05", 18);
   const firstEditionMax = 4;
   
   // deploy dao
-  const tx = await MoonlitFactory.createDao(title, ipfsLink, initialMintPrice, firstEditionMax);
+  const tx = await MoonlitFactory.createDao(title, textIpfsHash, initialMintPrice, firstEditionMax);
   const receipt = await tx.wait();
   const daoCreationEvent = receipt.events?.find((event:any) => event.event === 'DaoInstantiated');
   const daoAddress = daoCreationEvent.args[1];
@@ -44,7 +44,7 @@ async function deployAll() {
   }),
   hre.run("verify:verify", {
     address: daoAddress,
-    constructorArguments: [title, deployer.address, ipfsLink, initialMintPrice, firstEditionMax, MoonlitFactory.address],
+    constructorArguments: [title, deployer.address, textIpfsHash, initialMintPrice, firstEditionMax, MoonlitFactory.address],
   })
   ])
 }

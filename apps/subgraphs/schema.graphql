@@ -4,11 +4,13 @@ type Dao @entity {
   address: Bytes!
   createdAt: BigInt!
   title: String!
-  ipfsLink: String!
+  textIpfsHash: String!
   fundingEnded: Boolean!
   firstEditionMax: BigInt!
   fundedAmount: BigInt!
   mintPrice: BigInt!
+  imgIpfsHash: String
+  blurbIpfsHash: String
   subtitle: String
   genre: String
   # TODO how to make contributor an array of contribution with its dao being dao

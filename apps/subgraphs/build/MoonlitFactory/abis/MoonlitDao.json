@@ -13,7 +13,7 @@
       },
       {
         "internalType": "string",
-        "name": "_ipfsLink",
+        "name": "_textIpfsHash",
         "type": "string"
       },
       {
@@ -58,6 +58,19 @@
       }
     ],
     "name": "ApprovalForAll",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "blurbHash",
+        "type": "string"
+      }
+    ],
+    "name": "BlurbSet",
     "type": "event"
   },
   {
@@ -122,6 +135,19 @@
       }
     ],
     "name": "GenreSet",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "imgHash",
+        "type": "string"
+      }
+    ],
+    "name": "ImgSet",
     "type": "event"
   },
   {
@@ -216,6 +242,19 @@
     "anonymous": false,
     "inputs": [
       {
+        "indexed": false,
+        "internalType": "string",
+        "name": "textHash",
+        "type": "string"
+      }
+    ],
+    "name": "TextSet",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
         "indexed": true,
         "internalType": "address",
         "name": "operator",
@@ -303,19 +342,6 @@
       }
     ],
     "name": "URI",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "string",
-        "name": "ipfsHash",
-        "type": "string"
-      }
-    ],
-    "name": "URISet",
     "type": "event"
   },
   {
@@ -855,9 +881,19 @@
         "type": "address"
       },
       {
-        "internalType": "bytes",
-        "name": "ipfsLink",
-        "type": "bytes"
+        "internalType": "string",
+        "name": "textIpfsHash",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "imgIpfsHash",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "blurbIpfsHash",
+        "type": "string"
       }
     ],
     "stateMutability": "view",
@@ -1000,6 +1036,19 @@
     "inputs": [
       {
         "internalType": "string",
+        "name": "_blurbHash",
+        "type": "string"
+      }
+    ],
+    "name": "setBlurbIpfsHash",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
         "name": "_genre",
         "type": "string"
       }
@@ -1013,11 +1062,11 @@
     "inputs": [
       {
         "internalType": "string",
-        "name": "_ipfsHash",
+        "name": "_imgHash",
         "type": "string"
       }
     ],
-    "name": "setHash",
+    "name": "setImgIpfsHash",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1044,6 +1093,19 @@
       }
     ],
     "name": "setSubtitle",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_ipfsHash",
+        "type": "string"
+      }
+    ],
+    "name": "setTextIpfsHash",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

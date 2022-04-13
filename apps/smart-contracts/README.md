@@ -61,4 +61,4 @@ run `npx hardhat clean`
 
 For generating Interfaces
 
-run `yarn hardhat gen-interface <contractname>`
+run `npm hardhat gen-interface <contractname>`

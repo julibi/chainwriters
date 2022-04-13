@@ -36,6 +36,24 @@ export class ApprovalForAll__Params {
   }
 }
 
+export class BlurbSet extends ethereum.Event {
+  get params(): BlurbSet__Params {
+    return new BlurbSet__Params(this);
+  }
+}
+
+export class BlurbSet__Params {
+  _event: BlurbSet;
+
+  constructor(event: BlurbSet) {
+    this._event = event;
+  }
+
+  get blurbHash(): string {
+    return this._event.parameters[0].value.toString();
+  }
+}
+
 export class ContributorAdded extends ethereum.Event {
   get params(): ContributorAdded__Params {
     return new ContributorAdded__Params(this);
@@ -112,6 +130,24 @@ export class GenreSet__Params {
   }
 
   get newGenre(): string {
+    return this._event.parameters[0].value.toString();
+  }
+}
+
+export class ImgSet extends ethereum.Event {
+  get params(): ImgSet__Params {
+    return new ImgSet__Params(this);
+  }
+}
+
+export class ImgSet__Params {
+  _event: ImgSet;
+
+  constructor(event: ImgSet) {
+    this._event = event;
+  }
+
+  get imgHash(): string {
     return this._event.parameters[0].value.toString();
   }
 }
@@ -212,6 +248,24 @@ export class SubtitleSet__Params {
   }
 }
 
+export class TextSet extends ethereum.Event {
+  get params(): TextSet__Params {
+    return new TextSet__Params(this);
+  }
+}
+
+export class TextSet__Params {
+  _event: TextSet;
+
+  constructor(event: TextSet) {
+    this._event = event;
+  }
+
+  get textHash(): string {
+    return this._event.parameters[0].value.toString();
+  }
+}
+
 export class TransferBatch extends ethereum.Event {
   get params(): TransferBatch__Params {
     return new TransferBatch__Params(this);
@@ -302,24 +356,6 @@ export class URI__Params {
   }
 }
 
-export class URISet extends ethereum.Event {
-  get params(): URISet__Params {
-    return new URISet__Params(this);
-  }
-}
-
-export class URISet__Params {
-  _event: URISet;
-
-  constructor(event: URISet) {
-    this._event = event;
-  }
-
-  get ipfsHash(): string {
-    return this._event.parameters[0].value.toString();
-  }
-}
-
 export class MoonlitDao__authorResult {
   value0: BigInt;
   value1: BigInt;
@@ -385,20 +421,26 @@ export class MoonlitDao__projectResult {
   value1: string;
   value2: string;
   value3: Address;
-  value4: Bytes;
+  value4: string;
+  value5: string;
+  value6: string;
 
   constructor(
     value0: string,
     value1: string,
     value2: string,
     value3: Address,
-    value4: Bytes
+    value4: string,
+    value5: string,
+    value6: string
   ) {
     this.value0 = value0;
     this.value1 = value1;
     this.value2 = value2;
     this.value3 = value3;
     this.value4 = value4;
+    this.value5 = value5;
+    this.value6 = value6;
   }
 
   toMap(): TypedMap<string, ethereum.Value> {
@@ -407,7 +449,9 @@ export class MoonlitDao__projectResult {
     map.set("value1", ethereum.Value.fromString(this.value1));
     map.set("value2", ethereum.Value.fromString(this.value2));
     map.set("value3", ethereum.Value.fromAddress(this.value3));
-    map.set("value4", ethereum.Value.fromBytes(this.value4));
+    map.set("value4", ethereum.Value.fromString(this.value4));
+    map.set("value5", ethereum.Value.fromString(this.value5));
+    map.set("value6", ethereum.Value.fromString(this.value6));
     return map;
   }
 }
@@ -942,7 +986,7 @@ export class MoonlitDao extends ethereum.SmartContract {
   project(): MoonlitDao__projectResult {
     let result = super.call(
       "project",
-      "project():(string,string,string,address,bytes)",
+      "project():(string,string,string,address,string,string,string)",
       []
     );
 
@@ -951,14 +995,16 @@ export class MoonlitDao extends ethereum.SmartContract {
       result[1].toString(),
       result[2].toString(),
       result[3].toAddress(),
-      result[4].toBytes()
+      result[4].toString(),
+      result[5].toString(),
+      result[6].toString()
     );
   }
 
   try_project(): ethereum.CallResult<MoonlitDao__projectResult> {
     let result = super.tryCall(
       "project",
-      "project():(string,string,string,address,bytes)",
+      "project():(string,string,string,address,string,string,string)",
       []
     );
     if (result.reverted) {
@@ -971,7 +1017,9 @@ export class MoonlitDao extends ethereum.SmartContract {
         value[1].toString(),
         value[2].toString(),
         value[3].toAddress(),
-        value[4].toBytes()
+        value[4].toString(),
+        value[5].toString(),
+        value[6].toString()
       )
     );
   }
@@ -1126,7 +1174,7 @@ export class ConstructorCall__Inputs {
     return this._call.inputValues[1].value.toAddress();
   }
 
-  get _ipfsLink(): string {
+  get _textIpfsHash(): string {
     return this._call.inputValues[2].value.toString();
   }
 
@@ -1589,6 +1637,36 @@ export class SetApprovalForAllCall__Outputs {
   }
 }
 
+export class SetBlurbIpfsHashCall extends ethereum.Call {
+  get inputs(): SetBlurbIpfsHashCall__Inputs {
+    return new SetBlurbIpfsHashCall__Inputs(this);
+  }
+
+  get outputs(): SetBlurbIpfsHashCall__Outputs {
+    return new SetBlurbIpfsHashCall__Outputs(this);
+  }
+}
+
+export class SetBlurbIpfsHashCall__Inputs {
+  _call: SetBlurbIpfsHashCall;
+
+  constructor(call: SetBlurbIpfsHashCall) {
+    this._call = call;
+  }
+
+  get _blurbHash(): string {
+    return this._call.inputValues[0].value.toString();
+  }
+}
+
+export class SetBlurbIpfsHashCall__Outputs {
+  _call: SetBlurbIpfsHashCall;
+
+  constructor(call: SetBlurbIpfsHashCall) {
+    this._call = call;
+  }
+}
+
 export class SetGenreCall extends ethereum.Call {
   get inputs(): SetGenreCall__Inputs {
     return new SetGenreCall__Inputs(this);
@@ -1619,32 +1697,32 @@ export class SetGenreCall__Outputs {
   }
 }
 
-export class SetHashCall extends ethereum.Call {
-  get inputs(): SetHashCall__Inputs {
-    return new SetHashCall__Inputs(this);
+export class SetImgIpfsHashCall extends ethereum.Call {
+  get inputs(): SetImgIpfsHashCall__Inputs {
+    return new SetImgIpfsHashCall__Inputs(this);
   }
 
-  get outputs(): SetHashCall__Outputs {
-    return new SetHashCall__Outputs(this);
+  get outputs(): SetImgIpfsHashCall__Outputs {
+    return new SetImgIpfsHashCall__Outputs(this);
   }
 }
 
-export class SetHashCall__Inputs {
-  _call: SetHashCall;
+export class SetImgIpfsHashCall__Inputs {
+  _call: SetImgIpfsHashCall;
 
-  constructor(call: SetHashCall) {
+  constructor(call: SetImgIpfsHashCall) {
     this._call = call;
   }
 
-  get _ipfsHash(): string {
+  get _imgHash(): string {
     return this._call.inputValues[0].value.toString();
   }
 }
 
-export class SetHashCall__Outputs {
-  _call: SetHashCall;
+export class SetImgIpfsHashCall__Outputs {
+  _call: SetImgIpfsHashCall;
 
-  constructor(call: SetHashCall) {
+  constructor(call: SetImgIpfsHashCall) {
     this._call = call;
   }
 }
@@ -1705,6 +1783,36 @@ export class SetSubtitleCall__Outputs {
   _call: SetSubtitleCall;
 
   constructor(call: SetSubtitleCall) {
+    this._call = call;
+  }
+}
+
+export class SetTextIpfsHashCall extends ethereum.Call {
+  get inputs(): SetTextIpfsHashCall__Inputs {
+    return new SetTextIpfsHashCall__Inputs(this);
+  }
+
+  get outputs(): SetTextIpfsHashCall__Outputs {
+    return new SetTextIpfsHashCall__Outputs(this);
+  }
+}
+
+export class SetTextIpfsHashCall__Inputs {
+  _call: SetTextIpfsHashCall;
+
+  constructor(call: SetTextIpfsHashCall) {
+    this._call = call;
+  }
+
+  get _ipfsHash(): string {
+    return this._call.inputValues[0].value.toString();
+  }
+}
+
+export class SetTextIpfsHashCall__Outputs {
+  _call: SetTextIpfsHashCall;
+
+  constructor(call: SetTextIpfsHashCall) {
     this._call = call;
   }
 }

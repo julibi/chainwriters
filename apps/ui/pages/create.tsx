@@ -251,10 +251,9 @@ const Create = () => {
   const uploadText = useCallback(async () => {
     try {
       const added = await client.add(text);
-      const url = `https://ipfs.infura.io/ipfs/${added.path}`;
+      // const url = `https://ipfs.infura.io/ipfs/${added.path}`;
       // TODO what about pinning?
-      setTextIPFS(url);
-      console.log({ url });
+      setTextIPFS(added.path);
       return added.path;
     } catch (e) {
       console.log({ e });

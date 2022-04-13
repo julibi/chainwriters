@@ -1,5 +1,5 @@
 import { DaoInstantiated } from "../generated/MoonlitFactory/MoonlitFactory"
-import { Deposited, FundingEnded, GenreSet, SubtitleSet, URISet, ContributorAdded } from "../generated/templates/MoonlitDao/MoonlitDao"
+import { Deposited, FundingEnded, GenreSet, SubtitleSet, ImgSet, BlurbSet, TextSet, ContributorAdded, SafeBatchTransferFromCall } from "../generated/templates/MoonlitDao/MoonlitDao"
 import { Contribution, Dao } from "../generated/schema"
 
 export function handleDaoInstantiated(event: DaoInstantiated): void {
@@ -8,7 +8,7 @@ export function handleDaoInstantiated(event: DaoInstantiated): void {
   dao.address = event.params.dao
   dao.createdAt = event.block.timestamp
   dao.title = event.params.title
-  dao.ipfsLink = event.params.ipfsLink
+  dao.textIpfsHash = event.params.textIpfsHash
   dao.firstEditionMax = event.params.firstEditionAmount
   dao.mintPrice = event.params.initialMintPrice
   dao.fundingEnded = false
@@ -17,6 +17,8 @@ export function handleDaoInstantiated(event: DaoInstantiated): void {
 
 export function handleDeposited(event: Deposited):void {
   let dao = Dao.load(event.address.toHexString())
+  console.log(event.address.toHexString())
+  console.log(event.params.fundedAmount.toHex())
   if (!dao) return
   dao.fundedAmount = event.params.fundedAmount
   dao.save()
@@ -27,6 +29,20 @@ export function handleFundingEnded(event: FundingEnded): void {
   let dao = Dao.load(event.address.toHexString())
   if (!dao) return
   dao.fundingEnded = true
+  dao.save()
+}
+
+export function handleImgHashSet(event: ImgSet): void {
+  let dao = Dao.load(event.address.toHexString())
+  if (!dao) return
+  dao.imgIpfsHash = event.params.imgHash
+  dao.save()
+}
+
+export function handleBlurbHashSet(event: BlurbSet): void {
+  let dao = Dao.load(event.address.toHexString())
+  if (!dao) return
+  dao.blurbIpfsHash = event.params.blurbHash
   dao.save()
 }
 
@@ -44,10 +60,10 @@ export function handleSubtitleSet(event: SubtitleSet): void {
   dao.save()
 }
 
-export function handleURISet(event: URISet): void {
+export function handleTextSet(event: TextSet): void {
   let dao = Dao.load(event.address.toHexString())
   if (!dao) return
-  dao.ipfsLink = event.params.ipfsHash
+  dao.textIpfsHash = event.params.textHash
   dao.save()
 }
 
