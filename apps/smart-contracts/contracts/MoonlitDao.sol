@@ -57,6 +57,14 @@ contract MoonlitDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
   bool public shareSentToMoonlit = false;
   bool public refundEnabled = false;
   // bool public paused = true;
+  event DaoCreated(
+    address indexed caller,
+    address indexed dao,
+    string title,
+    string textIpfsHash,
+    uint256 initialMintPrice,
+    uint256 firstEditionAmount
+  );
   event Deposited(uint256 fundedAmount);
   event FundingEnded(bool finished);
   event ImgSet(string imgHash);
@@ -98,6 +106,15 @@ contract MoonlitDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
         INITIAL_MINT_PRICE = _initialMintPrice;
         currentEditionMax = _firstEditionMax;
         factory = _factory;
+
+    emit DaoCreated(
+      _author_address,
+      address(this),
+      _title,
+      _textIpfsHash,
+      _initialMintPrice,
+      _firstEditionMax
+    );
   }
 
   function deposit(uint256 _amount) external payable {
@@ -204,7 +221,7 @@ contract MoonlitDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
     emit ContributorAdded(_contributor, _share, "");
   }
 
-  function setTextIpfsHash(string memory _ipfsHash) public onlyRole(AUTHOR_ROLE) isBeforeInvesting {
+  function setTextIpfsHash(string memory _ipfsHash) external onlyRole(AUTHOR_ROLE) isBeforeInvesting {
     project.textIpfsHash = _ipfsHash; 
     emit TextSet(_ipfsHash);
   }
@@ -229,7 +246,7 @@ contract MoonlitDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
     emit SubtitleSet(_subtitle);
   }
 
-  function setMaxGenesisClaimableAuthor(uint256 _amount) public onlyRole(AUTHOR_ROLE) isBeforeInvesting {
+  function setMaxGenesisClaimableAuthor(uint256 _amount) external onlyRole(AUTHOR_ROLE) isBeforeInvesting {
     require(_amount < currentEditionMax, "Too many");
     
     author.genesisEditionReserved = _amount;
@@ -241,7 +258,7 @@ contract MoonlitDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
     author.hasWithdrawnShare = true;
   }
 
-  function enableNextEdition(uint256 _maxNftAmountOfNewEdition, uint256 _newEditionMintPrice) public onlyRole(AUTHOR_ROLE) {
+  function enableNextEdition(uint256 _maxNftAmountOfNewEdition, uint256 _newEditionMintPrice) external onlyRole(AUTHOR_ROLE) {
     if (currentEdition == 1) {
       require(investingFinished, "Investing must finish first");
     } else {

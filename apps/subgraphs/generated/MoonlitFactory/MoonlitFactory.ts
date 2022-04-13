@@ -10,90 +10,49 @@ import {
   BigInt
 } from "@graphprotocol/graph-ts";
 
-export class DaoInstantiated extends ethereum.Event {
-  get params(): DaoInstantiated__Params {
-    return new DaoInstantiated__Params(this);
+export class OwnershipTransferred extends ethereum.Event {
+  get params(): OwnershipTransferred__Params {
+    return new OwnershipTransferred__Params(this);
   }
 }
 
-export class DaoInstantiated__Params {
-  _event: DaoInstantiated;
+export class OwnershipTransferred__Params {
+  _event: OwnershipTransferred;
 
-  constructor(event: DaoInstantiated) {
+  constructor(event: OwnershipTransferred) {
+    this._event = event;
+  }
+
+  get previousOwner(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get newOwner(): Address {
+    return this._event.parameters[1].value.toAddress();
+  }
+}
+
+export class Random extends ethereum.Event {
+  get params(): Random__Params {
+    return new Random__Params(this);
+  }
+}
+
+export class Random__Params {
+  _event: Random;
+
+  constructor(event: Random) {
     this._event = event;
   }
 
   get caller(): Address {
     return this._event.parameters[0].value.toAddress();
   }
-
-  get dao(): Address {
-    return this._event.parameters[1].value.toAddress();
-  }
-
-  get title(): string {
-    return this._event.parameters[2].value.toString();
-  }
-
-  get textIpfsHash(): string {
-    return this._event.parameters[3].value.toString();
-  }
-
-  get initialMintPrice(): BigInt {
-    return this._event.parameters[4].value.toBigInt();
-  }
-
-  get firstEditionAmount(): BigInt {
-    return this._event.parameters[5].value.toBigInt();
-  }
 }
 
 export class MoonlitFactory extends ethereum.SmartContract {
   static bind(address: Address): MoonlitFactory {
     return new MoonlitFactory("MoonlitFactory", address);
-  }
-
-  createDao(
-    _title: string,
-    _textIpfsHash: string,
-    _initialMintPrice: BigInt,
-    _firstEditionAmount: BigInt
-  ): Address {
-    let result = super.call(
-      "createDao",
-      "createDao(string,string,uint256,uint256):(address)",
-      [
-        ethereum.Value.fromString(_title),
-        ethereum.Value.fromString(_textIpfsHash),
-        ethereum.Value.fromUnsignedBigInt(_initialMintPrice),
-        ethereum.Value.fromUnsignedBigInt(_firstEditionAmount)
-      ]
-    );
-
-    return result[0].toAddress();
-  }
-
-  try_createDao(
-    _title: string,
-    _textIpfsHash: string,
-    _initialMintPrice: BigInt,
-    _firstEditionAmount: BigInt
-  ): ethereum.CallResult<Address> {
-    let result = super.tryCall(
-      "createDao",
-      "createDao(string,string,uint256,uint256):(address)",
-      [
-        ethereum.Value.fromString(_title),
-        ethereum.Value.fromString(_textIpfsHash),
-        ethereum.Value.fromUnsignedBigInt(_initialMintPrice),
-        ethereum.Value.fromUnsignedBigInt(_firstEditionAmount)
-      ]
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toAddress());
   }
 
   firstEditionMax(): BigInt {
@@ -179,32 +138,6 @@ export class MoonlitFactory extends ethereum.SmartContract {
   }
 }
 
-export class ConstructorCall extends ethereum.Call {
-  get inputs(): ConstructorCall__Inputs {
-    return new ConstructorCall__Inputs(this);
-  }
-
-  get outputs(): ConstructorCall__Outputs {
-    return new ConstructorCall__Outputs(this);
-  }
-}
-
-export class ConstructorCall__Inputs {
-  _call: ConstructorCall;
-
-  constructor(call: ConstructorCall) {
-    this._call = call;
-  }
-}
-
-export class ConstructorCall__Outputs {
-  _call: ConstructorCall;
-
-  constructor(call: ConstructorCall) {
-    this._call = call;
-  }
-}
-
 export class CreateDaoCall extends ethereum.Call {
   get inputs(): CreateDaoCall__Inputs {
     return new CreateDaoCall__Inputs(this);
@@ -245,9 +178,31 @@ export class CreateDaoCall__Outputs {
   constructor(call: CreateDaoCall) {
     this._call = call;
   }
+}
 
-  get value0(): Address {
-    return this._call.outputValues[0].value.toAddress();
+export class RenounceOwnershipCall extends ethereum.Call {
+  get inputs(): RenounceOwnershipCall__Inputs {
+    return new RenounceOwnershipCall__Inputs(this);
+  }
+
+  get outputs(): RenounceOwnershipCall__Outputs {
+    return new RenounceOwnershipCall__Outputs(this);
+  }
+}
+
+export class RenounceOwnershipCall__Inputs {
+  _call: RenounceOwnershipCall;
+
+  constructor(call: RenounceOwnershipCall) {
+    this._call = call;
+  }
+}
+
+export class RenounceOwnershipCall__Outputs {
+  _call: RenounceOwnershipCall;
+
+  constructor(call: RenounceOwnershipCall) {
+    this._call = call;
   }
 }
 
@@ -302,7 +257,7 @@ export class TransferOwnershipCall__Inputs {
     this._call = call;
   }
 
-  get _newOwner(): Address {
+  get newOwner(): Address {
     return this._call.inputValues[0].value.toAddress();
   }
 }

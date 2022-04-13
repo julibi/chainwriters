@@ -80,6 +80,44 @@ export class ContributorAdded__Params {
   }
 }
 
+export class DaoCreated extends ethereum.Event {
+  get params(): DaoCreated__Params {
+    return new DaoCreated__Params(this);
+  }
+}
+
+export class DaoCreated__Params {
+  _event: DaoCreated;
+
+  constructor(event: DaoCreated) {
+    this._event = event;
+  }
+
+  get caller(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get dao(): Address {
+    return this._event.parameters[1].value.toAddress();
+  }
+
+  get title(): string {
+    return this._event.parameters[2].value.toString();
+  }
+
+  get textIpfsHash(): string {
+    return this._event.parameters[3].value.toString();
+  }
+
+  get initialMintPrice(): BigInt {
+    return this._event.parameters[4].value.toBigInt();
+  }
+
+  get firstEditionAmount(): BigInt {
+    return this._event.parameters[5].value.toBigInt();
+  }
+}
+
 export class Deposited extends ethereum.Event {
   get params(): Deposited__Params {
     return new Deposited__Params(this);

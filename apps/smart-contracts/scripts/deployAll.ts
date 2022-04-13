@@ -26,11 +26,11 @@ async function deployAll() {
   const firstEditionMax = 4;
   
   // deploy dao
-  const tx = await MoonlitFactory.createDao(title, textIpfsHash, initialMintPrice, firstEditionMax);
-  const receipt = await tx.wait();
-  const daoCreationEvent = receipt.events?.find((event:any) => event.event === 'DaoInstantiated');
-  const daoAddress = daoCreationEvent.args[1];
-  console.log(`Dao contract deployed to: ${daoAddress}`);
+  // const tx = await MoonlitFactory.createDao(title, textIpfsHash, initialMintPrice, firstEditionMax);
+  // const receipt = await tx.wait();
+  // const daoCreationEvent = receipt.events?.find((event:any) => event.event === 'DaoCreated');
+  // const daoAddress = daoCreationEvent.args[1];
+  // console.log(`Dao contract deployed to: ${daoAddress}`);
 
   // wait around for a bit
   console.log('Waiting for etherscan/polygonscan once more...')
@@ -38,15 +38,23 @@ async function deployAll() {
 
   // verify contract
   console.log('Verifying...')
-  await Promise.all([hre.run("verify:verify", {
-    address: MoonlitFactory.address,
-    constructorArguments: []
-  }),
-  hre.run("verify:verify", {
-    address: daoAddress,
-    constructorArguments: [title, deployer.address, textIpfsHash, initialMintPrice, firstEditionMax, MoonlitFactory.address],
-  })
-  ])
+  await Promise.all([
+    hre.run("verify:verify", {
+      address: MoonlitFactory.address,
+      constructorArguments: [],
+    })
+    // hre.run("verify:verify", {
+    //   address: daoAddress,
+    //   constructorArguments: [
+    //     title,
+    //     deployer.address,
+    //     textIpfsHash,
+    //     initialMintPrice,
+    //     firstEditionMax,
+    //     MoonlitFactory.address,
+    //   ],
+    // }),
+  ]);
 }
 
 deployAll().catch((error) => {

@@ -1,8 +1,13 @@
-import { DaoInstantiated } from "../generated/MoonlitFactory/MoonlitFactory"
-import { Deposited, FundingEnded, GenreSet, SubtitleSet, ImgSet, BlurbSet, TextSet, ContributorAdded, SafeBatchTransferFromCall } from "../generated/templates/MoonlitDao/MoonlitDao"
-import { Contribution, Dao } from "../generated/schema"
+import { Random } from "../generated/MoonlitFactory/MoonlitFactory"
+import { DaoCreated, Deposited, FundingEnded, GenreSet, SubtitleSet, ImgSet, BlurbSet, TextSet, ContributorAdded } from "../generated/templates/MoonlitDao/MoonlitDao"
+import { Contribution, Dao, Test } from "../generated/schema"
 
-export function handleDaoInstantiated(event: DaoInstantiated): void {
+export function handleRandom(event: Random): void {
+  let test = new Test(event.params.caller.toHex())
+  test.save()
+}
+
+export function handleDaoCreated(event: DaoCreated): void {
   let dao = new Dao(event.params.dao.toHex())
   dao.author = event.params.caller
   dao.address = event.params.dao

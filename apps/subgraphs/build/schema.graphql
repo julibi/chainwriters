@@ -23,3 +23,7 @@ type Contribution @entity {
   role: String
   dao: Bytes!
 }
+
+type Test @entity {
+  id: ID!
+}
