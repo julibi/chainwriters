@@ -11,6 +11,7 @@ import timestampConverter from '../../utils/timestampConverter'
 import Circle from '../../components/Circle'
 
 import { PieChart } from 'react-minimal-pie-chart';
+import useProjectContract from 'apps/ui/hooks/useProjectContract'
 
 // TODO
 // author view
@@ -122,6 +123,8 @@ const ProjectDetailView = () => {
   const router = useRouter();
   const { projectAddress } = router.query;
   const getProjectDetails = useGetProjectDetails();
+  // @ts-ignore
+  const ProjectContract = useProjectContract(projectAddress);
   const [daoData, setDaoData] = useState<DaoData | null>(null);
 
   const callGetProjectDetails = useCallback(async(projectAddress: string) => {
@@ -132,9 +135,17 @@ const ProjectDetailView = () => {
   useEffect(() => {
     if (projectAddress) {
       // @ts-ignore
-      callGetProjectDetails(projectAddress)
+      callGetProjectDetails(projectAddress);
+
+      ProjectContract.project()
+        .then((x: any) => {
+          console.log({ x });
+        })
+        .catch((e: unknown) => {
+          console.log({ e });
+        })
     }
-  }, [projectAddress, callGetProjectDetails]);
+  }, [projectAddress, ProjectContract, callGetProjectDetails]);
 
   return (
     <Root>

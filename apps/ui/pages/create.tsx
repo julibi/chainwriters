@@ -252,6 +252,7 @@ const Create = () => {
     try {
       const added = await client.add(text);
       const url = `https://ipfs.infura.io/ipfs/${added.path}`;
+      // TODO what about pinning?
       setTextIPFS(url);
       console.log({ url });
       return added.path;
