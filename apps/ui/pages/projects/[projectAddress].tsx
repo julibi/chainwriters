@@ -138,7 +138,7 @@ const ProjectDetailView = () => {
 
       ProjectContract.project()
         .then((x: any) => {
-          console.log({ x });
+          console.log(x);
         })
         .catch((e: unknown) => {
           console.log({ e });

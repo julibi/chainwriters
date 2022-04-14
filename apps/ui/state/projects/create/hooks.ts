@@ -2,6 +2,33 @@ import { useWeb3React } from '@web3-react/core'
 import { toast } from 'react-toastify'
 import { Contributor } from '../../../pages/create';
 
+export const useCreateSetCover = () => {
+  const { chainId } = useWeb3React();
+  return async (
+    daoContract: any,
+    cid: string,
+    loadingFunc: (x: boolean) => void,
+    onLoad: (chainId: number, hash: string, message: string) => void,
+    onSuccess: (chainId: number, hash: string, message: string) => void
+  ) => {
+    loadingFunc(true);
+    try {
+      console.log({ cid });
+      const Tx = await daoContract.setImgIpfsHash(cid);
+      const { hash } = Tx;
+      onLoad(chainId, hash, 'Pending transaction...');
+
+      daoContract.provider.once(hash, (transaction) => {
+        onSuccess(chainId, hash, 'Success!');
+        loadingFunc(false);
+      });
+    } catch (e) {
+      loadingFunc(false);
+      toast.error(e.reason ?? 'Something went wrong.');
+    }
+  };
+};
+
 export const useCreateSetGenre = () => {
   const { chainId } = useWeb3React();
   return async (

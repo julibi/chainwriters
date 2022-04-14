@@ -1,4 +1,5 @@
 import React, { ChangeEvent, FormEvent, useCallback, useMemo, useState } from 'react'
+import Image from 'next/image'
 import { useRouter } from 'next/router'
 import styled from 'styled-components'
 import { create } from 'ipfs-http-client'
@@ -22,6 +23,7 @@ import useDaoContract from '../state/useDaoContract'
 import {
   useCreateSetAuthorMaxClaimable,
   useCreateSetContributors,
+  useCreateSetCover,
   useCreateSetGenre,
   useCreateSetSubtitle,
 } from '../state/projects/create/hooks';
@@ -181,7 +183,14 @@ const InputDescription = styled.p`
 const FlexContainer = styled.div`
   display: flex;
 `;
- 
+
+const CoverImage = styled.div`
+  width: 240px;
+  height: 300px;
+  align-items: center;
+  box-shadow: ${INSET_BASE_BOX_SHADOW};
+`;
+
 export interface Contributor {
   address: string;
   share: number;
@@ -238,6 +247,7 @@ const Create = () => {
   // TODO type for buffer
   const [imgBuffer, setImgBuffer] = useState<null | Buffer>(null);
   const [coverImgIPFS, setCoverImgIPFS] = useState<string>('');
+  const [blurb, setBlurb] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const [genre, setGenre] = useState('');
   const [daoAddress, setDaoAddress] = useState<string>('');
@@ -246,6 +256,7 @@ const Create = () => {
   const [subtitle, setSubtitle] = useState<string>('');
   const [authorMaxClaimable, setAuthorMaxClaimable] = useState<number>(0);
   const getDaoContract = useDaoContract();
+  const createSetCover = useCreateSetCover();
   const createSetGenre = useCreateSetGenre();
   const createSetSubtitle = useCreateSetSubtitle();
   const createSetAuthorMaxClaimable = useCreateSetAuthorMaxClaimable();
@@ -308,17 +319,37 @@ const Create = () => {
       // @ts-ignore
       const buffer = Buffer.from(reader.result);
       setImgBuffer(buffer);
-      
     }
   };
-  const submitImage = async(event: SyntheticEvent) => {
-    event.preventDefault();
+
+  const submitImage = async() => {
     const added = await client.add(imgBuffer);
     // const url = `https://ipfs.infura.io/ipfs/${added.path}`;
     // TODO what about pinning?
-    console.log({ added });
     setCoverImgIPFS(added.path);
+    createSetCover(
+      daoContract,
+      added.path,
+      setLoading,
+      PendingToast,
+      (x, y, z) => {
+        setSubStep(subStep + 1);
+        // @ts-ignore
+        return <SuccessToast chainId={x} hash={y} customMessage={z} />;
+      }
+    )       
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      .then(() => {})
+      .catch((e) => {
+        console.log({e});
+        toast.error('Something went wrong');
+      });
   };
+
+  const handleSetBlurb = useCallback(async() => {
+    console.log('handleSetBlurb');
+    setSubStep(subStep + 1);
+  }, [subStep]);
 
   const handleSetGenre = useCallback(async() => {
       createSetGenre(
@@ -445,8 +476,14 @@ const allContributors = useMemo(async() => {
           about.
         </InputDescription>
         {/* TODO was this text already uploaded? */}
-        <TextInput value={text} onChange={(e) => setText(e.target.value)} />
-        <StyledInputError>{text.length < 1 ? 'At least 1 character.' : ' '}</StyledInputError>
+        <TextInput
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          style={{ height: '200px' }}
+        />
+        <StyledInputError>
+          {text.length < 1 ? 'At least 1 character.' : ' '}
+        </StyledInputError>
         <SubmitButton
           onClick={() => setCurrentStep(currentStep + 1)}
           disabled={text.length < 1}
@@ -560,7 +597,6 @@ const allContributors = useMemo(async() => {
     </FadeIn>
   );
 
-  // TODO address is tx hash, not dao address
   // TODO make congrats screen look nice and special
   const Congrats = () => (
     <FadeIn>
@@ -588,28 +624,63 @@ const allContributors = useMemo(async() => {
     </FadeIn>
   );
 
-  const CoverImageForm = () => {
-    return (
-      <FadeIn>
-        <Wrapper>
-          {/* @ts-ignore */}
-          <form onSubmit={(evt) => submitImage(evt)}>
-            {/* @ts-ignore */}
-            <input type="file" onChange={(evt) => captureFile(evt)} />
-            <input type="submit" />
-          </form>
-        </Wrapper>
-      </FadeIn>
-    );
-  };
-
-  const BlurbForm = () => {
+  const CoverImageForm = () => (
     <FadeIn>
       <Wrapper>
-
+        <InputName>COVER IMAGE</InputName>
+        <InputDescription>Upload a Cover Image</InputDescription>
+        {/* @ts-ignore */}
+        <CoverImage>
+          <Image
+            src={'/ImgPlaceholder.png'}
+            height={'100%'}
+            width={'100%'}
+            alt={'Cover Image Placeholder'}
+          />
+        </CoverImage>
+        {/* INPUT is breaking the app ?! */}
+        {/* <SubmitButton
+          onClick={() => setCurrentStep(currentStep + 1)}
+        >
+          {'Skip'}
+        </SubmitButton>
+        <SubmitButton
+            onClick={submitImage}
+            disabled={loading || !imgBuffer}
+            style={{ minWidth: '182px' }}
+        >
+          Submit Image
+        </SubmitButton> */}
       </Wrapper>
-    </FadeIn>;
-  };
+    </FadeIn>
+  );
+
+  const BlurbForm = () => (
+    <FadeIn>
+      <Wrapper>
+        <InputName>BLURB</InputName>
+        <InputDescription>
+          Write a short text to introduce your project and captivate readers! A short summary? Or just the first few lines?
+        </InputDescription>
+        <TextInput value={blurb} onChange={(e) => setBlurb(e.target.value)} />
+        <StyledInputError>
+          {blurb.length < 20 ? 'At least 20 characters.' : ' '}
+        </StyledInputError>
+        <SubmitButton
+          onClick={() => setCurrentStep(currentStep + 1)}
+        >
+          {'Skip'}
+        </SubmitButton>
+        <SubmitButton
+          onClick={handleSetBlurb}
+          disabled={loading || (blurb.length < 20)}
+          style={{ minWidth: '182px' }}
+        >
+          {loading ? <Loading height={20} dotHeight={20} /> : 'Set Blurb'}
+        </SubmitButton>
+      </Wrapper>
+    </FadeIn>
+  );
 
   const GenreForm = () => (
     <FadeIn>
@@ -835,8 +906,8 @@ const allContributors = useMemo(async() => {
       </ProgressBarWrapper>
       <FormWrapper>
         <Form>
-          {currentStep === 0 && CoverImageForm()}
-          {/* {currentStep === 0 && !creatingDao && NameForm()} */}
+          {/* {currentStep === 0 && CoverImageForm()} */}
+          {currentStep === 0 && !creatingDao && NameForm()}
           {currentStep === 1 && !creatingDao && TextForm()}
           {currentStep === 2 && !creatingDao && AmountForm()}
           {currentStep === 3 && !creatingDao && PriceForm()}
