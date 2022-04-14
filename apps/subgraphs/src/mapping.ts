@@ -3,11 +3,15 @@ import { DaoCreated, Deposited, FundingEnded, GenreSet, SubtitleSet, ImgSet, Blu
 import { Contribution, Dao, Test } from "../generated/schema"
 
 export function handleRandom(event: Random): void {
+  console.log('handleRandom')
+  console.log(event.params.caller.toHex())
   let test = new Test(event.params.caller.toHex())
   test.save()
 }
 
 export function handleDaoCreated(event: DaoCreated): void {
+  console.log('handleDaoCreated')
+  console.log(event.params.dao.toHex())
   let dao = new Dao(event.params.dao.toHex())
   dao.author = event.params.caller
   dao.address = event.params.dao
@@ -21,6 +25,8 @@ export function handleDaoCreated(event: DaoCreated): void {
 }
 
 export function handleDeposited(event: Deposited):void {
+  console.log('handleDeposited')
+  console.log(event.address.toHexString())
   let dao = Dao.load(event.address.toHexString())
   console.log(event.address.toHexString())
   console.log(event.params.fundedAmount.toHex())

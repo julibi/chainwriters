@@ -10,7 +10,7 @@ dataSources:
     source:
       address: '0xEa8D61E4BB000a1B670280Da91D73502E6b64062'
       abi: MoonlitFactory
-      startBlock: 25917257
+      startBlock: 25917200
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
