@@ -42,7 +42,7 @@ const MainInfoWrapper = styled.section`
   width: 90%;
   max-width: 1200px;
   color: ${PLAIN_WHITE};
-  
+
   animation: fadein 2s;
 
   @keyframes fadein {
@@ -123,8 +123,7 @@ const ProjectDetailView = () => {
   const router = useRouter();
   const { projectAddress } = router.query;
   const getProjectDetails = useGetProjectDetails();
-  // @ts-ignore
-  const ProjectContract = useProjectContract(projectAddress);
+  const ProjectContract = useProjectContract(projectAddress as string);
   const [daoData, setDaoData] = useState<DaoData | null>(null);
 
   const callGetProjectDetails = useCallback(async(projectAddress: string) => {
