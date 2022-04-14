@@ -1,4 +1,4 @@
-import React, { FormEvent, useCallback, useMemo, useState } from 'react'
+import React, { ChangeEvent, FormEvent, useCallback, useMemo, useState } from 'react'
 import { useRouter } from 'next/router'
 import styled from 'styled-components'
 import { create } from 'ipfs-http-client'
@@ -30,6 +30,13 @@ import PendingToast from '../components/PendingToast'
 import { truncateAddress } from '../components/WalletIndicator'
 import InputField, { StyledInputError } from '../components/InputField'
 
+
+interface SyntheticEvent {
+  target: {
+    files: Blob[]
+  };
+  preventDefault: () => void;
+}
 
 const Root = styled.div`
   display: flex;
@@ -216,6 +223,7 @@ const Create = () => {
   const router = useRouter();
   const { chainId } = useWeb3React();
   const FactoryContract = useFactoryContract();
+  // TODO 
   // @ts-ignore
   const client = create('https://ipfs.infura.io:5001/api/v0');
   const [currentStep, setCurrentStep] = useState(0);
@@ -227,7 +235,9 @@ const Create = () => {
   const [agreed, setAgreed] = useState(false);
   const [firstEdMintPrice, setFirstEdMintPrice] = useState('0');
   const [firstEdMaxAmount, setFirstEdMaxAmount] = useState(0);
-  const [imageIPFS, setImageIPFS] = useState('');
+  // TODO type for buffer
+  const [imgBuffer, setImgBuffer] = useState<null | Buffer>(null);
+  const [coverImgIPFS, setCoverImgIPFS] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const [genre, setGenre] = useState('');
   const [daoAddress, setDaoAddress] = useState<string>('');
@@ -287,6 +297,27 @@ const Create = () => {
       console.log({ e });
       toast.error(e.reason ?? 'Something went wrong.');
     }
+  };
+
+  const captureFile = (event: SyntheticEvent) => {
+    event.preventDefault();
+    const file = event.target.files[0]
+    const reader = new window.FileReader()
+    reader.readAsArrayBuffer(file)
+    reader.onloadend = () => {
+      // @ts-ignore
+      const buffer = Buffer.from(reader.result);
+      setImgBuffer(buffer);
+      
+    }
+  };
+  const submitImage = async(event: SyntheticEvent) => {
+    event.preventDefault();
+    const added = await client.add(imgBuffer);
+    // const url = `https://ipfs.infura.io/ipfs/${added.path}`;
+    // TODO what about pinning?
+    console.log({ added });
+    setCoverImgIPFS(added.path);
   };
 
   const handleSetGenre = useCallback(async() => {
@@ -557,6 +588,29 @@ const allContributors = useMemo(async() => {
     </FadeIn>
   );
 
+  const CoverImageForm = () => {
+    return (
+      <FadeIn>
+        <Wrapper>
+          {/* @ts-ignore */}
+          <form onSubmit={(evt) => submitImage(evt)}>
+            {/* @ts-ignore */}
+            <input type="file" onChange={(evt) => captureFile(evt)} />
+            <input type="submit" />
+          </form>
+        </Wrapper>
+      </FadeIn>
+    );
+  };
+
+  const BlurbForm = () => {
+    <FadeIn>
+      <Wrapper>
+
+      </Wrapper>
+    </FadeIn>;
+  };
+
   const GenreForm = () => (
     <FadeIn>
       <Wrapper>
@@ -781,18 +835,21 @@ const allContributors = useMemo(async() => {
       </ProgressBarWrapper>
       <FormWrapper>
         <Form>
-          {currentStep === 0 && !creatingDao && NameForm()}
+          {currentStep === 0 && CoverImageForm()}
+          {/* {currentStep === 0 && !creatingDao && NameForm()} */}
           {currentStep === 1 && !creatingDao && TextForm()}
           {currentStep === 2 && !creatingDao && AmountForm()}
           {currentStep === 3 && !creatingDao && PriceForm()}
           {currentStep === 4 && !creatingDao && ReviewForm()}
           {creatingDao && <Waiting />}
           {currentStep === 5 && !creatingDao && Congrats()}
-          {currentStep === 6 && subStep === 1 && !creatingDao && GenreForm()}
-          {currentStep === 6 && subStep === 2 && !creatingDao && SubTitleForm()}
-          {currentStep === 6 && subStep === 3 && !creatingDao && AuthorMaxClaimableForm()}
-          {currentStep === 6 && subStep === 4 && !creatingDao && ContributorsForm()}
-          {currentStep === 6 && subStep === 5 && !creatingDao && YourFinished()}
+          {currentStep === 6 && subStep === 1 && !creatingDao && CoverImageForm()}
+          {currentStep === 6 && subStep === 2 && !creatingDao && BlurbForm()}
+          {currentStep === 6 && subStep === 3 && !creatingDao && GenreForm()}
+          {currentStep === 6 && subStep === 4 && !creatingDao && SubTitleForm()}
+          {currentStep === 6 && subStep === 5 && !creatingDao && AuthorMaxClaimableForm()}
+          {currentStep === 6 && subStep === 6 && !creatingDao && ContributorsForm()}
+          {currentStep === 6 && subStep === 7 && !creatingDao && YourFinished()}
         </Form>
       </FormWrapper>
     </Root>
