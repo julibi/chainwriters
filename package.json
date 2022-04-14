@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "start": "nx serve",
-    "build": "nx build",
+    "build": "nx build && mv dist/apps/ui/public dist/apps/ui/.next",
     "test": "nx test"
   },
   "private": true,
