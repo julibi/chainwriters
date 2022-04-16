@@ -8,7 +8,7 @@ const StyledSVG = styled.svg`
   left: 0;
 `;
 
-const MyCircle = styled.circle`
+const MyCircle = styled.circle<{ fulfilled: number }>`
   fill: none;
   stroke: url(#GradientColor);
   stroke-width: 70px;
@@ -19,12 +19,16 @@ const MyCircle = styled.circle`
 
   @keyframes anim {
     100% {
-      stroke-dashoffset: 43px;
+      stroke-dashoffset: ${({ fulfilled }) => fulfilled}px;
     }
   }
 `;
 
-const Circle = () => {
+interface CircleProps {
+  fulfilled: number;
+}
+
+const Circle = ({ fulfilled }: CircleProps) => {
   return (
     <StyledSVG
       xmlns="http://www.w3.org/2000/svg"
@@ -38,7 +42,7 @@ const Circle = () => {
           <stop offset="100%" stopColor={PINK} />
         </linearGradient>
       </defs>
-      <MyCircle cx="120" cy="120" r="80"  />
+      <MyCircle cx="120" cy="120" r="80" fulfilled={fulfilled} />
     </StyledSVG>
   );
 }

@@ -4,11 +4,11 @@ import Image from 'next/image'
 import { useRouter } from 'next/router'
 import styled from 'styled-components'
 import Loading from '../../components/Loading'
+import PieChart from '../../components/PieChart'
 import { useGetProjectDetails } from '../../state/projects/hooks'
 import { SectionTitle } from '../../components/ProjectSection'
-import { BASE_BORDER_RADIUS, BASE_BOX_SHADOW, INSET_BASE_BOX_SHADOW, PINK, PLAIN_WHITE } from '../../themes'
+import { BASE_BORDER_RADIUS, BASE_BOX_SHADOW, PLAIN_WHITE } from '../../themes'
 import timestampConverter from '../../utils/timestampConverter'
-import Circle from '../../components/Circle'
 import useProjectContract from '../../hooks/useProjectContract'
 
 // TODO
@@ -86,63 +86,50 @@ const FlexWrapper = styled.div`
   justify-content: space-between;
 `;
 
-const Pie = styled.div`
-  width: 242px;
-  height: 242px;
-  border-radius: 50%;
-  padding: 70px;
-  box-shadow: ${BASE_BOX_SHADOW};
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const PieHole = styled.div`
-  width: 78px;
-  height: 78px;
-  border-radius: 50%;
-  box-shadow: ${INSET_BASE_BOX_SHADOW};
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const PieHoleData = styled.div`
-  text-align: center;
-`;
-
-const StyledCircle = styled(Circle)`
-  box-shadow: 0px 0px 50px 4px ${PINK};
-`;
-
 const ProjectDetailView = () => {
   const router = useRouter();
   const { projectAddress } = router.query;
   const getProjectDetails = useGetProjectDetails();
   const ProjectContract = useProjectContract(projectAddress as string);
   const [daoData, setDaoData] = useState<DaoData | null>(null);
+  const [successfullyLoaded, setSuccessfullyLoaded] = useState<boolean>(false);
 
   const callGetProjectDetails = useCallback(async(projectAddress: string) => {
     const result = await getProjectDetails(projectAddress);
-    setDaoData(result.dao);
+    const mockDao = {
+      address: "0xE5D7BFed391508d5191DEb18301b63dc84FcD444",
+      title: "MOCK DAO",
+      author: "0x61a2ef03e18A78B8337Cd7409C02b61D694F28C0",
+      mintPrice: "2000000000000000",
+      fundedAmount: "10",
+      firstEditionMax: "12",
+      createdAt: "1649784856",
+      genre: null,
+      subtitle: null
+    };
+    setDaoData(mockDao);
   }, [getProjectDetails]);
 
   useEffect(() => {
-    if (projectAddress) {
+    if (projectAddress && !successfullyLoaded) {
       // @ts-ignore
       callGetProjectDetails(projectAddress);
 
       ProjectContract.project()
         .then((x: any) => {
           console.log(x);
+          setSuccessfullyLoaded(true);
         })
         .catch((e: unknown) => {
           console.log({ e });
-        })
+        });
     }
-  }, [projectAddress, ProjectContract, callGetProjectDetails]);
+  }, [
+    projectAddress,
+    ProjectContract,
+    callGetProjectDetails,
+    successfullyLoaded,
+  ]);
 
   return (
     <Root>
@@ -154,7 +141,6 @@ const ProjectDetailView = () => {
             {daoData.subtitle && <Info>{daoData.subtitle}</Info>}
             <FlexWrapper>
               <Info>{daoData.genre ?? 'Unknown Genre'}</Info>
-              {/* var date = new Date(unix_timestamp * 1000); */}
               <Info>{`Created: ${timestampConverter(daoData.createdAt)}`}</Info>
             </FlexWrapper>
             <FlexWrapper>
@@ -163,12 +149,10 @@ const ProjectDetailView = () => {
                 daoData.mintPrice
               )} MATIC`}</Info>
             </FlexWrapper>
-            <Pie>
-              <StyledCircle />
-              <PieHole>
-                <PieHoleData>{`${daoData.fundedAmount}/${daoData.firstEditionMax} Spots Taken`}</PieHoleData>
-              </PieHole>
-            </Pie>
+            <PieChart
+              part={daoData.fundedAmount}
+              whole={daoData.firstEditionMax}
+            />
           </InfoLeft>
           <InfoRight>
             <Image
