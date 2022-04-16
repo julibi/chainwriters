@@ -97,24 +97,24 @@ contract MoonlitDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
       uint256 _firstEditionMax,
       address _factory
     ) ERC1155("") {
-        // is it ok to give MOONLIT_FOUNDATION_ADDRESS DEFAULT_ADMIN_ROLE and they have the ability to freeze the contract?
-        _setupRole(DEFAULT_ADMIN_ROLE, _author_address);
-        _setupRole(AUTHOR_ROLE, _author_address);
-        project.textIpfsHash = _textIpfsHash;
-        project.title = _title;
-        project.author_address = _author_address;
-        INITIAL_MINT_PRICE = _initialMintPrice;
-        currentEditionMax = _firstEditionMax;
-        factory = _factory;
+      // is it ok to give MOONLIT_FOUNDATION_ADDRESS DEFAULT_ADMIN_ROLE and they have the ability to freeze the contract?
+      _setupRole(DEFAULT_ADMIN_ROLE, _author_address);
+      _setupRole(AUTHOR_ROLE, _author_address);
+      project.textIpfsHash = _textIpfsHash;
+      project.title = _title;
+      project.author_address = _author_address;
+      INITIAL_MINT_PRICE = _initialMintPrice;
+      currentEditionMax = _firstEditionMax;
+      factory = _factory;
 
-    emit DaoCreated(
-      _author_address,
-      address(this),
-      _title,
-      _textIpfsHash,
-      _initialMintPrice,
-      _firstEditionMax
-    );
+      emit DaoCreated(
+        _author_address,
+        address(this),
+        _title,
+        _textIpfsHash,
+        _initialMintPrice,
+        _firstEditionMax
+      );
   }
 
   function deposit(uint256 _amount) external payable {

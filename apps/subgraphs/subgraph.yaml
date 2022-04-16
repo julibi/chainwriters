@@ -54,11 +54,3 @@ templates:
           handler: handleImgHashSet
         - event: BlurbSet(string)
           handler: handleBlurbHashSet
-        - event: GenreSet(string)
-          handler: handleGenreSet
-        - event: SubtitleSet(string)
-          handler: handleSubtitleSet
-        - event: TextSet(string)
-          handler: handleTextSet
-        - event: ContributorAdded(address,uint256,string)
-          handler: handleContributorAdded

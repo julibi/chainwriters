@@ -6,11 +6,11 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: MoonlitFactory
-    network: rinkeby
+    network: mumbai
     source:
-      address: "0x9bad649121df5c73862f9632cc20664695a0cb10"
+      address: "0xEa8D61E4BB000a1B670280Da91D73502E6b64062"
       abi: MoonlitFactory
-      startBlock: 10514780
+      startBlock: 25917200
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -29,7 +29,7 @@ dataSources:
 templates:
   - kind: ethereum/contract
     name: MoonlitDao
-    network: rinkeby
+    network: mumbai
     source:
       abi: MoonlitDao
     mapping:
@@ -54,11 +54,3 @@ templates:
           handler: handleImgHashSet
         - event: BlurbSet(string)
           handler: handleBlurbHashSet
-        - event: GenreSet(string)
-          handler: handleGenreSet
-        - event: SubtitleSet(string)
-          handler: handleSubtitleSet
-        - event: TextSet(string)
-          handler: handleTextSet
-        - event: ContributorAdded(address,uint256,string)
-          handler: handleContributorAdded
