@@ -25,6 +25,7 @@ import {
   useCreateSetContributors,
   useCreateSetCover,
   useCreateSetGenre,
+  useCreateSetBlurb,
   useCreateSetSubtitle,
 } from '../state/projects/create/hooks';
 import SuccessToast from '../components/SuccessToast'
@@ -210,31 +211,8 @@ const UploadCTAWrapper = styled.div`
   margin-block-end: 2rem;
 `;
 
-const StyledSubmitInput = styled.input`
-  font-family: 'Roboto Mono';
-  text-transform: uppercase;
-  text-align: center;
+const StyledSubmitButton = styled(SubmitButton)`
   color: ${PINK};
-  background-color: ${BG_NORMAL};
-  border-radius: ${BASE_BORDER_RADIUS};
-  box-shadow: ${BASE_BOX_SHADOW};
-  padding: 1rem;
-
-  :hover {
-    cursor: pointer;
-  }
-
-  :active {
-    box-shadow: ${INSET_BASE_BOX_SHADOW};
-  }
-
-  :disabled {
-    color: grey;
-
-    :hover {
-      cursor: default;
-    }
-  }
 `;
 
 const StyledFileInput = styled.input`
@@ -264,6 +242,11 @@ const StyledFileInput = styled.input`
       }
     }
   }
+`;
+
+const ButtonsWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
 `;
 
 const FileName = styled.span`
@@ -329,6 +312,7 @@ const Create = () => {
   const [imgFile, setImgFile] = useState(null);
   const [coverImgIPFS, setCoverImgIPFS] = useState<string>('');
   const [blurb, setBlurb] = useState<string>('');
+  const [blurbIPFS, setBlurbIPFS] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const [genre, setGenre] = useState('');
   const [daoAddress, setDaoAddress] = useState<string>('');
@@ -339,6 +323,7 @@ const Create = () => {
   const getDaoContract = useDaoContract();
   const createSetCover = useCreateSetCover();
   const createSetGenre = useCreateSetGenre();
+  const createSetBlurb = useCreateSetBlurb();
   const createSetSubtitle = useCreateSetSubtitle();
   const createSetAuthorMaxClaimable = useCreateSetAuthorMaxClaimable();
   const createSetContributors = useCreateSetContributors();
@@ -416,30 +401,46 @@ const Create = () => {
     // const url = `https://ipfs.infura.io/ipfs/${added.path}`;
     // TODO what about pinning?
     setCoverImgIPFS(added.path);
-    toast.info(added.path);
-    // createSetCover(
-    //   daoContract,
-    //   added.path,
-    //   setLoading,
-    //   PendingToast,
-    //   (x, y, z) => {
-    //     setSubStep(subStep + 1);
-    //     // @ts-ignore
-    //     return <SuccessToast chainId={x} hash={y} customMessage={z} />;
-    //   }
-    // )       
-    //   // eslint-disable-next-line @typescript-eslint/no-empty-function
-    //   .then(() => {})
-    //   .catch((e) => {
-    //     console.log({e});
-    //     toast.error('Something went wrong');
-    //   });
+    createSetCover(
+      daoContract,
+      added.path,
+      setLoading,
+      PendingToast,
+      (x, y, z) => {
+        setSubStep(subStep + 1);
+        // @ts-ignore
+        return <SuccessToast chainId={x} hash={y} customMessage={z} />;
+      }
+    )       
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      .then(() => {})
+      .catch((e) => {
+        console.log({e});
+        toast.error('Something went wrong');
+      });
   };
 
   const handleSetBlurb = useCallback(async() => {
-    console.log('handleSetBlurb');
-    setSubStep(subStep + 1);
-  }, [subStep]);
+    const added = await client.add(blurb);
+    setBlurbIPFS(added.path);
+    createSetBlurb(
+      daoContract,
+      added.path,
+      setLoading,
+      PendingToast,
+      (x, y, z) => {
+        setSubStep(subStep + 1);
+        // @ts-ignore
+        return <SuccessToast chainId={x} hash={y} customMessage={z} />;
+      }
+    )       
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      .then(() => {})
+      .catch((e) => {
+        console.log({e});
+        toast.error('Something went wrong');
+      });
+  }, [blurb, client, createSetBlurb, daoContract, subStep]);
 
   const handleSetGenre = useCallback(async() => {
       createSetGenre(
@@ -569,7 +570,6 @@ const allContributors = useMemo(async() => {
         <TextInput
           value={text}
           onChange={(e) => setText(e.target.value)}
-          style={{ height: '200px' }}
         />
         <StyledInputError>
           {text.length < 1 ? 'At least 1 character.' : ' '}
@@ -744,6 +744,7 @@ const allContributors = useMemo(async() => {
           <UploadCTAWrapper>
             <FileName>{imgFile ? shortenImageName(imgFile.name) : ''}</FileName>
             <StyledFileInput
+              disabled={loading}
               type="file"
               onChange={(evt: any) => {
                 evt.preventDefault();
@@ -751,15 +752,18 @@ const allContributors = useMemo(async() => {
                 captureFile(file);
               }}
             />
-            <StyledSubmitInput
-              disabled={!imgBuffer}
-              type="submit"
-              value="Set Image"
-            />
+            <ButtonsWrapper>
+              <SubmitButton
+                disabled={loading}
+                onClick={() => setCurrentStep(currentStep + 1)}
+              >
+                {loading ? <Loading height={20} dotHeight={20} short /> : 'Skip'}
+              </SubmitButton>
+              <StyledSubmitButton disabled={!imgBuffer}>
+                {loading ? <Loading height={20} dotHeight={20} short /> : 'Set Image'}
+              </StyledSubmitButton>
+            </ButtonsWrapper>
           </UploadCTAWrapper>
-          <SubmitButton onClick={() => setCurrentStep(currentStep + 1)}>
-            {'Skip'}
-          </SubmitButton>
         </StyledImageForm>
       </Wrapper>
     </FadeIn>
@@ -770,24 +774,32 @@ const allContributors = useMemo(async() => {
       <Wrapper>
         <InputName>BLURB</InputName>
         <InputDescription>
-          Write a short text to introduce your project and captivate readers! A short summary? Or just the first few lines?
+          Write a short text to introduce your project and captivate readers! A
+          short summary? Or just the first few lines?
         </InputDescription>
-        <TextInput value={blurb} onChange={(e) => setBlurb(e.target.value)} />
+        <TextInput
+          style={{ height: '200px' }}
+          value={blurb}
+          onChange={(e) => setBlurb(e.target.value)}
+        />
         <StyledInputError>
           {blurb.length < 20 ? 'At least 20 characters.' : ' '}
         </StyledInputError>
-        <SubmitButton
-          onClick={() => setCurrentStep(currentStep + 1)}
-        >
-          {'Skip'}
-        </SubmitButton>
-        <SubmitButton
-          onClick={handleSetBlurb}
-          disabled={loading || (blurb.length < 20)}
-          style={{ minWidth: '182px' }}
-        >
-          {loading ? <Loading height={20} dotHeight={20} /> : 'Set Blurb'}
-        </SubmitButton>
+        <ButtonsWrapper>
+          <SubmitButton
+            disabled={loading}
+            onClick={() => setSubStep(subStep + 1)}
+            >
+            {'Skip'}
+          </SubmitButton>
+          <SubmitButton
+            onClick={handleSetBlurb}
+            disabled={loading || blurb.length < 20}
+            style={{ minWidth: '182px', marginInlineStart: '1rem' }}
+            >
+            {loading ? <Loading height={20} dotHeight={20} /> : 'Set Blurb'}
+          </SubmitButton>
+        </ButtonsWrapper>
       </Wrapper>
     </FadeIn>
   );

@@ -5,6 +5,7 @@ import { BASE_BOX_SHADOW, INSET_BASE_BOX_SHADOW } from '../themes';
 interface LoadingProps {
   height: number;
   dotHeight?: number;
+  short?: boolean;
 }
 
 interface DotProps {
@@ -38,10 +39,10 @@ const Dot = styled.span<DotProps>`
   }
 `;
 
-const Loading = ({height, dotHeight = 40}: LoadingProps) => {
+const Loading = ({height, dotHeight = 40, short = false}: LoadingProps) => {
   return (
     <Root height={height} dotHeight={dotHeight}>
-      <Dot index={0} dotHeight={dotHeight} />
+      {!short && <Dot index={0} dotHeight={dotHeight} />}
       <Dot index={1} dotHeight={dotHeight} />
       <Dot index={2} dotHeight={dotHeight} />
     </Root>
