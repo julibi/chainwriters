@@ -9,9 +9,7 @@ import { SectionTitle } from '../../components/ProjectSection'
 import { BASE_BORDER_RADIUS, BASE_BOX_SHADOW, INSET_BASE_BOX_SHADOW, PINK, PLAIN_WHITE } from '../../themes'
 import timestampConverter from '../../utils/timestampConverter'
 import Circle from '../../components/Circle'
-
-import { PieChart } from 'react-minimal-pie-chart';
-import useProjectContract from 'apps/ui/hooks/useProjectContract'
+import useProjectContract from '../../hooks/useProjectContract'
 
 // TODO
 // author view
