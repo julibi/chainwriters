@@ -184,7 +184,10 @@ const FlexContainer = styled.div`
   display: flex;
 `;
 
-const StyledImageForm = styled.form``;
+const StyledImageForm = styled.form`
+  display: flex;
+  flex-direction: column;
+`;
 
 const DragNDrop = styled.div`
   width: 100%;
@@ -204,6 +207,7 @@ const DragNDrop = styled.div`
 const UploadCTAWrapper = styled.div`
   display: flex;
   flex-direction: column;
+  margin-block-end: 2rem;
 `;
 
 const StyledSubmitInput = styled.input`
@@ -717,19 +721,21 @@ const allContributors = useMemo(async() => {
         <InputDescription>Upload a Cover Image</InputDescription>
         {/* @ts-ignore */}
 
-        <StyledImageForm onSubmit={(e:any) => submitImage(e)}>
+        <StyledImageForm onSubmit={(e: any) => submitImage(e)}>
           <DragNDrop
-            onDragOver={(e:any) => {
+            onDragOver={(e: any) => {
               e.preventDefault();
             }}
-            onDrop={(e:any) => {
+            onDrop={(e: any) => {
               e.preventDefault();
               const file = e.dataTransfer.files[0];
               captureFile(file);
             }}
           >
             <Image
-              src={imgFile ? URL.createObjectURL(imgFile) : '/ImgPlaceholder.png'}
+              src={
+                imgFile ? URL.createObjectURL(imgFile) : '/ImgPlaceholder.png'
+              }
               height={'100%'}
               width={'100%'}
               alt={'Cover'}
@@ -744,9 +750,16 @@ const allContributors = useMemo(async() => {
                 const file = evt.target.files[0];
                 captureFile(file);
               }}
-              />
-            <StyledSubmitInput disabled={!imgBuffer} type="submit" value="Set Image"/>
+            />
+            <StyledSubmitInput
+              disabled={!imgBuffer}
+              type="submit"
+              value="Set Image"
+            />
           </UploadCTAWrapper>
+          <SubmitButton onClick={() => setCurrentStep(currentStep + 1)}>
+            {'Skip'}
+          </SubmitButton>
         </StyledImageForm>
       </Wrapper>
     </FadeIn>
@@ -1003,15 +1016,14 @@ const allContributors = useMemo(async() => {
       </ProgressBarWrapper>
       <FormWrapper>
         <Form>
-          {currentStep === 0 && CoverImageForm()}
-          {/* {currentStep === 0 && !creatingDao && NameForm()} */}
+          {currentStep === 0 && !creatingDao && NameForm()}
           {currentStep === 1 && !creatingDao && TextForm()}
           {currentStep === 2 && !creatingDao && AmountForm()}
           {currentStep === 3 && !creatingDao && PriceForm()}
           {currentStep === 4 && !creatingDao && ReviewForm()}
           {creatingDao && <Waiting />}
           {currentStep === 5 && !creatingDao && Congrats()}
-          {/* {currentStep === 6 && subStep === 1 && !creatingDao && CoverImageForm()} */}
+          {currentStep === 6 && subStep === 1 && !creatingDao && CoverImageForm()}
           {currentStep === 6 && subStep === 2 && !creatingDao && BlurbForm()}
           {currentStep === 6 && subStep === 3 && !creatingDao && GenreForm()}
           {currentStep === 6 && subStep === 4 && !creatingDao && SubTitleForm()}
