@@ -1,17 +1,18 @@
 import { Random } from "../generated/MoonlitFactory/MoonlitFactory"
 import { DaoCreated, Deposited, FundingEnded, GenreSet, SubtitleSet, ImgSet, BlurbSet, TextSet, ContributorAdded } from "../generated/templates/MoonlitDao/MoonlitDao"
 import { Contribution, Dao, Test } from "../generated/schema"
+import { log } from "@graphprotocol/graph-ts"
 
 export function handleRandom(event: Random): void {
-  console.log('handleRandom')
-  console.log(event.params.caller.toHex())
+  log.info('handleRandom', [event.params.caller.toHex()]);
+  log.debug('handleRandom', [event.params.caller.toHex()]);
   let test = new Test(event.params.caller.toHex())
   test.save()
 }
 
 export function handleDaoCreated(event: DaoCreated): void {
-  console.log('handleDaoCreated')
-  console.log(event.params.dao.toHex())
+  log.info('handleDaoCreated', [event.params.dao.toHex()])
+  log.debug('handleDaoCreated', [event.params.dao.toHex()])
   let dao = new Dao(event.params.dao.toHex())
   dao.author = event.params.caller
   dao.address = event.params.dao
@@ -25,12 +26,11 @@ export function handleDaoCreated(event: DaoCreated): void {
 }
 
 export function handleDeposited(event: Deposited):void {
-  console.log('handleDeposited')
-  console.log(event.address.toHexString())
+  log.info('handleDeposited', [event.address.toHexString()]);
+  log.debug('handleDeposited', [event.address.toHexString()]);
   let dao = Dao.load(event.address.toHexString())
-  console.log(event.address.toHexString())
-  console.log(event.params.fundedAmount.toHex())
   if (!dao) return
+  log.info('Dao was loaded!', [event.address.toHexString()]);
   dao.fundedAmount = event.params.fundedAmount
   dao.save()
 }

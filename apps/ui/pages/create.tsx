@@ -184,11 +184,82 @@ const FlexContainer = styled.div`
   display: flex;
 `;
 
+const StyledImageForm = styled.form``;
+
+const UploadCTAWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const StyledSubmitInput = styled.input`
+  font-family: 'Roboto Mono';
+  text-transform: uppercase;
+  text-align: center;
+  color: ${PINK};
+  background-color: ${BG_NORMAL};
+  border-radius: ${BASE_BORDER_RADIUS};
+  box-shadow: ${BASE_BOX_SHADOW};
+  padding: 1rem;
+
+  :hover {
+    cursor: pointer;
+  }
+
+  :active {
+    box-shadow: ${INSET_BASE_BOX_SHADOW};
+  }
+
+  :disabled {
+    color: grey;
+
+    :hover {
+      cursor: default;
+    }
+  }
+`;
+
 const CoverImage = styled.div`
-  width: 240px;
+  width: 100%;
   height: 300px;
   align-items: center;
   box-shadow: ${INSET_BASE_BOX_SHADOW};
+  margin: 0 0 2rem 0;
+  display: flex;
+  justify-content: center;
+`;
+
+const StyledFileInput = styled.input`
+  color: transparent;
+  margin-block: 1rem;
+  
+  ::-webkit-file-upload-button {
+    width: 100%;
+    border-width: 0;
+    font-family: 'Roboto Mono';
+    text-transform: uppercase;
+    text-align: center;
+    color: ${BG_NORMAL};
+    background-color: ${PLAIN_WHITE};
+    border-radius: ${BASE_BORDER_RADIUS} !important;
+    padding: 1rem;
+  
+    :hover {
+      cursor: pointer;
+    }
+  
+    :disabled {
+      color: grey;
+  
+      :hover {
+        cursor: default;
+      }
+    }
+  }
+`;
+
+const FileName = styled.span`
+  display: inline-block;
+  height: 24px;
 `;
 
 export interface Contributor {
@@ -246,6 +317,7 @@ const Create = () => {
   const [firstEdMaxAmount, setFirstEdMaxAmount] = useState(0);
   // TODO type for buffer
   const [imgBuffer, setImgBuffer] = useState<null | Buffer>(null);
+  const [imgFileName, setImgFileName] = useState<string>('');
   const [coverImgIPFS, setCoverImgIPFS] = useState<string>('');
   const [blurb, setBlurb] = useState<string>('');
   const [loading, setLoading] = useState(false);
@@ -310,40 +382,49 @@ const Create = () => {
     }
   };
 
-  const captureFile = (event: SyntheticEvent) => {
-    event.preventDefault();
-    const file = event.target.files[0]
+  const shortenImageName = (filename: string) => {
+    const filenameStart = filename.substring(0, 6);
+    const filenameLength = filename.length;
+    const cut = filenameLength - 6;
+    const filenameEnd = filename.substring(filenameLength, cut);
+    return `${filenameStart}...${filenameEnd}`; 
+  };
+
+  const captureFile = (file: any) => {
     const reader = new window.FileReader()
     reader.readAsArrayBuffer(file)
     reader.onloadend = () => {
       // @ts-ignore
       const buffer = Buffer.from(reader.result);
+      setImgFileName(shortenImageName(file.name));
       setImgBuffer(buffer);
     }
   };
 
-  const submitImage = async() => {
+  const submitImage = async(event: SyntheticEvent) => {
+    event.preventDefault();
     const added = await client.add(imgBuffer);
     // const url = `https://ipfs.infura.io/ipfs/${added.path}`;
     // TODO what about pinning?
     setCoverImgIPFS(added.path);
-    createSetCover(
-      daoContract,
-      added.path,
-      setLoading,
-      PendingToast,
-      (x, y, z) => {
-        setSubStep(subStep + 1);
-        // @ts-ignore
-        return <SuccessToast chainId={x} hash={y} customMessage={z} />;
-      }
-    )       
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      .then(() => {})
-      .catch((e) => {
-        console.log({e});
-        toast.error('Something went wrong');
-      });
+    toast.info(added.path);
+    // createSetCover(
+    //   daoContract,
+    //   added.path,
+    //   setLoading,
+    //   PendingToast,
+    //   (x, y, z) => {
+    //     setSubStep(subStep + 1);
+    //     // @ts-ignore
+    //     return <SuccessToast chainId={x} hash={y} customMessage={z} />;
+    //   }
+    // )       
+    //   // eslint-disable-next-line @typescript-eslint/no-empty-function
+    //   .then(() => {})
+    //   .catch((e) => {
+    //     console.log({e});
+    //     toast.error('Something went wrong');
+    //   });
   };
 
   const handleSetBlurb = useCallback(async() => {
@@ -630,27 +711,39 @@ const allContributors = useMemo(async() => {
         <InputName>COVER IMAGE</InputName>
         <InputDescription>Upload a Cover Image</InputDescription>
         {/* @ts-ignore */}
-        <CoverImage>
-          <Image
-            src={'/ImgPlaceholder.png'}
-            height={'100%'}
-            width={'100%'}
-            alt={'Cover Image Placeholder'}
-          />
-        </CoverImage>
-        {/* INPUT is breaking the app ?! */}
-        {/* <SubmitButton
-          onClick={() => setCurrentStep(currentStep + 1)}
-        >
-          {'Skip'}
-        </SubmitButton>
-        <SubmitButton
-            onClick={submitImage}
-            disabled={loading || !imgBuffer}
-            style={{ minWidth: '182px' }}
-        >
-          Submit Image
-        </SubmitButton> */}
+
+        <StyledImageForm onSubmit={(e: any) => submitImage(e)}>
+          <CoverImage
+            onDragOver={(e:any) => {
+              e.preventDefault();
+              console.log({e});
+            }}
+            onDrop={(e:any) => {
+              e.preventDefault();
+              const file = e.dataTransfer.files[0];
+              captureFile(file);
+            }}
+          >
+            <Image
+              src={'/ImgPlaceholder.png'}
+              height={'100%'}
+              width={'100%'}
+              alt={'Cover Image Placeholder'}
+            />
+          </CoverImage>
+          <UploadCTAWrapper>
+            <FileName>{imgFileName}</FileName>
+            <StyledFileInput
+              type="file"
+              onChange={(evt: any) => {
+                evt.preventDefault();
+                const file = evt.target.files[0];
+                captureFile(file);
+              }}
+              />
+            <StyledSubmitInput disabled={!imgBuffer} type="submit" value="Set Image"/>
+          </UploadCTAWrapper>
+        </StyledImageForm>
       </Wrapper>
     </FadeIn>
   );
@@ -906,15 +999,15 @@ const allContributors = useMemo(async() => {
       </ProgressBarWrapper>
       <FormWrapper>
         <Form>
-          {/* {currentStep === 0 && CoverImageForm()} */}
-          {currentStep === 0 && !creatingDao && NameForm()}
+          {currentStep === 0 && CoverImageForm()}
+          {/* {currentStep === 0 && !creatingDao && NameForm()} */}
           {currentStep === 1 && !creatingDao && TextForm()}
           {currentStep === 2 && !creatingDao && AmountForm()}
           {currentStep === 3 && !creatingDao && PriceForm()}
           {currentStep === 4 && !creatingDao && ReviewForm()}
           {creatingDao && <Waiting />}
           {currentStep === 5 && !creatingDao && Congrats()}
-          {currentStep === 6 && subStep === 1 && !creatingDao && CoverImageForm()}
+          {/* {currentStep === 6 && subStep === 1 && !creatingDao && CoverImageForm()} */}
           {currentStep === 6 && subStep === 2 && !creatingDao && BlurbForm()}
           {currentStep === 6 && subStep === 3 && !creatingDao && GenreForm()}
           {currentStep === 6 && subStep === 4 && !creatingDao && SubTitleForm()}
