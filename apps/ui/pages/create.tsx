@@ -186,6 +186,21 @@ const FlexContainer = styled.div`
 
 const StyledImageForm = styled.form``;
 
+const DragNDrop = styled.div`
+  width: 100%;
+  height: 300px;
+  align-items: center;
+  box-shadow: ${INSET_BASE_BOX_SHADOW};
+  margin: 0 0 2rem 0;
+
+  > span {
+    width:100% !important;
+    height:100% !important;
+    object-fit: cover !important;
+    overflow: hidden !important;
+  }
+`;
+
 const UploadCTAWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -216,16 +231,6 @@ const StyledSubmitInput = styled.input`
       cursor: default;
     }
   }
-`;
-
-const CoverImage = styled.div`
-  width: 100%;
-  height: 300px;
-  align-items: center;
-  box-shadow: ${INSET_BASE_BOX_SHADOW};
-  margin: 0 0 2rem 0;
-  display: flex;
-  justify-content: center;
 `;
 
 const StyledFileInput = styled.input`
@@ -317,7 +322,7 @@ const Create = () => {
   const [firstEdMaxAmount, setFirstEdMaxAmount] = useState(0);
   // TODO type for buffer
   const [imgBuffer, setImgBuffer] = useState<null | Buffer>(null);
-  const [imgFileName, setImgFileName] = useState<string>('');
+  const [imgFile, setImgFile] = useState(null);
   const [coverImgIPFS, setCoverImgIPFS] = useState<string>('');
   const [blurb, setBlurb] = useState<string>('');
   const [loading, setLoading] = useState(false);
@@ -396,7 +401,7 @@ const Create = () => {
     reader.onloadend = () => {
       // @ts-ignore
       const buffer = Buffer.from(reader.result);
-      setImgFileName(shortenImageName(file.name));
+      setImgFile(file);
       setImgBuffer(buffer);
     }
   };
@@ -712,11 +717,10 @@ const allContributors = useMemo(async() => {
         <InputDescription>Upload a Cover Image</InputDescription>
         {/* @ts-ignore */}
 
-        <StyledImageForm onSubmit={(e: any) => submitImage(e)}>
-          <CoverImage
+        <StyledImageForm onSubmit={(e:any) => submitImage(e)}>
+          <DragNDrop
             onDragOver={(e:any) => {
               e.preventDefault();
-              console.log({e});
             }}
             onDrop={(e:any) => {
               e.preventDefault();
@@ -725,14 +729,14 @@ const allContributors = useMemo(async() => {
             }}
           >
             <Image
-              src={'/ImgPlaceholder.png'}
+              src={imgFile ? URL.createObjectURL(imgFile) : '/ImgPlaceholder.png'}
               height={'100%'}
               width={'100%'}
-              alt={'Cover Image Placeholder'}
+              alt={'Cover'}
             />
-          </CoverImage>
+          </DragNDrop>
           <UploadCTAWrapper>
-            <FileName>{imgFileName}</FileName>
+            <FileName>{imgFile ? shortenImageName(imgFile.name) : ''}</FileName>
             <StyledFileInput
               type="file"
               onChange={(evt: any) => {
