@@ -92,7 +92,7 @@ const ProjectDetailView = () => {
   const getProjectDetails = useGetProjectDetails();
   const ProjectContract = useProjectContract(projectAddress as string);
   const [daoData, setDaoData] = useState<DaoData | null>(null);
-  const [coverImgLink, setCoverImgLink] = useState<string>('');
+  const [coverImgLink, setCoverImgLink] = useState<string>(null);
   const [successfullyLoaded, setSuccessfullyLoaded] = useState<boolean>(false);
 
   const callGetProjectDetails = useCallback(async(projectAddress: string) => {
@@ -109,21 +109,27 @@ const ProjectDetailView = () => {
       subtitle: null
     };
     setDaoData(mockDao);
+    
   }, [getProjectDetails]);
 
+  useEffect(() => {
+    setCoverImgLink("https://ipfs.io/ipfs/QmbsMGBbjGjvX1ihkQQQWSxSzSdbRU9RiWMXr8e3KNWNLf");
+  }, []);
+  
   useEffect(() => {
     if (projectAddress && !successfullyLoaded) {
       // @ts-ignore
       callGetProjectDetails(projectAddress);
+      setSuccessfullyLoaded(true);
 
-      ProjectContract.project()
-        .then((x: any) => {
-          setCoverImgLink("https://ipfs.io/ipfs/QmbsMGBbjGjvX1ihkQQQWSxSzSdbRU9RiWMXr8e3KNWNLf");
-          setSuccessfullyLoaded(true);
-        })
-        .catch((e: unknown) => {
-          console.log({ e });
-        });
+      // ProjectContract.project()
+      //   .then((x: any) => {
+      //     setCoverImgLink("https://ipfs.io/ipfs/QmbsMGBbjGjvX1ihkQQQWSxSzSdbRU9RiWMXr8e3KNWNLf");
+      //     setSuccessfullyLoaded(true);
+      //   })
+      //   .catch((e: unknown) => {
+      //     console.log({ e });
+      //   });
     }
   }, [
     projectAddress,
