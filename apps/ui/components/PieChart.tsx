@@ -42,7 +42,7 @@ interface PieChart {
 const PieChart = ({ part, whole }) => {
   return (
     <Pie>
-      <StyledCircle fulfilled={500} />
+      <StyledCircle percentage={parseInt((part/whole * 100).toString())} />
       <PieHole>
         <PieHoleData>{`${part}/${whole} Spots Taken`}</PieHoleData>
       </PieHole>

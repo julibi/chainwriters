@@ -101,7 +101,7 @@ const ProjectDetailView = () => {
       title: "MOCK DAO",
       author: "0x61a2ef03e18A78B8337Cd7409C02b61D694F28C0",
       mintPrice: "2000000000000000",
-      fundedAmount: "10",
+      fundedAmount: "8",
       firstEditionMax: "12",
       createdAt: "1649784856",
       genre: null,
