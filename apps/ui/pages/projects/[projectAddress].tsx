@@ -4,10 +4,11 @@ import Image from 'next/image'
 import { useRouter } from 'next/router'
 import styled from 'styled-components'
 import Loading from '../../components/Loading'
-import PieChart from '../../components/PieChart'
 import { useGetProjectDetails } from '../../state/projects/hooks'
+import PieChart from '../../components/PieChart'
 import { SectionTitle } from '../../components/ProjectSection'
-import { BASE_BORDER_RADIUS, BASE_BOX_SHADOW, PLAIN_WHITE } from '../../themes'
+import { truncateAddress } from '../../components/WalletIndicator'
+import { BaseButton, BASE_BORDER_RADIUS, BASE_BOX_SHADOW, DISABLED_WHITE, INSET_BASE_BOX_SHADOW, PLAIN_WHITE, PrimaryButton } from '../../themes'
 import timestampConverter from '../../utils/timestampConverter'
 import useProjectContract from '../../hooks/useProjectContract'
 
@@ -59,13 +60,10 @@ const InfoLeft = styled.div`
   padding: 2rem;
 `;
 
-const InfoRight = styled.div`
-  flex: 1;
-
-  border-radius: ${BASE_BORDER_RADIUS};
-  box-shadow: ${BASE_BOX_SHADOW};
-  margin-inline-start: 2rem;
-  padding: 2rem;
+const PieChartWrapper = styled.div`
+  display: inline-block;
+  margin: 0 auto;
+  margin-block-end: 2rem;
 `;
 
 const Title = styled(SectionTitle)`
@@ -86,6 +84,59 @@ const FlexWrapper = styled.div`
   justify-content: space-between;
 `;
 
+const StyledControl = styled(BaseButton)``;
+
+const StyledFakeInput = styled.span`
+  width: 100px;
+  display: inline-block;
+  margin: 0 1rem;
+  text-align: center;
+`;
+
+const DepositButton = styled(PrimaryButton)`
+  font-family: 'Roboto Mono Bold';
+  padding: 1rem;
+  width: 209px;
+
+  :disabled {
+    background-color: ${DISABLED_WHITE};
+    :hover {
+      cursor: auto;
+    }
+  }
+`;
+
+const InfoRight = styled.div`
+  flex: 1;
+
+  margin-inline-start: 2rem;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  > div {
+    padding: 2rem;
+    border-radius: ${BASE_BORDER_RADIUS};
+    box-shadow: ${BASE_BOX_SHADOW};
+  }
+`;
+
+const ImageWrapper = styled.div`
+  height: 100%;
+  margin-block-end: 2rem;
+
+  > span {
+    object-fit: contain;
+    width: 100% !important;
+    height: 100% !important;
+  }
+`;
+
+const Author = styled.div`
+`;
+
+
 const ProjectDetailView = () => {
   const router = useRouter();
   const { projectAddress } = router.query;
@@ -94,6 +145,18 @@ const ProjectDetailView = () => {
   const [daoData, setDaoData] = useState<DaoData | null>(null);
   const [coverImgLink, setCoverImgLink] = useState<string>(null);
   const [successfullyLoaded, setSuccessfullyLoaded] = useState<boolean>(false);
+  const [mintingAmount, setMintingAmount] = useState<number>(1);
+  const handleIncrement = useCallback(() => {
+    setMintingAmount(mintingAmount + 1);
+  }, [mintingAmount]); 
+
+  const handleDecrement = useCallback(() => {
+    setMintingAmount(mintingAmount - 1);
+  }, [mintingAmount]); 
+
+  const handleDeposit = useCallback(() => {
+    console.log("handleDeposit");
+  }, [mintingAmount]); 
 
   const callGetProjectDetails = useCallback(async(projectAddress: string) => {
     const result = await getProjectDetails(projectAddress);
@@ -156,18 +219,47 @@ const ProjectDetailView = () => {
                 daoData.mintPrice
               )} MATIC`}</Info>
             </FlexWrapper>
-            <PieChart
-              part={daoData.fundedAmount}
-              whole={daoData.firstEditionMax}
-            />
+            <PieChartWrapper>
+              <PieChart
+                part={Number(daoData.fundedAmount)}
+                whole={Number(daoData.firstEditionMax)}
+              />
+            </PieChartWrapper>
+            <FlexWrapper>
+              <div>
+                <StyledControl
+                  onClick={handleDecrement}
+                  disabled={mintingAmount === 1}
+                >
+                  -
+                </StyledControl>
+                <StyledFakeInput>{mintingAmount}</StyledFakeInput>
+                <StyledControl
+                  onClick={handleIncrement}
+                  disabled={mintingAmount === 5}
+                >
+                  +
+                </StyledControl>
+              </div>
+              <DepositButton onClick={handleDeposit}>
+                {`Deposit For ${formatEther(
+                  (Number(daoData.mintPrice) * mintingAmount).toString()
+                )}`}
+              </DepositButton>
+            </FlexWrapper>
           </InfoLeft>
           <InfoRight>
-            <Image
-              src={coverImgLink ?? '/ImgPlaceholder.png'}
-              height={'100%'}
-              width={'100%'}
-              alt={'Project Image'}
-            />
+            <ImageWrapper>
+              <Image
+                src={coverImgLink ?? '/ImgPlaceholder.png'}
+                height={'100%'}
+                width={'100%'}
+                alt={'Project Image'}
+              />
+            </ImageWrapper>
+            <Author>
+              <span>{`Author: ${truncateAddress(daoData.author)}`}</span>
+            </Author>
           </InfoRight>
         </MainInfoWrapper>
       )}

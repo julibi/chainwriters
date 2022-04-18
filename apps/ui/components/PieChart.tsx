@@ -35,11 +35,11 @@ const StyledCircle = styled(Circle)`
 `;
 
 interface PieChart {
-  part: string;
-  whole: string;
+  part: number;
+  whole: number;
 }
 
-const PieChart = ({ part, whole }) => {
+const PieChart = ({ part, whole }: PieChart) => {
   return (
     <Pie>
       <StyledCircle percentage={parseInt((part/whole * 100).toString())} />
