@@ -32,6 +32,8 @@ interface DaoData {
 
 const Root = styled.div`
   display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
   margin-block-start: 3rem;
 `;
@@ -41,6 +43,7 @@ const MainInfoWrapper = styled.section`
   width: 90%;
   max-width: 1200px;
   color: ${PLAIN_WHITE};
+  margin-block-end: 2rem;
 
   animation: fadein 2s;
 
@@ -128,14 +131,31 @@ const ImageWrapper = styled.div`
 
   > span {
     object-fit: contain;
-    width: 100% !important;
-    height: 100% !important;
+    width: 500px !important;
+    height: 400px !important;
   }
 `;
 
 const Author = styled.div`
 `;
 
+const DescriptionWrapper = styled.section`
+  display: flex;
+  width: 90%;
+  max-width: 1200px;
+  color: ${PLAIN_WHITE};
+  margin-block-end: 2rem;
+  padding: 2rem;
+  border-radius: ${BASE_BORDER_RADIUS};
+  box-shadow: ${BASE_BOX_SHADOW};
+
+  animation: fadein 2s;
+
+  @keyframes fadein {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+  }
+`;
 
 const ProjectDetailView = () => {
   const router = useRouter();
@@ -205,6 +225,7 @@ const ProjectDetailView = () => {
     <Root>
       {!daoData && <Loading height={530} />}
       {daoData && (
+        <>
         <MainInfoWrapper>
           <InfoLeft>
             <Title>{daoData.title}</Title>
@@ -262,6 +283,11 @@ const ProjectDetailView = () => {
             </Author>
           </InfoRight>
         </MainInfoWrapper>
+        <DescriptionWrapper>
+          <SectionTitle>Description</SectionTitle>
+          "Lorem ipsum Lorem ipsumLorem ipsumLorem ipsumLorem ipsumLorem ipsum"
+        </DescriptionWrapper>
+        </>
       )}
     </Root>
   );
