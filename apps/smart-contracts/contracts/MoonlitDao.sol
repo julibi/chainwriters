@@ -33,6 +33,7 @@ contract MoonlitDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
 
   struct Contribution {
     address shareRecipient;
+    string role;
     uint256 share;
     uint256 shareInMatic;
     bool hasWithdrawnShare;
@@ -208,17 +209,18 @@ contract MoonlitDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
   // ------------------
  
   // add role of contributor
-  function addContributor(address _contributor, uint256 _share) external onlyRole(AUTHOR_ROLE) isBeforeInvesting {
+  function addContributor(address _contributor, uint256 _share, string _role) external onlyRole(AUTHOR_ROLE) isBeforeInvesting {
     // in theory user can put the same contributor 3 times - we don't care
     require(_contributor != address(0), "Contribut cannot be 0 address");
     require(contributorIndex < 3, "Contributors already set");
     require(totalSharePercentage + _share < 101, "Contributor's share too high");
     contributors[contributorIndex].shareRecipient = _contributor;
     contributors[contributorIndex].share = _share;
+    contributors[contributorIndex].role = _share;
     contributors[contributorIndex].hasWithdrawnShare = false;
     totalSharePercentage = totalSharePercentage + _share;
     contributorIndex = contributorIndex + 1;
-    emit ContributorAdded(_contributor, _share, "");
+    emit ContributorAdded(_contributor, _share, _role);
   }
 
   function setTextIpfsHash(string memory _ipfsHash) external onlyRole(AUTHOR_ROLE) isBeforeInvesting {
