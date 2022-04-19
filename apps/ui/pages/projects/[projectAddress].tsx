@@ -276,6 +276,7 @@ const ProjectDetailView = () => {
 
   const callGetProjectDetails = useCallback(async(projectAddress: string) => {
     const { results } = await getProjectDetails(projectAddress);
+    console.log('multicall: ', {results});
     const contributorsData = results.results.PROJECT.callsReturnContext.map((contrib, i) => {
       return {
         address: contrib.returnValues[0],
