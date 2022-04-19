@@ -12,7 +12,7 @@ import { BaseButton, BASE_BORDER_RADIUS, BASE_BOX_SHADOW, DISABLED_WHITE, INSET_
 import timestampConverter from '../../utils/timestampConverter'
 import useProjectContract from '../../hooks/useProjectContract'
 import { NULL_ADDRESS } from '../../../constants';
-import useFactoryContract from '../../hooks/useFactoryContract';
+import useFactoryContract from '../../hooks/useFactoryContract'
 
 // TODO
 // author view
@@ -24,7 +24,6 @@ interface DaoData {
   address: string;
   title: string;
   author: string;
-  authorShare: null | number;
   mintPrice: string;
   fundedAmount: string;
   firstEditionMax: string;
@@ -146,12 +145,7 @@ const DepositButton = styled(PrimaryButton)`
 
 const InfoRight = styled.div`
   flex: 1;
-
   margin-inline-start: 2rem;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
 
   > div {
     padding: 2rem;
@@ -163,16 +157,20 @@ const InfoRight = styled.div`
     margin-inline-start: 0;
     margin-block-end: 2rem;
   }
-`;
+`
 
 const ImageWrapper = styled.div`
   height: 100%;
   margin-block-end: 2rem;
 
-  > span {
-    object-fit: contain;
-    width: 500px !important;
-    height: 400px !important;
+  span {
+    width: 100% !important;
+    height: 100% !important;
+
+    img {
+      object-fit: contain;
+      
+    }
   }
 `;
 
@@ -296,8 +294,7 @@ const ProjectDetailView = () => {
       firstEditionMax: "12",
       createdAt: "1649784856",
       genre: null,
-      subtitle: null,
-      authorShare: null
+      subtitle: null
     };
     setDaoData(mockDao);
     try {
@@ -310,16 +307,18 @@ const ProjectDetailView = () => {
 
 
   
-  useEffect(() => {
+  const authorShare = useMemo(() => {
     if (contributors && daoData) {      
       const contributorsShareTotal = contributors.reduce((partialSum, a) => partialSum + a.share, 0);
-      const authorShare = 85 - contributorsShareTotal;
-      setDaoData({...daoData, authorShare: authorShare});
+      const result = 85 - contributorsShareTotal;
+      return result;
     }
   }, [contributors, daoData]);
 
   useEffect(() => {
-    setCoverImgLink("https://ipfs.io/ipfs/QmbsMGBbjGjvX1ihkQQQWSxSzSdbRU9RiWMXr8e3KNWNLf");
+    setCoverImgLink("https://ipfs.io/ipfs/Qmdp4FB1QBXnMbPP3QfR7jKgBD2o5HMdDpdrXWad991Sf4");
+    // setCoverImgLink("https://www.fillmurray.com/360/360");
+    // setCoverImgLink('https://picsum.photos/200/300');
   }, []);
   
   useEffect(() => {
@@ -397,15 +396,18 @@ const ProjectDetailView = () => {
             <InfoRight>
               <ImageWrapper>
                 <Image
+                  priority
                   src={coverImgLink ?? '/ImgPlaceholder.png'}
                   height={'100%'}
                   width={'100%'}
                   alt={'Project Image'}
+                  quality={65}
+                  layout="responsive"
                 />
               </ImageWrapper>
-              <Author>
+              {/* <Author>
                 <span>{`Author: ${truncateAddress(daoData.author)}`}</span>
-              </Author>
+              </Author> */}
             </InfoRight>
           </MainInfoWrapper>
           <ShareSection>
@@ -414,12 +416,18 @@ const ProjectDetailView = () => {
               <Share>
                 <ShareTitle>Author</ShareTitle>
                 <ShareAddress>{truncateAddress(daoData.author)}</ShareAddress>
-                <SharePercentage>{`${daoData.authorShare}%`}</SharePercentage>
+                <SharePercentage>{`${authorShare} %`}</SharePercentage>
               </Share>
               {contributors.map((contributor, i) => (
                 <Share key={i}>
-                  <ShareTitle>{contributor.role.length ? contributor.role : "Unknown role"}</ShareTitle>
-                  <ShareAddress>{truncateAddress(contributor.address)}</ShareAddress>
+                  <ShareTitle>
+                    {contributor.role.length
+                      ? contributor.role
+                      : 'Unknown role'}
+                  </ShareTitle>
+                  <ShareAddress>
+                    {truncateAddress(contributor.address)}
+                  </ShareAddress>
                   <SharePercentage>{`${contributor.share} %`}</SharePercentage>
                 </Share>
               ))}

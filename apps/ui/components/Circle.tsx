@@ -29,7 +29,6 @@ interface CircleProps {
 }
 
 const Circle = ({ percentage }: CircleProps) => {
-  console.log({percentage});
   return (
     <StyledSVG
       xmlns="http://www.w3.org/2000/svg"
