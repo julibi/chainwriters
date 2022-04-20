@@ -13,7 +13,7 @@ import timestampConverter from '../../utils/timestampConverter'
 import useProjectContract from '../../hooks/useProjectContract'
 import { NULL_ADDRESS } from '../../../constants';
 import useFactoryContract from '../../hooks/useFactoryContract'
-
+import { PieChart as ExternalPieChart } from 'react-minimal-pie-chart'
 // TODO
 // author view
 // contributor view
@@ -221,6 +221,11 @@ const ShareAddress = styled.span`
 
 const SharePercentage = styled.span`
   display: inline-block;
+`;
+
+const ExternalPieChartWrapper = styled.div`
+  height: 300px;
+  width: auto;
 `;
 
 const DescriptionSection = styled.section`
@@ -438,6 +443,24 @@ const ProjectDetailView = () => {
                 <SharePercentage>15 %</SharePercentage>
               </Share>
             </Shares>
+            <PieChart
+                  part={Number(daoData.fundedAmount)}
+                  whole={Number(daoData.firstEditionMax)}
+                />
+            {/* <ExternalPieChartWrapper>
+              <ExternalPieChart
+                label={(index) => index.dataEntry.title}
+                labelStyle={{color: '#fff !important'}}
+                animate
+                animationDuration={1}
+                animationEasing="ease-in"
+                data={[
+                  { title: 'One', value: 60, color: '#E38627' },
+                  { title: 'Two', value: 25, color: '#C13C37' },
+                  { title: 'Three', value: 15, color: '#6A2135' },
+                ]}
+                />
+            </ExternalPieChartWrapper> */}
           </ShareSection>
           <DescriptionSection>
             <Title style={{ maxWidth: '200px' }}>Description</Title>
