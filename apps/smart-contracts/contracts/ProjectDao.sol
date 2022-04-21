@@ -51,7 +51,7 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
   bool public refundEnabled = false;
 
   // uint256 public AUCTION_DURATION = 1 days;
-  uint256 public AUCTION_DURATION = 3000;
+  uint256 public AUCTION_DURATION = 1 days;
   uint public discountRate;
   uint public startAt;
   uint public expiresAt;
@@ -90,14 +90,22 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
       factory = _factory;
   }
 
+  function showTimestamp() public view returns (uint) {
+    return block.timestamp;
+  }
+
+  function retriggerAuction() external {
+    require(expiresAt > block.timestamp, "Triggering unnecessary. Auction running.");
+    startAt = block.timestamp;
+    expiresAt = block.timestamp + AUCTION_DURATION;
+  }
+
   function buy() external payable whenNotPaused {
     require(auctionStarted, "Auctions have not started");
     require(!auctionPhaseFinished, "Auctions finished");
-    if (expiresAt < block.timestamp) {
-      triggerNextAuction();
-      require(false == true, "Auction ended. You triggered a new one.");
-    }
+    require(expiresAt > block.timestamp, "Auction ended. Trigger a new one.");
     uint price = getPrice();
+    bool shouldTriggerNextAuction = totalSupply(1) + 1 < currentEditionMax;
     require(msg.value >= price, "Value sent not sufficient.");
 
     _mint(msg.sender, 1, 1, "");
@@ -105,7 +113,8 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
     if (refund > 0) {
         payable(msg.sender).transfer(refund);
     }
-    if(totalSupply(1) < currentEditionMax) {
+
+    if(shouldTriggerNextAuction) {
       triggerNextAuction();
     } else {
       distributeShares();

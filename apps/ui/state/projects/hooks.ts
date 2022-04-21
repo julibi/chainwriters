@@ -92,8 +92,8 @@ export const useGetProjectDetails = () => {
     if (!address) {
       return null;
     }
-    const multicallContext = {
-      reference: "PROJECT",
+    const contributorsMulticallContext = {
+      reference: "PROJECT_CONTRIBS",
       contractAddress: address,
       abi: PROJECT_ABI,
       calls: [
@@ -106,26 +106,39 @@ export const useGetProjectDetails = () => {
           reference: "contributor2",
           methodName: "contributors",
           methodParameters: [1]
-        },
-        {
-          reference: "contributor3",
-          methodName: "contributors",
-          methodParameters: [2]
-        },
-        
+        }
       ]
     };
-    const results = await multicall.call(multicallContext);
+
+    const auctionsMulticallContext = {
+      reference: 'PROJECT_AUCTIONS',
+      contractAddress: address,
+      abi: PROJECT_ABI,
+      calls: [
+        {
+          reference: 'auctionStarted',
+          methodName: 'auctionStarted',
+          methodParameters: [],
+        },
+        {
+          reference: 'auctionPhaseFinished',
+          methodName: 'auctionPhaseFinished',
+          methodParameters: [],
+        },
+      ],
+    };
+    const contribs = await multicall.call(contributorsMulticallContext);
+    const auctions = await multicall.call(auctionsMulticallContext);
     const addressLow = address.toLowerCase();
     // not using useQuery here, because we have to wait for the the var `address`,
     // and int main body or custom hook it cannot be present from the start
-    const {
-      data: { dao }
-    } = await client.query({
-      query: GET_ONE_DAO,
-      variables: { address: addressLow }
-    });
+    // const {
+    //   data: { dao }
+    // } = await client.query({
+    //   query: GET_ONE_DAO,
+    //   variables: { address: addressLow }
+    // });
     // TODO - also fetch all contributors of that project
-    return { results, dao };
+    return { contribs, auctions };
   };
 };

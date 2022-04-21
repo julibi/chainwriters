@@ -1,5 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { toast } from 'react-toastify';
 import { formatEther, parseEther } from '@ethersproject/units'
+import { useWeb3React } from '@web3-react/core';
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import styled from 'styled-components'
@@ -13,7 +15,8 @@ import timestampConverter from '../../utils/timestampConverter'
 import useProjectContract from '../../hooks/useProjectContract'
 import { NULL_ADDRESS } from '../../../constants';
 import useFactoryContract from '../../hooks/useFactoryContract'
-import { PieChart as ExternalPieChart } from 'react-minimal-pie-chart'
+import BaseModal from '../../components/BaseModal';
+
 // TODO
 // author view
 // contributor view
@@ -126,7 +129,7 @@ const StyledFakeInput = styled.span`
   text-align: center;
 `;
 
-const DepositButton = styled(PrimaryButton)`
+const StyledPrimaryButton = styled(PrimaryButton)`
   font-family: 'Roboto Mono Bold';
   padding: 1rem;
   width: 209px;
@@ -255,7 +258,26 @@ const Description = styled.p`
   line-height: 170%;
 `;
 
+const ContentWrapper = styled.div`
+  margin: 2rem;
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const ModalHeader = styled.h2`
+  display: inline-block;
+`;
+
+const ModalText = styled.span`
+  display: inline-block;
+  margin-block: 1rem;
+  text-align: center;
+`;
+
 const ProjectDetailView = () => {
+  const { account } = useWeb3React();
   const router = useRouter();
   const { projectAddress } = router.query;
   const getProjectDetails = useGetProjectDetails();
@@ -267,6 +289,14 @@ const ProjectDetailView = () => {
   const [mintingAmount, setMintingAmount] = useState<number>(1);
   const [contributors, setContributors] = useState<Contributor[] | null>(null);
   const [factoryOwner, setFactoryOwner] = useState<string | null>(null);
+  const [isAuthor, setIsAuthor] = useState<boolean>(false);
+  const [loadingPrice, setLoadingPrice] = useState<boolean>(false);
+  const [showBuyModal, setShowBuyModal] = useState<boolean>(false);
+  // todo: big integer
+  const [currentPrice, setCurrentPrice] = useState(null);
+  const [mintPending, setMintPending] = useState<boolean>(false);
+  
+  
   const handleIncrement = useCallback(() => {
     setMintingAmount(mintingAmount + 1);
   }, [mintingAmount]); 
@@ -280,9 +310,9 @@ const ProjectDetailView = () => {
   }, [mintingAmount]); 
 
   const callGetProjectDetails = useCallback(async(projectAddress: string) => {
-    const { results } = await getProjectDetails(projectAddress);
-    console.log('multicall: ', {results});
-    const contributorsData = results.results.PROJECT.callsReturnContext.map((contrib, i) => {
+    const { contribs, auctions } = await getProjectDetails(projectAddress);
+    console.log('multicall: ', {contribs, auctions });
+    const contributorsData = contribs.results.PROJECT_CONTRIBS.callsReturnContext.map((contrib, i) => {
       return {
         address: contrib.returnValues[0],
         share: parseInt(contrib.returnValues[1].hex, 16),
@@ -311,7 +341,6 @@ const ProjectDetailView = () => {
     }
   }, [FactoryContract, getProjectDetails]);
 
-
   
   const authorShare = useMemo(() => {
     if (contributors && daoData) {      
@@ -321,33 +350,59 @@ const ProjectDetailView = () => {
     }
   }, [contributors, daoData]);
 
-  useEffect(() => {
-    setCoverImgLink("https://ipfs.io/ipfs/Qmdp4FB1QBXnMbPP3QfR7jKgBD2o5HMdDpdrXWad991Sf4");
-    // setCoverImgLink("https://www.fillmurray.com/360/360");
-    // setCoverImgLink('https://picsum.photos/200/300');
-  }, []);
-  
+  const mint = () => {
+    // pass the amount
+      ProjectContract
+      .buy({value: currentPrice})
+      .then(mintTx => {
+        const { hash } = mintTx;
+        setMintPending(true);
+        toast.info(`Pending: ${hash}`);
+        ProjectContract.provider.once(hash, (transaction) => {
+          toast.success(`Success: ${hash}`);
+          setMintPending(false);
+        });
+      })
+      .catch(e => {
+        console.log({ e });
+        toast.error('Something went wrong.');
+        setMintPending(false);
+      });
+  };
+
   useEffect(() => {
     if (projectAddress && !successfullyLoaded) {
       // @ts-ignore
       callGetProjectDetails(projectAddress);
       setSuccessfullyLoaded(true);
 
-      // ProjectContract.project()
-      //   .then((x: any) => {
-      //     setCoverImgLink("https://ipfs.io/ipfs/QmbsMGBbjGjvX1ihkQQQWSxSzSdbRU9RiWMXr8e3KNWNLf");
-      //     setSuccessfullyLoaded(true);
-      //   })
-      //   .catch((e: unknown) => {
-      //     console.log({ e });
-      //   });
+      ProjectContract.project()
+        .then((x: any) => {
+          setCoverImgLink("https://ipfs.io/ipfs/Qmdp4FB1QBXnMbPP3QfR7jKgBD2o5HMdDpdrXWad991Sf4");
+          setSuccessfullyLoaded(true);
+          if (x.author_address == account) {
+            setIsAuthor(true);
+          }
+        })
+        .catch((e: unknown) => {
+          console.log({ e });
+        });
     }
   }, [
+    account,
     projectAddress,
     ProjectContract,
     callGetProjectDetails,
     successfullyLoaded,
   ]);
+
+  const fetchCurrentPrice = async() => {
+    setLoadingPrice(true);
+    const price = await ProjectContract.getPrice();
+    setCurrentPrice(price);
+    setLoadingPrice(false);
+    setShowBuyModal(true);
+  };
 
   return (
     <Root>
@@ -377,7 +432,7 @@ const ProjectDetailView = () => {
                 />
               </PieChartWrapper>
               <FlexWrapper>
-                <ControlWrapper>
+                {/* <ControlWrapper>
                   <StyledControl
                     onClick={handleDecrement}
                     disabled={mintingAmount === 1}
@@ -396,7 +451,10 @@ const ProjectDetailView = () => {
                   {`Deposit For ${formatEther(
                     (Number(daoData.mintPrice) * mintingAmount).toString()
                   )}`}
-                </DepositButton>
+                </DepositButton> */}
+                <StyledPrimaryButton onClick={() => fetchCurrentPrice()}>
+                  Get Current Price
+                </StyledPrimaryButton>
               </FlexWrapper>
             </InfoLeft>
             <InfoRight>
@@ -416,7 +474,7 @@ const ProjectDetailView = () => {
               </Author> */}
             </InfoRight>
           </MainInfoWrapper>
-          <ShareSection>
+          {/* <ShareSection>
             <Title style={{ maxWidth: '200px' }}>Contributors</Title>
             <Shares>
               <Share>
@@ -447,21 +505,7 @@ const ProjectDetailView = () => {
                   part={Number(daoData.fundedAmount)}
                   whole={Number(daoData.firstEditionMax)}
                 />
-            {/* <ExternalPieChartWrapper>
-              <ExternalPieChart
-                label={(index) => index.dataEntry.title}
-                labelStyle={{color: '#fff !important'}}
-                animate
-                animationDuration={1}
-                animationEasing="ease-in"
-                data={[
-                  { title: 'One', value: 60, color: '#E38627' },
-                  { title: 'Two', value: 25, color: '#C13C37' },
-                  { title: 'Three', value: 15, color: '#6A2135' },
-                ]}
-                />
-            </ExternalPieChartWrapper> */}
-          </ShareSection>
+          </ShareSection> */}
           <DescriptionSection>
             <Title style={{ maxWidth: '200px' }}>Description</Title>
             <Description>
@@ -477,7 +521,17 @@ const ProjectDetailView = () => {
               dolor sit amet.
             </Description>
           </DescriptionSection>
+          {isAuthor && <div>YOU ARE THE AUTHOR</div>}
         </>
+      )}
+      {showBuyModal && (
+        <BaseModal onClose={() => setShowBuyModal(false)}>
+          <ContentWrapper>
+            <ModalHeader>{`Current Price: ${formatEther(parseInt(currentPrice._hex, 16).toString())} MATIC`}</ModalHeader>
+            <ModalText>In a dutch auction the price keeps going down. Don't miss the chance and mint now, before someone else does.</ModalText>
+            <StyledPrimaryButton onClick={mint}>MINT</StyledPrimaryButton>
+          </ContentWrapper>
+        </BaseModal>
       )}
     </Root>
   );
