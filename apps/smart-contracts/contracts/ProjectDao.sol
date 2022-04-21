@@ -105,7 +105,7 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
     require(!auctionPhaseFinished, "Auctions finished");
     require(expiresAt > block.timestamp, "Auction ended. Trigger a new one.");
     uint price = getPrice();
-    bool shouldTriggerNextAuction = totalSupply(1) + 1 < currentEditionMax;
+    bool shouldTriggerNextAuction = totalSupply(1) + 1 <= currentEditionMax;
     require(msg.value >= price, "Value sent not sufficient.");
 
     _mint(msg.sender, 1, 1, "");
@@ -158,18 +158,20 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
   }
 
   function distributeShares() private {
-    uint256 shareAuthor = 85;
-    uint256 balanceTotal = address(this).balance;
-    uint256 foundationShareInMatic = balanceTotal * 15 / 100;
-    for(uint256 i = 0; i < contributorIndex; i++) {
-      shareAuthor = shareAuthor - contributors[i].share;
-      contributors[i].shareInMatic = balanceTotal * contributors[i].share / 100;
-      withdraw(contributors[i].shareRecipient, contributors[i].shareInMatic);
-    }
-    author.share = shareAuthor;
-    author.shareInMatic = balanceTotal * shareAuthor / 100;
-    withdraw(factory, foundationShareInMatic);
-    withdraw(project.author_address, author.shareInMatic);
+    // uint256 shareAuthor = 85;
+    // uint256 balanceTotal = address(this).balance;
+    // uint256 foundationShareInMatic = balanceTotal * 15 / 100;
+    // for(uint256 i = 0; i < contributorIndex; i++) {
+    //   shareAuthor = shareAuthor - contributors[i].share;
+    //   contributors[i].shareInMatic = balanceTotal * contributors[i].share / 100;
+    //   withdraw(contributors[i].shareRecipient, contributors[i].shareInMatic);
+    // }
+    // author.share = shareAuthor;
+    // author.shareInMatic = balanceTotal * shareAuthor / 100;
+    // withdraw(factory, foundationShareInMatic);
+    // withdraw(project.author_address, author.shareInMatic);
+    // debugging distributeShares
+    withdraw(project.author_address, address(this).balance);
   }
 
   function withdraw(address _to, uint256 _amount) private {

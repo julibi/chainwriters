@@ -23,7 +23,7 @@ async function deployAll() {
   const title = "My little Phony";
   const textIpfsHash = "QmTw3pWBQinwuHS57FcWyUGBpvGqLHQZkn1eKjp89XXyFg";
   const initialMintPrice = hre.ethers.utils.parseUnits("0.05", 18);
-  const firstEditionMax = 5;
+  const firstEditionMax = 4;
   
   // deploy dao
   const tx = await ProjectFactory.createDao(title, textIpfsHash, initialMintPrice, firstEditionMax);
