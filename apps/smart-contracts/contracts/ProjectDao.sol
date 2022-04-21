@@ -1,13 +1,14 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.9;
 
+import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
 
-
-contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
-  bytes32 public constant AUTHOR_ROLE = keccak256("AUTHOR_ROLE"); 
+contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable {
+  bytes32 public constant AUTHOR_ROLE = keccak256("AUTHOR_ROLE");
+  bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
   address public factory;
   
   struct Project {
@@ -23,7 +24,6 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
   struct AuthorShare {
     uint256 share;
     uint256 shareInMatic;
-    bool hasWithdrawnShare;
     uint256 genesisEditionReserved;
     bool hasClaimedGenesis;
   }
@@ -33,11 +33,10 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
     string role;
     uint256 share;
     uint256 shareInMatic;
-    bool hasWithdrawnShare;
   }
 
   Project public project = Project("", "", "", address(0), "", "", "");
-  AuthorShare public author = AuthorShare(0, 0, false, 1, false);
+  AuthorShare public author = AuthorShare(0, 0, 1, false);
   mapping(uint256 => Contribution) public contributors;
   uint8 public contributorIndex = 0;
 
@@ -49,30 +48,27 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
   uint256 public currentEditionMintPrice;
   // 15% always go to the DAO 
   uint256 public totalSharePercentage = 15;
-  bool public investingFinished = false;
-  bool public shareSentToMoonlit = false;
   bool public refundEnabled = false;
 
-  uint256 public AUCTION_DURATION = 1 days;
+  // uint256 public AUCTION_DURATION = 1 days;
+  uint256 public AUCTION_DURATION = 3000;
   uint public discountRate;
   uint public startAt;
   uint public expiresAt;
-  bool public auctionStarted;
-  bool public auctionPhaseFinished;
+  bool public auctionStarted = false;
+  bool public auctionPhaseFinished = false;
   // bool public paused = true;
-  event DaoCreated(
-    address indexed caller,
-    address indexed dao,
-    string title,
-    string textIpfsHash,
-    uint256 initialMintPrice
+  event Configurated(
+    string imgHash,
+    string blurbHash,
+    string newGenre,
+    string newSubtitle
   );
-  event ImgSet(string imgHash);
-  event BlurbSet(string blurbHash);
-  event GenreSet(string newGenre);
-  event SubtitleSet(string newSubtitle);
   event TextSet(string textHash);
   event ContributorAdded(address contributor, uint256 share, string role);
+  event AuctionsStarted(bool started);
+  event AuctionsEnded(bool ended);
+  event Paused(bool paused);
 
   constructor(
       string memory _title,
@@ -85,44 +81,22 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
       // is it ok to give MOONLIT_FOUNDATION_ADDRESS DEFAULT_ADMIN_ROLE and they have the ability to freeze the contract?
       _setupRole(DEFAULT_ADMIN_ROLE, _author_address);
       _setupRole(AUTHOR_ROLE, _author_address);
+      _setupRole(PAUSER_ROLE, _factory);
       project.textIpfsHash = _textIpfsHash;
       project.title = _title;
       project.author_address = _author_address;
       INITIAL_MINT_PRICE = _initialMintPrice;
       currentEditionMax = _firstEditionMax;
       factory = _factory;
-
-      emit DaoCreated(
-        _author_address,
-        address(this),
-        _title,
-        _textIpfsHash,
-        _initialMintPrice
-      );
   }
 
-  modifier whenAuctionsPhaseFinished() {
-    require(auctionPhaseFinished);
-      _;
-  }
-
-  function withdrawShareContributor(address _to) external whenAuctionsPhaseFinished {
-    bool canWithdraw = false;
-    for(uint256 i = 0; i < contributorIndex; i++) {
-      if (msg.sender == contributors[i].shareRecipient) {
-        if (!contributors[i].hasWithdrawnShare) {
-          canWithdraw = true;
-          withdraw(_to, contributors[i].shareInMatic);
-          contributors[i].hasWithdrawnShare = true;
-        }
-      }
-    }
-    require(canWithdraw, "Cannot withdraw");
-  }
-
-  function buy() external payable {
-    require(block.timestamp < expiresAt, "This auction has ended");
+  function buy() external payable whenNotPaused {
+    require(auctionStarted, "Auctions have not started");
     require(!auctionPhaseFinished, "Auctions finished");
+    if (expiresAt < block.timestamp) {
+      triggerNextAuction();
+      require(false == true, "Auction ended. You triggered a new one.");
+    }
     uint price = getPrice();
     require(msg.value >= price, "Value sent not sufficient.");
 
@@ -134,16 +108,18 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
     if(totalSupply(1) < currentEditionMax) {
       triggerNextAuction();
     } else {
-      calculateShares();
+      distributeShares();
       auctionPhaseFinished = true;
+      emit AuctionsEnded(true);
     }
   }
 
   function mint(uint256 _amount)
     external
     payable
+    whenNotPaused
   {
-    require(currentEdition != 1, "Cannot mint during Genesis Edition Auction.");
+    require(currentEdition != 1, "Public minting only possible from edition 2");
     require((balanceOf(msg.sender, currentEdition) + _amount) <= MAX_PER_WALLET, "Exceeds max per wallet.");
     require((totalSupply(currentEdition) + _amount) <= currentEditionMax, "Amount exceeds cap.");
     require(msg.value >= currentEditionMintPrice * _amount, "Value sent not sufficient.");
@@ -155,9 +131,12 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
   // -----------------
 
   function getPrice() public view returns (uint) {
-    uint timeElapsed = block.timestamp - startAt;
-    uint discount = discountRate * timeElapsed;
-    return startingPrice - discount;
+    if (auctionStarted && !auctionPhaseFinished) {
+      uint timeElapsed = block.timestamp - startAt;
+      uint discount = discountRate * timeElapsed;
+      return INITIAL_MINT_PRICE - discount;
+    }
+    return 0;
   }
 
   // ------------------
@@ -169,17 +148,19 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
     expiresAt = block.timestamp + AUCTION_DURATION;
   }
 
-  function calculateShares() private {
+  function distributeShares() private {
     uint256 shareAuthor = 85;
     uint256 balanceTotal = address(this).balance;
     uint256 foundationShareInMatic = balanceTotal * 15 / 100;
     for(uint256 i = 0; i < contributorIndex; i++) {
       shareAuthor = shareAuthor - contributors[i].share;
       contributors[i].shareInMatic = balanceTotal * contributors[i].share / 100;
+      withdraw(contributors[i].shareRecipient, contributors[i].shareInMatic);
     }
     author.share = shareAuthor;
     author.shareInMatic = balanceTotal * shareAuthor / 100;
     withdraw(factory, foundationShareInMatic);
+    withdraw(project.author_address, author.shareInMatic);
   }
 
   function withdraw(address _to, uint256 _amount) private {
@@ -192,67 +173,71 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
   // ------------------
  
   // add role of contributor
-  function addContributor(address _contributor, uint256 _share, string _role) external onlyRole(AUTHOR_ROLE)  {
+  function addContributor(address _contributor, uint256 _share, string calldata _role) external onlyRole(AUTHOR_ROLE) whenNotPaused {
     // in theory user can put the same contributor 3 times - we don't care
+    require(!auctionStarted, "Cannot add after auction started");
     require(_contributor != address(0), "Contribut cannot be 0 address");
     require(contributorIndex < 3, "Contributors already set");
     require(totalSharePercentage + _share < 101, "Contributor's share too high");
     contributors[contributorIndex].shareRecipient = _contributor;
     contributors[contributorIndex].share = _share;
-    contributors[contributorIndex].role = _share;
-    contributors[contributorIndex].hasWithdrawnShare = false;
+    contributors[contributorIndex].role = _role;
     totalSharePercentage = totalSharePercentage + _share;
     contributorIndex = contributorIndex + 1;
     emit ContributorAdded(_contributor, _share, _role);
   }
 
-  function setTextIpfsHash(string memory _ipfsHash) external onlyRole(AUTHOR_ROLE)  {
+  function configureProjectDetails(
+    string calldata _imgHash,
+    string calldata _blurbHash,
+    string memory _genre,
+    string memory _subtitle
+  ) external onlyRole(AUTHOR_ROLE) whenNotPaused {
+    require(!auctionStarted, "Configuration only possible before auctions start");
+    project.imgIpfsHash = _imgHash;
+    project.blurbIpfsHash = _blurbHash;
+    project.genre = _genre;
+    project.subtitle = _subtitle;
+
+    emit Configurated(
+      _imgHash,
+      _blurbHash,
+      _genre,
+      _subtitle
+    );
+  }
+
+  function setTextIpfsHash(string memory _ipfsHash) external onlyRole(AUTHOR_ROLE) whenNotPaused {
+    require(!auctionStarted, "Configuration only possible before auctions start");
     project.textIpfsHash = _ipfsHash; 
     emit TextSet(_ipfsHash);
   }
 
-  function setImgIpfsHash(string calldata _imgHash) external onlyRole(AUTHOR_ROLE) {
-    project.imgIpfsHash = _imgHash;
-    emit ImgSet(_imgHash);
-  }
-
-  function setBlurbIpfsHash(string calldata _blurbHash) external onlyRole(AUTHOR_ROLE) {
-    project.blurbIpfsHash = _blurbHash;
-    emit BlurbSet(_blurbHash);
-  }
-
-  function setGenre(string memory _genre) external onlyRole(AUTHOR_ROLE) {
-    project.genre = _genre;
-    emit GenreSet(_genre);
-  }
-
-  function setSubtitle(string memory _subtitle) external onlyRole(AUTHOR_ROLE) {
-    project.subtitle = _subtitle;
-    emit SubtitleSet(_subtitle);
-  }
-
-  function setMaxGenesisClaimableAuthor(uint256 _amount) external onlyRole(AUTHOR_ROLE)  {
-    require(_amount < currentEditionMax, "Too many");
+  function setMaxGenesisClaimableAuthor(uint256 _amount) external onlyRole(AUTHOR_ROLE) whenNotPaused {
+    require((_amount < currentEditionMax) && (_amount < 10), "Too many");
     
     author.genesisEditionReserved = _amount;
   }
 
-  function withdrawShareAuthor(address _to) external whenAuctionsPhaseFinished onlyRole(AUTHOR_ROLE) {
-    require(!author.hasWithdrawnShare, 'Share already withdrawn');
-    withdraw(_to, author.shareInMatic);
-    author.hasWithdrawnShare = true;
+  function authorMint() external onlyRole(AUTHOR_ROLE) whenNotPaused {
+    require(!auctionStarted, "Auctions already started");
+    require(author.hasClaimedGenesis == false, "Already claimed");
+    _mint(msg.sender, 1, author.genesisEditionReserved, "");
+    author.hasClaimedGenesis = true;
   }
 
-  function triggerFirstAuction(uint256 _discountRate, uint256 _expiresAt) external onlyRole(AUTHOR_ROLE) {
+  function triggerFirstAuction(uint256 _discountRate) external onlyRole(AUTHOR_ROLE) whenNotPaused {
+    require(author.hasClaimedGenesis, "Mint tokenshare before triggering auctions");
     discountRate = _discountRate;
     startAt = block.timestamp;
-    expiresAt = _expiresAt + AUCTION_DURATION;
+    expiresAt = block.timestamp + AUCTION_DURATION;
     auctionStarted = true;
+    emit AuctionsStarted(true);
   }
 
-  function enableNextEdition(uint256 _maxNftAmountOfNewEdition, uint256 _newEditionMintPrice) external onlyRole(AUTHOR_ROLE) {
+  function enableNextEdition(uint256 _maxNftAmountOfNewEdition, uint256 _newEditionMintPrice) external onlyRole(AUTHOR_ROLE) whenNotPaused {
     if (currentEdition == 1) {
-      require(investingFinished, "Investing must finish first");
+      require(auctionPhaseFinished, "Auctions must finish first");
     } else {
     // what if some nfts are sent to zero address? Is there a case that prevents this check from being true?
       require(totalSupply(currentEdition) == currentEditionMax, "Current edition needs to sellout first");
@@ -263,11 +248,16 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply {
     currentEditionMintPrice = _newEditionMintPrice;
   }
 
-  // !! REMOVE !!
-  // only for development
-  function withdrawAll() external onlyRole(AUTHOR_ROLE) {
-    uint256 balance = address(this).balance;
-    payable(msg.sender).transfer(balance);
+  // ------------------
+  // Can only be called by Foundation
+  // ------------------
+
+  function pause() external onlyRole(PAUSER_ROLE) {
+    _pause();
+  }
+
+  function unpause() external onlyRole(PAUSER_ROLE) {
+    _unpause();
   }
 
   // ------------------
