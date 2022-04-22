@@ -145,6 +145,11 @@ export const useGetProjectDetails = () => {
           methodName: 'INITIAL_MINT_PRICE',
           methodParameters: [],
         },
+        {
+          reference: 'currentEdition',
+          methodName: 'currentEdition',
+          methodParameters: [],
+        },
       ],
     };
     const contribs = await multicall.call(contributorsMulticallContext);
