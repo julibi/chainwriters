@@ -5,17 +5,18 @@ import { useWeb3React } from '@web3-react/core';
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import styled from 'styled-components'
-import Loading from '../../components/Loading'
 import { useGetProjectDetails } from '../../state/projects/hooks'
+import BaseModal from '../../components/BaseModal'
+import Countdown from '../../components/Countdown'
+import Loading from '../../components/Loading'
 import PieChart from '../../components/PieChart'
 import { SectionTitle } from '../../components/ProjectSection'
 import { truncateAddress } from '../../components/WalletIndicator'
-import { BaseButton, BASE_BORDER_RADIUS, BASE_BOX_SHADOW, DISABLED_WHITE, INSET_BASE_BOX_SHADOW, PLAIN_WHITE, PrimaryButton } from '../../themes'
+import { BaseButton, BASE_BORDER_RADIUS, BASE_BOX_SHADOW, DISABLED_WHITE, PINK, PLAIN_WHITE, PrimaryButton } from '../../themes'
 import timestampConverter from '../../utils/timestampConverter'
 import useProjectContract from '../../hooks/useProjectContract'
-import { NULL_ADDRESS } from '../../../constants';
+import { NULL_ADDRESS } from '../../../constants'
 import useFactoryContract from '../../hooks/useFactoryContract'
-import BaseModal from '../../components/BaseModal';
 
 // TODO
 // author view
@@ -68,10 +69,12 @@ const MainInfoWrapper = styled.section`
   }
 `;
 
-const InfoLeft = styled.div`
+const InfoRight = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  font-family: 'Roboto Mono Bold';
 
   border-radius: ${BASE_BORDER_RADIUS};
   box-shadow: ${BASE_BOX_SHADOW};
@@ -82,15 +85,58 @@ const InfoLeft = styled.div`
   }
 `;
 
+const ImageWrapper = styled.div`
+  height: 100%;
+  margin-block-end: 2rem;
+  span {
+    width: 100% !important;
+    height: 100% !important;
+
+    img {
+      object-fit: contain;
+      
+    }
+  }
+`;
+
+const Author = styled.div`
+  margin-block-end: 2rem;
+  padding: 1rem !important;
+  text-transform: uppercase;
+  font-family: 'Roboto Mono Bold';
+  display: flex;
+  justify-content: space-between;
+`;
+
+const Key = styled.span`
+  display: inline-block;
+`;
+
+const Val = styled.span`
+  display: inline-block;
+  font-family: 'Nunito Sans Bold';
+  text-transform: default;
+`;
+
+const Genre = styled.div`
+  padding: 1rem !important;
+  text-transform: uppercase;
+  font-family: 'Roboto Mono Bold';
+  display: flex;
+  justify-content: space-between;  
+`;
+
 const PieChartWrapper = styled.div`
   display: inline-block;
   margin: 0 auto;
-  margin-block-end: 2rem;
+  margin-block: 2rem;
 `;
 
 const Title = styled(SectionTitle)`
-  text-align: left;
+  text-align: center;
   margin-block-end: 2rem;
+  display: flex;
+  flex-direction: column;
 `;
 
 const Info = styled.h4`
@@ -101,9 +147,42 @@ const Info = styled.h4`
   box-shadow: ${BASE_BOX_SHADOW};
 `;
 
+const Subtitle = styled(Info)`
+  font-size: 14px;
+  margin: 0;
+  padding: 0;
+  box-shadow: none;
+`;
+
+const AuctionTitle = styled.h2`
+  text-align: center;
+  text-transform: uppercase;
+  font-family: 'Roboto Mono Bold';
+  margin-block-start: -1rem;
+  margin-block-end: 3rem;
+  padding: 0;
+`;
+
+const InfoBlock = styled.div`
+  width: 40%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2rem;
+  border-radius: ${BASE_BORDER_RADIUS};
+  box-shadow: ${BASE_BOX_SHADOW};
+
+  @media (max-width: 900px) {
+    width: 100%;
+    margin-block-end: 2rem;
+  }
+`;
+
 const FlexWrapper = styled.div`
   display: flex;
   justify-content: space-between;
+  margin-bottom: 2rem;
 
   @media (max-width: 900px) {
     flex-direction: column;
@@ -146,9 +225,11 @@ const StyledPrimaryButton = styled(PrimaryButton)`
   }
 `;
 
-const InfoRight = styled.div`
+const InfoLeft = styled.div`
   flex: 1;
-  margin-inline-start: 2rem;
+  margin-inline-end: 2rem;
+  display: flex;
+  flex-direction: column;
 
   > div {
     padding: 2rem;
@@ -157,28 +238,10 @@ const InfoRight = styled.div`
   }
 
   @media (max-width: 900px) {
-    margin-inline-start: 0;
+    margin-inline: 0;
     margin-block-end: 2rem;
   }
 `
-
-const ImageWrapper = styled.div`
-  height: 100%;
-  margin-block-end: 2rem;
-
-  span {
-    width: 100% !important;
-    height: 100% !important;
-
-    img {
-      object-fit: contain;
-      
-    }
-  }
-`;
-
-const Author = styled.div`
-`;
 
 const ShareSection = styled.section`
   display: flex;
@@ -295,6 +358,8 @@ const ProjectDetailView = () => {
   // todo: big integer
   const [currentPrice, setCurrentPrice] = useState(null);
   const [mintPending, setMintPending] = useState<boolean>(false);
+  const [auctionEnd, setAuctionEnd] = useState<number | null>(null);
+  
   
   
   const handleIncrement = useCallback(() => {
@@ -321,15 +386,19 @@ const ProjectDetailView = () => {
     })
     .filter(element => element.address !== NULL_ADDRESS);
     setContributors(contributorsData);
+    const auctionData = auctions.results.PROJECT_AUCTIONS.callsReturnContext;
+    const auctionEnd = auctionData.find(x => x.reference == 'expiresAt').returnValues[0];
+    setAuctionEnd(parseInt(auctionEnd.hex, 16));
     const mockDao = {
       address: "0xE5D7BFed391508d5191DEb18301b63dc84FcD444",
       title: "MOCK DAO",
       author: "0x61a2ef03e18A78B8337Cd7409C02b61D694F28C0",
-      mintPrice: "2000000000000000",
+      mintPrice: "50000000000000000",
       fundedAmount: "8",
       firstEditionMax: "12",
       createdAt: "1649784856",
       genre: null,
+      // subtitle: "My Subtitle"
       subtitle: null
     };
     setDaoData(mockDao);
@@ -411,19 +480,44 @@ const ProjectDetailView = () => {
         <>
           <MainInfoWrapper>
             <InfoLeft>
-              <Title>{daoData.title}</Title>
-              {daoData.subtitle && <Info>{daoData.subtitle}</Info>}
+              <Title>
+                {daoData.title}
+                {daoData.subtitle && <Subtitle>{daoData.subtitle}</Subtitle>}
+              </Title>
+              <ImageWrapper>
+                <Image
+                  priority
+                  src={coverImgLink ?? '/ImgPlaceholder.png'}
+                  height={'100%'}
+                  width={'100%'}
+                  alt={'Project Image'}
+                  quality={65}
+                  layout="responsive"
+                />
+              </ImageWrapper>
+              <Author>
+                <Key>{'Author '}</Key>
+                <Val>{truncateAddress(daoData.author)}</Val>
+              </Author>
+              <Genre>
+                <Key>{'Genre '}</Key>
+                <Val>{daoData.genre ?? 'Unknown'}</Val>
+              </Genre>
+            </InfoLeft>
+            <InfoRight>
+              <AuctionTitle>AUCTION</AuctionTitle>
               <FlexWrapper>
-                <Info>{daoData.genre ?? 'Unknown Genre'}</Info>
-                <Info>{`Created: ${timestampConverter(
-                  daoData.createdAt
-                )}`}</Info>
-              </FlexWrapper>
-              <FlexWrapper>
-                <Info>{`First Edition Max: ${daoData.firstEditionMax}`}</Info>
-                <Info>{`Price Per Spot: ${formatEther(
-                  daoData.mintPrice
-                )} MATIC`}</Info>
+                <InfoBlock style={{ marginInlineEnd: '2rem' }}>
+                  <Key style={{ marginBlockEnd: '1rem' }}>{'Auction ends in'}</Key>
+                  <Val style={{ fontSize: '22px', color: `${PINK}`, fontFamily: 'Nunito Sans Bold' }}><Countdown end={auctionEnd} /></Val>
+                 
+                </InfoBlock>
+                <InfoBlock>
+                  <Key style={{ marginBlockEnd: '1rem' }}>{'Starting Price'}</Key>
+                  <Val>
+                    {`${formatEther(daoData.mintPrice)} MATIC`}
+                  </Val>
+                </InfoBlock>
               </FlexWrapper>
               <PieChartWrapper>
                 <PieChart
@@ -431,7 +525,17 @@ const ProjectDetailView = () => {
                   whole={Number(daoData.firstEditionMax)}
                 />
               </PieChartWrapper>
-              <FlexWrapper>
+
+              <FlexWrapper style={{ marginBlockEnd: '0' }}>
+                <InfoBlock style={{ marginInlineEnd: '2rem' }}>
+                  <Key style={{ marginBlockEnd: '1rem' }}>{'Genesis Edition Total'}</Key>
+                  <Val style={{ fontSize: '22px', fontFamily: 'Nunito Sans Bold' }}>12</Val>
+                </InfoBlock>
+                <StyledPrimaryButton onClick={() => fetchCurrentPrice()}>
+                  Get Current Price
+                </StyledPrimaryButton>
+              </FlexWrapper>
+              
                 {/* <ControlWrapper>
                   <StyledControl
                     onClick={handleDecrement}
@@ -452,26 +556,7 @@ const ProjectDetailView = () => {
                     (Number(daoData.mintPrice) * mintingAmount).toString()
                   )}`}
                 </DepositButton> */}
-                <StyledPrimaryButton onClick={() => fetchCurrentPrice()}>
-                  Get Current Price
-                </StyledPrimaryButton>
-              </FlexWrapper>
-            </InfoLeft>
-            <InfoRight>
-              <ImageWrapper>
-                <Image
-                  priority
-                  src={coverImgLink ?? '/ImgPlaceholder.png'}
-                  height={'100%'}
-                  width={'100%'}
-                  alt={'Project Image'}
-                  quality={65}
-                  layout="responsive"
-                />
-              </ImageWrapper>
-              {/* <Author>
-                <span>{`Author: ${truncateAddress(daoData.author)}`}</span>
-              </Author> */}
+
             </InfoRight>
           </MainInfoWrapper>
           {/* <ShareSection>
@@ -527,8 +612,13 @@ const ProjectDetailView = () => {
       {showBuyModal && (
         <BaseModal onClose={() => setShowBuyModal(false)}>
           <ContentWrapper>
-            <ModalHeader>{`Current Price: ${formatEther(parseInt(currentPrice._hex, 16).toString())} MATIC`}</ModalHeader>
-            <ModalText>In a dutch auction the price keeps going down. Don't miss the chance and mint now, before someone else does.</ModalText>
+            <ModalHeader>{`Current Price: ${formatEther(
+              parseInt(currentPrice._hex, 16).toString()
+            )} MATIC`}</ModalHeader>
+            <ModalText>
+              In a dutch auction the price keeps going down. Don't miss the
+              chance and mint now, before someone else does.
+            </ModalText>
             <StyledPrimaryButton onClick={mint}>MINT</StyledPrimaryButton>
           </ContentWrapper>
         </BaseModal>

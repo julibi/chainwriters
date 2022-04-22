@@ -11,15 +11,15 @@ const StyledSVG = styled.svg`
 const MyCircle = styled.circle<{ percentage: number }>`
   fill: none;
   stroke: url(#GradientColor);
-  stroke-width: 70px;
-  stroke-dasharray: 502px;
-  stroke-dashoffset: 502px;
+  stroke-width: 90px;
+  stroke-dasharray: 560px;
+  stroke-dashoffset: 560px;
   animation: anim 1s ease-in forwards;
   animation-delay: 0.5s;
 
   @keyframes anim {
     100% {
-      stroke-dashoffset: ${({ percentage }) => (502/100)*(100 - percentage)}px;
+      stroke-dashoffset: ${({ percentage }) => (552/100)*(100 - percentage)}px;
     }
   }
 `;
@@ -33,8 +33,8 @@ const Circle = ({ percentage }: CircleProps) => {
     <StyledSVG
       xmlns="http://www.w3.org/2000/svg"
       version="1.1"
-      width="240px"
-      height="240px"
+      width="280px"
+      height="280px"
       >
       <defs>
         <linearGradient id="GradientColor">
@@ -42,7 +42,7 @@ const Circle = ({ percentage }: CircleProps) => {
           <stop offset="100%" stopColor={PINK} />
         </linearGradient>
       </defs>
-      <MyCircle cx="120" cy="120" r="80" percentage={percentage} />
+      <MyCircle cx="140" cy="140" r="85" percentage={percentage} />
     </StyledSVG>
   );
 }

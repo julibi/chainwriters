@@ -4,8 +4,8 @@ import Circle from './Circle'
 import { BASE_BOX_SHADOW, INSET_BASE_BOX_SHADOW, PINK } from '../themes'
 
 const Pie = styled.div`
-  width: 242px;
-  height: 242px;
+  width: 280px;
+  height: 280px;
   border-radius: 50%;
   padding: 70px;
   box-shadow: ${BASE_BOX_SHADOW};
@@ -16,8 +16,8 @@ const Pie = styled.div`
 `;
 
 const PieHole = styled.div`
-  width: 78px;
-  height: 78px;
+  width: 70px;
+  height: 70px;
   border-radius: 50%;
   box-shadow: ${INSET_BASE_BOX_SHADOW};
   position: relative;
@@ -44,7 +44,7 @@ const PieChart = ({ part, whole }: PieChart) => {
     <Pie>
       <StyledCircle percentage={parseInt((part/whole * 100).toString())} />
       <PieHole>
-        <PieHoleData>{`${part}/${whole} Spots Taken`}</PieHoleData>
+        <PieHoleData>{`${part}/${whole} Sold Out`}</PieHoleData>
       </PieHole>
     </Pie>
   );

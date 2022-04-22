@@ -125,6 +125,11 @@ export const useGetProjectDetails = () => {
           methodName: 'auctionPhaseFinished',
           methodParameters: [],
         },
+        {
+          reference: 'expiresAt',
+          methodName: 'expiresAt',
+          methodParameters: [],
+        },
       ],
     };
     const contribs = await multicall.call(contributorsMulticallContext);
