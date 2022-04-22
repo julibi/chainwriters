@@ -19,9 +19,6 @@ const Countdown = ({ end }: { end: number }) => {
   }, [time, end]);
 
   const timeUntilEnd = end - time;
-  console.log({ timeUntilEnd });
-  console.log({ end });
-  console.log({ time });
 
   return (
     <>{toHHMMSS(timeUntilEnd)}</>

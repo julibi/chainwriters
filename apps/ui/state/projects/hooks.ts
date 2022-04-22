@@ -130,6 +130,21 @@ export const useGetProjectDetails = () => {
           methodName: 'expiresAt',
           methodParameters: [],
         },
+        {
+          reference: 'genEdTotalSupply',
+          methodName: 'totalSupply',
+          methodParameters: [1],
+        },
+        {
+          reference: 'currentEditionMax',
+          methodName: 'currentEditionMax',
+          methodParameters: [],
+        },
+        {
+          reference: 'initialMintPrice',
+          methodName: 'INITIAL_MINT_PRICE',
+          methodParameters: [],
+        },
       ],
     };
     const contribs = await multicall.call(contributorsMulticallContext);

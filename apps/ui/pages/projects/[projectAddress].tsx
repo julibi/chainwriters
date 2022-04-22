@@ -13,7 +13,6 @@ import PieChart from '../../components/PieChart'
 import { SectionTitle } from '../../components/ProjectSection'
 import { truncateAddress } from '../../components/WalletIndicator'
 import { BaseButton, BASE_BORDER_RADIUS, BASE_BOX_SHADOW, DISABLED_WHITE, PINK, PLAIN_WHITE, PrimaryButton } from '../../themes'
-import timestampConverter from '../../utils/timestampConverter'
 import useProjectContract from '../../hooks/useProjectContract'
 import { NULL_ADDRESS } from '../../../constants'
 import useFactoryContract from '../../hooks/useFactoryContract'
@@ -42,6 +41,18 @@ interface Contributor {
   share: number;
 }
 
+interface BigIntHexNoUnderscore {
+  hex: number;
+}
+
+interface AuctionData {
+  auctionStarted: boolean;
+  auctionPhaseFinished: boolean;
+  expiresAt: BigIntHexNoUnderscore;
+  totalSupply: BigIntHexNoUnderscore;
+  max: BigIntHexNoUnderscore;
+  price: BigIntHexNoUnderscore;
+}
 const Root = styled.div`
   display: flex;
   flex-direction: column;
@@ -110,6 +121,7 @@ const Author = styled.div`
 
 const Key = styled.span`
   display: inline-block;
+  margin-block-end: 1rem;
 `;
 
 const Val = styled.span`
@@ -356,11 +368,9 @@ const ProjectDetailView = () => {
   const [loadingPrice, setLoadingPrice] = useState<boolean>(false);
   const [showBuyModal, setShowBuyModal] = useState<boolean>(false);
   // todo: big integer
-  const [currentPrice, setCurrentPrice] = useState(null);
   const [mintPending, setMintPending] = useState<boolean>(false);
-  const [auctionEnd, setAuctionEnd] = useState<number | null>(null);
-  
-  
+  const [auctionData, setAuctionData] = useState<AuctionData | null>(null);
+  const [currentPrice, setCurrentPrice] = useState(null);
   
   const handleIncrement = useCallback(() => {
     setMintingAmount(mintingAmount + 1);
@@ -376,7 +386,6 @@ const ProjectDetailView = () => {
 
   const callGetProjectDetails = useCallback(async(projectAddress: string) => {
     const { contribs, auctions } = await getProjectDetails(projectAddress);
-    console.log('multicall: ', {contribs, auctions });
     const contributorsData = contribs.results.PROJECT_CONTRIBS.callsReturnContext.map((contrib, i) => {
       return {
         address: contrib.returnValues[0],
@@ -387,8 +396,22 @@ const ProjectDetailView = () => {
     .filter(element => element.address !== NULL_ADDRESS);
     setContributors(contributorsData);
     const auctionData = auctions.results.PROJECT_AUCTIONS.callsReturnContext;
-    const auctionEnd = auctionData.find(x => x.reference == 'expiresAt').returnValues[0];
-    setAuctionEnd(parseInt(auctionEnd.hex, 16));
+    const auctionStarted = auctionData.find(x => x.reference == 'auctionStarted').returnValues[0];
+    const auctionPhaseFinished = auctionData.find(x => x.reference == 'auctionPhaseFinished').returnValues[0];
+    const expiresAt = auctionData.find(x => x.reference == 'expiresAt').returnValues[0];
+    const genEdTotalSupply = auctionData.find(x => x.reference == 'genEdTotalSupply').returnValues[0];
+    const currentEditionMax = auctionData.find(x => x.reference == 'currentEditionMax').returnValues[0];
+    const initialMintPrice = auctionData.find(x => x.reference == 'initialMintPrice').returnValues[0];
+    
+    setAuctionData({
+      auctionStarted,
+      auctionPhaseFinished,
+      expiresAt,
+      totalSupply: genEdTotalSupply,
+      max: currentEditionMax,
+      price: initialMintPrice
+    });
+
     const mockDao = {
       address: "0xE5D7BFed391508d5191DEb18301b63dc84FcD444",
       title: "MOCK DAO",
@@ -419,7 +442,7 @@ const ProjectDetailView = () => {
     }
   }, [contributors, daoData]);
 
-  const mint = () => {
+  const mint = useCallback(async() => {
     // pass the amount
       ProjectContract
       .buy({value: currentPrice})
@@ -437,7 +460,7 @@ const ProjectDetailView = () => {
         toast.error('Something went wrong.');
         setMintPending(false);
       });
-  };
+  }, [ProjectContract, currentPrice]);
 
   useEffect(() => {
     if (projectAddress && !successfullyLoaded) {
@@ -508,35 +531,57 @@ const ProjectDetailView = () => {
               <AuctionTitle>AUCTION</AuctionTitle>
               <FlexWrapper>
                 <InfoBlock style={{ marginInlineEnd: '2rem' }}>
-                  <Key style={{ marginBlockEnd: '1rem' }}>{'Auction ends in'}</Key>
-                  <Val style={{ fontSize: '22px', color: `${PINK}`, fontFamily: 'Nunito Sans Bold' }}><Countdown end={auctionEnd} /></Val>
-                 
-                </InfoBlock>
-                <InfoBlock>
-                  <Key style={{ marginBlockEnd: '1rem' }}>{'Starting Price'}</Key>
-                  <Val>
-                    {`${formatEther(daoData.mintPrice)} MATIC`}
+                  <Key>{'Auction ends in'}</Key>
+                  <Val
+                    style={{
+                      fontSize: '22px',
+                      color: `${PINK}`,
+                      fontFamily: 'Nunito Sans Bold',
+                    }}
+                  >
+                    {auctionData && (
+                      <Countdown
+                        end={parseInt(auctionData.expiresAt.hex.toString(), 16)}
+                      />
+                    )}
                   </Val>
                 </InfoBlock>
+                <InfoBlock>
+                  <Key>{'Starting Price'}</Key>
+                  {auctionData && (
+                    <Val>{`${formatEther(auctionData.price.hex)} MATIC`}</Val>
+                  )}
+                </InfoBlock>
               </FlexWrapper>
-              <PieChartWrapper>
-                <PieChart
-                  part={Number(daoData.fundedAmount)}
-                  whole={Number(daoData.firstEditionMax)}
-                />
-              </PieChartWrapper>
+              {auctionData && (
+                <PieChartWrapper>
+                  <PieChart
+                    part={parseInt(auctionData.totalSupply.hex.toString(), 16)}
+                    whole={parseInt(auctionData.max.hex.toString(), 16)}
+                  />
+                </PieChartWrapper>
+              )}
 
               <FlexWrapper style={{ marginBlockEnd: '0' }}>
                 <InfoBlock style={{ marginInlineEnd: '2rem' }}>
-                  <Key style={{ marginBlockEnd: '1rem' }}>{'Genesis Edition Total'}</Key>
-                  <Val style={{ fontSize: '22px', fontFamily: 'Nunito Sans Bold' }}>12</Val>
+                  <Key>{'Genesis Edition Total'}</Key>
+                  {auctionData && (
+                    <Val
+                      style={{
+                        fontSize: '22px',
+                        fontFamily: 'Nunito Sans Bold',
+                      }}
+                    >
+                      {parseInt(auctionData.max.hex.toString(), 16)}
+                    </Val>
+                  )}
                 </InfoBlock>
                 <StyledPrimaryButton onClick={() => fetchCurrentPrice()}>
                   Get Current Price
                 </StyledPrimaryButton>
               </FlexWrapper>
-              
-                {/* <ControlWrapper>
+
+              {/* <ControlWrapper>
                   <StyledControl
                     onClick={handleDecrement}
                     disabled={mintingAmount === 1}
@@ -556,7 +601,6 @@ const ProjectDetailView = () => {
                     (Number(daoData.mintPrice) * mintingAmount).toString()
                   )}`}
                 </DepositButton> */}
-
             </InfoRight>
           </MainInfoWrapper>
           {/* <ShareSection>
