@@ -26,6 +26,7 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
     uint256 shareInMatic;
     uint256 genesisEditionReserved;
     bool hasClaimedGenesis;
+    bool hasWithdrawnShare;
   }
 
   struct Contribution {
@@ -33,10 +34,11 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
     string role;
     uint256 share;
     uint256 shareInMatic;
+    bool hasWithdrawnShare;
   }
 
   Project public project = Project("", "", "", address(0), "", "", "");
-  AuthorShare public author = AuthorShare(0, 0, 1, false);
+  AuthorShare public author = AuthorShare(0, 0, 1, false, false);
   mapping(uint256 => Contribution) public contributors;
   uint8 public contributorIndex = 0;
 
@@ -94,7 +96,7 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
     return block.timestamp;
   }
 
-  function retriggerAuction() external {
+  function retriggerAuction() external whenNotPaused {
     require(expiresAt > block.timestamp, "Triggering unnecessary. Auction running.");
     startAt = block.timestamp;
     expiresAt = block.timestamp + AUCTION_DURATION;
@@ -117,7 +119,9 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
     if(shouldTriggerNextAuction) {
       triggerNextAuction();
     } else {
-      distributeShares();
+      // isnt it possible to automatically transfer all the shares to author contributors proportionally?
+      // this way we need to wait until everybody withdraws their shares 
+      calculateShares();
       auctionPhaseFinished = true;
       emit AuctionsEnded(true);
     }
@@ -135,6 +139,30 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
     _mint(msg.sender, currentEdition, _amount, "");
   }
 
+  function contributorWithdrawShare() external whenNotPaused {
+    require(contributorIndex > 0, "No contributors");
+    require(currentEditionMax == totalSupply(currentEdition), "Withdraw only possible after sellout");
+    bool isContrib0 = contributors[0].shareRecipient == msg.sender;
+    bool isContrib1 = contributors[1].shareRecipient == msg.sender;
+    bool isContrib2 = contributors[2].shareRecipient == msg.sender;
+    require(isContrib0 || isContrib1 || isContrib2, "Not contributor");
+    if (isContrib0) {
+      require(!contributors[0].hasWithdrawnShare, "Already withdrawn");
+      withdraw(msg.sender, contributors[0].shareInMatic);
+      contributors[0].hasWithdrawnShare = true;
+    }
+    if (isContrib1) {
+      require(!contributors[1].hasWithdrawnShare, "Already withdrawn");
+      withdraw(msg.sender, contributors[1].shareInMatic);
+      contributors[1].hasWithdrawnShare = true;
+    }
+    if (isContrib2) {
+      require(!contributors[2].hasWithdrawnShare, "Already withdrawn");
+      withdraw(msg.sender, contributors[2].shareInMatic);
+      contributors[2].hasWithdrawnShare = true;
+    }
+  }
+
   // ------------------
   // View functions
   // -----------------
@@ -148,6 +176,18 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
     return 0;
   }
 
+  function allSharesWithdrawn() public view returns (bool) {
+    bool authorHasWithdrawn = author.hasWithdrawnShare;
+    bool allContribsHaveWithdrawn = true;
+     for(uint256 i = 0; i < contributorIndex; i++) {
+      if(!contributors[i].hasWithdrawnShare) {
+        allContribsHaveWithdrawn = false;
+        break;
+      }
+    }
+    return authorHasWithdrawn && allContribsHaveWithdrawn;
+  }
+
   // ------------------
   // Private functions
   // ------------------
@@ -157,28 +197,22 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
     expiresAt = block.timestamp + AUCTION_DURATION;
   }
 
-  function distributeShares() private {
+  function calculateShares() private {
     uint256 shareAuthor = 85;
     uint256 balanceTotal = address(this).balance;
     uint256 foundationShareInMatic = balanceTotal * 15 / 100;
-    // for(uint256 i = 0; i < contributorIndex; i++) {
-    //   shareAuthor = shareAuthor - contributors[i].share;
-    //   contributors[i].shareInMatic = balanceTotal * contributors[i].share / 100;
-    //   withdraw(contributors[i].shareRecipient, contributors[i].shareInMatic);
-    // }
+    for(uint256 i = 0; i < contributorIndex; i++) {
+      shareAuthor = shareAuthor - contributors[i].share;
+      contributors[i].shareInMatic = balanceTotal * contributors[i].share / 100;
+    }
     author.share = shareAuthor;
     author.shareInMatic = balanceTotal * shareAuthor / 100;
     withdraw(factory, foundationShareInMatic);
-    withdraw(project.author_address, author.shareInMatic);
   }
 
   function withdraw(address _to, uint256 _amount) private {
     require(_to != address(0), "Cannot withdraw to the 0 address");
     payable(_to).transfer(_amount);
-  }
-
-  function destroy() external onlyRole(AUTHOR_ROLE) {
-    selfdestruct(project.author_address);
   }
 
   // ------------------
@@ -195,6 +229,7 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
     contributors[contributorIndex].shareRecipient = _contributor;
     contributors[contributorIndex].share = _share;
     contributors[contributorIndex].role = _role;
+    contributors[contributorIndex].hasWithdrawnShare = false;
     totalSharePercentage = totalSharePercentage + _share;
     contributorIndex = contributorIndex + 1;
     emit ContributorAdded(_contributor, _share, _role);
@@ -248,17 +283,35 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
     emit AuctionsStarted(true);
   }
 
+  function authorWithdrawShare() external onlyRole(AUTHOR_ROLE) whenNotPaused {
+    require(currentEditionMax == totalSupply(currentEdition), "Withdraw only possible after sellout");
+    require(!author.hasWithdrawnShare, "Already withdrawn");
+    withdraw(project.author_address, author.shareInMatic);
+    author.hasWithdrawnShare = true;
+  }
+
   function enableNextEdition(uint256 _maxNftAmountOfNewEdition, uint256 _newEditionMintPrice) external onlyRole(AUTHOR_ROLE) whenNotPaused {
     if (currentEdition == 1) {
       require(auctionPhaseFinished, "Auctions must finish first");
+      require(allSharesWithdrawn(), "All shares must be withdrawn first");
     } else {
     // what if some nfts are sent to zero address? Is there a case that prevents this check from being true?
       require(totalSupply(currentEdition) == currentEditionMax, "Current edition needs to sellout first");
+      require(allSharesWithdrawn(), "All shares must be withdrawn first");
     }
     require(_maxNftAmountOfNewEdition < 10000, "Max Amount too big");
     currentEdition = currentEdition + 1;
     currentEditionMax = _maxNftAmountOfNewEdition;
     currentEditionMintPrice = _newEditionMintPrice;
+    author.hasWithdrawnShare = false;
+    contributors[0].hasWithdrawnShare = false;
+    contributors[1].hasWithdrawnShare = false;
+    contributors[2].hasWithdrawnShare = false;
+  }
+
+  // Only in case of emergency!
+  function destroy() external onlyRole(AUTHOR_ROLE) {
+    selfdestruct(payable(project.author_address));
   }
 
   // ------------------
