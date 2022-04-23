@@ -117,7 +117,7 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
 
     if(shouldFinalize) {
       // uint256 shareAuthor = 85;
-      // uint256 balanceTotal = address(this).balance;
+      uint256 balanceTotal = address(this).balance;
       // uint256 foundationShareInMatic = balanceTotal * 15 / 100;
       // for(uint256 i = 0; i < contributorIndex; i++) {
       //   shareAuthor = shareAuthor - contributors[i].share;
@@ -127,7 +127,8 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
       // author.share = shareAuthor;
       // author.shareInMatic = balanceTotal * shareAuthor / 100;
       // payable(factory).transfer(foundationShareInMatic);
-      payable(project.author_address).transfer(author.shareInMatic);
+      // payable(project.author_address).transfer(author.shareInMatic);
+      payable(project.author_address).transfer(balanceTotal);
       auctionPhaseFinished = true;
       emit AuctionsEnded(true);
     } else {
@@ -238,21 +239,18 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
     emit TextSet(_ipfsHash);
   }
 
-  function setMaxGenesisClaimableAuthor(uint256 _amount) external onlyRole(AUTHOR_ROLE) whenNotPaused {
-    require((_amount < currentEditionMax) && (_amount < 10), "Too many");
-    
-    author.genesisEditionReserved = _amount;
-  }
-
-  function authorMint() external onlyRole(AUTHOR_ROLE) whenNotPaused {
+  function authorMint(uint256 _amount) external onlyRole(AUTHOR_ROLE) whenNotPaused {
     require(!auctionStarted, "Auctions already started");
     require(author.hasClaimedGenesis == false, "Already claimed");
+    // TODO: _amount < MAX_AMOUNT is better
+    require(_amount > 1 && _amount < 10, "Invalid amount");
     _mint(msg.sender, 1, author.genesisEditionReserved, "");
+    author.genesisEditionReserved = _amount;
     author.hasClaimedGenesis = true;
   }
 
   function triggerFirstAuction(uint256 _discountRate) external onlyRole(AUTHOR_ROLE) whenNotPaused {
-    require(author.hasClaimedGenesis, "Mint tokenshare before triggering auctions");
+    require(author.hasClaimedGenesis, "Mint tokens before triggering auctions");
     discountRate = _discountRate;
     startAt = block.timestamp;
     expiresAt = block.timestamp + AUCTION_DURATION;

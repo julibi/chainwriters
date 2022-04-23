@@ -7,6 +7,7 @@ const Root = styled.div`
   width: 90%;
   max-width:1200px;
   height: 30px;
+  flex-wrap: wrap;
 `;
 
 const Fill = styled.div`
@@ -18,6 +19,7 @@ const Fill = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  min-width: 30px;
 `;
 
 const Inside = styled.div`
@@ -42,6 +44,13 @@ const CreateProgressBar = ({currentStep}: CreateProgressBarProps) => {
       <Fill>{currentStep >= 4 && <Inside />}</Fill>
       <Fill>{currentStep >= 5 && <Inside />}</Fill>
       <Fill>{currentStep >= 6 && <Inside />}</Fill>
+      <Fill>{currentStep >= 7 && <Inside />}</Fill>
+      <Fill>{currentStep >= 8 && <Inside />}</Fill>
+      <Fill>{currentStep >= 9 && <Inside />}</Fill>
+      <Fill>{currentStep >= 10 && <Inside />}</Fill>
+      <Fill>{currentStep >= 11 && <Inside />}</Fill>
+      <Fill>{currentStep >= 12 && <Inside />}</Fill>
+      <Fill>{currentStep >= 13 && <Inside />}</Fill>
     </Root>
   )
 }

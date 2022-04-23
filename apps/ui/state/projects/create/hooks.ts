@@ -2,88 +2,14 @@ import { useWeb3React } from '@web3-react/core'
 import { toast } from 'react-toastify'
 import { Contributor } from '../../../pages/create';
 
-export const useCreateSetCover = () => {
+
+export const useCreateSetConfiguration = () => {
   const { chainId } = useWeb3React();
   return async (
     daoContract: any,
-    cid: string,
-    loadingFunc: (x: boolean) => void,
-    onLoad: (chainId: number, hash: string, message: string) => void,
-    onSuccess: (chainId: number, hash: string, message: string) => void
-  ) => {
-    loadingFunc(true);
-    try {
-      const Tx = await daoContract.setImgIpfsHash(cid);
-      const { hash } = Tx;
-      onLoad(chainId, hash, 'Pending transaction...');
-
-      daoContract.provider.once(hash, (transaction) => {
-        onSuccess(chainId, hash, 'Success!');
-        loadingFunc(false);
-      });
-    } catch (e) {
-      loadingFunc(false);
-      toast.error(e.reason ?? 'Something went wrong.');
-    }
-  };
-};
-
-export const useCreateSetBlurb = () => {
-  const { chainId } = useWeb3React();
-  return async (
-    daoContract: any,
-    cid: string,
-    loadingFunc: (x: boolean) => void,
-    onLoad: (chainId: number, hash: string, message: string) => void,
-    onSuccess: (chainId: number, hash: string, message: string) => void
-  ) => {
-    loadingFunc(true);
-    try {
-      const Tx = await daoContract.setBlurbIpfsHash(cid);
-      const { hash } = Tx;
-      onLoad(chainId, hash, 'Pending transaction...');
-
-      daoContract.provider.once(hash, (transaction) => {
-        onSuccess(chainId, hash, 'Success!');
-        loadingFunc(false);
-      });
-    } catch (e) {
-      loadingFunc(false);
-      toast.error(e.reason ?? 'Something went wrong.');
-    }
-  };
-};
-
-export const useCreateSetGenre = () => {
-  const { chainId } = useWeb3React();
-  return async (
-    daoContract: any,
+    coverImgCID: string,
+    blurbCID: string,
     genre: string,
-    loadingFunc: (x: boolean) => void,
-    onLoad: (chainId: number, hash: string, message: string) => void,
-    onSuccess: (chainId: number, hash: string, message: string) => void
-  ) => {
-    loadingFunc(true);
-    try {
-      const Tx = await daoContract.setGenre(genre);
-      const { hash } = Tx;
-      onLoad(chainId, hash, 'Pending transaction...');
-
-      daoContract.provider.once(hash, (transaction) => {
-        onSuccess(chainId, hash, 'Success!');
-        loadingFunc(false);
-      });
-    } catch (e) {
-      loadingFunc(false);
-      toast.error(e.reason ?? 'Something went wrong.');
-    }
-  };
-};
-
-export const useCreateSetSubtitle = () => {
-  const { chainId } = useWeb3React();
-  return async (
-    daoContract: any,
     subtitle: string,
     loadingFunc: (x: boolean) => void,
     onLoad: (chainId: number, hash: string, message: string) => void,
@@ -91,7 +17,12 @@ export const useCreateSetSubtitle = () => {
   ) => {
     loadingFunc(true);
     try {
-      const Tx = await daoContract.setSubtitle(subtitle);
+      const Tx = await daoContract.configureProjectDetails(
+        coverImgCID,
+        blurbCID,
+        genre,
+        subtitle
+      );
       const { hash } = Tx;
       onLoad(chainId, hash, 'Pending transaction...');
 
@@ -106,18 +37,18 @@ export const useCreateSetSubtitle = () => {
   };
 };
 
-export const useCreateSetAuthorMaxClaimable = () => {
+export const useCreateAuthorMint = () => {
   const { chainId } = useWeb3React();
   return async (
     daoContract: any,
-    authorMaxClaimable: number,
+    authorMintAmount: number,
     loadingFunc: (x: boolean) => void,
     onLoad: (chainId: number, hash: string, message: string) => void,
     onSuccess: (chainId: number, hash: string, message: string) => void
   ) => {
     loadingFunc(true);
     try {
-      const Tx = await daoContract.setMaxGenesisClaimableAuthor(authorMaxClaimable);
+      const Tx = await daoContract.authorMint(authorMintAmount);
       const { hash } = Tx;
       onLoad(chainId, hash, 'Pending transaction...');
 

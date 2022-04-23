@@ -21,12 +21,9 @@ import {
 import Loading from '../components/Loading'
 import useDaoContract from '../state/useDaoContract'
 import {
-  useCreateSetAuthorMaxClaimable,
+  useCreateAuthorMint,
   useCreateSetContributors,
-  useCreateSetCover,
-  useCreateSetGenre,
-  useCreateSetBlurb,
-  useCreateSetSubtitle,
+  useCreateSetConfiguration,
 } from '../state/projects/create/hooks';
 import SuccessToast from '../components/SuccessToast'
 import PendingToast from '../components/PendingToast'
@@ -140,6 +137,25 @@ const LoadingWrapper = styled.div`
   justify-content: center;
   align-items: center;
   height: 500px;
+`;
+
+const ReviewItems = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const CoverImageReview = styled.div`
+  height: 100%;
+  margin-block-end: 2rem;
+  span {
+    width: 100% !important;
+    height: 100% !important;
+
+    img {
+      object-fit: contain;
+      
+    }
+  }
 `;
 
 const ReviewItemWrapper = styled.div`
@@ -299,7 +315,6 @@ const Create = () => {
   // @ts-ignore
   const client = create('https://ipfs.infura.io:5001/api/v0');
   const [currentStep, setCurrentStep] = useState(0);
-  const [subStep, setSubStep] = useState(0);
   const [title, setTitle] = useState('');
   const [text, setText] = useState('');
   // need it for state? We are returning the hash after upload...
@@ -319,13 +334,11 @@ const Create = () => {
   const [creatingDao, setCreatingDao] = useState<boolean>(false);
   
   const [subtitle, setSubtitle] = useState<string>('');
-  const [authorMaxClaimable, setAuthorMaxClaimable] = useState<number>(0);
+  const [authorMintAmount, setAuthorMintAmount] = useState<number>(0);
   const getDaoContract = useDaoContract();
-  const createSetCover = useCreateSetCover();
-  const createSetGenre = useCreateSetGenre();
-  const createSetBlurb = useCreateSetBlurb();
-  const createSetSubtitle = useCreateSetSubtitle();
-  const createSetAuthorMaxClaimable = useCreateSetAuthorMaxClaimable();
+
+  const createSetConfiguration = useCreateSetConfiguration();
+  const createAuthorMint = useCreateAuthorMint();
   const createSetContributors = useCreateSetContributors();
   const daoContract = useMemo(() => daoAddress ? getDaoContract(daoAddress) : null, [daoAddress, getDaoContract]);
   const contribInitialState = {address: '', share: 0};
@@ -395,81 +408,32 @@ const Create = () => {
     }
   };
 
-  const submitImage = async(event: SyntheticEvent) => {
+  const submitImage = useCallback(async(event: SyntheticEvent) => {
     event.preventDefault();
     const added = await client.add(imgBuffer);
     // const url = `https://ipfs.infura.io/ipfs/${added.path}`;
     // TODO what about pinning?
     setCoverImgIPFS(added.path);
-    createSetCover(
-      daoContract,
-      added.path,
-      setLoading,
-      PendingToast,
-      (x, y, z) => {
-        setSubStep(subStep + 1);
-        // @ts-ignore
-        return <SuccessToast chainId={x} hash={y} customMessage={z} />;
-      }
-    )       
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      .then(() => {})
-      .catch((e) => {
-        console.log({e});
-        toast.error('Something went wrong');
-      });
-  };
+    setCurrentStep(currentStep + 1);
+  }, [client, imgBuffer, currentStep])
 
   const handleSetBlurb = useCallback(async() => {
     const added = await client.add(blurb);
     setBlurbIPFS(added.path);
-    createSetBlurb(
-      daoContract,
-      added.path,
-      setLoading,
-      PendingToast,
-      (x, y, z) => {
-        setSubStep(subStep + 1);
-        // @ts-ignore
-        return <SuccessToast chainId={x} hash={y} customMessage={z} />;
-      }
-    )       
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      .then(() => {})
-      .catch((e) => {
-        console.log({e});
-        toast.error('Something went wrong');
-      });
-  }, [blurb, client, createSetBlurb, daoContract, subStep]);
+    setCurrentStep(currentStep + 1);
+  }, [blurb, client, currentStep]);
 
-  const handleSetGenre = useCallback(async() => {
-      createSetGenre(
+  const handleSetConfiguration = useCallback(async() => {
+      createSetConfiguration(
         daoContract,
+        coverImgIPFS,
+        blurbIPFS,
+        subtitle,
         genre,
         setLoading,
         PendingToast,
         (x, y, z) => {
-          setSubStep(subStep + 1);
-          // @ts-ignore
-          return <SuccessToast chainId={x} hash={y} customMessage={z} />;
-        }
-      )       
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        .then(() => {})
-        .catch((e) => {
-          console.log({e});
-          toast.error('Something went wrong');
-        });
-  }, [daoContract, createSetGenre, genre, setLoading, subStep]);
-
-  const handleSetSubtitle = useCallback(async() => {
-      createSetSubtitle(
-        daoContract,
-        subtitle,
-        setLoading,
-        PendingToast,
-        (x, y, z) => {
-          setSubStep(subStep + 1);
+          setCurrentStep(currentStep + 1);
           // @ts-ignore
           return <SuccessToast chainId={x} hash={y} customMessage={z} />
         }
@@ -480,16 +444,16 @@ const Create = () => {
         console.log({e});
         toast.error('Something went wrong');
       });
-  }, [daoContract, createSetSubtitle, subtitle, setLoading, currentStep]);
+  }, [createSetConfiguration, daoContract, coverImgIPFS, blurbIPFS, subtitle, genre, currentStep]);
   
-  const handleSetAuthorMaxClaimable = useCallback(async() => {
-    createSetAuthorMaxClaimable(
+  const handleAuthorMint = useCallback(async() => {
+    createAuthorMint(
       daoContract,
-      authorMaxClaimable,
+      authorMintAmount,
       setLoading,
       PendingToast,
       (x, y, z) => {
-        setSubStep(subStep + 1);
+        setCurrentStep(currentStep + 1);
         // @ts-ignore
         return <SuccessToast chainId={x} hash={y} customMessage={z} />
       }
@@ -500,7 +464,7 @@ const Create = () => {
       console.log({e});
       toast.error('Something went wrong');
     });
-}, [daoContract, createSetAuthorMaxClaimable, authorMaxClaimable, setLoading, currentStep]);
+}, [createAuthorMint, daoContract, authorMintAmount, currentStep]);
 
 // could fetch from graph?
 const allContributors = useMemo(async() => {
@@ -520,7 +484,7 @@ const allContributors = useMemo(async() => {
         setContributor(contribInitialState);
         setContributorIndex(contributorIndex + 1);
         setContributorList([...contributorList, contributor]);
-        contributorIndex == 2 && setSubStep(subStep + 1);
+        contributorIndex == 2 && setCurrentStep(currentStep + 1);
         // @ts-ignore
         return <SuccessToast chainId={x} hash={y} customMessage={z} />
       }
@@ -705,7 +669,7 @@ const allContributors = useMemo(async() => {
         <SubmitButton
           onClick={() => {
             setCurrentStep(currentStep + 1);
-            setSubStep(subStep + 1);
+            setCurrentStep(currentStep + 1);
           }}
         >
           {'Continue'}
@@ -720,7 +684,6 @@ const allContributors = useMemo(async() => {
         <InputName>COVER IMAGE</InputName>
         <InputDescription>Upload a Cover Image</InputDescription>
         {/* @ts-ignore */}
-
         <StyledImageForm onSubmit={(e: any) => submitImage(e)}>
           <DragNDrop
             onDragOver={(e: any) => {
@@ -739,12 +702,13 @@ const allContributors = useMemo(async() => {
               height={'100%'}
               width={'100%'}
               alt={'Cover'}
+              quality={65}
+              layout="responsive"
             />
           </DragNDrop>
           <UploadCTAWrapper>
             <FileName>{imgFile ? shortenImageName(imgFile.name) : ''}</FileName>
             <StyledFileInput
-              disabled={loading}
               type="file"
               onChange={(evt: any) => {
                 evt.preventDefault();
@@ -754,13 +718,12 @@ const allContributors = useMemo(async() => {
             />
             <ButtonsWrapper>
               <SubmitButton
-                disabled={loading}
                 onClick={() => setCurrentStep(currentStep + 1)}
               >
-                {loading ? <Loading height={20} dotHeight={20} short /> : 'Skip'}
+                Skip
               </SubmitButton>
               <StyledSubmitButton disabled={!imgBuffer}>
-                {loading ? <Loading height={20} dotHeight={20} short /> : 'Set Image'}
+                Set Image
               </StyledSubmitButton>
             </ButtonsWrapper>
           </UploadCTAWrapper>
@@ -787,17 +750,16 @@ const allContributors = useMemo(async() => {
         </StyledInputError>
         <ButtonsWrapper>
           <SubmitButton
-            disabled={loading}
-            onClick={() => setSubStep(subStep + 1)}
+            onClick={() => setCurrentStep(currentStep + 1)}
             >
             {'Skip'}
           </SubmitButton>
           <SubmitButton
             onClick={handleSetBlurb}
-            disabled={loading || blurb.length < 20}
+            disabled={blurb.length < 20}
             style={{ minWidth: '182px', marginInlineStart: '1rem' }}
             >
-            {loading ? <Loading height={20} dotHeight={20} /> : 'Set Blurb'}
+            Set Blurb
           </SubmitButton>
         </ButtonsWrapper>
       </Wrapper>
@@ -812,7 +774,6 @@ const allContributors = useMemo(async() => {
           If you specify the Genre, it makes it easier for people to find your project. Also, you are giving more information for possible readers and supporters.
         </InputDescription>
         <InputField
-          disabled={loading}
           error={genre.length < 3 && 'At least 3 characters.'}
           // @ts-ignore
           onChange={(e) => setGenre(e.target.value)}
@@ -822,17 +783,16 @@ const allContributors = useMemo(async() => {
         <FlexContainer>
           <SubmitButton
             style={{marginInlineEnd: '1rem'}}
-            onClick={() => setSubStep(subStep + 1)}
-            disabled={loading}
+            onClick={() => setCurrentStep(currentStep + 1)}
           >
             {'Skip'}
           </SubmitButton>
           <SubmitButton
-            onClick={handleSetGenre}
-            disabled={loading || (genre.length < 3)}
+            onClick={() => setCurrentStep(currentStep + 1)}
+            disabled={genre.length < 3}
             style={{ minWidth: '182px' }}
           >
-            {loading ? <Loading height={20} dotHeight={20} /> : 'Set Genre'}
+            Set Genre
           </SubmitButton>
         </FlexContainer>
       </Wrapper>
@@ -847,7 +807,6 @@ const allContributors = useMemo(async() => {
           Does your text have a subtitle?
         </InputDescription>
         <InputField
-          disabled={loading}
           error={subtitle.length < 3 && 'At least 3 characters.'}
           // @ts-ignore
           onChange={(e) => setSubtitle(e.target.value)}
@@ -856,14 +815,13 @@ const allContributors = useMemo(async() => {
         <FlexContainer>
           <SubmitButton
             style={{marginInlineEnd: '1rem'}}
-            onClick={() => setSubStep(subStep + 1)}
-            disabled={loading}
+            onClick={() => setCurrentStep(currentStep + 1)}
           >
             {'Skip'}
           </SubmitButton>
           <SubmitButton
-            onClick={handleSetSubtitle}
-            disabled={loading || (subtitle.length < 1)}
+            onClick={() => setCurrentStep(currentStep + 1)}
+            disabled={subtitle.length < 1}
             style={{ minWidth: '182px' }}
           >
             {loading ? <Loading height={20} dotHeight={20} /> : 'Set Subtitle'}
@@ -873,36 +831,79 @@ const allContributors = useMemo(async() => {
     </FadeIn>
   );
 
-  const AuthorMaxClaimableForm = () => (
+  const ConfigReviewForm = () => (
+    <FadeIn>
+      <Wrapper>
+        <InputName>Your Project Details</InputName>
+        <InputDescription>
+          {`Review this data closely before submitting it.`}
+        </InputDescription>
+        <FlexContainer>
+          <CoverImageReview>
+            <Image
+              src={
+                imgFile ? URL.createObjectURL(imgFile) : '/ImgPlaceholder.png'
+              }
+              height={'100%'}
+              width={'100%'}
+              alt={'Cover'}
+            />
+          </CoverImageReview>
+          <ReviewItems>
+            <ReviewItemWrapper>
+              <BlockSpan>Subtitle</BlockSpan>
+              <ReviewItem>{subtitle.length ? subtitle : 'None specified'}</ReviewItem>
+            </ReviewItemWrapper>
+            <ReviewItemWrapper>
+              <BlockSpan>Genre</BlockSpan>
+              <ReviewItem>{genre.length ? genre : 'None specified'}</ReviewItem>
+            </ReviewItemWrapper>
+            <ReviewItemWrapper>
+              <BlockSpan>Blurb</BlockSpan>
+              <ReviewItem>{blurbIPFS ? blurb : 'None specified' }</ReviewItem>
+            </ReviewItemWrapper>
+          </ReviewItems>
+        </FlexContainer>
+        <SubmitButton
+          disabled={loading}
+          style={{ marginBlockEnd: '0', minWidth: '182px' }}
+          onClick={handleSetConfiguration}
+        >
+          {loading ? <Loading height={20} dotHeight={20} /> : 'Looks Good'}
+        </SubmitButton>
+      </Wrapper>
+    </FadeIn>
+  );
+
+  const AuthorClaimForm = () => (
     <FadeIn>
       <Wrapper>
         <InputName>AMOUNT CLAIMABLE BY YOU</InputName>
         <InputDescription>
-          {`You as an author can reserve an amount of your project's genesis edition NFTs for yourself. Determine the amount.`}
+          {`You as an author can mint an amount of your project's NFTs for yourself. 
+          Only after minting this amount, can you trigger the public auctions for your first edition.
+          These are NFTs of the first edition - the so called Genesis Edition.
+          Why yould you want more than 1 for yourself? Maybe you want to keep a couple more
+          as giveaways in the future to engage with your readers and community?
+          Or maybe you want to gift them to co-authors and other contributors? Up to you :)
+          `}
         </InputDescription>
         <InputField
           // validation, needs to be smaller than total amount
           disabled={loading}
-          error={authorMaxClaimable >= firstEdMaxAmount && 'Must be smaller than Max Amount.'}
+          error={authorMintAmount >= firstEdMaxAmount && 'Must be smaller than Max Amount.'}
           // @ts-ignore
-          onChange={(e) => setAuthorMaxClaimable(Number(e.target.value))}
-          placeholder={'10'}
-          value={authorMaxClaimable}
+          onChange={(e) => setAuthorMintAmount(Number(e.target.value))}
+          placeholder={'6'}
+          value={authorMintAmount}
         />
         <FlexContainer>
           <SubmitButton
-            style={{marginInlineEnd: '1rem'}}
-            onClick={() => setSubStep(subStep + 1)}
-            disabled={loading}
-          >
-            {'Skip'}
-          </SubmitButton>
-          <SubmitButton
-            onClick={handleSetAuthorMaxClaimable}
-            disabled={loading || authorMaxClaimable == 0 || authorMaxClaimable >= firstEdMaxAmount}
+            onClick={handleAuthorMint}
+            disabled={loading || authorMintAmount == 0 || authorMintAmount >= firstEdMaxAmount}
             style={{ minWidth: '182px' }}
           >
-            {loading ? <Loading height={20} dotHeight={20} /> : 'Set Reserved Amount'}
+            {loading ? <Loading height={20} dotHeight={20} /> : 'Mint'}
           </SubmitButton>
         </FlexContainer>
       </Wrapper>
@@ -983,7 +984,7 @@ const allContributors = useMemo(async() => {
           <ContribButtonContainer>
             <SubmitButton
               style={{ marginInlineEnd: '1rem' }}
-              onClick={() => setSubStep(subStep + 1)}
+              onClick={() => setCurrentStep(currentStep + 1)}
               disabled={loading}
             >
               {contributorIndex > 0 ? 'Continue' : 'Skip'}
@@ -1001,7 +1002,7 @@ const allContributors = useMemo(async() => {
     </FadeIn>
   );
 
-  const YourFinished = () => {
+  const Finished = () => {
     return (
       <FadeIn>
         <Wrapper>
@@ -1035,13 +1036,14 @@ const allContributors = useMemo(async() => {
           {currentStep === 4 && !creatingDao && ReviewForm()}
           {creatingDao && <Waiting />}
           {currentStep === 5 && !creatingDao && Congrats()}
-          {currentStep === 6 && subStep === 1 && !creatingDao && CoverImageForm()}
-          {currentStep === 6 && subStep === 2 && !creatingDao && BlurbForm()}
-          {currentStep === 6 && subStep === 3 && !creatingDao && GenreForm()}
-          {currentStep === 6 && subStep === 4 && !creatingDao && SubTitleForm()}
-          {currentStep === 6 && subStep === 5 && !creatingDao && AuthorMaxClaimableForm()}
-          {currentStep === 6 && subStep === 6 && !creatingDao && ContributorsForm()}
-          {currentStep === 6 && subStep === 7 && !creatingDao && YourFinished()}
+          {currentStep === 6 && !creatingDao && CoverImageForm()}
+          {currentStep === 7 && !creatingDao && BlurbForm()}
+          {currentStep === 8 && !creatingDao && GenreForm()}
+          {currentStep === 9 && !creatingDao && SubTitleForm()}
+          {currentStep === 10 && !creatingDao && ConfigReviewForm()}
+          {currentStep === 11 && !creatingDao && AuthorClaimForm()}
+          {currentStep === 12 && !creatingDao && ContributorsForm()}
+          {currentStep === 13 && !creatingDao && Finished()}
         </Form>
       </FormWrapper>
     </Root>
