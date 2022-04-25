@@ -110,26 +110,27 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
     require(msg.value >= price, "Value sent not sufficient.");
 
     _mint(msg.sender, 1, 1, "");
-    uint refund = msg.value - price;
-    if (refund > 0) {
-        payable(msg.sender).transfer(refund);
-    }
+    // uint refund = msg.value - price;
+    // if (refund > 0) {
+    //     payable(msg.sender).transfer(refund);
+    // }
 
     if(shouldFinalize) {
-      // uint256 shareAuthor = 85;
-      uint256 balanceTotal = address(this).balance;
-      // uint256 foundationShareInMatic = balanceTotal * 15 / 100;
-      // for(uint256 i = 0; i < contributorIndex; i++) {
-      //   shareAuthor = shareAuthor - contributors[i].share;
-      //   contributors[i].shareInMatic = balanceTotal * contributors[i].share / 100;
-      //   payable(contributors[i].shareRecipient).transfer(contributors[i].shareInMatic);
-      // }
-      // author.share = shareAuthor;
-      // author.shareInMatic = balanceTotal * shareAuthor / 100;
-      // payable(factory).transfer(foundationShareInMatic);
-      // payable(project.author_address).transfer(author.shareInMatic);
-      payable(project.author_address).transfer(balanceTotal);
       auctionPhaseFinished = true;
+      uint256 shareAuthor = 85;
+      uint256 balanceTotal = address(this).balance;
+      uint256 foundationShareInMatic = balanceTotal * 15 / 100;
+      for(uint256 i = 0; i < contributorIndex; i++) {
+        shareAuthor = shareAuthor - contributors[i].share;
+        contributors[i].shareInMatic = balanceTotal * contributors[i].share / 100;
+        if (i == (contributorIndex - 1)) {
+          author.share = shareAuthor;
+          author.shareInMatic = balanceTotal * shareAuthor / 100;
+        }
+        payable(contributors[i].shareRecipient).transfer(contributors[i].shareInMatic);
+      }
+      payable(factory).transfer(foundationShareInMatic);
+      payable(project.author_address).transfer(author.shareInMatic);
       emit AuctionsEnded(true);
     } else {
       triggerNextAuction();

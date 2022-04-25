@@ -1,8 +1,12 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
-import { ethers } from "hardhat";
-import { wait } from "../scripts/deployAll";
+import { ethers, waffle } from "hardhat";
+import { experimentalAddHardhatNetworkMessageTraceHook } from "hardhat/config";
 import { ProjectDao } from "../typechain";
+
+const wait = (seconds: number) => new Promise((resolve, _) => {
+  setTimeout(resolve, seconds * 1000)
+})
 
 describe("ProjectDao", function () {
   let factory: SignerWithAddress;
@@ -15,11 +19,12 @@ describe("ProjectDao", function () {
   let ProjectDaoAsAuthor: ProjectDao;
   let ProjectDaoAsUserA: ProjectDao;
   let ProjectDaoAsUserB: ProjectDao;
+  let ProjectDaoAsContribB: ProjectDao;
   let title: string;
   let textIpfsHash: string
 
   beforeEach(async function() {
-    const [factory, author, contribA, contribB, userA, userB] = await ethers.getSigners();
+    [factory, author, contribA, contribB, userA, userB] = await ethers.getSigners();
 
     // deploy args
     const title = "My little Phony";
@@ -37,9 +42,11 @@ describe("ProjectDao", function () {
       // not correc,but not important for testing
       author.address
     );
+    console.log({userA});
     ProjectDaoAsAuthor = ProjectDao.connect(author);
     ProjectDaoAsUserA = ProjectDao.connect(userA);
     ProjectDaoAsUserB = ProjectDao.connect(userB);
+    ProjectDaoAsContribB = ProjectDao.connect(contribB)
   });
 
   it("should configure project data correctly",  async () =>  {
@@ -94,9 +101,79 @@ describe("ProjectDao", function () {
      await authorMintTx.wait();
      const triggerFirstAuctionTx = await ProjectDaoAsAuthor.triggerFirstAuction(1000);
      await triggerFirstAuctionTx.wait();
- 
-     const Buy1Tx = await ProjectDaoAsUserA.buy();
+     
+     const Buy1Tx = await ProjectDaoAsUserA.buy({value: "50000000000000000"});
      await Buy1Tx.wait();
-     const balanceOfUserA = await ProjectDao.balanceOf(userA);
+     const balanceOfUserA = await ProjectDao.balanceOf(userA.address, 1);
+     expect(balanceOfUserA).to.equal(1);
+  });
+
+  it("only allows buying until Gen Ed is sold out",  async () =>  {
+    // authorMint + trigger
+    const max = await ProjectDao.currentEditionMax();
+    const authorMintTx = await ProjectDaoAsAuthor.authorMint(2);
+    await authorMintTx.wait();
+    const triggerFirstAuctionTx = await ProjectDaoAsAuthor.triggerFirstAuction(1000);
+    await triggerFirstAuctionTx.wait();
+
+    const Buy1Tx = await ProjectDaoAsUserA.buy({value: "50000000000000000"});
+    await Buy1Tx.wait();
+    const Buy2Tx = await ProjectDaoAsUserB.buy({value: "50000000000000000"});
+    await Buy2Tx.wait();
+
+    await expect(
+      ProjectDaoAsAuthor.buy({value: "50000000000000000"})
+    ).to.be.revertedWith("Auctions finished");
+ });
+
+ it("requires users to at least pay the current price",  async () =>  {
+  // authorMint + trigger
+  const max = await ProjectDao.currentEditionMax();
+  const authorMintTx = await ProjectDaoAsAuthor.authorMint(2);
+  await authorMintTx.wait();
+  const triggerFirstAuctionTx = await ProjectDaoAsAuthor.triggerFirstAuction(1000);
+  await triggerFirstAuctionTx.wait();
+
+  const Buy1Tx = await ProjectDaoAsUserA.buy({value: "50000000000000000"});
+  await Buy1Tx.wait();
+  await expect(
+    ProjectDaoAsUserB.buy({value: "20000000000000000"})
+  ).to.be.revertedWith("Value sent not sufficient.");
+
+});
+
+  it("lets author add contributors",  async () =>  {
+    const authorAddsContribTx = await ProjectDaoAsAuthor.addContributor(contribA.address, 50, 'editor');
+    await authorAddsContribTx.wait();
+    const contributor = await ProjectDao.contributors(0);
+    expect(contributor.share).to.equal(50);
+    expect(contributor.shareRecipient).to.equal(contribA.address);
+  });
+
+  it("distributes shares after sellout of Gen Ed", async () => {
+    const authorAddsContribTx = await ProjectDaoAsAuthor.addContributor(contribA.address, 50, 'editor');
+    await authorAddsContribTx.wait();
+    const authorMintTx = await ProjectDaoAsAuthor.authorMint(1);
+    await authorMintTx.wait();
+    const triggerFirstAuctionTx = await ProjectDaoAsAuthor.triggerFirstAuction(1000000);
+    await triggerFirstAuctionTx.wait();
+
+    const provider = waffle.provider;
+    const authorBalanceBefore = await provider.getBalance(author.address);
+    const contribBalanceBefore = await provider.getBalance(contribA.address);
+
+    const Buy1Tx = await ProjectDaoAsUserA.buy({value: "50000000000000000"});
+    await Buy1Tx.wait();
+    const Buy2Tx = await ProjectDaoAsUserB.buy({value: "50000000000000000"});
+    await Buy2Tx.wait();
+    const Buy3Tx = await ProjectDaoAsContribB.buy({value: "50000000000000000"});
+    await Buy3Tx.wait();
+
+    const authorBalanceAfter = await provider.getBalance(author.address);
+    const contribBalanceAfter = await provider.getBalance(contribA.address);
+    
+    const gainsAuthor = (parseInt(authorBalanceAfter._hex, 16) - parseInt(authorBalanceBefore._hex, 16));
+    const gainsContributor = (parseInt(contribBalanceAfter._hex, 16) - parseInt(contribBalanceBefore._hex, 16));
+    expect(gainsAuthor + gainsContributor).to.be.greaterThan(149999999999000000);
   });
 });
