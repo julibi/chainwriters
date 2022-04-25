@@ -24,7 +24,7 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
   struct AuthorShare {
     uint256 share;
     uint256 shareInMatic;
-    uint256 genesisEditionReserved;
+    uint256 claimedAmount;
     bool hasClaimedGenesis;
   }
 
@@ -36,7 +36,7 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
   }
 
   Project public project = Project("", "", "", address(0), "", "", "");
-  AuthorShare public author = AuthorShare(0, 0, 1, false);
+  AuthorShare public author = AuthorShare(0, 0, 0, false);
   mapping(uint256 => Contribution) public contributors;
   uint8 public contributorIndex = 0;
 
@@ -58,7 +58,7 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
   bool public auctionStarted = false;
   bool public auctionPhaseFinished = false;
   // bool public paused = true;
-  event Configurated(
+  event Configured(
     string imgHash,
     string blurbHash,
     string newGenre,
@@ -225,7 +225,7 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
     project.genre = _genre;
     project.subtitle = _subtitle;
 
-    emit Configurated(
+    emit Configured(
       _imgHash,
       _blurbHash,
       _genre,
@@ -242,10 +242,9 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
   function authorMint(uint256 _amount) external onlyRole(AUTHOR_ROLE) whenNotPaused {
     require(!auctionStarted, "Auctions already started");
     require(author.hasClaimedGenesis == false, "Already claimed");
-    // TODO: _amount < MAX_AMOUNT is better
-    require(_amount > 1 && _amount < 10, "Invalid amount");
-    _mint(msg.sender, 1, author.genesisEditionReserved, "");
-    author.genesisEditionReserved = _amount;
+    require(_amount > 0 && _amount < currentEditionMax, "Invalid amount");
+    _mint(msg.sender, 1, _amount, "");
+    author.claimedAmount = _amount;
     author.hasClaimedGenesis = true;
   }
 
