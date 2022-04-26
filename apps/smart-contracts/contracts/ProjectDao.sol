@@ -104,6 +104,7 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
     require(auctionStarted, "Auctions have not started");
     require(!auctionPhaseFinished, "Auctions finished");
     require(expiresAt > block.timestamp, "Auction ended. Trigger a new one.");
+    // this require needed?
     require(totalSupply(1) + 1 <= currentEditionMax, "Sold out");
     uint price = getPrice();
     bool shouldFinalize = (totalSupply(1) + 1) == currentEditionMax;
@@ -117,20 +118,7 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
 
     if(shouldFinalize) {
       auctionPhaseFinished = true;
-      uint256 shareAuthor = 85;
-      uint256 balanceTotal = address(this).balance;
-      uint256 foundationShareInMatic = balanceTotal * 15 / 100;
-      for(uint256 i = 0; i < contributorIndex; i++) {
-        shareAuthor = shareAuthor - contributors[i].share;
-        contributors[i].shareInMatic = balanceTotal * contributors[i].share / 100;
-        if (i == (contributorIndex - 1)) {
-          author.share = shareAuthor;
-          author.shareInMatic = balanceTotal * shareAuthor / 100;
-        }
-        payable(contributors[i].shareRecipient).transfer(contributors[i].shareInMatic);
-      }
-      payable(factory).transfer(foundationShareInMatic);
-      payable(project.author_address).transfer(author.shareInMatic);
+      distributeShares();
       emit AuctionsEnded(true);
     } else {
       triggerNextAuction();
@@ -171,20 +159,22 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
     expiresAt = block.timestamp + AUCTION_DURATION;
   }
 
-  // function distributeShares() private {
-  //   uint256 shareAuthor = 85;
-  //   uint256 balanceTotal = address(this).balance;
-  //   uint256 foundationShareInMatic = balanceTotal * 15 / 100;
-  //   for(uint256 i = 0; i < contributorIndex; i++) {
-  //     shareAuthor = shareAuthor - contributors[i].share;
-  //     contributors[i].shareInMatic = balanceTotal * contributors[i].share / 100;
-  //     withdraw(contributors[i].shareRecipient, contributors[i].shareInMatic);
-  //   }
-  //   author.share = shareAuthor;
-  //   author.shareInMatic = balanceTotal * shareAuthor / 100;
-  //   withdraw(factory, foundationShareInMatic);
-  //   withdraw(project.author_address, author.shareInMatic);
-  // }
+  function distributeShares() private {
+    uint256 shareAuthor = 85;
+    uint256 balanceTotal = address(this).balance;
+    uint256 foundationShareInMatic = balanceTotal * 15 / 100;
+    for(uint256 i = 0; i < contributorIndex; i++) {
+      shareAuthor = shareAuthor - contributors[i].share;
+      contributors[i].shareInMatic = balanceTotal * contributors[i].share / 100;
+      if (i == (contributorIndex - 1)) {
+        author.share = shareAuthor;
+        author.shareInMatic = balanceTotal * shareAuthor / 100;
+      }
+      withdraw(contributors[i].shareRecipient, contributors[i].shareInMatic);
+    }
+    // withdraw(factory, foundationShareInMatic);
+    withdraw(project.author_address, author.shareInMatic);
+  }
 
   function withdraw(address _to, uint256 _amount) private {
     require(_to != address(0), "Cannot withdraw to the 0 address");
