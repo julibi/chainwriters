@@ -50,4 +50,9 @@ contract ProjectFactory is IProjectFactory, Ownable {
     firstEditionMin = _min;
     firstEditionMax = _max;
   }
+
+  function withdraw(address  _to) payable external onlyOwner {
+    require(_to != address(0), "Cannot withdraw to the 0 address");
+    payable(_to).transfer(address(this).balance);
+  }
 }
