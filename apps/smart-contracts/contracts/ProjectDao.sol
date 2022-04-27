@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
+import "../interfaces/IProjectFactory.sol";
 
 contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable {
   bytes32 public constant AUTHOR_ROLE = keccak256("AUTHOR_ROLE");
@@ -48,7 +49,6 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
   uint256 public currentEditionMintPrice;
   // 15% always go to the DAO 
   uint256 public totalSharePercentage = 15;
-  bool public refundEnabled = false;
 
   // uint256 public AUCTION_DURATION = 1 days;
   uint256 public AUCTION_DURATION = 1 days;
@@ -172,7 +172,8 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
       }
       withdraw(contributors[i].shareRecipient, contributors[i].shareInMatic);
     }
-    withdraw(factory, foundationShareInMatic);
+    // withdraw(factory, foundationShareInMatic);
+    withdraw(address(IProjectFactory(factory)), foundationShareInMatic);
     withdraw(project.author_address, author.shareInMatic);
   }
 
