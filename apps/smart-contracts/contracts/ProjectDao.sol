@@ -190,18 +190,37 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
   // ------------------
  
   // add role of contributor
-  function addContributor(address _contributor, uint256 _share, string calldata _role) external onlyRole(AUTHOR_ROLE) whenNotPaused {
+  function addContributors(
+    address[] calldata _contributors,
+    uint256[] calldata _shares,
+    string[] calldata _roles
+  )
+    external
+    onlyRole(AUTHOR_ROLE)
+    whenNotPaused
+  {
     // in theory user can put the same contributor 3 times - we don't care
-    require(!auctionStarted, "Cannot add after auction started");
-    require(_contributor != address(0), "Contribut cannot be 0 address");
-    require(contributorIndex < 3, "Contributors already set");
-    require(totalSharePercentage + _share < 101, "Contributor's share too high");
-    contributors[contributorIndex].shareRecipient = _contributor;
-    contributors[contributorIndex].share = _share;
-    contributors[contributorIndex].role = _role;
-    totalSharePercentage = totalSharePercentage + _share;
-    contributorIndex = contributorIndex + 1;
-    emit ContributorAdded(_contributor, _share, _role);
+    require(!auctionStarted, "Cannot change after auction started");
+    require((contributorIndex + _contributors.length) <= 3, "Max 3 contributors");
+    require(
+      (_contributors.length == _shares.length) &&
+      (_contributors.length == _roles.length),
+    "Same length required");
+    uint256 contribTotalShares = 0;
+    for (uint8 i = 0; i < _contributors.length; i++) {
+      contribTotalShares += _shares[i];
+    }
+    require(contribTotalShares <= 85, "Contributor shares too high");
+
+    totalSharePercentage += contribTotalShares;
+    for (uint8 i = 0; i < _contributors.length; i++) {
+      require(_contributors[i] != address(0), "Contributor cannot be 0 address");
+      contributors[contributorIndex].shareRecipient = _contributors[i];
+      contributors[contributorIndex].share = _shares[i];
+      contributors[contributorIndex].role = _roles[i];
+      contributorIndex ++;
+      emit ContributorAdded(_contributors[i], _shares[i], _roles[i]);
+    }
   }
 
   function configureProjectDetails(
