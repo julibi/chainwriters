@@ -273,6 +273,7 @@ const FileName = styled.span`
 export interface Contributor {
   address: string;
   share: number;
+  role: string;
 }
 
 const ContribList = styled.ul`
@@ -341,13 +342,28 @@ const Create = () => {
   const createAuthorMint = useCreateAuthorMint();
   const createSetContributors = useCreateSetContributors();
   const daoContract = useMemo(() => daoAddress ? getDaoContract(daoAddress) : null, [daoAddress, getDaoContract]);
-  const contribInitialState = {address: '', share: 0};
-  const [contributor, setContributor] = useState(contribInitialState);
-  const [contributorList, setContributorList] = useState([]);
-  const [contributorIndex, setContributorIndex] = useState<number>(0);
+  const contribInitialState = {
+    1: { address: '', share: 0, role: '' },
+    2: { address: '', share: 0, role: '' },
+    3: { address: '', share: 0, role: '' },
+  };
+  const [contributors, setContributors] = useState(contribInitialState);
   const [shareSelf, setShareSelf] = useState<number>(85);
   const [showInputError, setShowInputError] = useState<boolean>(false);
-  
+  const contributorIndex = useMemo(() => {
+    let idx = 0;
+    for (const contrib in contributors) {
+      if ((contributors[contrib].address.length > 0) && (contributors[contrib].length > 0)) {
+        idx ++;
+      }
+    }
+    return idx;
+  }, [contributors]);
+
+  const contributorList = useMemo(() => {
+    
+  }, [contributors]);
+
   const uploadText = useCallback(async () => {
     try {
       const added = await client.add(text);
@@ -466,37 +482,25 @@ const Create = () => {
     });
 }, [createAuthorMint, daoContract, authorMintAmount, currentStep]);
 
-// could fetch from graph?
-const allContributors = useMemo(async() => {
-  if (!daoContract) return null;
-  const contributorIndex = await daoContract.contributorIndex();
-  const contribs = await Promise.all([...Array(contributorIndex)].map(async(_, i) =>  await daoContract.contributors(i)));
-  return { contributorIndex, contribs };
-}, [daoContract]);
-
-  const handleSetContributors = useCallback(async() => {
+  const handleSetContributors = useCallback(async () => {
     createSetContributors(
       daoContract,
-      contributor,
+      contributors,
       setLoading,
       PendingToast,
       (x, y, z) => {
-        setContributor(contribInitialState);
-        setContributorIndex(contributorIndex + 1);
-        setContributorList([...contributorList, contributor]);
-        contributorIndex == 2 && setCurrentStep(currentStep + 1);
+        setCurrentStep(currentStep + 1);
         // @ts-ignore
-        return <SuccessToast chainId={x} hash={y} customMessage={z} />
+        return <SuccessToast chainId={x} hash={y} customMessage={z} />;
       }
     )
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    .then(() => {})
-    .catch((e) => {
-      console.log({e});
-      toast.error('Something went wrong');
-    });
-    await allContributors;
-  }, [daoContract, createSetContributors, setLoading, currentStep, contributorIndex]);
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      .then(() => {})
+      .catch((e) => {
+        console.log({ e });
+        toast.error('Something went wrong');
+      });
+  }, [createSetContributors, daoContract, contributors, currentStep]);
 
   const NameForm = () => (
     <FadeIn>
@@ -952,38 +956,103 @@ const allContributors = useMemo(async() => {
           </SpecialShare>
           <ContribInputContainer>
             <InputField
-              label={'Contributor Address:'}
+              label={'Address:'}
               disabled={loading}
               onChange={(e) =>
                 // @ts-ignore
-                setContributor({ ...contributor, address: e.target.value })
+                setContributor({
+                  ...contributors,
+                  // @ts-ignore
+                  0: { ...contributors[0], address: e.target.value }
+                })
               }
               placeholder={'0x123'}
-              value={contributor.address}
+              value={contributors[0].address}
               // TODO: validation: is not an address.
             />
             <InputField
-              label={'Contributor Share in %:'}
+              label={'Share in %:'}
               disabled={loading}
               onChange={(e) => {
                 // @ts-ignore
                 const inputVal = Number(e.target.value.replace(/[^0-9]/g, ''));
-                const otherShares =
-                  contributorList.reduce(
-                    (partialSum, a) => partialSum + a.share,
-                    0
-                  ) + inputVal;
-
-                setShareSelf(85 - otherShares);
-                setContributor({
-                  ...contributor,
-                  share: inputVal,
-                });
-                setShowInputError(85 - otherShares < 0);
+                setContributors({
+                  ...contributors,
+                  // @ts-ignore
+                  0: { ...contributors[0], share: inputVal }
+                })
+                // setShowInputError(85 - otherShares < 0);
               }}
               placeholder={'10%'}
-              value={contributor.share}
+              value={contributors[0].share}
               // TODO only full numbers
+            />
+            <InputField
+              label={'Role:'}
+              disabled={loading}
+              onChange={(e) =>
+                // @ts-ignore
+                setContributors({
+                  ...contributors,
+                  // @ts-ignore
+                  0: { ...contributors[0], role: e.target.value }
+                })
+              }
+              placeholder={'0x123'}
+              value={contributors[0].role}
+              // TODO: validation: is not an address.
+            />
+            <StyledInputError style={{ display: 'flex' }}>
+              {showInputError ? 'Share too high.' : ''}
+            </StyledInputError>
+          </ContribInputContainer>
+          <ContribInputContainer>
+            <InputField
+              label={'Address:'}
+              disabled={loading}
+              onChange={(e) =>
+                // @ts-ignore
+                setContributor({
+                  ...contributors,
+                  // @ts-ignore
+                  0: { ...contributors[0], address: e.target.value }
+                })
+              }
+              placeholder={'0x123'}
+              value={contributors[0].address}
+              // TODO: validation: is not an address.
+            />
+            <InputField
+              label={'Share in %:'}
+              disabled={loading}
+              onChange={(e) => {
+                // @ts-ignore
+                const inputVal = Number(e.target.value.replace(/[^0-9]/g, ''));
+                setContributors({
+                  ...contributors,
+                  // @ts-ignore
+                  0: { ...contributors[0], share: inputVal }
+                })
+                // setShowInputError(85 - otherShares < 0);
+              }}
+              placeholder={'10%'}
+              value={contributors[0].share}
+              // TODO only full numbers
+            />
+            <InputField
+              label={'Role:'}
+              disabled={loading}
+              onChange={(e) =>
+                // @ts-ignore
+                setContributors({
+                  ...contributors,
+                  // @ts-ignore
+                  0: { ...contributors[0], role: e.target.value }
+                })
+              }
+              placeholder={'0x123'}
+              value={contributors[0].role}
+              // TODO: validation: is not an address.
             />
             <StyledInputError style={{ display: 'flex' }}>
               {showInputError ? 'Share too high.' : ''}
@@ -1041,7 +1110,8 @@ const allContributors = useMemo(async() => {
       </ProgressBarWrapper>
       <FormWrapper>
         <Form>
-          {currentStep === 0 && !creatingDao && NameForm()}
+          {currentStep === 0 && !creatingDao && ContributorsForm()}
+          {/* {currentStep === 0 && !creatingDao && NameForm()} */}
           {currentStep === 1 && !creatingDao && TextForm()}
           {currentStep === 2 && !creatingDao && AmountForm()}
           {currentStep === 3 && !creatingDao && PriceForm()}
