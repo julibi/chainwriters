@@ -152,7 +152,7 @@ const CoverImageReview = styled.div`
     height: 100% !important;
 
     img {
-      object-fit: contain;
+      object-fit: contain !important;
       
     }
   }
@@ -551,12 +551,11 @@ const allContributors = useMemo(async() => {
   const AmountForm = () => (
     <FadeIn>
       <Wrapper>
-        <InputName>EARLY SUPPORTER AMOUNT TO REACH</InputName>
+        <InputName>TOTAL AMOUNT OF GENESIS EDITION</InputName>
         <InputDescription>
-          How many people do you want to push your project? The number you
-          specify here is the amount of people that need to fund your project,
-          in order for your project to turn it into an NFT Collection. These
-          people - including you – can then claim an NFT of the Collection...
+          The first edition of a work is called Genesis Edition. Holders of a Genesis Edition will have special benefits.
+          The Genesis Edition will be sold over a Dutch Auction. Determine its total amount. Keep in mind that you can only trigger the sale of
+          a subsequent edition after the Genesis Edition has sold out.
         </InputDescription>
         <InputField
           value={firstEdMaxAmount}
@@ -578,11 +577,13 @@ const allContributors = useMemo(async() => {
   const PriceForm = () => (
     <FadeIn>
       <Wrapper>
-        <InputName>PRICE PER FUNDING SPOT (MATIC)</InputName>
+        <InputName>STARTING PRICE(MATIC)</InputName>
         <InputDescription>
-          With this number you specify the Matic Price someone needs to pay to
-          get a spot as a supporter. It can also be regarded as the price for a
-          Genesis Edition NFT of your project.
+          The Genesis Edition is sold in a dutch auction.
+          In a dutch auction the price keeps going down during a given time – in our case: 24 hours – until someone buys.
+          Then the next dutch auction starts, until all copies are sold out.
+          Determine the starting price for all your Genesis Edition copies in Matic.
+          You will be able to determine the price for each new edition that you unlock.
         </InputDescription>
         {/* TODO validation so that it is 0.1 and not 0,1 */ }
         <InputField
@@ -615,17 +616,18 @@ const allContributors = useMemo(async() => {
             <ReviewItem>{text}</ReviewItem>
           </ReviewItemWrapper>
           <ReviewItemWrapper>
-            <BlockSpan>Price Per Funding Spot (MATIC)</BlockSpan>
+            <BlockSpan>Max Amount Genesis Edition</BlockSpan>
             <ReviewItem>{firstEdMaxAmount}</ReviewItem>
           </ReviewItemWrapper>
           <ReviewItemWrapper>
-            <BlockSpan>Max Funding Spot (MATIC)</BlockSpan>
+            <BlockSpan>Dutch Auction Starting Price (MATIC)</BlockSpan>
             <ReviewItem>{firstEdMintPrice}</ReviewItem>
           </ReviewItemWrapper>
           <Checkbox
             // TODO: contract - should be able to freeze a contract or destruct 
             description='I am aware that any form of plagiarism or hateful content can be banned from the platfom at any time. Other lawyer gibberish.'
             onClick={() => setAgreed(!agreed)}
+            agreed={agreed}
           />
           <SubmitButton
             disabled={!agreed}
@@ -880,9 +882,8 @@ const allContributors = useMemo(async() => {
       <Wrapper>
         <InputName>AMOUNT CLAIMABLE BY YOU</InputName>
         <InputDescription>
-          {`You as an author can mint an amount of your project's NFTs for yourself. 
+          {`You as an author can mint an amount of your project's Genesis Edition NFTs for yourself. 
           Only after minting this amount, can you trigger the public auctions for your first edition.
-          These are NFTs of the first edition - the so called Genesis Edition.
           Why yould you want more than 1 for yourself? Maybe you want to keep a couple more
           as giveaways in the future to engage with your readers and community?
           Or maybe you want to gift them to co-authors and other contributors? Up to you :)
@@ -915,7 +916,14 @@ const allContributors = useMemo(async() => {
       <Wrapper>
         <InputName>CONTRIBUTORS</InputName>
         <InputDescription>
-          {`Do you want to set contributors like Editors, Translators, Cover Artists etc.? You can input their address and role and most importantly what share of the funds they will be able to withdraw, once the Genesis Edition sells out. The should be set as a number between 0 and 100. A contributor with a share of 10, will be able to withdraw 10% of the funding. You can specify up to 3. Keep in mind that the total of shares should be deducted from you own share. So when an editor is getting 10%, you will be left with 90%. WARNING: This is irreversible.`}
+          {`Do you want to set contributors like Co-Authors, Editors, Translators, Cover Artists etc.?
+          You can input their addresses and roles and most importantly what share of the funds they will receive, once the Genesis Edition sells out.
+          Each share should be a number between 0 and 85. 
+          You can specify up to 3. Keep in mind that the total of shares will be deducted from you own share.
+          15% are always going to the foundation.
+          So a contributor with a share of 10, will receive 10% of the funds.
+          --> editor is getting 10%, foundation 15% you will be left with 75%.
+          WARNING: This is irreversible.`}
         </InputDescription>
         <CTAContainer>
           {contributorList.length ? (
@@ -961,24 +969,24 @@ const allContributors = useMemo(async() => {
                 // @ts-ignore
                 const inputVal = Number(e.target.value.replace(/[^0-9]/g, ''));
                 const otherShares =
-                  contributorList.reduce((partialSum, a) => partialSum + a.share, 0) +
-                  inputVal;
+                  contributorList.reduce(
+                    (partialSum, a) => partialSum + a.share,
+                    0
+                  ) + inputVal;
 
                 setShareSelf(85 - otherShares);
                 setContributor({
                   ...contributor,
                   share: inputVal,
                 });
-                setShowInputError((85 - otherShares) < 0);
+                setShowInputError(85 - otherShares < 0);
               }}
               placeholder={'10%'}
               value={contributor.share}
               // TODO only full numbers
             />
             <StyledInputError style={{ display: 'flex' }}>
-              {showInputError
-                ? 'Share too high.'
-                : ''}
+              {showInputError ? 'Share too high.' : ''}
             </StyledInputError>
           </ContribInputContainer>
           <ContribButtonContainer>
@@ -994,7 +1002,11 @@ const allContributors = useMemo(async() => {
               disabled={loading || contributorIndex == 3 || shareSelf <= 0}
               style={{ minWidth: '182px' }}
             >
-              {loading ? <Loading height={20} dotHeight={20} /> : 'Set Contributors'}
+              {loading ? (
+                <Loading height={20} dotHeight={20} />
+              ) : (
+                'Set Contributors'
+              )}
             </SubmitButton>{' '}
           </ContribButtonContainer>
         </CTAContainer>
