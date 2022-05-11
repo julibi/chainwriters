@@ -294,6 +294,11 @@ const SpecialShare = styled.span`
   margin-block-end: 1rem;
 `;
 
+const AddContribButton = styled(SubmitButton)`
+  width: 100%;
+  margin-block-end: 2rem;
+`;
+
 const CTAContainer = styled.div`
   padding: 1rem;
 `;
@@ -347,6 +352,7 @@ const Create = () => {
     2: { address: '', share: 0, role: '' },
     3: { address: '', share: 0, role: '' },
   };
+
   const [contributors, setContributors] = useState(contribInitialState);
   const [shareSelf, setShareSelf] = useState<number>(85);
   const [showInputError, setShowInputError] = useState<boolean>(false);
@@ -361,7 +367,13 @@ const Create = () => {
   }, [contributors]);
 
   const contributorList = useMemo(() => {
-    
+    const contribsArray = [];
+    Object.entries(contributors).map(contrib => {
+      if (contrib[1].address.length > 0 && contrib[1].share > 0) {
+        contribsArray.push(contrib[1]);
+      }
+    })
+    return contribsArray;
   }, [contributors]);
 
   const uploadText = useCallback(async () => {
@@ -915,173 +927,147 @@ const Create = () => {
     </FadeIn>
   );
 
-  const ContributorsForm = () => (
-    <FadeIn>
-      <Wrapper>
-        <InputName>CONTRIBUTORS</InputName>
-        <InputDescription>
-          {`Do you want to set contributors like Co-Authors, Editors, Translators, Cover Artists etc.?
-          You can input their addresses and roles and most importantly what share of the funds they will receive, once the Genesis Edition sells out.
-          Each share should be a number between 0 and 85. 
-          You can specify up to 3. Keep in mind that the total of shares will be deducted from you own share.
-          15% are always going to the foundation.
-          So a contributor with a share of 10, will receive 10% of the funds.
-          --> editor is getting 10%, foundation 15% you will be left with 75%.
-          WARNING: This is irreversible.`}
-        </InputDescription>
-        <CTAContainer>
-          {contributorList.length ? (
-            <ContribList>
-              {contributorList.map((item, idx) => (
-                <div key={idx}>
-                  <ContribItem>
-                    <span>Contributor {idx + 1}:</span>
-                    <span>{truncateAddress(item.address)}</span>
-                  </ContribItem>
-                  <ContribItem>
-                    <span>Share:</span>
-                    <span>{item.share} %</span>
-                  </ContribItem>
-                </div>
-              ))}
-            </ContribList>
-          ) : null}
-          <SpecialShare>
-            <span>Moonlit Foundation share:</span>
-            <span>15 %</span>
-          </SpecialShare>
-          <SpecialShare>
-            <span>Your share:</span>
-            <span>{shareSelf} %</span>
-          </SpecialShare>
-          <ContribInputContainer>
-            <InputField
-              label={'Address:'}
-              disabled={loading}
-              onChange={(e) =>
-                // @ts-ignore
-                setContributor({
-                  ...contributors,
-                  // @ts-ignore
-                  0: { ...contributors[0], address: e.target.value }
-                })
+  const ContributorsForm = () => {
+    const [formsAmount, setFormsAmount] = useState(1);
+
+    const renderForm = (idx: number) => {
+      return(
+        <ContribInputContainer>
+        <InputField
+          label={'Address:'}
+          disabled={loading}
+          onChange={(e) => {
+            console.log(contributors[idx]);
+            // @ts-ignore
+            setContributors({
+              ...contributors,
+              // @ts-ignore
+              [idx]: { ...contributors[idx], address: e.target.value }
+            })
+          }}
+          placeholder={'0x123'}
+          value={contributors[idx]?.address}
+          // TODO: validation: is not an address.
+        />
+        <InputField
+          label={'Share in %:'}
+          disabled={loading}
+          onChange={(e) => {
+            // @ts-ignore
+            const inputVal = Number(e.target.value.replace(/[^0-9]/g, ''));
+            setContributors({
+              ...contributors,
+              // @ts-ignore
+              [idx]: { ...contributors[idx], share: inputVal }
+            })
+            // setShowInputError(85 - otherShares < 0);
+          }}
+          placeholder={'10%'}
+          value={contributors[idx].share}
+          // TODO only full numbers
+        />
+        <InputField
+          label={'Role:'}
+          disabled={loading}
+          onChange={(e) =>
+            // @ts-ignore
+            setContributors({
+              ...contributors,
+              // @ts-ignore
+              [idx]: { ...contributors[idx], role: e.target.value }
+            })
+          }
+          placeholder={'0x123'}
+          value={contributors[idx].role}
+          // TODO: validation: is not an address.
+        />
+        <StyledInputError style={{ display: 'flex' }}>
+          {showInputError ? 'Share too high.' : ''}
+        </StyledInputError>
+      </ContribInputContainer>
+      );
+    };
+    return (
+      <FadeIn>
+        <Wrapper>
+          <InputName>CONTRIBUTORS</InputName>
+          <InputDescription>
+            {`Do you want to set contributors like Co-Authors, Editors, Translators, Cover Artists etc.?
+            You can input their addresses and roles and most importantly what share of the funds they will receive, once the Genesis Edition sells out.
+            Each share should be a number between 0 and 85. 
+            You can specify up to 3. Keep in mind that the total of shares will be deducted from you own share.
+            15% are always going to the foundation.
+            So a contributor with a share of 10, will receive 10% of the funds.
+            --> editor is getting 10%, foundation 15% you will be left with 75%.
+            WARNING: This is irreversible.`}
+          </InputDescription>
+          <CTAContainer>
+            {contributorList.length ? (
+              <ContribList>
+                {contributorList.map((item, idx) => (
+                  <div key={idx}>
+                    <ContribItem>
+                      <span>Contributor {idx + 1}:</span>
+                      <span>{truncateAddress(item.address)}</span>
+                    </ContribItem>
+                    <ContribItem>
+                      <span>Share:</span>
+                      <span>{item.share} %</span>
+                    </ContribItem>
+                    <ContribItem>
+                      <span>Role:</span>
+                      <span>{item.role.length > 0 ? item.role : 'Unknown'}</span>
+                    </ContribItem>
+                  </div>
+                ))}
+              </ContribList>
+            ) : null}
+            <SpecialShare>
+              <span>Moonlit Foundation share:</span>
+              <span>15 %</span>
+            </SpecialShare>
+            <SpecialShare>
+              <span>Your share:</span>
+              <span>{shareSelf} %</span>
+            </SpecialShare>
+            {renderForm(1)}
+            {formsAmount >= 2 && renderForm(2)}
+            {formsAmount === 3 && renderForm(3)}
+            <AddContribButton
+              disabled={
+                contributorList.length < 1 ||
+                contributorList.length === 3 ||
+                contributorList.length < formsAmount
               }
-              placeholder={'0x123'}
-              value={contributors[0].address}
-              // TODO: validation: is not an address.
-            />
-            <InputField
-              label={'Share in %:'}
-              disabled={loading}
-              onChange={(e) => {
-                // @ts-ignore
-                const inputVal = Number(e.target.value.replace(/[^0-9]/g, ''));
-                setContributors({
-                  ...contributors,
-                  // @ts-ignore
-                  0: { ...contributors[0], share: inputVal }
-                })
-                // setShowInputError(85 - otherShares < 0);
-              }}
-              placeholder={'10%'}
-              value={contributors[0].share}
-              // TODO only full numbers
-            />
-            <InputField
-              label={'Role:'}
-              disabled={loading}
-              onChange={(e) =>
-                // @ts-ignore
-                setContributors({
-                  ...contributors,
-                  // @ts-ignore
-                  0: { ...contributors[0], role: e.target.value }
-                })
-              }
-              placeholder={'0x123'}
-              value={contributors[0].role}
-              // TODO: validation: is not an address.
-            />
-            <StyledInputError style={{ display: 'flex' }}>
-              {showInputError ? 'Share too high.' : ''}
-            </StyledInputError>
-          </ContribInputContainer>
-          <ContribInputContainer>
-            <InputField
-              label={'Address:'}
-              disabled={loading}
-              onChange={(e) =>
-                // @ts-ignore
-                setContributor({
-                  ...contributors,
-                  // @ts-ignore
-                  0: { ...contributors[0], address: e.target.value }
-                })
-              }
-              placeholder={'0x123'}
-              value={contributors[0].address}
-              // TODO: validation: is not an address.
-            />
-            <InputField
-              label={'Share in %:'}
-              disabled={loading}
-              onChange={(e) => {
-                // @ts-ignore
-                const inputVal = Number(e.target.value.replace(/[^0-9]/g, ''));
-                setContributors({
-                  ...contributors,
-                  // @ts-ignore
-                  0: { ...contributors[0], share: inputVal }
-                })
-                // setShowInputError(85 - otherShares < 0);
-              }}
-              placeholder={'10%'}
-              value={contributors[0].share}
-              // TODO only full numbers
-            />
-            <InputField
-              label={'Role:'}
-              disabled={loading}
-              onChange={(e) =>
-                // @ts-ignore
-                setContributors({
-                  ...contributors,
-                  // @ts-ignore
-                  0: { ...contributors[0], role: e.target.value }
-                })
-              }
-              placeholder={'0x123'}
-              value={contributors[0].role}
-              // TODO: validation: is not an address.
-            />
-            <StyledInputError style={{ display: 'flex' }}>
-              {showInputError ? 'Share too high.' : ''}
-            </StyledInputError>
-          </ContribInputContainer>
-          <ContribButtonContainer>
-            <SubmitButton
-              style={{ marginInlineEnd: '1rem' }}
-              onClick={() => setCurrentStep(currentStep + 1)}
-              disabled={loading}
+              onClick={() => setFormsAmount(formsAmount + 1)}
             >
-              {contributorIndex > 0 ? 'Continue' : 'Skip'}
-            </SubmitButton>
-            <SubmitButton
-              onClick={handleSetContributors}
-              disabled={loading || contributorIndex == 3 || shareSelf <= 0}
-              style={{ minWidth: '182px' }}
-            >
-              {loading ? (
-                <Loading height={20} dotHeight={20} />
-              ) : (
-                'Set Contributors'
-              )}
-            </SubmitButton>{' '}
-          </ContribButtonContainer>
-        </CTAContainer>
-      </Wrapper>
-    </FadeIn>
-  );
+              Add Another Contributor
+            </AddContribButton>
+            <ContribButtonContainer>
+              <SubmitButton
+                style={{ marginInlineEnd: '1rem' }}
+                onClick={() => setCurrentStep(currentStep + 1)}
+                disabled={loading}
+              >
+                {contributorIndex > 0 ? 'Continue' : 'Skip'}
+              </SubmitButton>
+              <SubmitButton
+                onClick={handleSetContributors}
+                disabled={loading || contributorIndex == 3 || shareSelf <= 0}
+                style={{ minWidth: '182px' }}
+              >
+                {loading ? (
+                  <Loading height={20} dotHeight={20} />
+                ) : (
+                  'Set Contributors'
+                )}
+              </SubmitButton>{' '}
+            </ContribButtonContainer>
+          </CTAContainer>
+        </Wrapper>
+      </FadeIn>
+    );
+  };
 
   const Finished = () => {
     return (
