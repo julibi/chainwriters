@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FormEvent, useCallback, useMemo, useState } from 'react'
+import React, { FormEvent, useCallback, useMemo, useState } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import styled from 'styled-components'
@@ -29,7 +29,7 @@ import SuccessToast from '../components/SuccessToast'
 import PendingToast from '../components/PendingToast'
 import { truncateAddress } from '../components/WalletIndicator'
 import InputField, { StyledInputError } from '../components/InputField'
-
+import validateAddress from '../utils/validateAddress';
 
 interface SyntheticEvent {
   target: {
@@ -294,6 +294,12 @@ const SpecialShare = styled.span`
   margin-block-end: 1rem;
 `;
 
+const ContribsError = styled.div`
+  color: ${PINK};
+  margin-block-end: 2rem;
+  text-align: center;
+`;
+
 const AddContribButton = styled(SubmitButton)`
   width: 100%;
   margin-block-end: 2rem;
@@ -311,6 +317,11 @@ const ContribInputContainer = styled.div`
 
 const ContribButtonContainer = styled(FlexContainer)`
   justify-content: space-between;
+`;
+
+const Error = styled.span`
+  display: inline-block;
+  color: ${PINK};
 `;
 
 const Create = () => {
@@ -338,11 +349,9 @@ const Create = () => {
   const [genre, setGenre] = useState('');
   const [daoAddress, setDaoAddress] = useState<string>('');
   const [creatingDao, setCreatingDao] = useState<boolean>(false);
-  
   const [subtitle, setSubtitle] = useState<string>('');
   const [authorMintAmount, setAuthorMintAmount] = useState<number>(0);
   const getDaoContract = useDaoContract();
-
   const createSetConfiguration = useCreateSetConfiguration();
   const createAuthorMint = useCreateAuthorMint();
   const createSetContributors = useCreateSetContributors();
@@ -352,20 +361,7 @@ const Create = () => {
     2: { address: '', share: 0, role: '' },
     3: { address: '', share: 0, role: '' },
   };
-
   const [contributors, setContributors] = useState(contribInitialState);
-  const [shareSelf, setShareSelf] = useState<number>(85);
-  const [showInputError, setShowInputError] = useState<boolean>(false);
-  const contributorIndex = useMemo(() => {
-    let idx = 0;
-    for (const contrib in contributors) {
-      if ((contributors[contrib].address.length > 0) && (contributors[contrib].length > 0)) {
-        idx ++;
-      }
-    }
-    return idx;
-  }, [contributors]);
-
   const contributorList = useMemo(() => {
     const contribsArray = [];
     Object.entries(contributors).map(contrib => {
@@ -375,6 +371,16 @@ const Create = () => {
     })
     return contribsArray;
   }, [contributors]);
+  
+  const shareSelf = useMemo(() => {
+    let initShareSelf = 85;
+    if (contributorList.length > 0) {
+      for (let i = 0; i < contributorList.length; i++) {
+        initShareSelf = initShareSelf - contributorList[i].share;
+      }
+      return initShareSelf;
+    }
+  }, [contributorList]);
 
   const uploadText = useCallback(async () => {
     try {
@@ -929,64 +935,65 @@ const Create = () => {
 
   const ContributorsForm = () => {
     const [formsAmount, setFormsAmount] = useState(1);
-
     const renderForm = (idx: number) => {
-      return(
+      return (
         <ContribInputContainer>
-        <InputField
-          label={'Address:'}
-          disabled={loading}
-          onChange={(e) => {
-            console.log(contributors[idx]);
-            // @ts-ignore
-            setContributors({
-              ...contributors,
+          <InputField
+            label={'Address:'}
+            disabled={loading}
+            onChange={(e) => {
+              console.log(validateAddress(e.target.value));
               // @ts-ignore
-              [idx]: { ...contributors[idx], address: e.target.value }
-            })
-          }}
-          placeholder={'0x123'}
-          value={contributors[idx]?.address}
-          // TODO: validation: is not an address.
-        />
-        <InputField
-          label={'Share in %:'}
-          disabled={loading}
-          onChange={(e) => {
-            // @ts-ignore
-            const inputVal = Number(e.target.value.replace(/[^0-9]/g, ''));
-            setContributors({
-              ...contributors,
+              setContributors({
+                ...contributors,
+                // @ts-ignore
+                [idx]: { ...contributors[idx], address: e.target.value },
+              });
+            }}
+            placeholder={'0x123'}
+            value={contributors[idx]?.address}
+            error={
+              contributors[idx].address.length > 0 &&
+              !validateAddress(contributors[idx].address) &&
+              'Address not valid.'
+            }
+          />
+          <InputField
+            label={'Share in %:'}
+            disabled={loading}
+            onChange={(e) => {
               // @ts-ignore
-              [idx]: { ...contributors[idx], share: inputVal }
-            })
-            // setShowInputError(85 - otherShares < 0);
-          }}
-          placeholder={'10%'}
-          value={contributors[idx].share}
-          // TODO only full numbers
-        />
-        <InputField
-          label={'Role:'}
-          disabled={loading}
-          onChange={(e) =>
-            // @ts-ignore
-            setContributors({
-              ...contributors,
+              const inputVal = Number(e.target.value.replace(/[^0-9]/g, ''));
+              setContributors({
+                ...contributors,
+                // @ts-ignore
+                [idx]: { ...contributors[idx], share: inputVal },
+              });
+              // setShowInputError(85 - otherShares < 0);
+            }}
+            placeholder={'10%'}
+            value={contributors[idx].share}
+            // TODO only full numbers
+          />
+          <InputField
+            label={'Role:'}
+            disabled={loading}
+            onChange={(e) =>
               // @ts-ignore
-              [idx]: { ...contributors[idx], role: e.target.value }
-            })
-          }
-          placeholder={'0x123'}
-          value={contributors[idx].role}
-          // TODO: validation: is not an address.
-        />
-        <StyledInputError style={{ display: 'flex' }}>
-          {showInputError ? 'Share too high.' : ''}
-        </StyledInputError>
-      </ContribInputContainer>
+              setContributors({
+                ...contributors,
+                // @ts-ignore
+                [idx]: { ...contributors[idx], role: e.target.value },
+              })
+            }
+            placeholder={'0x123'}
+            value={contributors[idx].role}
+            // TODO: validation: is not an address.
+          />
+        </ContribInputContainer>
       );
     };
+
     return (
       <FadeIn>
         <Wrapper>
@@ -1016,7 +1023,9 @@ const Create = () => {
                     </ContribItem>
                     <ContribItem>
                       <span>Role:</span>
-                      <span>{item.role.length > 0 ? item.role : 'Unknown'}</span>
+                      <span>
+                        {item.role.length > 0 ? item.role : 'Unknown'}
+                      </span>
                     </ContribItem>
                   </div>
                 ))}
@@ -1033,15 +1042,25 @@ const Create = () => {
             {renderForm(1)}
             {formsAmount >= 2 && renderForm(2)}
             {formsAmount === 3 && renderForm(3)}
+            {shareSelf < 0 ? (
+              <ContribsError>
+                <span>{'Too many shares for contributor(s).'}</span>
+                <br />
+                <span>{'Total cannot be higher than 100.'}</span>
+              </ContribsError>
+            ) : (
+              ''
+            )}
             <AddContribButton
               disabled={
                 contributorList.length < 1 ||
                 contributorList.length === 3 ||
-                contributorList.length < formsAmount
+                contributorList.length < formsAmount ||
+                shareSelf < 1
               }
               onClick={() => setFormsAmount(formsAmount + 1)}
             >
-              Add Another Contributor
+              + Add More
             </AddContribButton>
             <ContribButtonContainer>
               <SubmitButton
@@ -1049,11 +1068,16 @@ const Create = () => {
                 onClick={() => setCurrentStep(currentStep + 1)}
                 disabled={loading}
               >
-                {contributorIndex > 0 ? 'Continue' : 'Skip'}
+                {contributorList.length > 0 ? 'Continue' : 'Skip'}
               </SubmitButton>
               <SubmitButton
                 onClick={handleSetContributors}
-                disabled={loading || contributorIndex == 3 || shareSelf <= 0}
+                disabled={
+                  loading ||
+                  contributorList.length >= 3 ||
+                  contributorList.length < 1 ||
+                  shareSelf < 1
+                }
                 style={{ minWidth: '182px' }}
               >
                 {loading ? (
