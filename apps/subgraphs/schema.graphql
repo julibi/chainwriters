@@ -5,9 +5,7 @@ type Dao @entity {
   createdAt: BigInt!
   title: String!
   textIpfsHash: String!
-  fundingEnded: Boolean!
   firstEditionMax: BigInt!
-  fundedAmount: BigInt!
   mintPrice: BigInt!
   imgIpfsHash: String
   blurbIpfsHash: String

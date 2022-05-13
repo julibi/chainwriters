@@ -21,9 +21,7 @@ export class Dao extends Entity {
     this.set("createdAt", Value.fromBigInt(BigInt.zero()));
     this.set("title", Value.fromString(""));
     this.set("textIpfsHash", Value.fromString(""));
-    this.set("fundingEnded", Value.fromBoolean(false));
     this.set("firstEditionMax", Value.fromBigInt(BigInt.zero()));
-    this.set("fundedAmount", Value.fromBigInt(BigInt.zero()));
     this.set("mintPrice", Value.fromBigInt(BigInt.zero()));
   }
 
@@ -98,15 +96,6 @@ export class Dao extends Entity {
     this.set("textIpfsHash", Value.fromString(value));
   }
 
-  get fundingEnded(): boolean {
-    let value = this.get("fundingEnded");
-    return value!.toBoolean();
-  }
-
-  set fundingEnded(value: boolean) {
-    this.set("fundingEnded", Value.fromBoolean(value));
-  }
-
   get firstEditionMax(): BigInt {
     let value = this.get("firstEditionMax");
     return value!.toBigInt();
@@ -114,15 +103,6 @@ export class Dao extends Entity {
 
   set firstEditionMax(value: BigInt) {
     this.set("firstEditionMax", Value.fromBigInt(value));
-  }
-
-  get fundedAmount(): BigInt {
-    let value = this.get("fundedAmount");
-    return value!.toBigInt();
-  }
-
-  set fundedAmount(value: BigInt) {
-    this.set("fundedAmount", Value.fromBigInt(value));
   }
 
   get mintPrice(): BigInt {
