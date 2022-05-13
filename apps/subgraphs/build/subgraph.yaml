@@ -26,3 +26,31 @@ dataSources:
         - event: DaoCreated(indexed address,indexed address,string,string,uint256,uint256)
           handler: handleDaoCreated
       file: ProjectFactory/ProjectFactory.wasm
+templates:
+  - kind: ethereum/contract
+    name: ProjectDao
+    network: mumbai
+    source:
+      abi: project
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      file: ProjectFactory/ProjectFactory.wasm
+      entities:
+        - Dao
+        - Contributor
+      abis:
+        - name: project
+          file: ProjectDao/abis/project.json
+      eventHandlers:
+        - event: TextSet(string)
+          handler: handleTextSet
+        - event: Configured(string,string,string,string)
+          handler: handleConfigured
+        - event: ContributorAdded(address,uint256,string)
+          handler: handleContributorAdded
+        - event: AuctionsStarted(bool)
+          handler: handleAuctionsStarted
+        - event: AuctionsEnded(bool)
+          handler: handleAuctionsEnded

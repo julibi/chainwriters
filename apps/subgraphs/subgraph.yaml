@@ -26,31 +26,31 @@ dataSources:
         - event: DaoCreated(indexed address,indexed address,string,string,uint256,uint256)
           handler: handleDaoCreated
       file: ./src/mapping.ts
-# templates:
-#   - kind: ethereum/contract
-#     name: MoonlitDao
-#     network: mumbai
-#     source:
-#       abi: MoonlitDao
-#     mapping:
-#       kind: ethereum/events
-#       apiVersion: 0.0.5
-#       language: wasm/assemblyscript
-#       file: ./src/mapping.ts
-#       entities:
-#         - Dao
-#         - Contributor
-#       abis:
-#         - name: MoonlitDao
-#           file: ./abis/MoonlitDao.json
-#       eventHandlers:
-#         - event: DaoCreated(indexed address,indexed address,string,string,uint256,uint256)
-#           handler: handleDaoCreated
-#         - event: Deposited(uint256)
-#           handler: handleDeposited
-#         - event: FundingEnded(bool)
-#           handler: handleFundingEnded
-#         - event: ImgSet(string)
-#           handler: handleImgHashSet
-#         - event: BlurbSet(string)
-#           handler: handleBlurbHashSet
+templates:
+  - kind: ethereum/contract
+    name: ProjectDao
+    network: mumbai
+    source:
+      abi: project
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      file: ./src/mapping.ts
+      entities:
+        - Dao
+        - Contributor
+      abis:
+        - name: project
+          file: ./abis/project.json
+      eventHandlers:
+        - event: TextSet(string)
+          handler: handleTextSet
+        - event: Configured(string,string,string,string)
+          handler: handleConfigured
+        - event: ContributorAdded(address,uint256,string)
+          handler: handleContributorAdded
+        - event: AuctionsStarted(bool)
+          handler: handleAuctionsStarted
+        - event: AuctionsEnded(bool)
+          handler: handleAuctionsEnded

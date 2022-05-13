@@ -36,21 +36,69 @@ export class ApprovalForAll__Params {
   }
 }
 
-export class BlurbSet extends ethereum.Event {
-  get params(): BlurbSet__Params {
-    return new BlurbSet__Params(this);
+export class AuctionsEnded extends ethereum.Event {
+  get params(): AuctionsEnded__Params {
+    return new AuctionsEnded__Params(this);
   }
 }
 
-export class BlurbSet__Params {
-  _event: BlurbSet;
+export class AuctionsEnded__Params {
+  _event: AuctionsEnded;
 
-  constructor(event: BlurbSet) {
+  constructor(event: AuctionsEnded) {
     this._event = event;
   }
 
-  get blurbHash(): string {
+  get ended(): boolean {
+    return this._event.parameters[0].value.toBoolean();
+  }
+}
+
+export class AuctionsStarted extends ethereum.Event {
+  get params(): AuctionsStarted__Params {
+    return new AuctionsStarted__Params(this);
+  }
+}
+
+export class AuctionsStarted__Params {
+  _event: AuctionsStarted;
+
+  constructor(event: AuctionsStarted) {
+    this._event = event;
+  }
+
+  get started(): boolean {
+    return this._event.parameters[0].value.toBoolean();
+  }
+}
+
+export class Configured extends ethereum.Event {
+  get params(): Configured__Params {
+    return new Configured__Params(this);
+  }
+}
+
+export class Configured__Params {
+  _event: Configured;
+
+  constructor(event: Configured) {
+    this._event = event;
+  }
+
+  get imgHash(): string {
     return this._event.parameters[0].value.toString();
+  }
+
+  get blurbHash(): string {
+    return this._event.parameters[1].value.toString();
+  }
+
+  get newGenre(): string {
+    return this._event.parameters[2].value.toString();
+  }
+
+  get newSubtitle(): string {
+    return this._event.parameters[3].value.toString();
   }
 }
 
@@ -80,113 +128,39 @@ export class ContributorAdded__Params {
   }
 }
 
-export class DaoCreated extends ethereum.Event {
-  get params(): DaoCreated__Params {
-    return new DaoCreated__Params(this);
+export class Paused extends ethereum.Event {
+  get params(): Paused__Params {
+    return new Paused__Params(this);
   }
 }
 
-export class DaoCreated__Params {
-  _event: DaoCreated;
+export class Paused__Params {
+  _event: Paused;
 
-  constructor(event: DaoCreated) {
+  constructor(event: Paused) {
     this._event = event;
   }
 
-  get caller(): Address {
-    return this._event.parameters[0].value.toAddress();
-  }
-
-  get dao(): Address {
-    return this._event.parameters[1].value.toAddress();
-  }
-
-  get title(): string {
-    return this._event.parameters[2].value.toString();
-  }
-
-  get textIpfsHash(): string {
-    return this._event.parameters[3].value.toString();
-  }
-
-  get initialMintPrice(): BigInt {
-    return this._event.parameters[4].value.toBigInt();
-  }
-
-  get firstEditionAmount(): BigInt {
-    return this._event.parameters[5].value.toBigInt();
-  }
-}
-
-export class Deposited extends ethereum.Event {
-  get params(): Deposited__Params {
-    return new Deposited__Params(this);
-  }
-}
-
-export class Deposited__Params {
-  _event: Deposited;
-
-  constructor(event: Deposited) {
-    this._event = event;
-  }
-
-  get fundedAmount(): BigInt {
-    return this._event.parameters[0].value.toBigInt();
-  }
-}
-
-export class FundingEnded extends ethereum.Event {
-  get params(): FundingEnded__Params {
-    return new FundingEnded__Params(this);
-  }
-}
-
-export class FundingEnded__Params {
-  _event: FundingEnded;
-
-  constructor(event: FundingEnded) {
-    this._event = event;
-  }
-
-  get finished(): boolean {
+  get paused(): boolean {
     return this._event.parameters[0].value.toBoolean();
   }
 }
 
-export class GenreSet extends ethereum.Event {
-  get params(): GenreSet__Params {
-    return new GenreSet__Params(this);
+export class Paused1 extends ethereum.Event {
+  get params(): Paused1__Params {
+    return new Paused1__Params(this);
   }
 }
 
-export class GenreSet__Params {
-  _event: GenreSet;
+export class Paused1__Params {
+  _event: Paused1;
 
-  constructor(event: GenreSet) {
+  constructor(event: Paused1) {
     this._event = event;
   }
 
-  get newGenre(): string {
-    return this._event.parameters[0].value.toString();
-  }
-}
-
-export class ImgSet extends ethereum.Event {
-  get params(): ImgSet__Params {
-    return new ImgSet__Params(this);
-  }
-}
-
-export class ImgSet__Params {
-  _event: ImgSet;
-
-  constructor(event: ImgSet) {
-    this._event = event;
-  }
-
-  get imgHash(): string {
-    return this._event.parameters[0].value.toString();
+  get account(): Address {
+    return this._event.parameters[0].value.toAddress();
   }
 }
 
@@ -265,24 +239,6 @@ export class RoleRevoked__Params {
 
   get sender(): Address {
     return this._event.parameters[2].value.toAddress();
-  }
-}
-
-export class SubtitleSet extends ethereum.Event {
-  get params(): SubtitleSet__Params {
-    return new SubtitleSet__Params(this);
-  }
-}
-
-export class SubtitleSet__Params {
-  _event: SubtitleSet;
-
-  constructor(event: SubtitleSet) {
-    this._event = event;
-  }
-
-  get newSubtitle(): string {
-    return this._event.parameters[0].value.toString();
   }
 }
 
@@ -394,50 +350,54 @@ export class URI__Params {
   }
 }
 
-export class MoonlitDao__authorResult {
+export class Unpaused extends ethereum.Event {
+  get params(): Unpaused__Params {
+    return new Unpaused__Params(this);
+  }
+}
+
+export class Unpaused__Params {
+  _event: Unpaused;
+
+  constructor(event: Unpaused) {
+    this._event = event;
+  }
+
+  get account(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+}
+
+export class project__authorResult {
   value0: BigInt;
   value1: BigInt;
-  value2: boolean;
-  value3: BigInt;
-  value4: boolean;
+  value2: BigInt;
+  value3: boolean;
 
-  constructor(
-    value0: BigInt,
-    value1: BigInt,
-    value2: boolean,
-    value3: BigInt,
-    value4: boolean
-  ) {
+  constructor(value0: BigInt, value1: BigInt, value2: BigInt, value3: boolean) {
     this.value0 = value0;
     this.value1 = value1;
     this.value2 = value2;
     this.value3 = value3;
-    this.value4 = value4;
   }
 
   toMap(): TypedMap<string, ethereum.Value> {
     let map = new TypedMap<string, ethereum.Value>();
     map.set("value0", ethereum.Value.fromUnsignedBigInt(this.value0));
     map.set("value1", ethereum.Value.fromUnsignedBigInt(this.value1));
-    map.set("value2", ethereum.Value.fromBoolean(this.value2));
-    map.set("value3", ethereum.Value.fromUnsignedBigInt(this.value3));
-    map.set("value4", ethereum.Value.fromBoolean(this.value4));
+    map.set("value2", ethereum.Value.fromUnsignedBigInt(this.value2));
+    map.set("value3", ethereum.Value.fromBoolean(this.value3));
     return map;
   }
 }
 
-export class MoonlitDao__contributorsResult {
+export class project__contributorsResult {
   value0: Address;
-  value1: BigInt;
+  value1: string;
   value2: BigInt;
-  value3: boolean;
+  value3: BigInt;
 
-  constructor(
-    value0: Address,
-    value1: BigInt,
-    value2: BigInt,
-    value3: boolean
-  ) {
+  constructor(value0: Address, value1: string, value2: BigInt, value3: BigInt) {
     this.value0 = value0;
     this.value1 = value1;
     this.value2 = value2;
@@ -447,14 +407,14 @@ export class MoonlitDao__contributorsResult {
   toMap(): TypedMap<string, ethereum.Value> {
     let map = new TypedMap<string, ethereum.Value>();
     map.set("value0", ethereum.Value.fromAddress(this.value0));
-    map.set("value1", ethereum.Value.fromUnsignedBigInt(this.value1));
+    map.set("value1", ethereum.Value.fromString(this.value1));
     map.set("value2", ethereum.Value.fromUnsignedBigInt(this.value2));
-    map.set("value3", ethereum.Value.fromBoolean(this.value3));
+    map.set("value3", ethereum.Value.fromUnsignedBigInt(this.value3));
     return map;
   }
 }
 
-export class MoonlitDao__projectResult {
+export class project__projectResult {
   value0: string;
   value1: string;
   value2: string;
@@ -494,9 +454,32 @@ export class MoonlitDao__projectResult {
   }
 }
 
-export class MoonlitDao extends ethereum.SmartContract {
-  static bind(address: Address): MoonlitDao {
-    return new MoonlitDao("MoonlitDao", address);
+export class project extends ethereum.SmartContract {
+  static bind(address: Address): project {
+    return new project("project", address);
+  }
+
+  AUCTION_DURATION(): BigInt {
+    let result = super.call(
+      "AUCTION_DURATION",
+      "AUCTION_DURATION():(uint256)",
+      []
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_AUCTION_DURATION(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "AUCTION_DURATION",
+      "AUCTION_DURATION():(uint256)",
+      []
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
   AUTHOR_ROLE(): Bytes {
@@ -579,26 +562,78 @@ export class MoonlitDao extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
-  author(): MoonlitDao__authorResult {
+  PAUSER_ROLE(): Bytes {
+    let result = super.call("PAUSER_ROLE", "PAUSER_ROLE():(bytes32)", []);
+
+    return result[0].toBytes();
+  }
+
+  try_PAUSER_ROLE(): ethereum.CallResult<Bytes> {
+    let result = super.tryCall("PAUSER_ROLE", "PAUSER_ROLE():(bytes32)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBytes());
+  }
+
+  auctionPhaseFinished(): boolean {
     let result = super.call(
-      "author",
-      "author():(uint256,uint256,bool,uint256,bool)",
+      "auctionPhaseFinished",
+      "auctionPhaseFinished():(bool)",
       []
     );
 
-    return new MoonlitDao__authorResult(
+    return result[0].toBoolean();
+  }
+
+  try_auctionPhaseFinished(): ethereum.CallResult<boolean> {
+    let result = super.tryCall(
+      "auctionPhaseFinished",
+      "auctionPhaseFinished():(bool)",
+      []
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBoolean());
+  }
+
+  auctionStarted(): boolean {
+    let result = super.call("auctionStarted", "auctionStarted():(bool)", []);
+
+    return result[0].toBoolean();
+  }
+
+  try_auctionStarted(): ethereum.CallResult<boolean> {
+    let result = super.tryCall("auctionStarted", "auctionStarted():(bool)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBoolean());
+  }
+
+  author(): project__authorResult {
+    let result = super.call(
+      "author",
+      "author():(uint256,uint256,uint256,bool)",
+      []
+    );
+
+    return new project__authorResult(
       result[0].toBigInt(),
       result[1].toBigInt(),
-      result[2].toBoolean(),
-      result[3].toBigInt(),
-      result[4].toBoolean()
+      result[2].toBigInt(),
+      result[3].toBoolean()
     );
   }
 
-  try_author(): ethereum.CallResult<MoonlitDao__authorResult> {
+  try_author(): ethereum.CallResult<project__authorResult> {
     let result = super.tryCall(
       "author",
-      "author():(uint256,uint256,bool,uint256,bool)",
+      "author():(uint256,uint256,uint256,bool)",
       []
     );
     if (result.reverted) {
@@ -606,12 +641,11 @@ export class MoonlitDao extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(
-      new MoonlitDao__authorResult(
+      new project__authorResult(
         value[0].toBigInt(),
         value[1].toBigInt(),
-        value[2].toBoolean(),
-        value[3].toBigInt(),
-        value[4].toBoolean()
+        value[2].toBigInt(),
+        value[3].toBoolean()
       )
     );
   }
@@ -700,27 +734,27 @@ export class MoonlitDao extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toI32());
   }
 
-  contributors(param0: BigInt): MoonlitDao__contributorsResult {
+  contributors(param0: BigInt): project__contributorsResult {
     let result = super.call(
       "contributors",
-      "contributors(uint256):(address,uint256,uint256,bool)",
+      "contributors(uint256):(address,string,uint256,uint256)",
       [ethereum.Value.fromUnsignedBigInt(param0)]
     );
 
-    return new MoonlitDao__contributorsResult(
+    return new project__contributorsResult(
       result[0].toAddress(),
-      result[1].toBigInt(),
+      result[1].toString(),
       result[2].toBigInt(),
-      result[3].toBoolean()
+      result[3].toBigInt()
     );
   }
 
   try_contributors(
     param0: BigInt
-  ): ethereum.CallResult<MoonlitDao__contributorsResult> {
+  ): ethereum.CallResult<project__contributorsResult> {
     let result = super.tryCall(
       "contributors",
-      "contributors(uint256):(address,uint256,uint256,bool)",
+      "contributors(uint256):(address,string,uint256,uint256)",
       [ethereum.Value.fromUnsignedBigInt(param0)]
     );
     if (result.reverted) {
@@ -728,11 +762,11 @@ export class MoonlitDao extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(
-      new MoonlitDao__contributorsResult(
+      new project__contributorsResult(
         value[0].toAddress(),
-        value[1].toBigInt(),
+        value[1].toString(),
         value[2].toBigInt(),
-        value[3].toBoolean()
+        value[3].toBigInt()
       )
     );
   }
@@ -802,6 +836,21 @@ export class MoonlitDao extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
+  discountRate(): BigInt {
+    let result = super.call("discountRate", "discountRate():(uint256)", []);
+
+    return result[0].toBigInt();
+  }
+
+  try_discountRate(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall("discountRate", "discountRate():(uint256)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
   exists(id: BigInt): boolean {
     let result = super.call("exists", "exists(uint256):(bool)", [
       ethereum.Value.fromUnsignedBigInt(id)
@@ -821,6 +870,21 @@ export class MoonlitDao extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBoolean());
   }
 
+  expiresAt(): BigInt {
+    let result = super.call("expiresAt", "expiresAt():(uint256)", []);
+
+    return result[0].toBigInt();
+  }
+
+  try_expiresAt(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall("expiresAt", "expiresAt():(uint256)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
   factory(): Address {
     let result = super.call("factory", "factory():(address)", []);
 
@@ -836,14 +900,14 @@ export class MoonlitDao extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toAddress());
   }
 
-  fundedAmount(): BigInt {
-    let result = super.call("fundedAmount", "fundedAmount():(uint256)", []);
+  getPrice(): BigInt {
+    let result = super.call("getPrice", "getPrice():(uint256)", []);
 
     return result[0].toBigInt();
   }
 
-  try_fundedAmount(): ethereum.CallResult<BigInt> {
-    let result = super.tryCall("fundedAmount", "fundedAmount():(uint256)", []);
+  try_getPrice(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall("getPrice", "getPrice():(uint256)", []);
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -945,50 +1009,6 @@ export class MoonlitDao extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBoolean());
   }
 
-  investingFinished(): boolean {
-    let result = super.call(
-      "investingFinished",
-      "investingFinished():(bool)",
-      []
-    );
-
-    return result[0].toBoolean();
-  }
-
-  try_investingFinished(): ethereum.CallResult<boolean> {
-    let result = super.tryCall(
-      "investingFinished",
-      "investingFinished():(bool)",
-      []
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBoolean());
-  }
-
-  investments(param0: Address): BigInt {
-    let result = super.call("investments", "investments(address):(uint256)", [
-      ethereum.Value.fromAddress(param0)
-    ]);
-
-    return result[0].toBigInt();
-  }
-
-  try_investments(param0: Address): ethereum.CallResult<BigInt> {
-    let result = super.tryCall(
-      "investments",
-      "investments(address):(uint256)",
-      [ethereum.Value.fromAddress(param0)]
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigInt());
-  }
-
   isApprovedForAll(account: Address, operator: Address): boolean {
     let result = super.call(
       "isApprovedForAll",
@@ -1021,14 +1041,29 @@ export class MoonlitDao extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBoolean());
   }
 
-  project(): MoonlitDao__projectResult {
+  paused(): boolean {
+    let result = super.call("paused", "paused():(bool)", []);
+
+    return result[0].toBoolean();
+  }
+
+  try_paused(): ethereum.CallResult<boolean> {
+    let result = super.tryCall("paused", "paused():(bool)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBoolean());
+  }
+
+  project(): project__projectResult {
     let result = super.call(
       "project",
       "project():(string,string,string,address,string,string,string)",
       []
     );
 
-    return new MoonlitDao__projectResult(
+    return new project__projectResult(
       result[0].toString(),
       result[1].toString(),
       result[2].toString(),
@@ -1039,7 +1074,7 @@ export class MoonlitDao extends ethereum.SmartContract {
     );
   }
 
-  try_project(): ethereum.CallResult<MoonlitDao__projectResult> {
+  try_project(): ethereum.CallResult<project__projectResult> {
     let result = super.tryCall(
       "project",
       "project():(string,string,string,address,string,string,string)",
@@ -1050,7 +1085,7 @@ export class MoonlitDao extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(
-      new MoonlitDao__projectResult(
+      new project__projectResult(
         value[0].toString(),
         value[1].toString(),
         value[2].toString(),
@@ -1062,42 +1097,38 @@ export class MoonlitDao extends ethereum.SmartContract {
     );
   }
 
-  refundEnabled(): boolean {
-    let result = super.call("refundEnabled", "refundEnabled():(bool)", []);
+  showTimestamp(): BigInt {
+    let result = super.call("showTimestamp", "showTimestamp():(uint256)", []);
 
-    return result[0].toBoolean();
+    return result[0].toBigInt();
   }
 
-  try_refundEnabled(): ethereum.CallResult<boolean> {
-    let result = super.tryCall("refundEnabled", "refundEnabled():(bool)", []);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBoolean());
-  }
-
-  shareSentToMoonlit(): boolean {
-    let result = super.call(
-      "shareSentToMoonlit",
-      "shareSentToMoonlit():(bool)",
-      []
-    );
-
-    return result[0].toBoolean();
-  }
-
-  try_shareSentToMoonlit(): ethereum.CallResult<boolean> {
+  try_showTimestamp(): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
-      "shareSentToMoonlit",
-      "shareSentToMoonlit():(bool)",
+      "showTimestamp",
+      "showTimestamp():(uint256)",
       []
     );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
     let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBoolean());
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  startAt(): BigInt {
+    let result = super.call("startAt", "startAt():(uint256)", []);
+
+    return result[0].toBigInt();
+  }
+
+  try_startAt(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall("startAt", "startAt():(uint256)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
   supportsInterface(interfaceId: Bytes): boolean {
@@ -1237,106 +1268,58 @@ export class ConstructorCall__Outputs {
   }
 }
 
-export class AddContributorCall extends ethereum.Call {
-  get inputs(): AddContributorCall__Inputs {
-    return new AddContributorCall__Inputs(this);
+export class AddContributorsCall extends ethereum.Call {
+  get inputs(): AddContributorsCall__Inputs {
+    return new AddContributorsCall__Inputs(this);
   }
 
-  get outputs(): AddContributorCall__Outputs {
-    return new AddContributorCall__Outputs(this);
+  get outputs(): AddContributorsCall__Outputs {
+    return new AddContributorsCall__Outputs(this);
   }
 }
 
-export class AddContributorCall__Inputs {
-  _call: AddContributorCall;
+export class AddContributorsCall__Inputs {
+  _call: AddContributorsCall;
 
-  constructor(call: AddContributorCall) {
+  constructor(call: AddContributorsCall) {
     this._call = call;
   }
 
-  get _contributor(): Address {
-    return this._call.inputValues[0].value.toAddress();
+  get _contributors(): Array<Address> {
+    return this._call.inputValues[0].value.toAddressArray();
   }
 
-  get _share(): BigInt {
-    return this._call.inputValues[1].value.toBigInt();
+  get _shares(): Array<BigInt> {
+    return this._call.inputValues[1].value.toBigIntArray();
   }
-}
 
-export class AddContributorCall__Outputs {
-  _call: AddContributorCall;
-
-  constructor(call: AddContributorCall) {
-    this._call = call;
+  get _roles(): Array<string> {
+    return this._call.inputValues[2].value.toStringArray();
   }
 }
 
-export class ClaimGenesisEditionNFTCall extends ethereum.Call {
-  get inputs(): ClaimGenesisEditionNFTCall__Inputs {
-    return new ClaimGenesisEditionNFTCall__Inputs(this);
-  }
+export class AddContributorsCall__Outputs {
+  _call: AddContributorsCall;
 
-  get outputs(): ClaimGenesisEditionNFTCall__Outputs {
-    return new ClaimGenesisEditionNFTCall__Outputs(this);
-  }
-}
-
-export class ClaimGenesisEditionNFTCall__Inputs {
-  _call: ClaimGenesisEditionNFTCall;
-
-  constructor(call: ClaimGenesisEditionNFTCall) {
+  constructor(call: AddContributorsCall) {
     this._call = call;
   }
 }
 
-export class ClaimGenesisEditionNFTCall__Outputs {
-  _call: ClaimGenesisEditionNFTCall;
+export class AuthorMintCall extends ethereum.Call {
+  get inputs(): AuthorMintCall__Inputs {
+    return new AuthorMintCall__Inputs(this);
+  }
 
-  constructor(call: ClaimGenesisEditionNFTCall) {
-    this._call = call;
+  get outputs(): AuthorMintCall__Outputs {
+    return new AuthorMintCall__Outputs(this);
   }
 }
 
-export class ClaimRefundCall extends ethereum.Call {
-  get inputs(): ClaimRefundCall__Inputs {
-    return new ClaimRefundCall__Inputs(this);
-  }
+export class AuthorMintCall__Inputs {
+  _call: AuthorMintCall;
 
-  get outputs(): ClaimRefundCall__Outputs {
-    return new ClaimRefundCall__Outputs(this);
-  }
-}
-
-export class ClaimRefundCall__Inputs {
-  _call: ClaimRefundCall;
-
-  constructor(call: ClaimRefundCall) {
-    this._call = call;
-  }
-}
-
-export class ClaimRefundCall__Outputs {
-  _call: ClaimRefundCall;
-
-  constructor(call: ClaimRefundCall) {
-    this._call = call;
-  }
-}
-
-export class DepositCall extends ethereum.Call {
-  get inputs(): DepositCall__Inputs {
-    return new DepositCall__Inputs(this);
-  }
-
-  get outputs(): DepositCall__Outputs {
-    return new DepositCall__Outputs(this);
-  }
-}
-
-export class DepositCall__Inputs {
-  _call: DepositCall;
-
-  constructor(call: DepositCall) {
+  constructor(call: AuthorMintCall) {
     this._call = call;
   }
 
@@ -1345,10 +1328,104 @@ export class DepositCall__Inputs {
   }
 }
 
-export class DepositCall__Outputs {
-  _call: DepositCall;
+export class AuthorMintCall__Outputs {
+  _call: AuthorMintCall;
 
-  constructor(call: DepositCall) {
+  constructor(call: AuthorMintCall) {
+    this._call = call;
+  }
+}
+
+export class BuyCall extends ethereum.Call {
+  get inputs(): BuyCall__Inputs {
+    return new BuyCall__Inputs(this);
+  }
+
+  get outputs(): BuyCall__Outputs {
+    return new BuyCall__Outputs(this);
+  }
+}
+
+export class BuyCall__Inputs {
+  _call: BuyCall;
+
+  constructor(call: BuyCall) {
+    this._call = call;
+  }
+}
+
+export class BuyCall__Outputs {
+  _call: BuyCall;
+
+  constructor(call: BuyCall) {
+    this._call = call;
+  }
+}
+
+export class ConfigureProjectDetailsCall extends ethereum.Call {
+  get inputs(): ConfigureProjectDetailsCall__Inputs {
+    return new ConfigureProjectDetailsCall__Inputs(this);
+  }
+
+  get outputs(): ConfigureProjectDetailsCall__Outputs {
+    return new ConfigureProjectDetailsCall__Outputs(this);
+  }
+}
+
+export class ConfigureProjectDetailsCall__Inputs {
+  _call: ConfigureProjectDetailsCall;
+
+  constructor(call: ConfigureProjectDetailsCall) {
+    this._call = call;
+  }
+
+  get _imgHash(): string {
+    return this._call.inputValues[0].value.toString();
+  }
+
+  get _blurbHash(): string {
+    return this._call.inputValues[1].value.toString();
+  }
+
+  get _genre(): string {
+    return this._call.inputValues[2].value.toString();
+  }
+
+  get _subtitle(): string {
+    return this._call.inputValues[3].value.toString();
+  }
+}
+
+export class ConfigureProjectDetailsCall__Outputs {
+  _call: ConfigureProjectDetailsCall;
+
+  constructor(call: ConfigureProjectDetailsCall) {
+    this._call = call;
+  }
+}
+
+export class DestroyCall extends ethereum.Call {
+  get inputs(): DestroyCall__Inputs {
+    return new DestroyCall__Inputs(this);
+  }
+
+  get outputs(): DestroyCall__Outputs {
+    return new DestroyCall__Outputs(this);
+  }
+}
+
+export class DestroyCall__Inputs {
+  _call: DestroyCall;
+
+  constructor(call: DestroyCall) {
+    this._call = call;
+  }
+}
+
+export class DestroyCall__Outputs {
+  _call: DestroyCall;
+
+  constructor(call: DestroyCall) {
     this._call = call;
   }
 }
@@ -1383,32 +1460,6 @@ export class EnableNextEditionCall__Outputs {
   _call: EnableNextEditionCall;
 
   constructor(call: EnableNextEditionCall) {
-    this._call = call;
-  }
-}
-
-export class EnableRefundCall extends ethereum.Call {
-  get inputs(): EnableRefundCall__Inputs {
-    return new EnableRefundCall__Inputs(this);
-  }
-
-  get outputs(): EnableRefundCall__Outputs {
-    return new EnableRefundCall__Outputs(this);
-  }
-}
-
-export class EnableRefundCall__Inputs {
-  _call: EnableRefundCall;
-
-  constructor(call: EnableRefundCall) {
-    this._call = call;
-  }
-}
-
-export class EnableRefundCall__Outputs {
-  _call: EnableRefundCall;
-
-  constructor(call: EnableRefundCall) {
     this._call = call;
   }
 }
@@ -1464,12 +1515,8 @@ export class MintCall__Inputs {
     this._call = call;
   }
 
-  get _account(): Address {
-    return this._call.inputValues[0].value.toAddress();
-  }
-
   get _amount(): BigInt {
-    return this._call.inputValues[1].value.toBigInt();
+    return this._call.inputValues[0].value.toBigInt();
   }
 }
 
@@ -1477,6 +1524,32 @@ export class MintCall__Outputs {
   _call: MintCall;
 
   constructor(call: MintCall) {
+    this._call = call;
+  }
+}
+
+export class PauseCall extends ethereum.Call {
+  get inputs(): PauseCall__Inputs {
+    return new PauseCall__Inputs(this);
+  }
+
+  get outputs(): PauseCall__Outputs {
+    return new PauseCall__Outputs(this);
+  }
+}
+
+export class PauseCall__Inputs {
+  _call: PauseCall;
+
+  constructor(call: PauseCall) {
+    this._call = call;
+  }
+}
+
+export class PauseCall__Outputs {
+  _call: PauseCall;
+
+  constructor(call: PauseCall) {
     this._call = call;
   }
 }
@@ -1511,6 +1584,32 @@ export class RenounceRoleCall__Outputs {
   _call: RenounceRoleCall;
 
   constructor(call: RenounceRoleCall) {
+    this._call = call;
+  }
+}
+
+export class RetriggerAuctionCall extends ethereum.Call {
+  get inputs(): RetriggerAuctionCall__Inputs {
+    return new RetriggerAuctionCall__Inputs(this);
+  }
+
+  get outputs(): RetriggerAuctionCall__Outputs {
+    return new RetriggerAuctionCall__Outputs(this);
+  }
+}
+
+export class RetriggerAuctionCall__Inputs {
+  _call: RetriggerAuctionCall;
+
+  constructor(call: RetriggerAuctionCall) {
+    this._call = call;
+  }
+}
+
+export class RetriggerAuctionCall__Outputs {
+  _call: RetriggerAuctionCall;
+
+  constructor(call: RetriggerAuctionCall) {
     this._call = call;
   }
 }
@@ -1675,156 +1774,6 @@ export class SetApprovalForAllCall__Outputs {
   }
 }
 
-export class SetBlurbIpfsHashCall extends ethereum.Call {
-  get inputs(): SetBlurbIpfsHashCall__Inputs {
-    return new SetBlurbIpfsHashCall__Inputs(this);
-  }
-
-  get outputs(): SetBlurbIpfsHashCall__Outputs {
-    return new SetBlurbIpfsHashCall__Outputs(this);
-  }
-}
-
-export class SetBlurbIpfsHashCall__Inputs {
-  _call: SetBlurbIpfsHashCall;
-
-  constructor(call: SetBlurbIpfsHashCall) {
-    this._call = call;
-  }
-
-  get _blurbHash(): string {
-    return this._call.inputValues[0].value.toString();
-  }
-}
-
-export class SetBlurbIpfsHashCall__Outputs {
-  _call: SetBlurbIpfsHashCall;
-
-  constructor(call: SetBlurbIpfsHashCall) {
-    this._call = call;
-  }
-}
-
-export class SetGenreCall extends ethereum.Call {
-  get inputs(): SetGenreCall__Inputs {
-    return new SetGenreCall__Inputs(this);
-  }
-
-  get outputs(): SetGenreCall__Outputs {
-    return new SetGenreCall__Outputs(this);
-  }
-}
-
-export class SetGenreCall__Inputs {
-  _call: SetGenreCall;
-
-  constructor(call: SetGenreCall) {
-    this._call = call;
-  }
-
-  get _genre(): string {
-    return this._call.inputValues[0].value.toString();
-  }
-}
-
-export class SetGenreCall__Outputs {
-  _call: SetGenreCall;
-
-  constructor(call: SetGenreCall) {
-    this._call = call;
-  }
-}
-
-export class SetImgIpfsHashCall extends ethereum.Call {
-  get inputs(): SetImgIpfsHashCall__Inputs {
-    return new SetImgIpfsHashCall__Inputs(this);
-  }
-
-  get outputs(): SetImgIpfsHashCall__Outputs {
-    return new SetImgIpfsHashCall__Outputs(this);
-  }
-}
-
-export class SetImgIpfsHashCall__Inputs {
-  _call: SetImgIpfsHashCall;
-
-  constructor(call: SetImgIpfsHashCall) {
-    this._call = call;
-  }
-
-  get _imgHash(): string {
-    return this._call.inputValues[0].value.toString();
-  }
-}
-
-export class SetImgIpfsHashCall__Outputs {
-  _call: SetImgIpfsHashCall;
-
-  constructor(call: SetImgIpfsHashCall) {
-    this._call = call;
-  }
-}
-
-export class SetMaxGenesisClaimableAuthorCall extends ethereum.Call {
-  get inputs(): SetMaxGenesisClaimableAuthorCall__Inputs {
-    return new SetMaxGenesisClaimableAuthorCall__Inputs(this);
-  }
-
-  get outputs(): SetMaxGenesisClaimableAuthorCall__Outputs {
-    return new SetMaxGenesisClaimableAuthorCall__Outputs(this);
-  }
-}
-
-export class SetMaxGenesisClaimableAuthorCall__Inputs {
-  _call: SetMaxGenesisClaimableAuthorCall;
-
-  constructor(call: SetMaxGenesisClaimableAuthorCall) {
-    this._call = call;
-  }
-
-  get _amount(): BigInt {
-    return this._call.inputValues[0].value.toBigInt();
-  }
-}
-
-export class SetMaxGenesisClaimableAuthorCall__Outputs {
-  _call: SetMaxGenesisClaimableAuthorCall;
-
-  constructor(call: SetMaxGenesisClaimableAuthorCall) {
-    this._call = call;
-  }
-}
-
-export class SetSubtitleCall extends ethereum.Call {
-  get inputs(): SetSubtitleCall__Inputs {
-    return new SetSubtitleCall__Inputs(this);
-  }
-
-  get outputs(): SetSubtitleCall__Outputs {
-    return new SetSubtitleCall__Outputs(this);
-  }
-}
-
-export class SetSubtitleCall__Inputs {
-  _call: SetSubtitleCall;
-
-  constructor(call: SetSubtitleCall) {
-    this._call = call;
-  }
-
-  get _subtitle(): string {
-    return this._call.inputValues[0].value.toString();
-  }
-}
-
-export class SetSubtitleCall__Outputs {
-  _call: SetSubtitleCall;
-
-  constructor(call: SetSubtitleCall) {
-    this._call = call;
-  }
-}
-
 export class SetTextIpfsHashCall extends ethereum.Call {
   get inputs(): SetTextIpfsHashCall__Inputs {
     return new SetTextIpfsHashCall__Inputs(this);
@@ -1855,88 +1804,58 @@ export class SetTextIpfsHashCall__Outputs {
   }
 }
 
-export class WithdrawAllCall extends ethereum.Call {
-  get inputs(): WithdrawAllCall__Inputs {
-    return new WithdrawAllCall__Inputs(this);
+export class TriggerFirstAuctionCall extends ethereum.Call {
+  get inputs(): TriggerFirstAuctionCall__Inputs {
+    return new TriggerFirstAuctionCall__Inputs(this);
   }
 
-  get outputs(): WithdrawAllCall__Outputs {
-    return new WithdrawAllCall__Outputs(this);
+  get outputs(): TriggerFirstAuctionCall__Outputs {
+    return new TriggerFirstAuctionCall__Outputs(this);
   }
 }
 
-export class WithdrawAllCall__Inputs {
-  _call: WithdrawAllCall;
+export class TriggerFirstAuctionCall__Inputs {
+  _call: TriggerFirstAuctionCall;
 
-  constructor(call: WithdrawAllCall) {
+  constructor(call: TriggerFirstAuctionCall) {
+    this._call = call;
+  }
+
+  get _discountRate(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+}
+
+export class TriggerFirstAuctionCall__Outputs {
+  _call: TriggerFirstAuctionCall;
+
+  constructor(call: TriggerFirstAuctionCall) {
     this._call = call;
   }
 }
 
-export class WithdrawAllCall__Outputs {
-  _call: WithdrawAllCall;
+export class UnpauseCall extends ethereum.Call {
+  get inputs(): UnpauseCall__Inputs {
+    return new UnpauseCall__Inputs(this);
+  }
 
-  constructor(call: WithdrawAllCall) {
+  get outputs(): UnpauseCall__Outputs {
+    return new UnpauseCall__Outputs(this);
+  }
+}
+
+export class UnpauseCall__Inputs {
+  _call: UnpauseCall;
+
+  constructor(call: UnpauseCall) {
     this._call = call;
   }
 }
 
-export class WithdrawShareAuthorCall extends ethereum.Call {
-  get inputs(): WithdrawShareAuthorCall__Inputs {
-    return new WithdrawShareAuthorCall__Inputs(this);
-  }
+export class UnpauseCall__Outputs {
+  _call: UnpauseCall;
 
-  get outputs(): WithdrawShareAuthorCall__Outputs {
-    return new WithdrawShareAuthorCall__Outputs(this);
-  }
-}
-
-export class WithdrawShareAuthorCall__Inputs {
-  _call: WithdrawShareAuthorCall;
-
-  constructor(call: WithdrawShareAuthorCall) {
-    this._call = call;
-  }
-
-  get _to(): Address {
-    return this._call.inputValues[0].value.toAddress();
-  }
-}
-
-export class WithdrawShareAuthorCall__Outputs {
-  _call: WithdrawShareAuthorCall;
-
-  constructor(call: WithdrawShareAuthorCall) {
-    this._call = call;
-  }
-}
-
-export class WithdrawShareContributorCall extends ethereum.Call {
-  get inputs(): WithdrawShareContributorCall__Inputs {
-    return new WithdrawShareContributorCall__Inputs(this);
-  }
-
-  get outputs(): WithdrawShareContributorCall__Outputs {
-    return new WithdrawShareContributorCall__Outputs(this);
-  }
-}
-
-export class WithdrawShareContributorCall__Inputs {
-  _call: WithdrawShareContributorCall;
-
-  constructor(call: WithdrawShareContributorCall) {
-    this._call = call;
-  }
-
-  get _to(): Address {
-    return this._call.inputValues[0].value.toAddress();
-  }
-}
-
-export class WithdrawShareContributorCall__Outputs {
-  _call: WithdrawShareContributorCall;
-
-  constructor(call: WithdrawShareContributorCall) {
+  constructor(call: UnpauseCall) {
     this._call = call;
   }
 }
