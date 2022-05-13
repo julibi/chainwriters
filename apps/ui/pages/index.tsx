@@ -1,11 +1,8 @@
-import { useEffect } from 'react'
-import { toast } from 'react-toastify'
 import { useWeb3React } from '@web3-react/core'
 import styled from 'styled-components'
 import Typewriter from '../components/Typewriter'
 import ProjectSection from '../components/ProjectSection'
 import { useDeviceDetect } from '../hooks/useDeviceDetect'
-import Checkbox from '../components/Checkbox'
 
 const Root = styled.div``;
 
