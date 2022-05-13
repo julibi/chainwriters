@@ -503,7 +503,7 @@ const Create = () => {
   const handleSetContributors = useCallback(async () => {
     createSetContributors(
       daoContract,
-      contributors,
+      contributorList,
       setLoading,
       PendingToast,
       (x, y, z) => {
@@ -942,7 +942,6 @@ const Create = () => {
             label={'Address:'}
             disabled={loading}
             onChange={(e) => {
-              console.log(validateAddress(e.target.value));
               // @ts-ignore
               setContributors({
                 ...contributors,
