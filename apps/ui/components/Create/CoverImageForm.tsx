@@ -58,10 +58,10 @@ const DragNDrop = styled.div`
   margin: 0 0 2rem 0;
 
   > span {
-    width:100% !important;
-    height:100% !important;
-    object-fit: cover !important;
-    overflow: hidden !important;
+    height:100% !important; 
+  }
+  img {
+    object-fit: contain;
   }
 `;
 

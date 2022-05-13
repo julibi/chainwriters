@@ -370,7 +370,15 @@ const Create = () => {
       </ProgressBarWrapper>
       <FormWrapper>
         <Form>
-          {/* {currentStep === 0 && !creatingDao && ContributorsForm()} */}
+          {/* {currentStep === 0 && !creatingDao &&
+            <CoverImageForm
+              captureFile={captureFile}
+              imgFile={imgFile}
+              imgBuffer={imgBuffer}
+              onNextStep={() => setCurrentStep(currentStep + 1)}
+              onSubmit={submitImage}
+            />
+          } */}
           {currentStep === 0 && !creatingDao && (
             <NameForm
               onChange={(e: ChangeEvent<HTMLInputElement>) =>

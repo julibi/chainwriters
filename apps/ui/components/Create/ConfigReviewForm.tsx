@@ -2,15 +2,26 @@ import React from 'react'
 import styled from 'styled-components'
 import Image from 'next/image'
 import Loading from '../Loading'
-import { BlockSpan, ReviewItem, ReviewItemWrapper, FlexContainer, FadeIn, Wrapper, InputName, InputDescription, SubmitButton } from '../../pages/create'
+import { BlockSpan, ReviewItem, ReviewItemWrapper, FadeIn, Wrapper, InputName, InputDescription, SubmitButton } from '../../pages/create'
+
+const FlexContainer = styled.div`
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+
+  @media (max-width: 900px) {
+    flex-direction: column;
+  }
+`;
 
 const ReviewItems = styled.div`
   display: flex;
   flex-direction: column;
+  flex: 1;
 `;
 
 const CoverImageReview = styled.div`
-  height: 100%;
+  flex: 1;
   margin-block-end: 2rem;
   span {
     width: 100% !important;
@@ -19,6 +30,12 @@ const CoverImageReview = styled.div`
     img {
       object-fit: contain !important;
       
+    }
+  }
+
+  @media (max-width: 900px) {
+    span {
+      height: 300px !important;
     }
   }
 `;
