@@ -351,6 +351,7 @@ const Create = () => {
   const [creatingDao, setCreatingDao] = useState<boolean>(false);
   const [subtitle, setSubtitle] = useState<string>('');
   const [authorMintAmount, setAuthorMintAmount] = useState<number>(0);
+  const [formsAmount, setFormsAmount] = useState(1);
   const getDaoContract = useDaoContract();
   const createSetConfiguration = useCreateSetConfiguration();
   const createAuthorMint = useCreateAuthorMint();
@@ -934,7 +935,6 @@ const Create = () => {
   );
 
   const ContributorsForm = () => {
-    const [formsAmount, setFormsAmount] = useState(1);
     const renderForm = (idx: number) => {
       return (
         <ContribInputContainer>
