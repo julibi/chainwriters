@@ -1,12 +1,12 @@
 import { DaoCreated } from "../generated/ProjectFactory/ProjectFactory"
 import { AuctionsEnded, AuctionsStarted, ContributorAdded, TextSet, Configured } from "../generated/templates/ProjectDao/ProjectDao";
 import { Contribution, Dao } from "../generated/schema"
+import { ProjectDao as ProjectDaoTemplate } from '../generated/templates'
 import { log } from "@graphprotocol/graph-ts"
 
 export function handleDaoCreated(event: DaoCreated): void {
-  log.info('handleDaoCreated', [event.params.dao.toHex()])
-  log.debug('handleDaoCreated', [event.params.dao.toHex()])
-  let dao = new Dao(event.params.dao.toHex())
+  let dao = new Dao(event.params.dao.toHexString())
+  ProjectDaoTemplate.create(event.params.dao)
   dao.author = event.params.caller
   dao.address = event.params.dao
   dao.title = event.params.title
