@@ -1,5 +1,12 @@
 import React, { ChangeEvent } from 'react'
-import { FlexContainer, FadeIn, Wrapper, InputName, InputDescription, SubmitButton, TextInput } from '../../pages/create'
+import {
+  FlexContainer,
+  FadeIn,
+  Wrapper,
+  InputName,
+  InputDescription,
+  SubmitButton
+} from '../../pages/create';
 import InputField from '../InputField'
 
 

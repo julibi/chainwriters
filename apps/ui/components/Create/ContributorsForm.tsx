@@ -4,11 +4,10 @@ import InputField from '../InputField'
 import Loading from '../Loading'
 import {
   FadeIn,
-  FlexContainer,
   Wrapper,
   InputName,
   InputDescription,
-  Contributor,
+  Contributor
 } from '../../pages/create';
 import {
   BaseButton,

@@ -1,5 +1,11 @@
 import React, { ChangeEvent } from 'react'
-import { FadeIn, Wrapper, InputName, InputDescription, SubmitButton } from '../../pages/create'
+import {
+  FadeIn,
+  Wrapper,
+  InputName,
+  InputDescription,
+  SubmitButton,
+} from '../../pages/create';
 import InputField from '../InputField'
 
 interface NameFormProps {

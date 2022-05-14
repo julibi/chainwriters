@@ -1,5 +1,12 @@
 import React from 'react'
-import { FadeIn, Wrapper, InputName, InputDescription, SubmitButton, ReviewItem } from '../../pages/create'
+import {
+  FadeIn,
+  Wrapper,
+  InputName,
+  InputDescription,
+  SubmitButton,
+  ReviewItem,
+} from '../../pages/create';
 
 // TODO make congrats screen look nice and special
 

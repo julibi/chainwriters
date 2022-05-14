@@ -1,5 +1,13 @@
 import React, { ChangeEvent } from 'react'
-import { ButtonsWrapper, FadeIn, Wrapper, InputName, InputDescription, SubmitButton, TextInput } from '../../pages/create'
+import {
+  ButtonsWrapper,
+  FadeIn,
+  Wrapper,
+  InputName,
+  InputDescription,
+  SubmitButton,
+  TextInput,
+} from '../../pages/create';
 import { StyledInputError } from '../InputField'
 
 interface BlurbFormProps {

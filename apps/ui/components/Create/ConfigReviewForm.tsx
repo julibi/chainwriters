@@ -2,7 +2,16 @@ import React from 'react'
 import styled from 'styled-components'
 import Image from 'next/image'
 import Loading from '../Loading'
-import { BlockSpan, ReviewItem, ReviewItemWrapper, FadeIn, Wrapper, InputName, InputDescription, SubmitButton } from '../../pages/create'
+import {
+  BlockSpan,
+  ReviewItem,
+  ReviewItemWrapper,
+  FadeIn,
+  Wrapper,
+  InputName,
+  InputDescription,
+  SubmitButton,
+} from '../../pages/create';
 
 const FlexContainer = styled.div`
   display: flex;
