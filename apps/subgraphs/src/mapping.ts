@@ -56,7 +56,7 @@ export function handleContributorAdded(event: ContributorAdded): void {
   contribution.address = event.params.contributor
   contribution.share = event.params.share
   contribution.role = event.params.role
-  contribution.dao = dao
+  contribution.dao = dao.id
   contribution.save()
 }
 

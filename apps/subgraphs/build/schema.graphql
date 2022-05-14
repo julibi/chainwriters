@@ -3,7 +3,7 @@ type Contribution @entity {
   address: Bytes!
   share: BigInt!
   role: String
-  dao: Bytes!
+  dao: Dao
 }
 
 type Dao @entity {
@@ -22,6 +22,5 @@ type Dao @entity {
   auctionsStarted: Boolean
   auctionsEnded: Boolean
   paused: Boolean
-  # TODO how to make contributor an array of contribution with its dao being dao
-  contributions: [Contribution!]
+  contributions: [Contribution!] @derivedFrom(field: "dao")
 }

@@ -39,7 +39,7 @@ templates:
       file: ProjectFactory/ProjectFactory.wasm
       entities:
         - Dao
-        - Contributor
+        - Contribution
       abis:
         - name: project
           file: ProjectDao/abis/project.json

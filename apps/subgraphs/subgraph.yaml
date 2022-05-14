@@ -39,7 +39,7 @@ templates:
       file: ./src/mapping.ts
       entities:
         - Dao
-        - Contributor
+        - Contribution
       abis:
         - name: project
           file: ./abis/project.json
