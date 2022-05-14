@@ -33,6 +33,7 @@ export function handleConfigured(event: Configured): void {
   dao.blurbIpfsHash = event.params.blurbHash
   dao.genre = event.params.newGenre
   dao.subtitle = event.params.newSubtitle
+  dao.save()
 }
 
 export function handleAuctionsStarted(event: AuctionsStarted): void {
