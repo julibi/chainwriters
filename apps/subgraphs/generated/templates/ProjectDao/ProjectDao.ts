@@ -368,7 +368,7 @@ export class Unpaused__Params {
   }
 }
 
-export class project__authorResult {
+export class ProjectDao__authorResult {
   value0: BigInt;
   value1: BigInt;
   value2: BigInt;
@@ -391,7 +391,7 @@ export class project__authorResult {
   }
 }
 
-export class project__contributorsResult {
+export class ProjectDao__contributorsResult {
   value0: Address;
   value1: string;
   value2: BigInt;
@@ -414,7 +414,7 @@ export class project__contributorsResult {
   }
 }
 
-export class project__projectResult {
+export class ProjectDao__projectResult {
   value0: string;
   value1: string;
   value2: string;
@@ -454,9 +454,9 @@ export class project__projectResult {
   }
 }
 
-export class project extends ethereum.SmartContract {
-  static bind(address: Address): project {
-    return new project("project", address);
+export class ProjectDao extends ethereum.SmartContract {
+  static bind(address: Address): ProjectDao {
+    return new ProjectDao("ProjectDao", address);
   }
 
   AUCTION_DURATION(): BigInt {
@@ -615,14 +615,14 @@ export class project extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBoolean());
   }
 
-  author(): project__authorResult {
+  author(): ProjectDao__authorResult {
     let result = super.call(
       "author",
       "author():(uint256,uint256,uint256,bool)",
       []
     );
 
-    return new project__authorResult(
+    return new ProjectDao__authorResult(
       result[0].toBigInt(),
       result[1].toBigInt(),
       result[2].toBigInt(),
@@ -630,7 +630,7 @@ export class project extends ethereum.SmartContract {
     );
   }
 
-  try_author(): ethereum.CallResult<project__authorResult> {
+  try_author(): ethereum.CallResult<ProjectDao__authorResult> {
     let result = super.tryCall(
       "author",
       "author():(uint256,uint256,uint256,bool)",
@@ -641,7 +641,7 @@ export class project extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(
-      new project__authorResult(
+      new ProjectDao__authorResult(
         value[0].toBigInt(),
         value[1].toBigInt(),
         value[2].toBigInt(),
@@ -734,14 +734,14 @@ export class project extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toI32());
   }
 
-  contributors(param0: BigInt): project__contributorsResult {
+  contributors(param0: BigInt): ProjectDao__contributorsResult {
     let result = super.call(
       "contributors",
       "contributors(uint256):(address,string,uint256,uint256)",
       [ethereum.Value.fromUnsignedBigInt(param0)]
     );
 
-    return new project__contributorsResult(
+    return new ProjectDao__contributorsResult(
       result[0].toAddress(),
       result[1].toString(),
       result[2].toBigInt(),
@@ -751,7 +751,7 @@ export class project extends ethereum.SmartContract {
 
   try_contributors(
     param0: BigInt
-  ): ethereum.CallResult<project__contributorsResult> {
+  ): ethereum.CallResult<ProjectDao__contributorsResult> {
     let result = super.tryCall(
       "contributors",
       "contributors(uint256):(address,string,uint256,uint256)",
@@ -762,7 +762,7 @@ export class project extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(
-      new project__contributorsResult(
+      new ProjectDao__contributorsResult(
         value[0].toAddress(),
         value[1].toString(),
         value[2].toBigInt(),
@@ -1056,14 +1056,14 @@ export class project extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBoolean());
   }
 
-  project(): project__projectResult {
+  project(): ProjectDao__projectResult {
     let result = super.call(
       "project",
       "project():(string,string,string,address,string,string,string)",
       []
     );
 
-    return new project__projectResult(
+    return new ProjectDao__projectResult(
       result[0].toString(),
       result[1].toString(),
       result[2].toString(),
@@ -1074,7 +1074,7 @@ export class project extends ethereum.SmartContract {
     );
   }
 
-  try_project(): ethereum.CallResult<project__projectResult> {
+  try_project(): ethereum.CallResult<ProjectDao__projectResult> {
     let result = super.tryCall(
       "project",
       "project():(string,string,string,address,string,string,string)",
@@ -1085,7 +1085,7 @@ export class project extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(
-      new project__projectResult(
+      new ProjectDao__projectResult(
         value[0].toString(),
         value[1].toString(),
         value[2].toString(),

@@ -9,7 +9,7 @@ dataSources:
     network: mumbai
     source:
       address: "0x6833CBB2a2FD74E82b2D627EB78Da42C286e5d0c"
-      abi: factory
+      abi: ProjectFactory
       startBlock: 26306620
     mapping:
       kind: ethereum/events
@@ -18,10 +18,10 @@ dataSources:
       entities:
         - Dao
       abis:
-        - name: factory
-          file: ProjectFactory/abis/factory.json
-        - name: project
-          file: ProjectFactory/abis/project.json
+        - name: ProjectFactory
+          file: ProjectFactory/abis/ProjectFactory.json
+        - name: ProjectDao
+          file: ProjectFactory/abis/ProjectDao.json
       eventHandlers:
         - event: DaoCreated(indexed address,indexed address,string,string,uint256,uint256)
           handler: handleDaoCreated
@@ -31,7 +31,7 @@ templates:
     name: ProjectDao
     network: mumbai
     source:
-      abi: project
+      abi: ProjectDao
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -41,8 +41,8 @@ templates:
         - Dao
         - Contribution
       abis:
-        - name: project
-          file: ProjectDao/abis/project.json
+        - name: ProjectDao
+          file: ProjectDao/abis/ProjectDao.json
       eventHandlers:
         - event: TextSet(string)
           handler: handleTextSet

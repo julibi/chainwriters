@@ -70,9 +70,9 @@ export class OwnershipTransferred__Params {
   }
 }
 
-export class factory extends ethereum.SmartContract {
-  static bind(address: Address): factory {
-    return new factory("factory", address);
+export class ProjectFactory extends ethereum.SmartContract {
+  static bind(address: Address): ProjectFactory {
+    return new ProjectFactory("ProjectFactory", address);
   }
 
   firstEditionMax(): BigInt {

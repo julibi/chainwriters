@@ -1,5 +1,5 @@
-import { DaoCreated } from "../generated/ProjectFactory/factory"
-import { AuctionsEnded, AuctionsStarted, ContributorAdded, TextSet, Configured } from "../generated/templates/ProjectDao/project";
+import { DaoCreated } from "../generated/ProjectFactory/ProjectFactory"
+import { AuctionsEnded, AuctionsStarted, ContributorAdded, TextSet, Configured } from "../generated/templates/ProjectDao/ProjectDao";
 import { Contribution, Dao } from "../generated/schema"
 import { log } from "@graphprotocol/graph-ts"
 
