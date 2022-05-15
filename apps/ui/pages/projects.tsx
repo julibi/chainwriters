@@ -3,9 +3,9 @@ import Image from 'next/image'
 import styled from 'styled-components'
 import { SectionTitleWrapper, SectionTitle } from '../components/ProjectSection'
 import { ProjectItem } from '../components/ProjectItem'
-import { useFetchAllProject } from '../state/projects/hooks'
+import { useFetchAllProjects } from '../state/projects/hooks'
 import Dropdown from '../components/Dropdown'
-import { BASE_BORDER_RADIUS, PLAIN_WHITE, BG_NORMAL, INSET_BASE_BOX_SHADOW, BaseButton, BaseInput } from '../themes'
+import { BaseButton, BaseInput } from '../themes'
 import Loading from '../components/Loading';
 
 const Root = styled.div`
@@ -77,7 +77,7 @@ const ProjectItems = styled.div`
 // TODO: use grid ?
 
 const Projects = () => {
-  const { loading, error, data, refetch } = useFetchAllProject();
+  const { loading, error, data, refetch } = useFetchAllProjects();
 
   return (
     <Root>

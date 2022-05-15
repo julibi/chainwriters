@@ -8,15 +8,16 @@ dataSources:
     name: ProjectFactory
     network: mumbai
     source:
-      address: "0x6833CBB2a2FD74E82b2D627EB78Da42C286e5d0c"
+      address: "0x34018079c6572629E6fEDF085Fb944114Fe0F555"
       abi: ProjectFactory
-      startBlock: 26306620
+      startBlock: 26322200
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
       language: wasm/assemblyscript
       entities:
         - Dao
+        - Edition
       abis:
         - name: ProjectFactory
           file: ProjectFactory/abis/ProjectFactory.json
@@ -40,6 +41,7 @@ templates:
       entities:
         - Dao
         - Contribution
+        - Edition
       abis:
         - name: ProjectDao
           file: ProjectDao/abis/ProjectDao.json
@@ -54,3 +56,11 @@ templates:
           handler: handleAuctionsStarted
         - event: AuctionsEnded(bool)
           handler: handleAuctionsEnded
+        - event: AuthorMinted(uint256,uint256)
+          handler: handleAuthorMinted
+        - event: Minted(uint256,uint256)
+          handler: handleMinted
+        - event: ExpirationSet(uint256,uint256)
+          handler: handleExpirationSet
+        - event: NextEditionEnabled(uint256,uint256,uint256)
+          handler: handleNextEditionEnabled

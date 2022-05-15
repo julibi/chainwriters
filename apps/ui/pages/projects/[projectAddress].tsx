@@ -15,7 +15,7 @@ import { truncateAddress } from '../../components/WalletIndicator'
 import { BASE_BORDER_RADIUS, BASE_BOX_SHADOW, DISABLED_WHITE, PINK, PLAIN_WHITE, PrimaryButton } from '../../themes'
 import useProjectContract from '../../hooks/useProjectContract'
 import { NULL_ADDRESS } from '../../../constants'
-import MintSection from 'apps/ui/components/MintSection';
+import MintSection from '../../components/MintSection';
 
 // TODO
 // author view

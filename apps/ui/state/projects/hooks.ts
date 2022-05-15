@@ -14,8 +14,6 @@ const multicall = new Multicall({
   tryAggregate: false
 });
 
-// TODO: filter out if fundingEnded and places to invest are still free
-
 export const GET_TOP_DAOS = gql`
   query topDaosQuery {
     daos(first: 5) {
@@ -24,9 +22,20 @@ export const GET_TOP_DAOS = gql`
       address
       createdAt
       title
-      # fundedAmount
-      # firstEditionMax
-      # mintPrice
+      textIpfsHash
+      imgIpfsHash
+      blurbIpfsHash
+      subtitle
+      genre
+      auctionsStarted
+      auctionsEnded
+      paused
+      contributions {
+        id
+        address
+        share
+        role
+      }
     }
   }
 `;
@@ -77,7 +86,7 @@ export const GET_SEARCHED_DAO = gql`
   }
 `;
 
-export const useFetchAllProject = () => {
+export const useFetchAllProjects = () => {
   const { loading, error, data, refetch } = useQuery(GET_ALL_DAOS);
   return { loading, error, data, refetch };
 };
@@ -141,7 +150,7 @@ export const useGetProjectDetails = () => {
           methodParameters: [],
         },
         {
-          reference: 'initialMintPrice',
+          reference: 'mintPrice',
           methodName: 'INITIAL_MINT_PRICE',
           methodParameters: [],
         },

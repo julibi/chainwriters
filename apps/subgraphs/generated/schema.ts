@@ -18,6 +18,7 @@ export class Contribution extends Entity {
 
     this.set("address", Value.fromBytes(Bytes.empty()));
     this.set("share", Value.fromBigInt(BigInt.zero()));
+    this.set("dao", Value.fromString(""));
   }
 
   save(): void {
@@ -81,20 +82,120 @@ export class Contribution extends Entity {
     }
   }
 
-  get dao(): string | null {
+  get dao(): string {
     let value = this.get("dao");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toString();
+    return value!.toString();
+  }
+
+  set dao(value: string) {
+    this.set("dao", Value.fromString(value));
+  }
+}
+
+export class Edition extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("totalSupply", Value.fromBigInt(BigInt.zero()));
+    this.set("maxSupply", Value.fromBigInt(BigInt.zero()));
+    this.set("mintPrice", Value.fromBigInt(BigInt.zero()));
+    this.set("dao", Value.fromString(""));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save Edition entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save Edition entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("Edition", id.toString(), this);
     }
   }
 
-  set dao(value: string | null) {
-    if (!value) {
-      this.unset("dao");
+  static load(id: string): Edition | null {
+    return changetype<Edition | null>(store.get("Edition", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get totalSupply(): BigInt {
+    let value = this.get("totalSupply");
+    return value!.toBigInt();
+  }
+
+  set totalSupply(value: BigInt) {
+    this.set("totalSupply", Value.fromBigInt(value));
+  }
+
+  get maxSupply(): BigInt {
+    let value = this.get("maxSupply");
+    return value!.toBigInt();
+  }
+
+  set maxSupply(value: BigInt) {
+    this.set("maxSupply", Value.fromBigInt(value));
+  }
+
+  get mintPrice(): BigInt {
+    let value = this.get("mintPrice");
+    return value!.toBigInt();
+  }
+
+  set mintPrice(value: BigInt) {
+    this.set("mintPrice", Value.fromBigInt(value));
+  }
+
+  get dao(): string {
+    let value = this.get("dao");
+    return value!.toString();
+  }
+
+  set dao(value: string) {
+    this.set("dao", Value.fromString(value));
+  }
+
+  get expiresAt(): BigInt | null {
+    let value = this.get("expiresAt");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
     } else {
-      this.set("dao", Value.fromString(<string>value));
+      return value.toBigInt();
+    }
+  }
+
+  set expiresAt(value: BigInt | null) {
+    if (!value) {
+      this.unset("expiresAt");
+    } else {
+      this.set("expiresAt", Value.fromBigInt(<BigInt>value));
+    }
+  }
+
+  get premintedByAuthor(): BigInt | null {
+    let value = this.get("premintedByAuthor");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set premintedByAuthor(value: BigInt | null) {
+    if (!value) {
+      this.unset("premintedByAuthor");
+    } else {
+      this.set("premintedByAuthor", Value.fromBigInt(<BigInt>value));
     }
   }
 }
@@ -109,8 +210,6 @@ export class Dao extends Entity {
     this.set("createdAt", Value.fromBigInt(BigInt.zero()));
     this.set("title", Value.fromString(""));
     this.set("textIpfsHash", Value.fromString(""));
-    this.set("firstEditionMax", Value.fromBigInt(BigInt.zero()));
-    this.set("mintPrice", Value.fromBigInt(BigInt.zero()));
   }
 
   save(): void {
@@ -184,24 +283,6 @@ export class Dao extends Entity {
     this.set("textIpfsHash", Value.fromString(value));
   }
 
-  get firstEditionMax(): BigInt {
-    let value = this.get("firstEditionMax");
-    return value!.toBigInt();
-  }
-
-  set firstEditionMax(value: BigInt) {
-    this.set("firstEditionMax", Value.fromBigInt(value));
-  }
-
-  get mintPrice(): BigInt {
-    let value = this.get("mintPrice");
-    return value!.toBigInt();
-  }
-
-  set mintPrice(value: BigInt) {
-    this.set("mintPrice", Value.fromBigInt(value));
-  }
-
   get imgIpfsHash(): string | null {
     let value = this.get("imgIpfsHash");
     if (!value || value.kind == ValueKind.NULL) {
@@ -267,6 +348,23 @@ export class Dao extends Entity {
       this.unset("genre");
     } else {
       this.set("genre", Value.fromString(<string>value));
+    }
+  }
+
+  get editions(): Array<string> | null {
+    let value = this.get("editions");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toStringArray();
+    }
+  }
+
+  set editions(value: Array<string> | null) {
+    if (!value) {
+      this.unset("editions");
+    } else {
+      this.set("editions", Value.fromStringArray(<Array<string>>value));
     }
   }
 

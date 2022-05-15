@@ -72,6 +72,28 @@ export class AuctionsStarted__Params {
   }
 }
 
+export class AuthorMinted extends ethereum.Event {
+  get params(): AuthorMinted__Params {
+    return new AuthorMinted__Params(this);
+  }
+}
+
+export class AuthorMinted__Params {
+  _event: AuthorMinted;
+
+  constructor(event: AuthorMinted) {
+    this._event = event;
+  }
+
+  get edition(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+
+  get amount(): BigInt {
+    return this._event.parameters[1].value.toBigInt();
+  }
+}
+
 export class Configured extends ethereum.Event {
   get params(): Configured__Params {
     return new Configured__Params(this);
@@ -125,6 +147,76 @@ export class ContributorAdded__Params {
 
   get role(): string {
     return this._event.parameters[2].value.toString();
+  }
+}
+
+export class ExpirationSet extends ethereum.Event {
+  get params(): ExpirationSet__Params {
+    return new ExpirationSet__Params(this);
+  }
+}
+
+export class ExpirationSet__Params {
+  _event: ExpirationSet;
+
+  constructor(event: ExpirationSet) {
+    this._event = event;
+  }
+
+  get edition(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+
+  get expirationTime(): BigInt {
+    return this._event.parameters[1].value.toBigInt();
+  }
+}
+
+export class Minted extends ethereum.Event {
+  get params(): Minted__Params {
+    return new Minted__Params(this);
+  }
+}
+
+export class Minted__Params {
+  _event: Minted;
+
+  constructor(event: Minted) {
+    this._event = event;
+  }
+
+  get edition(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+
+  get amount(): BigInt {
+    return this._event.parameters[1].value.toBigInt();
+  }
+}
+
+export class NextEditionEnabled extends ethereum.Event {
+  get params(): NextEditionEnabled__Params {
+    return new NextEditionEnabled__Params(this);
+  }
+}
+
+export class NextEditionEnabled__Params {
+  _event: NextEditionEnabled;
+
+  constructor(event: NextEditionEnabled) {
+    this._event = event;
+  }
+
+  get nextEdId(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+
+  get maxSupply(): BigInt {
+    return this._event.parameters[1].value.toBigInt();
+  }
+
+  get mintPrice(): BigInt {
+    return this._event.parameters[2].value.toBigInt();
   }
 }
 
