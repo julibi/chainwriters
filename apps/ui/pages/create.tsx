@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useCallback, useMemo, useState } from 'react'
+import React, { ChangeEvent, FormEvent, MouseEventHandler, useCallback, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { create } from 'ipfs-http-client'
 import { toast } from 'react-toastify'
@@ -285,7 +285,7 @@ const Create = () => {
     }
   };
 
-  const submitImage = useCallback(async(event: ChangeEvent<HTMLInputElement>) => {
+  const submitImage = useCallback(async(event: FormEvent<HTMLButtonElement>) => {
     event.preventDefault();
     const added = await client.add(imgBuffer);
     // const url = `https://ipfs.infura.io/ipfs/${added.path}`;

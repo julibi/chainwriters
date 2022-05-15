@@ -1,4 +1,4 @@
-import React, { ChangeEvent } from 'react'
+import React, { ChangeEvent, FormEvent } from 'react'
 import Image from 'next/image'
 import styled from 'styled-components'
 import {
@@ -122,7 +122,7 @@ interface CoverImageFormProps {
   imgBuffer: Buffer;
   imgFile: Blob | MediaSource;
   onNextStep: () => void;
-  onSubmit: (e: ChangeEvent<HTMLInputElement>) => Promise<void>;
+  onSubmit: (e: FormEvent<HTMLButtonElement>) => Promise<void>;
 }
 
 const CoverImageForm = ({
