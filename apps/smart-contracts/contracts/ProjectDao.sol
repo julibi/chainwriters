@@ -24,7 +24,7 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
   struct AuthorShare {
     uint256 share;
     uint256 shareInMatic;
-    uint256 genesisEditionReserved;
+    uint256 claimedAmount;
     bool hasClaimedGenesis;
   }
 
@@ -36,7 +36,7 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
   }
 
   Project public project = Project("", "", "", address(0), "", "", "");
-  AuthorShare public author = AuthorShare(0, 0, 1, false);
+  AuthorShare public author = AuthorShare(0, 0, 0, false);
   mapping(uint256 => Contribution) public contributors;
   uint8 public contributorIndex = 0;
 
@@ -48,7 +48,6 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
   uint256 public currentEditionMintPrice;
   // 15% always go to the DAO 
   uint256 public totalSharePercentage = 15;
-  bool public refundEnabled = false;
 
   // uint256 public AUCTION_DURATION = 1 days;
   uint256 public AUCTION_DURATION = 1 days;
@@ -58,7 +57,7 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
   bool public auctionStarted = false;
   bool public auctionPhaseFinished = false;
   // bool public paused = true;
-  event Configurated(
+  event Configured(
     string imgHash,
     string blurbHash,
     string newGenre,
@@ -104,32 +103,21 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
     require(auctionStarted, "Auctions have not started");
     require(!auctionPhaseFinished, "Auctions finished");
     require(expiresAt > block.timestamp, "Auction ended. Trigger a new one.");
+    // this require needed?
     require(totalSupply(1) + 1 <= currentEditionMax, "Sold out");
     uint price = getPrice();
     bool shouldFinalize = (totalSupply(1) + 1) == currentEditionMax;
     require(msg.value >= price, "Value sent not sufficient.");
 
     _mint(msg.sender, 1, 1, "");
-    uint refund = msg.value - price;
-    if (refund > 0) {
-        payable(msg.sender).transfer(refund);
-    }
+    // uint refund = msg.value - price;
+    // if (refund > 0) {
+    //     payable(msg.sender).transfer(refund);
+    // }
 
     if(shouldFinalize) {
-      // uint256 shareAuthor = 85;
-      uint256 balanceTotal = address(this).balance;
-      // uint256 foundationShareInMatic = balanceTotal * 15 / 100;
-      // for(uint256 i = 0; i < contributorIndex; i++) {
-      //   shareAuthor = shareAuthor - contributors[i].share;
-      //   contributors[i].shareInMatic = balanceTotal * contributors[i].share / 100;
-      //   payable(contributors[i].shareRecipient).transfer(contributors[i].shareInMatic);
-      // }
-      // author.share = shareAuthor;
-      // author.shareInMatic = balanceTotal * shareAuthor / 100;
-      // payable(factory).transfer(foundationShareInMatic);
-      // payable(project.author_address).transfer(author.shareInMatic);
-      payable(project.author_address).transfer(balanceTotal);
       auctionPhaseFinished = true;
+      distributeShares();
       emit AuctionsEnded(true);
     } else {
       triggerNextAuction();
@@ -170,22 +158,25 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
     expiresAt = block.timestamp + AUCTION_DURATION;
   }
 
-  // function distributeShares() private {
-  //   uint256 shareAuthor = 85;
-  //   uint256 balanceTotal = address(this).balance;
-  //   uint256 foundationShareInMatic = balanceTotal * 15 / 100;
-  //   for(uint256 i = 0; i < contributorIndex; i++) {
-  //     shareAuthor = shareAuthor - contributors[i].share;
-  //     contributors[i].shareInMatic = balanceTotal * contributors[i].share / 100;
-  //     withdraw(contributors[i].shareRecipient, contributors[i].shareInMatic);
-  //   }
-  //   author.share = shareAuthor;
-  //   author.shareInMatic = balanceTotal * shareAuthor / 100;
-  //   withdraw(factory, foundationShareInMatic);
-  //   withdraw(project.author_address, author.shareInMatic);
-  // }
+  function distributeShares() private {
+    uint256 shareAuthor = 85;
+    uint256 balanceTotal = address(this).balance;
+    uint256 foundationShareInMatic = balanceTotal * 15 / 100;
+    for(uint256 i = 0; i < contributorIndex; i++) {
+      shareAuthor = shareAuthor - contributors[i].share;
+      contributors[i].shareInMatic = balanceTotal * contributors[i].share / 100;
+      if (i == (contributorIndex - 1)) {
+        author.share = shareAuthor;
+        author.shareInMatic = balanceTotal * shareAuthor / 100;
+      }
+      withdraw(contributors[i].shareRecipient, contributors[i].shareInMatic);
+    }
+    withdraw(factory, foundationShareInMatic);
+    withdraw(project.author_address, author.shareInMatic);
+  }
 
-  function withdraw(address _to, uint256 _amount) private {
+  // test from private to internal
+  function withdraw(address  _to, uint256 _amount) internal {
     require(_to != address(0), "Cannot withdraw to the 0 address");
     payable(_to).transfer(_amount);
   }
@@ -199,18 +190,37 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
   // ------------------
  
   // add role of contributor
-  function addContributor(address _contributor, uint256 _share, string calldata _role) external onlyRole(AUTHOR_ROLE) whenNotPaused {
+  function addContributors(
+    address[] calldata _contributors,
+    uint256[] calldata _shares,
+    string[] calldata _roles
+  )
+    external
+    onlyRole(AUTHOR_ROLE)
+    whenNotPaused
+  {
     // in theory user can put the same contributor 3 times - we don't care
-    require(!auctionStarted, "Cannot add after auction started");
-    require(_contributor != address(0), "Contribut cannot be 0 address");
-    require(contributorIndex < 3, "Contributors already set");
-    require(totalSharePercentage + _share < 101, "Contributor's share too high");
-    contributors[contributorIndex].shareRecipient = _contributor;
-    contributors[contributorIndex].share = _share;
-    contributors[contributorIndex].role = _role;
-    totalSharePercentage = totalSharePercentage + _share;
-    contributorIndex = contributorIndex + 1;
-    emit ContributorAdded(_contributor, _share, _role);
+    require(!auctionStarted, "Cannot change after auction started");
+    require((contributorIndex + _contributors.length) <= 3, "Max 3 contributors");
+    require(
+      (_contributors.length == _shares.length) &&
+      (_contributors.length == _roles.length),
+    "Same length required");
+    uint256 contribTotalShares = 0;
+    for (uint8 i = 0; i < _contributors.length; i++) {
+      contribTotalShares += _shares[i];
+    }
+    require(contribTotalShares <= 85, "Contributor shares too high");
+
+    totalSharePercentage += contribTotalShares;
+    for (uint8 i = 0; i < _contributors.length; i++) {
+      require(_contributors[i] != address(0), "Contributor cannot be 0 address");
+      contributors[contributorIndex].shareRecipient = _contributors[i];
+      contributors[contributorIndex].share = _shares[i];
+      contributors[contributorIndex].role = _roles[i];
+      contributorIndex ++;
+      emit ContributorAdded(_contributors[i], _shares[i], _roles[i]);
+    }
   }
 
   function configureProjectDetails(
@@ -225,7 +235,7 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
     project.genre = _genre;
     project.subtitle = _subtitle;
 
-    emit Configurated(
+    emit Configured(
       _imgHash,
       _blurbHash,
       _genre,
@@ -242,10 +252,9 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
   function authorMint(uint256 _amount) external onlyRole(AUTHOR_ROLE) whenNotPaused {
     require(!auctionStarted, "Auctions already started");
     require(author.hasClaimedGenesis == false, "Already claimed");
-    // TODO: _amount < MAX_AMOUNT is better
-    require(_amount > 1 && _amount < 10, "Invalid amount");
-    _mint(msg.sender, 1, author.genesisEditionReserved, "");
-    author.genesisEditionReserved = _amount;
+    require(_amount > 0 && _amount < currentEditionMax, "Invalid amount");
+    _mint(msg.sender, 1, _amount, "");
+    author.claimedAmount = _amount;
     author.hasClaimedGenesis = true;
   }
 

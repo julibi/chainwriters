@@ -6,14 +6,14 @@ import {
   DataSourceContext
 } from "@graphprotocol/graph-ts";
 
-export class MoonlitDao extends DataSourceTemplate {
+export class ProjectDao extends DataSourceTemplate {
   static create(address: Address): void {
-    DataSourceTemplate.create("MoonlitDao", [address.toHex()]);
+    DataSourceTemplate.create("ProjectDao", [address.toHex()]);
   }
 
   static createWithContext(address: Address, context: DataSourceContext): void {
     DataSourceTemplate.createWithContext(
-      "MoonlitDao",
+      "ProjectDao",
       [address.toHex()],
       context
     );

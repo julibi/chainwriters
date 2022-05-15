@@ -1,3 +1,11 @@
+type Contribution @entity {
+  id: ID!
+  address: Bytes!
+  share: BigInt!
+  role: String
+  dao: Dao
+}
+
 type Dao @entity {
   id: ID!
   author: Bytes!
@@ -5,25 +13,14 @@ type Dao @entity {
   createdAt: BigInt!
   title: String!
   textIpfsHash: String!
-  fundingEnded: Boolean!
   firstEditionMax: BigInt!
-  fundedAmount: BigInt!
   mintPrice: BigInt!
   imgIpfsHash: String
   blurbIpfsHash: String
   subtitle: String
   genre: String
-  # TODO how to make contributor an array of contribution with its dao being dao
-  contribution: [Contribution!]
-}
-type Contribution @entity {
-  id: ID!
-  address: Bytes!
-  share: BigInt!
-  role: String
-  dao: Bytes!
-}
-
-type Test @entity {
-  id: ID!
+  auctionsStarted: Boolean
+  auctionsEnded: Boolean
+  paused: Boolean
+  contributions: [Contribution!] @derivedFrom(field: "dao")
 }

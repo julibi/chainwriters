@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import { BaseButton, BASE_BORDER_RADIUS, BASE_BOX_SHADOW, BG_NORMAL, INSET_BASE_BOX_SHADOW, PINK, PLAIN_WHITE } from '../themes';
 
 interface RootProps {
+  agreed?: boolean;
   description?: string;
   onClick: () => void;
 }
@@ -67,13 +68,13 @@ const BlockSpan = styled.span`
   margin-inline-start: 1rem;
 `;
 
-const Checkbox = ({description, onClick}: RootProps) => {
-  const [checked, setChecked] = useState(false);
+const Checkbox = ({ agreed, description, onClick }: RootProps) => {
+  const [checked, setChecked] = useState(agreed);
 
   const toggleChecked = () => {
     setChecked(!checked);
   };
-
+  // TODO: where is the checkbox?
   return (
     <Root>
       <StyledLabel>

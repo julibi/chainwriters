@@ -5,33 +5,33 @@ schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum/contract
-    name: MoonlitFactory
+    name: ProjectFactory
     network: mumbai
     source:
-      address: '0xEa8D61E4BB000a1B670280Da91D73502E6b64062'
-      abi: MoonlitFactory
-      startBlock: 25917200
+      address: '0x6833CBB2a2FD74E82b2D627EB78Da42C286e5d0c'
+      abi: ProjectFactory
+      startBlock: 26306620
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
       language: wasm/assemblyscript
       entities:
-        - Test
+        - Dao
       abis:
-        - name: MoonlitFactory
-          file: ./abis/MoonlitFactory.json
-        - name: MoonlitDao
-          file: ./abis/MoonlitDao.json
+        - name: ProjectFactory
+          file: ./abis/ProjectFactory.json
+        - name: ProjectDao
+          file: ./abis/ProjectDao.json
       eventHandlers:
-        - event: Random(indexed address)
-          handler: handleRandom
+        - event: DaoCreated(indexed address,indexed address,string,string,uint256,uint256)
+          handler: handleDaoCreated
       file: ./src/mapping.ts
 templates:
   - kind: ethereum/contract
-    name: MoonlitDao
+    name: ProjectDao
     network: mumbai
     source:
-      abi: MoonlitDao
+      abi: ProjectDao
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -39,18 +39,18 @@ templates:
       file: ./src/mapping.ts
       entities:
         - Dao
-        - Contributor
+        - Contribution
       abis:
-        - name: MoonlitDao
-          file: ./abis/MoonlitDao.json
+        - name: ProjectDao
+          file: ./abis/ProjectDao.json
       eventHandlers:
-        - event: DaoCreated(indexed address,indexed address,string,string,uint256,uint256)
-          handler: handleDaoCreated
-        - event: Deposited(uint256)
-          handler: handleDeposited
-        - event: FundingEnded(bool)
-          handler: handleFundingEnded
-        - event: ImgSet(string)
-          handler: handleImgHashSet
-        - event: BlurbSet(string)
-          handler: handleBlurbHashSet
+        - event: TextSet(string)
+          handler: handleTextSet
+        - event: Configured(string,string,string,string)
+          handler: handleConfigured
+        - event: ContributorAdded(address,uint256,string)
+          handler: handleContributorAdded
+        - event: AuctionsStarted(bool)
+          handler: handleAuctionsStarted
+        - event: AuctionsEnded(bool)
+          handler: handleAuctionsEnded

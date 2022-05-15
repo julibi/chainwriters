@@ -7,4 +7,5 @@ interface IProjectFactory {
   function firstEditionMin (  ) external view returns ( uint256 );
   function projectDaos ( uint256 ) external view returns ( address );
   function setGenesisAmountRange ( uint256 _min, uint256 _max ) external;
+  function withdraw ( address _to ) payable external;
 }

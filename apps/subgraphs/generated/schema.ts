@@ -11,6 +11,94 @@ import {
   BigDecimal
 } from "@graphprotocol/graph-ts";
 
+export class Contribution extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("address", Value.fromBytes(Bytes.empty()));
+    this.set("share", Value.fromBigInt(BigInt.zero()));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save Contribution entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save Contribution entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("Contribution", id.toString(), this);
+    }
+  }
+
+  static load(id: string): Contribution | null {
+    return changetype<Contribution | null>(store.get("Contribution", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get address(): Bytes {
+    let value = this.get("address");
+    return value!.toBytes();
+  }
+
+  set address(value: Bytes) {
+    this.set("address", Value.fromBytes(value));
+  }
+
+  get share(): BigInt {
+    let value = this.get("share");
+    return value!.toBigInt();
+  }
+
+  set share(value: BigInt) {
+    this.set("share", Value.fromBigInt(value));
+  }
+
+  get role(): string | null {
+    let value = this.get("role");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set role(value: string | null) {
+    if (!value) {
+      this.unset("role");
+    } else {
+      this.set("role", Value.fromString(<string>value));
+    }
+  }
+
+  get dao(): string | null {
+    let value = this.get("dao");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set dao(value: string | null) {
+    if (!value) {
+      this.unset("dao");
+    } else {
+      this.set("dao", Value.fromString(<string>value));
+    }
+  }
+}
+
 export class Dao extends Entity {
   constructor(id: string) {
     super();
@@ -21,9 +109,7 @@ export class Dao extends Entity {
     this.set("createdAt", Value.fromBigInt(BigInt.zero()));
     this.set("title", Value.fromString(""));
     this.set("textIpfsHash", Value.fromString(""));
-    this.set("fundingEnded", Value.fromBoolean(false));
     this.set("firstEditionMax", Value.fromBigInt(BigInt.zero()));
-    this.set("fundedAmount", Value.fromBigInt(BigInt.zero()));
     this.set("mintPrice", Value.fromBigInt(BigInt.zero()));
   }
 
@@ -98,15 +184,6 @@ export class Dao extends Entity {
     this.set("textIpfsHash", Value.fromString(value));
   }
 
-  get fundingEnded(): boolean {
-    let value = this.get("fundingEnded");
-    return value!.toBoolean();
-  }
-
-  set fundingEnded(value: boolean) {
-    this.set("fundingEnded", Value.fromBoolean(value));
-  }
-
   get firstEditionMax(): BigInt {
     let value = this.get("firstEditionMax");
     return value!.toBigInt();
@@ -114,15 +191,6 @@ export class Dao extends Entity {
 
   set firstEditionMax(value: BigInt) {
     this.set("firstEditionMax", Value.fromBigInt(value));
-  }
-
-  get fundedAmount(): BigInt {
-    let value = this.get("fundedAmount");
-    return value!.toBigInt();
-  }
-
-  set fundedAmount(value: BigInt) {
-    this.set("fundedAmount", Value.fromBigInt(value));
   }
 
   get mintPrice(): BigInt {
@@ -202,8 +270,35 @@ export class Dao extends Entity {
     }
   }
 
-  get contribution(): Array<string> | null {
-    let value = this.get("contribution");
+  get auctionsStarted(): boolean {
+    let value = this.get("auctionsStarted");
+    return value!.toBoolean();
+  }
+
+  set auctionsStarted(value: boolean) {
+    this.set("auctionsStarted", Value.fromBoolean(value));
+  }
+
+  get auctionsEnded(): boolean {
+    let value = this.get("auctionsEnded");
+    return value!.toBoolean();
+  }
+
+  set auctionsEnded(value: boolean) {
+    this.set("auctionsEnded", Value.fromBoolean(value));
+  }
+
+  get paused(): boolean {
+    let value = this.get("paused");
+    return value!.toBoolean();
+  }
+
+  set paused(value: boolean) {
+    this.set("paused", Value.fromBoolean(value));
+  }
+
+  get contributions(): Array<string> | null {
+    let value = this.get("contributions");
     if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
@@ -211,125 +306,11 @@ export class Dao extends Entity {
     }
   }
 
-  set contribution(value: Array<string> | null) {
+  set contributions(value: Array<string> | null) {
     if (!value) {
-      this.unset("contribution");
+      this.unset("contributions");
     } else {
-      this.set("contribution", Value.fromStringArray(<Array<string>>value));
+      this.set("contributions", Value.fromStringArray(<Array<string>>value));
     }
-  }
-}
-
-export class Contribution extends Entity {
-  constructor(id: string) {
-    super();
-    this.set("id", Value.fromString(id));
-
-    this.set("address", Value.fromBytes(Bytes.empty()));
-    this.set("share", Value.fromBigInt(BigInt.zero()));
-    this.set("dao", Value.fromBytes(Bytes.empty()));
-  }
-
-  save(): void {
-    let id = this.get("id");
-    assert(id != null, "Cannot save Contribution entity without an ID");
-    if (id) {
-      assert(
-        id.kind == ValueKind.STRING,
-        "Cannot save Contribution entity with non-string ID. " +
-          'Considering using .toHex() to convert the "id" to a string.'
-      );
-      store.set("Contribution", id.toString(), this);
-    }
-  }
-
-  static load(id: string): Contribution | null {
-    return changetype<Contribution | null>(store.get("Contribution", id));
-  }
-
-  get id(): string {
-    let value = this.get("id");
-    return value!.toString();
-  }
-
-  set id(value: string) {
-    this.set("id", Value.fromString(value));
-  }
-
-  get address(): Bytes {
-    let value = this.get("address");
-    return value!.toBytes();
-  }
-
-  set address(value: Bytes) {
-    this.set("address", Value.fromBytes(value));
-  }
-
-  get share(): BigInt {
-    let value = this.get("share");
-    return value!.toBigInt();
-  }
-
-  set share(value: BigInt) {
-    this.set("share", Value.fromBigInt(value));
-  }
-
-  get role(): string | null {
-    let value = this.get("role");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toString();
-    }
-  }
-
-  set role(value: string | null) {
-    if (!value) {
-      this.unset("role");
-    } else {
-      this.set("role", Value.fromString(<string>value));
-    }
-  }
-
-  get dao(): Bytes {
-    let value = this.get("dao");
-    return value!.toBytes();
-  }
-
-  set dao(value: Bytes) {
-    this.set("dao", Value.fromBytes(value));
-  }
-}
-
-export class Test extends Entity {
-  constructor(id: string) {
-    super();
-    this.set("id", Value.fromString(id));
-  }
-
-  save(): void {
-    let id = this.get("id");
-    assert(id != null, "Cannot save Test entity without an ID");
-    if (id) {
-      assert(
-        id.kind == ValueKind.STRING,
-        "Cannot save Test entity with non-string ID. " +
-          'Considering using .toHex() to convert the "id" to a string.'
-      );
-      store.set("Test", id.toString(), this);
-    }
-  }
-
-  static load(id: string): Test | null {
-    return changetype<Test | null>(store.get("Test", id));
-  }
-
-  get id(): string {
-    let value = this.get("id");
-    return value!.toString();
-  }
-
-  set id(value: string) {
-    this.set("id", Value.fromString(value));
   }
 }

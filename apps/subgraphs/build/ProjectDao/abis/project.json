@@ -65,12 +65,56 @@
     "inputs": [
       {
         "indexed": false,
+        "internalType": "bool",
+        "name": "ended",
+        "type": "bool"
+      }
+    ],
+    "name": "AuctionsEnded",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "bool",
+        "name": "started",
+        "type": "bool"
+      }
+    ],
+    "name": "AuctionsStarted",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "imgHash",
+        "type": "string"
+      },
+      {
+        "indexed": false,
         "internalType": "string",
         "name": "blurbHash",
         "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "newGenre",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "newSubtitle",
+        "type": "string"
       }
     ],
-    "name": "BlurbSet",
+    "name": "Configured",
     "type": "event"
   },
   {
@@ -102,69 +146,13 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "caller",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "dao",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "string",
-        "name": "title",
-        "type": "string"
-      },
-      {
-        "indexed": false,
-        "internalType": "string",
-        "name": "textIpfsHash",
-        "type": "string"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "initialMintPrice",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "firstEditionAmount",
-        "type": "uint256"
-      }
-    ],
-    "name": "DaoCreated",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "fundedAmount",
-        "type": "uint256"
-      }
-    ],
-    "name": "Deposited",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
         "indexed": false,
         "internalType": "bool",
-        "name": "finished",
+        "name": "paused",
         "type": "bool"
       }
     ],
-    "name": "FundingEnded",
+    "name": "Paused",
     "type": "event"
   },
   {
@@ -172,25 +160,12 @@
     "inputs": [
       {
         "indexed": false,
-        "internalType": "string",
-        "name": "newGenre",
-        "type": "string"
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
       }
     ],
-    "name": "GenreSet",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "string",
-        "name": "imgHash",
-        "type": "string"
-      }
-    ],
-    "name": "ImgSet",
+    "name": "Paused",
     "type": "event"
   },
   {
@@ -266,19 +241,6 @@
       }
     ],
     "name": "RoleRevoked",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "string",
-        "name": "newSubtitle",
-        "type": "string"
-      }
-    ],
-    "name": "SubtitleSet",
     "type": "event"
   },
   {
@@ -388,6 +350,32 @@
     "type": "event"
   },
   {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "Unpaused",
+    "type": "event"
+  },
+  {
+    "inputs": [],
+    "name": "AUCTION_DURATION",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "AUTHOR_ROLE",
     "outputs": [
@@ -440,21 +428,65 @@
     "type": "function"
   },
   {
-    "inputs": [
+    "inputs": [],
+    "name": "PAUSER_ROLE",
+    "outputs": [
       {
-        "internalType": "address",
-        "name": "_contributor",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_share",
-        "type": "uint256"
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
       }
     ],
-    "name": "addContributor",
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address[]",
+        "name": "_contributors",
+        "type": "address[]"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "_shares",
+        "type": "uint256[]"
+      },
+      {
+        "internalType": "string[]",
+        "name": "_roles",
+        "type": "string[]"
+      }
+    ],
+    "name": "addContributors",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "auctionPhaseFinished",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "auctionStarted",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -472,13 +504,8 @@
         "type": "uint256"
       },
       {
-        "internalType": "bool",
-        "name": "hasWithdrawnShare",
-        "type": "bool"
-      },
-      {
         "internalType": "uint256",
-        "name": "genesisEditionReserved",
+        "name": "claimedAmount",
         "type": "uint256"
       },
       {
@@ -488,6 +515,19 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "authorMint",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -540,14 +580,35 @@
   },
   {
     "inputs": [],
-    "name": "claimGenesisEditionNFT",
+    "name": "buy",
     "outputs": [],
-    "stateMutability": "nonpayable",
+    "stateMutability": "payable",
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "claimRefund",
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_imgHash",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_blurbHash",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_genre",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_subtitle",
+        "type": "string"
+      }
+    ],
+    "name": "configureProjectDetails",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -581,6 +642,11 @@
         "type": "address"
       },
       {
+        "internalType": "string",
+        "name": "role",
+        "type": "string"
+      },
+      {
         "internalType": "uint256",
         "name": "share",
         "type": "uint256"
@@ -589,11 +655,6 @@
         "internalType": "uint256",
         "name": "shareInMatic",
         "type": "uint256"
-      },
-      {
-        "internalType": "bool",
-        "name": "hasWithdrawnShare",
-        "type": "bool"
       }
     ],
     "stateMutability": "view",
@@ -639,16 +700,23 @@
     "type": "function"
   },
   {
-    "inputs": [
+    "inputs": [],
+    "name": "destroy",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "discountRate",
+    "outputs": [
       {
         "internalType": "uint256",
-        "name": "_amount",
+        "name": "",
         "type": "uint256"
       }
     ],
-    "name": "deposit",
-    "outputs": [],
-    "stateMutability": "payable",
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -665,13 +733,6 @@
       }
     ],
     "name": "enableNextEdition",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "enableRefund",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -697,6 +758,19 @@
   },
   {
     "inputs": [],
+    "name": "expiresAt",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "factory",
     "outputs": [
       {
@@ -710,7 +784,7 @@
   },
   {
     "inputs": [],
-    "name": "fundedAmount",
+    "name": "getPrice",
     "outputs": [
       {
         "internalType": "uint256",
@@ -826,38 +900,6 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "investingFinished",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "name": "investments",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
         "internalType": "address",
@@ -884,11 +926,6 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "_account",
-        "type": "address"
-      },
-      {
         "internalType": "uint256",
         "name": "_amount",
         "type": "uint256"
@@ -897,6 +934,26 @@
     "name": "mint",
     "outputs": [],
     "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "pause",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "paused",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -943,19 +1000,6 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "refundEnabled",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
         "internalType": "bytes32",
@@ -969,6 +1013,13 @@
       }
     ],
     "name": "renounceRole",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "retriggerAuction",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1079,71 +1130,6 @@
     "inputs": [
       {
         "internalType": "string",
-        "name": "_blurbHash",
-        "type": "string"
-      }
-    ],
-    "name": "setBlurbIpfsHash",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "_genre",
-        "type": "string"
-      }
-    ],
-    "name": "setGenre",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "_imgHash",
-        "type": "string"
-      }
-    ],
-    "name": "setImgIpfsHash",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_amount",
-        "type": "uint256"
-      }
-    ],
-    "name": "setMaxGenesisClaimableAuthor",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "_subtitle",
-        "type": "string"
-      }
-    ],
-    "name": "setSubtitle",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
         "name": "_ipfsHash",
         "type": "string"
       }
@@ -1155,12 +1141,25 @@
   },
   {
     "inputs": [],
-    "name": "shareSentToMoonlit",
+    "name": "showTimestamp",
     "outputs": [
       {
-        "internalType": "bool",
+        "internalType": "uint256",
         "name": "",
-        "type": "bool"
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "startAt",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -1221,6 +1220,26 @@
     "inputs": [
       {
         "internalType": "uint256",
+        "name": "_discountRate",
+        "type": "uint256"
+      }
+    ],
+    "name": "triggerFirstAuction",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "unpause",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
         "name": "",
         "type": "uint256"
       }
@@ -1234,39 +1253,6 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "withdrawAll",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_to",
-        "type": "address"
-      }
-    ],
-    "name": "withdrawShareAuthor",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_to",
-        "type": "address"
-      }
-    ],
-    "name": "withdrawShareContributor",
-    "outputs": [],
-    "stateMutability": "nonpayable",
     "type": "function"
   }
 ]
