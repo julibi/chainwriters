@@ -187,9 +187,9 @@ export const useGetProjectDetails = () => {
           methodParameters: [],
         },
         {
+          // not working...
           reference: 'expiresAt',
-          methodName: 'expiresAt',
-          methodParameters: [],
+          methodName: 'expiresAt'
         },
         {
           reference: 'totalSupplyGenEd',
@@ -198,6 +198,7 @@ export const useGetProjectDetails = () => {
         },
         {
           reference: 'mintPrice',
+          // it should be getPrice
           methodName: 'INITIAL_MINT_PRICE',
           methodParameters: [],
         },
@@ -221,6 +222,8 @@ export const useGetProjectDetails = () => {
     let totalSupplyGenEd = result.find(x => x.reference == 'totalSupplyGenEd').returnValues[0];
     totalSupplyGenEd = convertToRegularNumber(totalSupplyGenEd, true);
     const expiresAt = parseInt(result.find(x => x.reference == 'expiresAt').returnValues[0].hex.toString(), 16)
+    const test = result;
+    console.log({ test });
     let mintPrice = result.find(x => x.reference == 'mintPrice').returnValues[0];
     mintPrice = BigNumber.from((parseInt(mintPrice.hex, 16).toString()));
     const paused = result.find(x => x.reference === 'paused').returnValues[0];
@@ -264,11 +267,12 @@ export const useGetProjectDetails = () => {
       };
     });
     console.log({
-      id,
       author,
-      createdAt,
       title,
-
+      auctionsStarted,
+      auctionsEnded,
+      expiresAt,
+      mintPrice
     });
     return {  
       id,

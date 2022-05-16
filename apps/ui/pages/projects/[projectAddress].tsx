@@ -12,17 +12,25 @@ import Loading from '../../components/Loading'
 import PieChart from '../../components/PieChart'
 import { SectionTitle } from '../../components/ProjectSection'
 import { truncateAddress } from '../../components/WalletIndicator'
-import { BASE_BORDER_RADIUS, BASE_BOX_SHADOW, DISABLED_WHITE, PINK, PLAIN_WHITE, PrimaryButton } from '../../themes'
+import {
+  BASE_BORDER_RADIUS,
+  BASE_BOX_SHADOW,
+  DISABLED_WHITE,
+  BG_NORMAL,
+  PINK,
+  PLAIN_WHITE,
+  PrimaryButton,
+  BaseButton,
+} from '../../themes';
 import useProjectContract from '../../hooks/useProjectContract'
-import { NULL_ADDRESS } from '../../../constants'
 import MintSection from '../../components/MintSection'
 import { ProjectData } from '../../state/projects/hooks'
+
 
 // TODO
 // author view
 // contributor view
 // anyone else
-
 
 const Root = styled.div`
   display: flex;
@@ -279,6 +287,19 @@ const Description = styled.p`
   line-height: 170%;
 `;
 
+const AuthorSection = styled.section`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 90%;
+  max-width: 1200px;
+  color: ${PLAIN_WHITE};
+  margin-block-end: 2rem;
+  padding: 2rem;
+  border-radius: ${BASE_BORDER_RADIUS};
+  box-shadow: ${BASE_BOX_SHADOW};
+`;
+
 const ContentWrapper = styled.div`
   margin: 2rem;
   padding: 0.75rem;
@@ -297,6 +318,24 @@ const ModalText = styled.span`
   text-align: center;
 `;
 
+const TriggerButton = styled(BaseButton)`
+  background-color: ${BG_NORMAL};
+  color: ${PINK};
+  font-family: 'Roboto Mono Bold';
+  padding: 1rem;
+  width: 209px;
+
+  :disabled {
+    :hover {
+      cursor: auto;
+    }
+  }
+
+  @media (max-width: 900px) {
+    width: 100%;
+  }
+`;
+
 const ProjectDetailView = () => {
   const { account } = useWeb3React();
   const router = useRouter();
@@ -312,10 +351,10 @@ const ProjectDetailView = () => {
   // todo: big integer
   const [mintPending, setMintPending] = useState<boolean>(false);
   const [currentPrice, setCurrentPrice] = useState(null);
+  const [triggerPending, setTriggerPending] = useState(false);
   
   const callGetProjectDetails = useCallback(async(projectAddress: string) => {
     const ProjectData: ProjectData = await getProjectDetails(projectAddress);
-    console.log({ ProjectData });
     setDaoData(ProjectData);
     setSuccessfullyLoaded(true);
   }, [getProjectDetails]);
@@ -323,14 +362,13 @@ const ProjectDetailView = () => {
   // if current Edition is not Genesis, we fetch the total Supply by ID
   const totalSupplyOfCurrentEdition = useMemo(async() => {
     if (daoData && daoData.currentEdition > 1) { 
-      console.log("should not be called!")
       const totalSupply = await ProjectContract.totalSupply(daoData.currentEdition);     
       return totalSupply;
     }
   }, [daoData, ProjectContract]);
 
   const isAuthor = useMemo(() => {
-    if (daoData && account === daoData.author) {
+    if (daoData && account.toLowerCase() === daoData.author.toLowerCase()) {
       return true;
     }
     return false;
@@ -394,6 +432,39 @@ const ProjectDetailView = () => {
       setLoading(false);
     }
   }, [ProjectContract, callGetProjectDetails, projectAddress]);
+
+  const triggerFirstAuction = useCallback(async () => {
+    if (
+      daoData &&
+      daoData.author &&
+      account.toLowerCase() === daoData.author.toLowerCase()
+    ) {
+      try {
+        setTriggerPending(true);
+        // TODO: understand the rate
+        const Tx = await ProjectContract.triggerFirstAuction(100000000);
+        const { hash } = Tx;
+        ProjectContract.provider.once(hash, (transaction) => {
+          // refetch
+          // @ts-ignore
+          callGetProjectDetails(projectAddress);
+          setTriggerPending(false);
+          toast.success('Auctions have started!');
+        });
+      } catch (e: unknown) {
+        // @ts-ignore
+        toast.error(e.reason ?? 'Something went wrong.');
+        console.log({ e });
+        setTriggerPending(false);
+      }
+    }
+  }, [
+    account,
+    daoData,
+    ProjectContract,
+    callGetProjectDetails,
+    projectAddress,
+  ]);
 
   const showsAuctionText = useCallback(() => {
     if (!daoData) return;
@@ -548,10 +619,8 @@ const ProjectDetailView = () => {
                 <SharePercentage>15 %</SharePercentage>
               </Share>
             </Shares>
-            {/* <PieChart
-                  part={Number(daoData.fundedAmount)}
-                  whole={Number(daoData.firstEditionMax)}
-                /> */}
+            {/* Pie Chart for Contributions Section - also for Create Flow */}
+            {/* <PieChart part={Number(30)} whole={Number(90)} /> */}
           </ShareSection>
           <DescriptionSection>
             <Title style={{ maxWidth: '200px' }}>Description</Title>
@@ -568,7 +637,17 @@ const ProjectDetailView = () => {
               dolor sit amet.
             </Description>
           </DescriptionSection>
-          {isAuthor && <div>YOU ARE THE AUTHOR</div>}
+          {isAuthor && 
+            <AuthorSection>
+              <Title style={{ maxWidth: '300px' }}>Control Settings for Author</Title>
+              <TriggerButton
+                onClick={triggerFirstAuction}
+                disabled={daoData.auctionsStarted}
+              >
+               {triggerPending ? <Loading height={20} dotHeight={20} /> : 'Trigger Auctions'}
+              </TriggerButton>
+            </AuthorSection>
+          }
         </>
       )}
       {showBuyModal && (

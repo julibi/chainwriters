@@ -52,9 +52,9 @@ templates:
           handler: handleConfigured
         - event: ContributorAdded(address,uint256,string)
           handler: handleContributorAdded
-        - event: AuctionsStarted(bool)
+        - event: AuctionsStarted()
           handler: handleAuctionsStarted
-        - event: AuctionsEnded(bool)
+        - event: AuctionsEnded()
           handler: handleAuctionsEnded
         - event: AuthorMinted(uint256)
           handler: handleAuthorMinted

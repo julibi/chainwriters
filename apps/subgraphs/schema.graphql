@@ -29,8 +29,8 @@ type Dao @entity {
   subtitle: String
   genre: String
   editions: [Edition!] @derivedFrom(field: "dao")
-  auctionsStarted: Boolean
-  auctionsEnded: Boolean
-  paused: Boolean
+  auctionsStarted: Boolean!
+  auctionsEnded: Boolean!
+  paused: Boolean!
   contributions: [Contribution!] @derivedFrom(field: "dao")
 }

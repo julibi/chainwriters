@@ -66,8 +66,8 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
   );
   event TextSet(string textHash);
   event ContributorAdded(address contributor, uint256 share, string role);
-  event AuctionsStarted(bool started);
-  event AuctionsEnded(bool ended);
+  event AuctionsStarted();
+  event AuctionsEnded();
   event AuthorMinted(uint256 amount);
   event Minted(uint256 edition, uint256 amount);
   event ExpirationSet(uint256 edition, uint256 expirationTime);
@@ -125,7 +125,7 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
     if(shouldFinalize) {
       auctionPhaseFinished = true;
       distributeShares();
-      emit AuctionsEnded(true);
+      emit AuctionsEnded();
     } else {
       triggerNextAuction();
     }
@@ -276,7 +276,7 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
     startAt = block.timestamp;
     expiresAt = block.timestamp + AUCTION_DURATION;
     auctionStarted = true;
-    emit AuctionsStarted(true);
+    emit AuctionsStarted();
     emit ExpirationSet(currentEdition, expiresAt);
   }
 
