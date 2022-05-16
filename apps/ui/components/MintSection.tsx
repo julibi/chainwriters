@@ -22,7 +22,7 @@ const StyledFakeInput = styled.span`
   margin: 0 1rem;
   text-align: center;
 `;
-
+// TODO mint section should further check for whether things are even mintable etc.
 const MintSection = () => {
   const [mintingAmount, setMintingAmount] = useState<number>(1);
   const handleIncrement = useCallback(() => {
