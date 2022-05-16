@@ -49,14 +49,14 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
   // 15% always go to the DAO 
   uint256 public totalSharePercentage = 15;
 
-  // uint256 public AUCTION_DURATION = 1 days;
   uint256 public AUCTION_DURATION = 1 days;
   uint public discountRate;
   uint public startAt;
   uint public expiresAt;
   bool public auctionStarted = false;
   bool public auctionPhaseFinished = false;
-  // bool public paused = true;
+  string public name;
+
   event Configured(
     string imgHash,
     string blurbHash,
@@ -91,6 +91,7 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
       INITIAL_MINT_PRICE = _initialMintPrice;
       currentEditionMax = _firstEditionMax;
       factory = _factory;
+      name = _title;
   }
 
   function showTimestamp() public view returns (uint) {
@@ -119,7 +120,7 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
     // if (refund > 0) {
     //     payable(msg.sender).transfer(refund);
     // }
-    emit Minted(1,1);
+    emit Minted(currentEdition,1);
     if(shouldFinalize) {
       auctionPhaseFinished = true;
       distributeShares();
@@ -263,7 +264,7 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
     _mint(msg.sender, 1, _amount, "");
     author.claimedAmount = _amount;
     author.hasClaimedGenesis = true;
-    emit AuthorMinted(1, _amount);
+    emit AuthorMinted(currentEdition, _amount);
   }
 
   function triggerFirstAuction(uint256 _discountRate) external onlyRole(AUTHOR_ROLE) whenNotPaused {

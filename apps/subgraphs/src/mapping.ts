@@ -27,7 +27,6 @@ export function handleDaoCreated(event: DaoCreated): void {
   dao.auctionsEnded = false
   dao.save()
 
-  // this is the error
   let edition = new Edition(event.params.dao.toHexString() + '1') 
   edition.dao = dao.id
   edition.totalSupply = BigInt.fromI32(0)
@@ -80,10 +79,9 @@ export function handleContributorAdded(event: ContributorAdded): void {
 
 export function handleAuthorMinted(event: AuthorMinted): void {
   let edition = Edition.load(event.address.toHexString() + event.params.edition.toHexString()) 
-  if (!edition) {
-    log.info("handleAuthorMinted", [event.address.toHexString(), event.params.edition.toHexString()])
-    return
-  }
+  log.info("handleAuthorMinted", [event.address.toHexString(), event.params.edition.toHexString()])
+  if (!edition) return
+  log.info("there is an edition! handleAuthorMing", [edition.id])
   edition.premintedByAuthor = event.params.amount
   edition.save()
 }

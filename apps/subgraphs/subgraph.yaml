@@ -8,9 +8,9 @@ dataSources:
     name: ProjectFactory
     network: mumbai
     source:
-      address: '0x34018079c6572629E6fEDF085Fb944114Fe0F555'
+      address: '0xa425093Ccc31572D502b24cb62a6E0ff959b0c48'
       abi: ProjectFactory
-      startBlock: 26322200
+      startBlock: 26333430
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
