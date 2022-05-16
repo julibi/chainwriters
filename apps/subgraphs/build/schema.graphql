@@ -8,13 +8,13 @@ type Contribution @entity {
 
 type Edition @entity {
   id: ID!
-  totalSupply: BigInt!
+  # totalSupply: BigInt! - not working
   maxSupply: BigInt!
   mintPrice: BigInt!
   dao: Dao!
   # only available for GenEd
-  expiresAt: BigInt
-  premintedByAuthor: BigInt
+  # expiresAt: BigInt - not working
+  # premintedByAuthor: BigInt - not working
 }
 
 type Dao @entity {

@@ -80,12 +80,6 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "edition",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
         "name": "amount",
         "type": "uint256"
       }
@@ -771,7 +765,12 @@
       },
       { "internalType": "string", "name": "textIpfsHash", "type": "string" },
       { "internalType": "string", "name": "imgIpfsHash", "type": "string" },
-      { "internalType": "string", "name": "blurbIpfsHash", "type": "string" }
+      { "internalType": "string", "name": "blurbIpfsHash", "type": "string" },
+      {
+        "internalType": "uint256",
+        "name": "premintedByAuthor",
+        "type": "uint256"
+      }
     ],
     "stateMutability": "view",
     "type": "function"

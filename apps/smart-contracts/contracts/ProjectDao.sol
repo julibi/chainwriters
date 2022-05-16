@@ -19,6 +19,7 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
     string textIpfsHash;
     string imgIpfsHash;
     string blurbIpfsHash;
+    uint256 premintedByAuthor;
   }
 
   struct AuthorShare {
@@ -35,7 +36,7 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
     uint256 shareInMatic;
   }
 
-  Project public project = Project("", "", "", address(0), "", "", "");
+  Project public project = Project("", "", "", address(0), "", "", "", 0);
   AuthorShare public author = AuthorShare(0, 0, 0, false);
   mapping(uint256 => Contribution) public contributors;
   uint8 public contributorIndex = 0;
@@ -67,7 +68,7 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
   event ContributorAdded(address contributor, uint256 share, string role);
   event AuctionsStarted(bool started);
   event AuctionsEnded(bool ended);
-  event AuthorMinted(uint256 edition, uint256 amount);
+  event AuthorMinted(uint256 amount);
   event Minted(uint256 edition, uint256 amount);
   event ExpirationSet(uint256 edition, uint256 expirationTime);
   event NextEditionEnabled(uint256 nextEdId, uint256 maxSupply, uint256 mintPrice);
@@ -264,7 +265,9 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
     _mint(msg.sender, 1, _amount, "");
     author.claimedAmount = _amount;
     author.hasClaimedGenesis = true;
-    emit AuthorMinted(currentEdition, _amount);
+    // subgrph is not picking this up, hence storing this in contract
+    emit AuthorMinted(_amount);
+    project.premintedByAuthor = _amount;
   }
 
   function triggerFirstAuction(uint256 _discountRate) external onlyRole(AUTHOR_ROLE) whenNotPaused {

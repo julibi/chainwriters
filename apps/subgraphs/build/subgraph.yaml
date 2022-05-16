@@ -8,7 +8,7 @@ dataSources:
     name: ProjectFactory
     network: mumbai
     source:
-      address: "0xa425093Ccc31572D502b24cb62a6E0ff959b0c48"
+      address: "0xF6852aa995835335eE710fa22BF01d78e8d05FAc"
       abi: ProjectFactory
       startBlock: 26333430
     mapping:
@@ -56,7 +56,7 @@ templates:
           handler: handleAuctionsStarted
         - event: AuctionsEnded(bool)
           handler: handleAuctionsEnded
-        - event: AuthorMinted(uint256,uint256)
+        - event: AuthorMinted(uint256)
           handler: handleAuthorMinted
         - event: Minted(uint256,uint256)
           handler: handleMinted

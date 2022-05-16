@@ -97,7 +97,6 @@ export class Edition extends Entity {
     super();
     this.set("id", Value.fromString(id));
 
-    this.set("totalSupply", Value.fromBigInt(BigInt.zero()));
     this.set("maxSupply", Value.fromBigInt(BigInt.zero()));
     this.set("mintPrice", Value.fromBigInt(BigInt.zero()));
     this.set("dao", Value.fromString(""));
@@ -129,15 +128,6 @@ export class Edition extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get totalSupply(): BigInt {
-    let value = this.get("totalSupply");
-    return value!.toBigInt();
-  }
-
-  set totalSupply(value: BigInt) {
-    this.set("totalSupply", Value.fromBigInt(value));
-  }
-
   get maxSupply(): BigInt {
     let value = this.get("maxSupply");
     return value!.toBigInt();
@@ -163,40 +153,6 @@ export class Edition extends Entity {
 
   set dao(value: string) {
     this.set("dao", Value.fromString(value));
-  }
-
-  get expiresAt(): BigInt | null {
-    let value = this.get("expiresAt");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toBigInt();
-    }
-  }
-
-  set expiresAt(value: BigInt | null) {
-    if (!value) {
-      this.unset("expiresAt");
-    } else {
-      this.set("expiresAt", Value.fromBigInt(<BigInt>value));
-    }
-  }
-
-  get premintedByAuthor(): BigInt | null {
-    let value = this.get("premintedByAuthor");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toBigInt();
-    }
-  }
-
-  set premintedByAuthor(value: BigInt | null) {
-    if (!value) {
-      this.unset("premintedByAuthor");
-    } else {
-      this.set("premintedByAuthor", Value.fromBigInt(<BigInt>value));
-    }
   }
 }
 

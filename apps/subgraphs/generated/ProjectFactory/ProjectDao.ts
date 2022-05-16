@@ -85,12 +85,8 @@ export class AuthorMinted__Params {
     this._event = event;
   }
 
-  get edition(): BigInt {
-    return this._event.parameters[0].value.toBigInt();
-  }
-
   get amount(): BigInt {
-    return this._event.parameters[1].value.toBigInt();
+    return this._event.parameters[0].value.toBigInt();
   }
 }
 
@@ -514,6 +510,7 @@ export class ProjectDao__projectResult {
   value4: string;
   value5: string;
   value6: string;
+  value7: BigInt;
 
   constructor(
     value0: string,
@@ -522,7 +519,8 @@ export class ProjectDao__projectResult {
     value3: Address,
     value4: string,
     value5: string,
-    value6: string
+    value6: string,
+    value7: BigInt
   ) {
     this.value0 = value0;
     this.value1 = value1;
@@ -531,6 +529,7 @@ export class ProjectDao__projectResult {
     this.value4 = value4;
     this.value5 = value5;
     this.value6 = value6;
+    this.value7 = value7;
   }
 
   toMap(): TypedMap<string, ethereum.Value> {
@@ -542,6 +541,7 @@ export class ProjectDao__projectResult {
     map.set("value4", ethereum.Value.fromString(this.value4));
     map.set("value5", ethereum.Value.fromString(this.value5));
     map.set("value6", ethereum.Value.fromString(this.value6));
+    map.set("value7", ethereum.Value.fromUnsignedBigInt(this.value7));
     return map;
   }
 }
@@ -1166,7 +1166,7 @@ export class ProjectDao extends ethereum.SmartContract {
   project(): ProjectDao__projectResult {
     let result = super.call(
       "project",
-      "project():(string,string,string,address,string,string,string)",
+      "project():(string,string,string,address,string,string,string,uint256)",
       []
     );
 
@@ -1177,14 +1177,15 @@ export class ProjectDao extends ethereum.SmartContract {
       result[3].toAddress(),
       result[4].toString(),
       result[5].toString(),
-      result[6].toString()
+      result[6].toString(),
+      result[7].toBigInt()
     );
   }
 
   try_project(): ethereum.CallResult<ProjectDao__projectResult> {
     let result = super.tryCall(
       "project",
-      "project():(string,string,string,address,string,string,string)",
+      "project():(string,string,string,address,string,string,string,uint256)",
       []
     );
     if (result.reverted) {
@@ -1199,7 +1200,8 @@ export class ProjectDao extends ethereum.SmartContract {
         value[3].toAddress(),
         value[4].toString(),
         value[5].toString(),
-        value[6].toString()
+        value[6].toString(),
+        value[7].toBigInt()
       )
     );
   }

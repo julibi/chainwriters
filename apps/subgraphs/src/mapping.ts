@@ -29,7 +29,6 @@ export function handleDaoCreated(event: DaoCreated): void {
 
   let edition = new Edition(event.params.dao.toHexString() + '1') 
   edition.dao = dao.id
-  edition.totalSupply = BigInt.fromI32(0)
   edition.maxSupply = event.params.firstEditionAmount
   edition.mintPrice = event.params.initialMintPrice
   edition.save()
@@ -78,26 +77,28 @@ export function handleContributorAdded(event: ContributorAdded): void {
 }
 
 export function handleAuthorMinted(event: AuthorMinted): void {
-  let edition = Edition.load(event.address.toHexString() + event.params.edition.toHexString()) 
-  log.info("handleAuthorMinted", [event.address.toHexString(), event.params.edition.toHexString()])
+  let id = event.address.toHexString() + '1'
+  let edition = Edition.load(id) 
+  log.info("handleAuthorMinted", [event.address.toHexString()])
   if (!edition) return
   log.info("there is an edition! handleAuthorMing", [edition.id])
-  edition.premintedByAuthor = event.params.amount
-  edition.save()
+  // NOT WORKING
 }
 
 export function handleMinted(event: Minted): void {
   let edition = Edition.load(event.address.toHexString() + event.params.edition.toHexString())
   if (!edition) return
-  edition.totalSupply = edition.totalSupply.plus(event.params.amount)
-  edition.save()
+  // NOT WORKING
+  // edition.totalSupply = edition.totalSupply.plus(event.params.amount)
+  // edition.save()
 }
 
 export function handleExpirationSet(event: ExpirationSet): void {
   let edition = Edition.load(event.address.toHexString() + event.params.edition.toHexString())
   if (!edition) return
-  edition.expiresAt = event.params.expirationTime
-  edition.save()
+   // NOT WORKING
+  // edition.expiresAt = event.params.expirationTime
+  // edition.save()
 }
 
 export function handleNextEditionEnabled(event: NextEditionEnabled): void {
@@ -105,7 +106,6 @@ export function handleNextEditionEnabled(event: NextEditionEnabled): void {
   let dao = Dao.load(event.address.toHexString())
   if (!dao) return
   edition.dao = dao.id
-  edition.totalSupply = BigInt.fromI32(0)
   edition.maxSupply = event.params.maxSupply
   edition.mintPrice = event.params.mintPrice
   edition.save()
