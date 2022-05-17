@@ -495,6 +495,10 @@ const ProjectDetailView = () => {
     return <Key>{'Auction Has Not Started Yet'}</Key>;
   }, [daoData]);
 
+// Mint button should be disabled while loading
+// pending and success messages are weird
+// is price going down? - understand the rate...
+
   return (
     <Root>
       {!daoData && !successfullyLoaded && <Loading height={530} />}

@@ -187,9 +187,9 @@ export const useGetProjectDetails = () => {
           methodParameters: [],
         },
         {
-          // not working...
           reference: 'expiresAt',
-          methodName: 'expiresAt'
+          methodName: 'expiresAt',
+          methodParameters: [],
         },
         {
           reference: 'totalSupplyGenEd',
@@ -214,7 +214,7 @@ export const useGetProjectDetails = () => {
         }
       ],
     };
-    const result = await (await multicall.call(multicallContext)).results.PROJECT_DETAILS.callsReturnContext;
+    const result = (await multicall.call(multicallContext)).results.PROJECT_DETAILS.callsReturnContext;
     let premintedByAuthor = result.find(x => x.reference == 'project').returnValues[7];
     let currentEdition = result.find(x => x.reference == 'currentEdition').returnValues[0];
     currentEdition = convertToRegularNumber(currentEdition, true);
@@ -222,9 +222,8 @@ export const useGetProjectDetails = () => {
     let totalSupplyGenEd = result.find(x => x.reference == 'totalSupplyGenEd').returnValues[0];
     totalSupplyGenEd = convertToRegularNumber(totalSupplyGenEd, true);
     const expiresAt = parseInt(result.find(x => x.reference == 'expiresAt').returnValues[0].hex.toString(), 16)
-    const test = result;
-    console.log({ test });
     let mintPrice = result.find(x => x.reference == 'mintPrice').returnValues[0];
+    console.log(parseInt(mintPrice.hex, 16).toString());
     mintPrice = BigNumber.from((parseInt(mintPrice.hex, 16).toString()));
     const paused = result.find(x => x.reference === 'paused').returnValues[0];
     const factory = result.find(x => x.reference === 'factory').returnValues[0];
@@ -266,14 +265,7 @@ export const useGetProjectDetails = () => {
         maxSupply: Number(edition.maxSupply),
       };
     });
-    console.log({
-      author,
-      title,
-      auctionsStarted,
-      auctionsEnded,
-      expiresAt,
-      mintPrice
-    });
+
     return {  
       id,
       author,
