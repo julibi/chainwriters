@@ -582,9 +582,9 @@ const ProjectDetailView = () => {
                     <InfoBlock>
                       <Key>{'Starting Price'}</Key>
                       {daoData && (
-                        // @ts-ignore
                         <Val>{`${formatEther(
                           parseInt(
+                            // @ts-ignore
                             daoData.editions[0].mintPrice._hex,
                             16
                           ).toString()
