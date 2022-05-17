@@ -9,6 +9,8 @@ import { useGetProjectDetails } from '../../state/projects/hooks'
 import BaseModal from '../../components/BaseModal'
 import Countdown from '../../components/Countdown'
 import Loading from '../../components/Loading'
+import MintSection from '../../components/MintSection'
+import ToastLink from '../../components/ToastLink';
 import PieChart from '../../components/PieChart'
 import { SectionTitle } from '../../components/ProjectSection'
 import { truncateAddress } from '../../components/WalletIndicator'
@@ -23,7 +25,7 @@ import {
   BaseButton,
 } from '../../themes';
 import useProjectContract from '../../hooks/useProjectContract'
-import MintSection from '../../components/MintSection'
+
 import { ProjectData } from '../../state/projects/hooks'
 
 
@@ -187,7 +189,24 @@ export const StyledPrimaryButton = styled(PrimaryButton)`
   :disabled {
     background-color: ${DISABLED_WHITE};
     :hover {
-      cursor: auto;
+      pointer-events: none;
+    }
+  }
+
+  @media (max-width: 900px) {
+    width: 100%;
+  }
+`;
+
+const MintButton = styled(BaseButton)`
+  font-family: 'Roboto Mono Bold';
+  padding: 1rem;
+  width: 209px;
+  color: ${PINK};
+
+  :disabled {
+    :hover {
+      pointer-events: none;
     }
   }
 
@@ -318,16 +337,20 @@ const ModalText = styled.span`
   text-align: center;
 `;
 
-const TriggerButton = styled(BaseButton)`
+interface TriggerButtonTypes {
+  disabled: boolean;
+}
+
+const TriggerButton = styled(BaseButton)<TriggerButtonTypes>`
   background-color: ${BG_NORMAL};
-  color: ${PINK};
+  color: ${({ disabled }) => disabled ? DISABLED_WHITE : PINK};
   font-family: 'Roboto Mono Bold';
   padding: 1rem;
   width: 209px;
 
   :disabled {
     :hover {
-      cursor: auto;
+      pointer-events: none;
     }
   }
 
@@ -337,7 +360,7 @@ const TriggerButton = styled(BaseButton)`
 `;
 
 const ProjectDetailView = () => {
-  const { account } = useWeb3React();
+  const { account, chainId } = useWeb3React();
   const router = useRouter();
   let projectAddress = router.query.projectAddress;
   projectAddress = Array.isArray(projectAddress) ? projectAddress[0] : projectAddress;
@@ -355,7 +378,9 @@ const ProjectDetailView = () => {
   
   const callGetProjectDetails = useCallback(async(projectAddress: string) => {
     const ProjectData: ProjectData = await getProjectDetails(projectAddress);
+    console.log({ ProjectData });
     setDaoData(ProjectData);
+    setCoverImgLink(`https://ipfs.io/ipfs/${ProjectData.imgIpfsHash}`);
     setSuccessfullyLoaded(true);
   }, [getProjectDetails]);
   
@@ -390,23 +415,38 @@ const ProjectDetailView = () => {
   }, [projectAddress]);
 
   const mint = useCallback(async() => {
+      setMintPending(true);
       ProjectContract
       .buy({value: currentPrice})
       .then(mintTx => {
         const { hash } = mintTx;
-        setMintPending(true);
-        toast.info(`Pending: ${hash}`);
+        toast.info(
+          <ToastLink
+            hash={hash}
+            chainId={chainId}
+            message={'Mint pending...'}
+          />
+        );
         ProjectContract.provider.once(hash, (transaction) => {
-          toast.success(`Success: ${hash}`);
+          toast.success(
+            <ToastLink
+              hash={hash}
+              chainId={chainId}
+              message={'Successfyull Minted!'}
+            />
+          );
           setMintPending(false);
+          setShowBuyModal(false);
+          // @ts-ignore
+          callGetProjectDetails(projectAddress);
         });
       })
-      .catch(e => {
+      .catch((e: unknown) => {
         console.log({ e });
-        toast.error('Something went wrong.');
+        toast.error('Sorry, something went wrong...');
         setMintPending(false);
       });
-  }, [ProjectContract, currentPrice]);
+  }, [projectAddress, ProjectContract, chainId, currentPrice]);
 
   const fetchCurrentPrice = async() => {
     setLoading(true);
@@ -495,9 +535,9 @@ const ProjectDetailView = () => {
     return <Key>{'Auction Has Not Started Yet'}</Key>;
   }, [daoData]);
 
-// Mint button should be disabled while loading
-// pending and success messages are weird
-// is price going down? - understand the rate...
+  // show image
+  // is price going down? - understand the rate...
+  // ui flow of triggering
 
   return (
     <Root>
@@ -527,26 +567,31 @@ const ProjectDetailView = () => {
               </Author>
               <Genre>
                 <Key>{'Genre '}</Key>
-                <Val>{daoData.genre ?? 'Unknown'}</Val>
+                <Val>{daoData.subtitle ?? 'Unknown'}</Val>
               </Genre>
             </InfoLeft>
             <InfoRight>
-              {(daoData.currentEdition > 1) && <MintSection />}
-                {daoData.currentEdition === 1 &&
-                  <>                
+              {daoData.currentEdition > 1 && <MintSection />}
+              {daoData.currentEdition === 1 && (
+                <>
                   <AuctionTitle>AUCTION</AuctionTitle>
                   <FlexWrapper>
                     <InfoBlock style={{ marginInlineEnd: '2rem' }}>
-                     {showsAuctionText()}
+                      {showsAuctionText()}
                     </InfoBlock>
                     <InfoBlock>
                       <Key>{'Starting Price'}</Key>
                       {daoData && (
                         // @ts-ignore
-                        <Val>{`${formatEther(parseInt(daoData.editions[0].mintPrice._hex, 16).toString())} MATIC`}</Val>
+                        <Val>{`${formatEther(
+                          parseInt(
+                            daoData.editions[0].mintPrice._hex,
+                            16
+                          ).toString()
+                        )} MATIC`}</Val>
                       )}
                     </InfoBlock>
-                  </FlexWrapper> 
+                  </FlexWrapper>
                   <PieChartWrapper>
                     <PieChart
                       part={daoData.totalSupplyGenEd}
@@ -556,44 +601,50 @@ const ProjectDetailView = () => {
                   <FlexWrapper style={{ marginBlockEnd: '0' }}>
                     <InfoBlock style={{ marginInlineEnd: '2rem' }}>
                       <Key>{'Genesis Edition Total'}</Key>
-                        <Val
-                          style={{
-                            fontSize: '22px',
-                            fontFamily: 'Nunito Sans Bold',
-                          }}
-                        >
-                          {daoData.totalSupplyGenEd}
-                        </Val>
+                      <Val
+                        style={{
+                          fontSize: '22px',
+                          fontFamily: 'Nunito Sans Bold',
+                        }}
+                      >
+                        {daoData.totalSupplyGenEd}
+                      </Val>
                     </InfoBlock>
-                    {daoData.auctionsStarted && !daoData.auctionsEnded &&
-                    <>
-                      {
-                        (Math.floor(Date.now() / 1000) > daoData.expiresAt) ? (
+                    {daoData.auctionsStarted && !daoData.auctionsEnded && (
+                      <>
+                        {Math.floor(Date.now() / 1000) > daoData.expiresAt ? (
                           <StyledPrimaryButton
                             onClick={() => retriggerAuction()}
                             disabled={loading}
                           >
-                            {loading ? <Loading height={20} dotHeight={20} short /> : 'Retrigger Auction'}
+                            {loading ? (
+                              <Loading height={20} dotHeight={20} short />
+                            ) : (
+                              'Retrigger Auction'
+                            )}
                           </StyledPrimaryButton>
                         ) : (
                           <StyledPrimaryButton
                             onClick={() => fetchCurrentPrice()}
                             disabled={loading}
                           >
-                            {loading ? <Loading height={20} dotHeight={20} short /> : 'Get Current Price'}
+                            {loading ? (
+                              <Loading height={20} dotHeight={20} short />
+                            ) : (
+                              'Get Current Price'
+                            )}
                           </StyledPrimaryButton>
-                        )
-                      }
-                    </>
-                    }
-                    {(!daoData.auctionsStarted || daoData.auctionsEnded) &&
+                        )}
+                      </>
+                    )}
+                    {(!daoData.auctionsStarted || daoData.auctionsEnded) && (
                       <StyledPrimaryButton disabled>
                         Get Current Price
                       </StyledPrimaryButton>
-                    }
+                    )}
                   </FlexWrapper>
                 </>
-              }
+              )}
             </InfoRight>
           </MainInfoWrapper>
           <ShareSection>
@@ -607,13 +658,9 @@ const ProjectDetailView = () => {
               {daoData.contributions.map((cntrb, i) => (
                 <Share key={i}>
                   <ShareTitle>
-                    {cntrb.role.length
-                      ? cntrb.role
-                      : 'Unknown role'}
+                    {cntrb.role.length ? cntrb.role : 'Unknown role'}
                   </ShareTitle>
-                  <ShareAddress>
-                    {truncateAddress(cntrb.address)}
-                  </ShareAddress>
+                  <ShareAddress>{truncateAddress(cntrb.address)}</ShareAddress>
                   <SharePercentage>{`${cntrb.share} %`}</SharePercentage>
                 </Share>
               ))}
@@ -641,17 +688,27 @@ const ProjectDetailView = () => {
               dolor sit amet.
             </Description>
           </DescriptionSection>
-          {isAuthor && 
+          {isAuthor && (
             <AuthorSection>
-              <Title style={{ maxWidth: '300px' }}>Control Settings for Author</Title>
-              <TriggerButton
-                onClick={triggerFirstAuction}
-                disabled={daoData.auctionsStarted}
-              >
-               {triggerPending ? <Loading height={20} dotHeight={20} /> : 'Trigger Auctions'}
-              </TriggerButton>
+              <Title style={{ maxWidth: '300px' }}>
+                Control Settings for Author
+              </Title>
+              {daoData.auctionsStarted ? (
+                <TriggerButton disabled>{'Triggered Auctions'}</TriggerButton>
+              ) : (
+                <TriggerButton
+                  onClick={triggerFirstAuction}
+                  disabled={triggerPending}
+                >
+                  {triggerPending ? (
+                    <Loading height={20} dotHeight={20} />
+                  ) : (
+                    'Trigger Auctions'
+                  )}
+                </TriggerButton>
+              )}
             </AuthorSection>
-          }
+          )}
         </>
       )}
       {showBuyModal && (
@@ -664,7 +721,9 @@ const ProjectDetailView = () => {
               In a dutch auction the price keeps going down. Don't miss the
               chance and mint now, before someone else does.
             </ModalText>
-            <StyledPrimaryButton onClick={mint}>MINT</StyledPrimaryButton>
+            <MintButton disabled={mintPending} onClick={mint}>
+              {mintPending ? <Loading height={20} dotHeight={20} /> : 'MINT'}
+            </MintButton>
           </ContentWrapper>
         </BaseModal>
       )}

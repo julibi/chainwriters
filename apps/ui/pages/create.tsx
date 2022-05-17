@@ -338,7 +338,7 @@ const Create = () => {
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     .then(() => {})
     .catch((e) => {
-      console.log({e});
+      console.log({ e });
       toast.error('Something went wrong');
     });
 }, [createAuthorMint, daoContract, authorMintAmount, currentStep]);

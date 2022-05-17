@@ -217,13 +217,12 @@ export const useGetProjectDetails = () => {
     const result = (await multicall.call(multicallContext)).results.PROJECT_DETAILS.callsReturnContext;
     let premintedByAuthor = result.find(x => x.reference == 'project').returnValues[7];
     let currentEdition = result.find(x => x.reference == 'currentEdition').returnValues[0];
-    currentEdition = convertToRegularNumber(currentEdition, true);
-    premintedByAuthor = convertToRegularNumber(premintedByAuthor, true);
     let totalSupplyGenEd = result.find(x => x.reference == 'totalSupplyGenEd').returnValues[0];
-    totalSupplyGenEd = convertToRegularNumber(totalSupplyGenEd, true);
     const expiresAt = parseInt(result.find(x => x.reference == 'expiresAt').returnValues[0].hex.toString(), 16)
     let mintPrice = result.find(x => x.reference == 'mintPrice').returnValues[0];
-    console.log(parseInt(mintPrice.hex, 16).toString());
+    currentEdition = convertToRegularNumber(currentEdition, true);
+    premintedByAuthor = convertToRegularNumber(premintedByAuthor, true);
+    totalSupplyGenEd = convertToRegularNumber(totalSupplyGenEd, true);
     mintPrice = BigNumber.from((parseInt(mintPrice.hex, 16).toString()));
     const paused = result.find(x => x.reference === 'paused').returnValues[0];
     const factory = result.find(x => x.reference === 'factory').returnValues[0];
@@ -235,7 +234,7 @@ export const useGetProjectDetails = () => {
       query: GET_ONE_DAO,
       variables: { address: addressLow }
     });
-
+    console.log({dao})
     // subgraph call
     const {
       id,
