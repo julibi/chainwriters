@@ -2,7 +2,6 @@ import { useWeb3React } from '@web3-react/core'
 import { toast } from 'react-toastify'
 import { Contributor } from '../../../pages/create';
 
-
 export const useCreateSetConfiguration = () => {
   const { chainId } = useWeb3React();
   return async (

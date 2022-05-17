@@ -19,6 +19,7 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
     string textIpfsHash;
     string imgIpfsHash;
     string blurbIpfsHash;
+    uint256 premintedByAuthor;
   }
 
   struct AuthorShare {
@@ -35,7 +36,7 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
     uint256 shareInMatic;
   }
 
-  Project public project = Project("", "", "", address(0), "", "", "");
+  Project public project = Project("", "", "", address(0), "", "", "", 0);
   AuthorShare public author = AuthorShare(0, 0, 0, false);
   mapping(uint256 => Contribution) public contributors;
   uint8 public contributorIndex = 0;
@@ -49,14 +50,14 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
   // 15% always go to the DAO 
   uint256 public totalSharePercentage = 15;
 
-  // uint256 public AUCTION_DURATION = 1 days;
   uint256 public AUCTION_DURATION = 1 days;
   uint public discountRate;
   uint public startAt;
   uint public expiresAt;
   bool public auctionStarted = false;
   bool public auctionPhaseFinished = false;
-  // bool public paused = true;
+  string public name;
+
   event Configured(
     string imgHash,
     string blurbHash,
@@ -65,8 +66,12 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
   );
   event TextSet(string textHash);
   event ContributorAdded(address contributor, uint256 share, string role);
-  event AuctionsStarted(bool started);
-  event AuctionsEnded(bool ended);
+  event AuctionsStarted();
+  event AuctionsEnded();
+  event AuthorMinted(uint256 amount);
+  event Minted(uint256 edition, uint256 amount);
+  event ExpirationSet(uint256 edition, uint256 expirationTime);
+  event NextEditionEnabled(uint256 nextEdId, uint256 maxSupply, uint256 mintPrice);
   event Paused(bool paused);
 
   constructor(
@@ -87,6 +92,7 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
       INITIAL_MINT_PRICE = _initialMintPrice;
       currentEditionMax = _firstEditionMax;
       factory = _factory;
+      name = _title;
   }
 
   function showTimestamp() public view returns (uint) {
@@ -97,6 +103,7 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
     require(expiresAt > block.timestamp, "Triggering unnecessary. Auction running.");
     startAt = block.timestamp;
     expiresAt = block.timestamp + AUCTION_DURATION;
+    emit ExpirationSet(currentEdition, expiresAt);
   }
 
   function buy() external payable whenNotPaused {
@@ -114,11 +121,11 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
     // if (refund > 0) {
     //     payable(msg.sender).transfer(refund);
     // }
-
+    emit Minted(currentEdition,1);
     if(shouldFinalize) {
       auctionPhaseFinished = true;
       distributeShares();
-      emit AuctionsEnded(true);
+      emit AuctionsEnded();
     } else {
       triggerNextAuction();
     }
@@ -134,6 +141,7 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
     require((totalSupply(currentEdition) + _amount) <= currentEditionMax, "Amount exceeds cap.");
     require(msg.value >= currentEditionMintPrice * _amount, "Value sent not sufficient.");
     _mint(msg.sender, currentEdition, _amount, "");
+    emit Minted(currentEdition, _amount);
   }
 
   // ------------------
@@ -156,6 +164,7 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
   function triggerNextAuction() private {
     startAt = block.timestamp;
     expiresAt = block.timestamp + AUCTION_DURATION;
+    emit ExpirationSet(currentEdition, expiresAt);
   }
 
   function distributeShares() private {
@@ -256,6 +265,9 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
     _mint(msg.sender, 1, _amount, "");
     author.claimedAmount = _amount;
     author.hasClaimedGenesis = true;
+    // subgrph is not picking this up, hence storing this in contract
+    emit AuthorMinted(_amount);
+    project.premintedByAuthor = _amount;
   }
 
   function triggerFirstAuction(uint256 _discountRate) external onlyRole(AUTHOR_ROLE) whenNotPaused {
@@ -264,7 +276,8 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
     startAt = block.timestamp;
     expiresAt = block.timestamp + AUCTION_DURATION;
     auctionStarted = true;
-    emit AuctionsStarted(true);
+    emit AuctionsStarted();
+    emit ExpirationSet(currentEdition, expiresAt);
   }
 
   function enableNextEdition(uint256 _maxNftAmountOfNewEdition, uint256 _newEditionMintPrice) external onlyRole(AUTHOR_ROLE) whenNotPaused {
@@ -278,6 +291,7 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
     currentEdition = currentEdition + 1;
     currentEditionMax = _maxNftAmountOfNewEdition;
     currentEditionMintPrice = _newEditionMintPrice;
+    emit NextEditionEnabled(currentEdition + 1, _maxNftAmountOfNewEdition, _newEditionMintPrice);
   }
 
   // ------------------
@@ -286,9 +300,11 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
 
   function pause() external onlyRole(PAUSER_ROLE) {
     _pause();
+    emit Paused(true);
   }
 
   function unpause() external onlyRole(PAUSER_ROLE) {
+    emit Paused(false);
     _unpause();
   }
 

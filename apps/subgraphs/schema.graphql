@@ -3,7 +3,18 @@ type Contribution @entity {
   address: Bytes!
   share: BigInt!
   role: String
-  dao: Dao
+  dao: Dao!
+}
+
+type Edition @entity {
+  id: ID!
+  # totalSupply: BigInt! - not working
+  maxSupply: BigInt!
+  mintPrice: BigInt!
+  dao: Dao!
+  # only available for GenEd
+  # expiresAt: BigInt - not working
+  # premintedByAuthor: BigInt - not working
 }
 
 type Dao @entity {
@@ -13,14 +24,13 @@ type Dao @entity {
   createdAt: BigInt!
   title: String!
   textIpfsHash: String!
-  firstEditionMax: BigInt!
-  mintPrice: BigInt!
   imgIpfsHash: String
   blurbIpfsHash: String
   subtitle: String
   genre: String
-  auctionsStarted: Boolean
-  auctionsEnded: Boolean
-  paused: Boolean
+  editions: [Edition!] @derivedFrom(field: "dao")
+  auctionsStarted: Boolean!
+  auctionsEnded: Boolean!
+  paused: Boolean!
   contributions: [Contribution!] @derivedFrom(field: "dao")
 }
