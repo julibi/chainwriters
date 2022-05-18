@@ -3,7 +3,6 @@ import styled from 'styled-components'
 import Typewriter from '../components/Typewriter'
 import ProjectSection from '../components/ProjectSection'
 import { useDeviceDetect } from '../hooks/useDeviceDetect'
-import NeumorphicCheckbox from '../components/Create/NeumorphicCheckbox'
 
 const Root = styled.div``;
 
@@ -65,7 +64,6 @@ export function Index() {
         <TypedTextWrapper>
           <Typewriter typedText={'This is MOONLIT. On the left, imagine seeing a nice logo or animated illustration :)'} />
         </TypedTextWrapper>
-        <NeumorphicCheckbox />
       </HeaderSection>
       <ProjectSection />
     </Root>
