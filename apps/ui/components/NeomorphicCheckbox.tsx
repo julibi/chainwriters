@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import { BG_NORMAL } from '../../themes';
+import { BG_NORMAL } from '../themes';
 
 const Wrapper = styled.div`
   display: flex;
@@ -68,13 +68,14 @@ const Indicator = styled.div<IndicatorProps>`
     }
 `;
 
-interface NeumorphicCheckboxProps {
+interface NeomorphicCheckboxProps {
   readonly?: boolean;
   check: boolean;
   label?: string;
+  onChange?: () => void;
 }
 
-const NeumorphicCheckbox = ({ readonly, check, label }: NeumorphicCheckboxProps) => {
+const NeomorphicCheckbox = ({ readonly, check, label, onChange }: NeomorphicCheckboxProps) => {
   const [checked, setChecked] = useState<boolean>(check);
   return (
     <Wrapper>
@@ -92,4 +93,4 @@ const NeumorphicCheckbox = ({ readonly, check, label }: NeumorphicCheckboxProps)
   );
 }
 
-export default NeumorphicCheckbox
+export default NeomorphicCheckbox

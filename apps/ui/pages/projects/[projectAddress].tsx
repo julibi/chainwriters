@@ -8,12 +8,13 @@ import styled from 'styled-components'
 import { useGetProjectDetails } from '../../state/projects/hooks'
 import BaseModal from '../../components/BaseModal'
 import Countdown from '../../components/Countdown'
-import NeumorphicCheckbox from '../../components/Create/NeumorphicCheckbox';
+import NeomorphicCheckbox from '../../components/NeomorphicCheckbox';
 import Loading from '../../components/Loading'
 import MintSection from '../../components/MintSection'
 import ToastLink from '../../components/ToastLink';
 import PieChart from '../../components/PieChart'
 import { SectionTitle } from '../../components/ProjectSection'
+import ProgressBar from '../../components/ProgressBar';
 import { truncateAddress } from '../../components/WalletIndicator'
 import {
   BASE_BORDER_RADIUS,
@@ -756,7 +757,7 @@ const ProjectDetailView = () => {
               {daoData.auctionsStarted ? (
                 <ActionItem>
                   <DoneAction>{'Triggered Auctions'}</DoneAction>
-                  <NeumorphicCheckbox check readonly />
+                  <NeomorphicCheckbox check readonly />
                 </ActionItem>
               ) : (
                 <ActionItem>
@@ -770,7 +771,7 @@ const ProjectDetailView = () => {
                       'Trigger Auctions'
                     )}
                   </TriggerButton>
-                  <NeumorphicCheckbox check={daoData.auctionsStarted} readonly />
+                  <NeomorphicCheckbox check={daoData.auctionsStarted} readonly />
                 </ActionItem>
               )}
               {canTriggerNextEdition ? (
@@ -785,15 +786,19 @@ const ProjectDetailView = () => {
                      'Enable Next Edition'
                    )}
                  </TriggerButton>
-                 <NeumorphicCheckbox check={false} readonly />
+                 <NeomorphicCheckbox check={false} readonly />
                </ActionItem>
               ) : (
                 <ActionItem>
                   <DoneAction>{'Enable Next Edition'}</DoneAction>
-                  <NeumorphicCheckbox check readonly />
+                  <NeomorphicCheckbox check readonly />
                 </ActionItem>
               )}
               </ActionItems>
+              <ProgressBar
+                // completed={30}
+                bgColor={PINK}
+              />
             </AuthorSection>
           )}
         </>
