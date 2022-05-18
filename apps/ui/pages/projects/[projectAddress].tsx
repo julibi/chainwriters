@@ -8,6 +8,7 @@ import styled from 'styled-components'
 import { useGetProjectDetails } from '../../state/projects/hooks'
 import BaseModal from '../../components/BaseModal'
 import Countdown from '../../components/Countdown'
+import NeumorphicCheckbox from '../../components/Create/NeumorphicCheckbox';
 import Loading from '../../components/Loading'
 import MintSection from '../../components/MintSection'
 import ToastLink from '../../components/ToastLink';
@@ -23,6 +24,7 @@ import {
   PLAIN_WHITE,
   PrimaryButton,
   BaseButton,
+  INSET_BASE_BOX_SHADOW
 } from '../../themes';
 import useProjectContract from '../../hooks/useProjectContract'
 
@@ -346,7 +348,7 @@ const TriggerButton = styled(BaseButton)<TriggerButtonTypes>`
   color: ${({ disabled }) => disabled ? DISABLED_WHITE : PINK};
   font-family: 'Roboto Mono Bold';
   padding: 1rem;
-  width: 209px;
+  width: 230px;
 
   :disabled {
     :hover {
@@ -358,13 +360,44 @@ const TriggerButton = styled(BaseButton)<TriggerButtonTypes>`
     width: 100%;
   }
 `;
+const ActionItems = styled.div`
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+`;
+
+const ActionItem = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 300px;
+  margin-block-end: 1rem;
+`;
+
+const DoneAction = styled.div`
+  background-color: ${BG_NORMAL};
+  color: ${DISABLED_WHITE};
+  border-radius: ${BASE_BORDER_RADIUS};
+  // could change to this kinda style
+  // box-shadow:
+  //   inset -4px -2px 4px 0px rgba(125,125,125,0.1),
+  //   inset 4px 2px 8px 0px rgba(0,0,0,0.7);
+  box-shadow: ${INSET_BASE_BOX_SHADOW};
+  font-family: 'Roboto Mono Bold';
+  padding: 1rem;
+  width: 230px;
+
+  @media (max-width: 900px) {
+    width: 100%;
+  }
+`
 
 const ProjectDetailView = () => {
   const { account, chainId } = useWeb3React();
   const router = useRouter();
   let projectAddress = router.query.projectAddress;
   projectAddress = Array.isArray(projectAddress) ? projectAddress[0] : projectAddress;
-  const getProjectDetails = useGetProjectDetails();
+  const getProjectDetails = useGetProjectDetails(projectAddress as string);
   const ProjectContract = useProjectContract(projectAddress as string);
   const [daoData, setDaoData] = useState<ProjectData | null>(null);
   const [coverImgLink, setCoverImgLink] = useState<string>(null);
@@ -375,22 +408,15 @@ const ProjectDetailView = () => {
   const [mintPending, setMintPending] = useState<boolean>(false);
   const [currentPrice, setCurrentPrice] = useState(null);
   const [triggerPending, setTriggerPending] = useState(false);
+  const [nextEditionPending, setNextEditionPending] = useState(false);
+  const [showNextEditionModal, setShowNextEditionModal] = useState(false);
   
   const callGetProjectDetails = useCallback(async(projectAddress: string) => {
     const ProjectData: ProjectData = await getProjectDetails(projectAddress);
-    console.log({ ProjectData });
     setDaoData(ProjectData);
     setCoverImgLink(`https://ipfs.io/ipfs/${ProjectData.imgIpfsHash}`);
     setSuccessfullyLoaded(true);
   }, [getProjectDetails]);
-  
-  // if current Edition is not Genesis, we fetch the total Supply by ID
-  const totalSupplyOfCurrentEdition = useMemo(async() => {
-    if (daoData && daoData.currentEdition > 1) { 
-      const totalSupply = await ProjectContract.totalSupply(daoData.currentEdition);     
-      return totalSupply;
-    }
-  }, [daoData, ProjectContract]);
 
   const isAuthor = useMemo(() => {
     if (daoData && account.toLowerCase() === daoData.author.toLowerCase()) {
@@ -400,11 +426,23 @@ const ProjectDetailView = () => {
   }, [daoData, account]);
 
   const authorShare = useMemo(() => {
+    let result = 85;
     if (daoData && daoData.contributions.length > 0) {      
       const contributorsShareTotal = daoData.contributions.reduce((partialSum, a) => partialSum + a.share, 0);
-      const result = 85 - contributorsShareTotal;
-      return result;
+      result = result - contributorsShareTotal;
     }
+    return result;
+  }, [daoData]);
+
+  const canTriggerNextEdition = useMemo(() => {
+    let canTrigger = false;
+    if (
+      daoData &&
+      daoData.currenEditionMaxSupply === daoData.currentEditionTotalSupply
+    ) {
+      canTrigger = true;
+    }
+    return canTrigger;
   }, [daoData]);
 
   useEffect(() => {
@@ -446,7 +484,7 @@ const ProjectDetailView = () => {
         toast.error('Sorry, something went wrong...');
         setMintPending(false);
       });
-  }, [projectAddress, ProjectContract, chainId, currentPrice]);
+  }, [projectAddress, ProjectContract, callGetProjectDetails, chainId, currentPrice]);
 
   const fetchCurrentPrice = async() => {
     setLoading(true);
@@ -506,6 +544,27 @@ const ProjectDetailView = () => {
     projectAddress,
   ]);
 
+  const enableNextEdition = useCallback(async()=> {
+    try {
+      setNextEditionPending(true);
+      // TODO: make it dynamic
+      const Tx = await ProjectContract.enableNextEdition(10, 500000000000000000);
+      const { hash } = Tx;
+      ProjectContract.provider.once(hash, (transaction) => {
+        // refetch
+        // @ts-ignore
+        callGetProjectDetails(projectAddress);
+        setNextEditionPending(false);
+        toast.success('Next Edition unlocked!');
+      });
+    } catch (e: unknown) {
+      // @ts-ignore
+      toast.error(e.reason ?? 'Something went wrong.');
+      console.log({ e });
+      setNextEditionPending(false);
+    }
+  }, []);
+
   const showsAuctionText = useCallback(() => {
     if (!daoData) return;
     const { auctionsStarted, auctionsEnded, expiresAt } = daoData;
@@ -538,7 +597,7 @@ const ProjectDetailView = () => {
   // show image
   // is price going down? - understand the rate...
   // ui flow of triggering
-
+  console.log(daoData)
   return (
     <Root>
       {!daoData && !successfullyLoaded && <Loading height={530} />}
@@ -567,7 +626,7 @@ const ProjectDetailView = () => {
               </Author>
               <Genre>
                 <Key>{'Genre '}</Key>
-                <Val>{daoData.subtitle ?? 'Unknown'}</Val>
+                <Val>{daoData.genre ?? 'Unknown'}</Val>
               </Genre>
             </InfoLeft>
             <InfoRight>
@@ -600,7 +659,7 @@ const ProjectDetailView = () => {
                   </PieChartWrapper>
                   <FlexWrapper style={{ marginBlockEnd: '0' }}>
                     <InfoBlock style={{ marginInlineEnd: '2rem' }}>
-                      <Key>{'Genesis Edition Total'}</Key>
+                      <Key>{'Minted'}</Key>
                       <Val
                         style={{
                           fontSize: '22px',
@@ -693,20 +752,48 @@ const ProjectDetailView = () => {
               <Title style={{ maxWidth: '300px' }}>
                 Control Settings for Author
               </Title>
+              <ActionItems>
               {daoData.auctionsStarted ? (
-                <TriggerButton disabled>{'Triggered Auctions'}</TriggerButton>
+                <ActionItem>
+                  <DoneAction>{'Triggered Auctions'}</DoneAction>
+                  <NeumorphicCheckbox check readonly />
+                </ActionItem>
               ) : (
-                <TriggerButton
-                  onClick={triggerFirstAuction}
-                  disabled={triggerPending}
-                >
-                  {triggerPending ? (
-                    <Loading height={20} dotHeight={20} />
-                  ) : (
-                    'Trigger Auctions'
-                  )}
-                </TriggerButton>
+                <ActionItem>
+                  <TriggerButton
+                    onClick={triggerFirstAuction}
+                    disabled={triggerPending}
+                  >
+                    {triggerPending ? (
+                      <Loading height={20} dotHeight={20} />
+                    ) : (
+                      'Trigger Auctions'
+                    )}
+                  </TriggerButton>
+                  <NeumorphicCheckbox check={daoData.auctionsStarted} readonly />
+                </ActionItem>
               )}
+              {canTriggerNextEdition ? (
+                <ActionItem>
+                 <TriggerButton
+                   onClick={() => setShowNextEditionModal(true)}
+                   disabled={nextEditionPending}
+                 >
+                   {nextEditionPending ? (
+                     <Loading height={20} dotHeight={20} />
+                   ) : (
+                     'Enable Next Edition'
+                   )}
+                 </TriggerButton>
+                 <NeumorphicCheckbox check={false} readonly />
+               </ActionItem>
+              ) : (
+                <ActionItem>
+                  <DoneAction>{'Enable Next Edition'}</DoneAction>
+                  <NeumorphicCheckbox check readonly />
+                </ActionItem>
+              )}
+              </ActionItems>
             </AuthorSection>
           )}
         </>
@@ -724,6 +811,17 @@ const ProjectDetailView = () => {
             <MintButton disabled={mintPending} onClick={mint}>
               {mintPending ? <Loading height={20} dotHeight={20} /> : 'MINT'}
             </MintButton>
+          </ContentWrapper>
+        </BaseModal>
+      )}
+      {showNextEditionModal && (
+        <BaseModal onClose={() => setShowNextEditionModal(false)}>
+          <ContentWrapper>
+            <ModalHeader>{'Trigger Next Edition'}</ModalHeader>
+            <ModalText>
+              Specify the max amount and price per mint.
+            </ModalText>
+            Two inputs and CTA with loading here
           </ContentWrapper>
         </BaseModal>
       )}

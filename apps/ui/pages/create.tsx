@@ -305,8 +305,8 @@ const Create = () => {
         daoContract,
         coverImgIPFS,
         blurbIPFS,
-        subtitle,
         genre,
+        subtitle,
         setLoading,
         PendingToast,
         (x, y, z) => {

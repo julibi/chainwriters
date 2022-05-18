@@ -120,8 +120,8 @@ const ContributorsForm = ({
       for (let i = 0; i < contributorList.length; i++) {
         initShareSelf = initShareSelf - contributorList[i].share;
       }
-      return initShareSelf;
     }
+    return initShareSelf;
   }, [contributorList]);
   const renderForm = (idx: number) => {
     return (

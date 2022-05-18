@@ -5,6 +5,7 @@ import client from '../../apolloclient'
 import { JsonRpcProvider } from '@ethersproject/providers'
 import { RPC_URLS } from '../../connectors'
 import PROJECT_ABI from '../../abis/project.json'
+import useProjectContract from '../../hooks/useProjectContract'
 
 
 interface Contribution {
@@ -38,8 +39,11 @@ export interface ProjectData {
   auctionsEnded: boolean;
   contributions: Contribution[] | null;
   editions: Edition[];
+  // coming from Contract directly
+  currenEditionMaxSupply: number;
   // coming from multicall
   currentEdition: number;
+  currentEditionTotalSupply: number;
   premintedByAuthor: number;
   totalSupplyGenEd: number;
   expiresAt: number;
@@ -163,7 +167,8 @@ const convertToRegularBigInt = (bigInt) => {
   }
 };
 
-export const useGetProjectDetails = () => {  
+export const useGetProjectDetails = (projectAddress: string) => { 
+  const ProjectContract = useProjectContract(projectAddress); 
   return async(address: string): Promise<ProjectData> => {
     if (!address) {
       return null;
@@ -234,7 +239,7 @@ export const useGetProjectDetails = () => {
       query: GET_ONE_DAO,
       variables: { address: addressLow }
     });
-    console.log({dao})
+
     // subgraph call
     const {
       id,
@@ -264,6 +269,10 @@ export const useGetProjectDetails = () => {
         maxSupply: Number(edition.maxSupply),
       };
     });
+  
+    const currenEditionMaxSupply = Number(editions[editions.length - 1].maxSupply);
+    const currentEdTotalSupplyBig = await ProjectContract.totalSupply(currentEdition);
+    const currentEditionTotalSupply = parseInt(currentEdTotalSupplyBig._hex, 16);
 
     return {  
       id,
@@ -276,6 +285,8 @@ export const useGetProjectDetails = () => {
       imgIpfsHash,
       blurbIpfsHash,
       currentEdition,
+      currentEditionTotalSupply,
+      currenEditionMaxSupply,
       auctionsStarted,
       auctionsEnded,
       contributions: contributionsFormatted,
