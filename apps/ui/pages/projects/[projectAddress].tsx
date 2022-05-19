@@ -14,7 +14,6 @@ import MintSection from '../../components/MintSection'
 import ToastLink from '../../components/ToastLink';
 import PieChart from '../../components/PieChart'
 import { SectionTitle } from '../../components/ProjectSection'
-import ProgressBar from '../../components/ProgressBar';
 import { truncateAddress } from '../../components/WalletIndicator'
 import {
   BASE_BORDER_RADIUS,
@@ -795,10 +794,6 @@ const ProjectDetailView = () => {
                 </ActionItem>
               )}
               </ActionItems>
-              <ProgressBar
-                // completed={30}
-                bgColor={PINK}
-              />
             </AuthorSection>
           )}
         </>

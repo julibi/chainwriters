@@ -1,7 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import styled from 'styled-components';
-import { BG_NORMAL, INSET_BASE_BOX_SHADOW, PINK, PLAIN_WHITE } from '../themes';
+import { BG_NORMAL, PINK } from '../themes';
   
+interface ProgressBarProps {
+  completed: number;
+}
+
 const Root = styled.div`
   height: 40px;
   width: 100%;
@@ -12,46 +16,42 @@ const Root = styled.div`
   border-radius: 50px;
   display: flex;
   align-items: center;
-  margin: 50px;
   padding-inline: .5rem;
   position: relative;
 `;
 
-interface ProgressProps {
-  completed: number;
-  bgColor: string;
-}
-
-const Progress = styled.div<ProgressProps>`
-  height: 70%;
+const Progress = styled.div<ProgressBarProps>`
+  height: 75%;
   width: ${({completed}) => completed}%;
-  background-color: ${({bgColor}) => bgColor};
+  background-color: ${PINK};
   transition: width 1s ease-in-out;
   border-radius: inherit;
   text-align: right;
   display: flex;
   justify-content: center;
-  
+
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
-const Label = styled.span`
-  display: inline-block;
-  color: ${PLAIN_WHITE};
-  fontWeight: bold;
+const ProgressTopLayer = styled.div`
+  height: 88%;
+  width: 98%;
+  background-color: #f51651;
+  margin: 0 auto;
+  border-radius: inherit;
+  box-shadow:
+    -4px -2px 4px 0px rgb(125 125 125 / 10%),
+    4px 2px 8px 0px rgb(0 0 0 / 30%);
 `;
-interface ProgressBarProps {
-  bgColor: string;
-  completed?: number;
-}
-const ProgressBar = ({ bgColor }:ProgressBarProps) => {
-  const [completed, setCompleted] = useState(30);
-  useEffect(() => {
-    setInterval(() => setCompleted(Math.floor(Math.random() * 100) + 1), 2000);
-  }, []);
+
+const ProgressBar = ({ completed }:ProgressBarProps) => {
   return (
     <Root>
-      <Progress bgColor={bgColor} completed={completed}>
-        <Label>{`${completed}%`}</Label>
+      <Progress completed={completed}>
+        <ProgressTopLayer />
       </Progress>
     </Root>
   )

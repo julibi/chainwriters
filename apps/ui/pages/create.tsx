@@ -4,7 +4,7 @@ import { create } from 'ipfs-http-client'
 import { toast } from 'react-toastify'
 import { parseEther } from 'ethers/lib/utils'
 import { useWeb3React } from '@web3-react/core'
-import CreateProgressBar from '../components/CreateProgressBar'
+import ProgressBar from '../components/ProgressBar'
 import useFactoryContract from '../hooks/useFactoryContract'
 import {
   BaseButton,
@@ -48,11 +48,17 @@ const Root = styled.div`
 `;
 
 const ProgressBarWrapper = styled.div`
-  width: 90%;
-  max-width:1200px;
   display: flex;
   justify-content: center;
-  margin-block-end: 2rem;
+  width: 90%;
+  max-width: 1200px;
+  padding: 0 3rem;
+  margin-block-end: 3rem;
+
+  @media (max-width: 900px) {
+    padding: 0 1rem;
+    margin-block-end: 2rem;
+  }
 `;
 
 const FormWrapper = styled.div`
@@ -366,19 +372,10 @@ const Create = () => {
   return (
     <Root>
       <ProgressBarWrapper>
-        <CreateProgressBar currentStep={currentStep} />
+        <ProgressBar completed={currentStep ? (currentStep/12 * 100) : 0}/>
       </ProgressBarWrapper>
       <FormWrapper>
         <Form>
-          {/* {currentStep === 0 && !creatingDao &&
-            <CoverImageForm
-              captureFile={captureFile}
-              imgFile={imgFile}
-              imgBuffer={imgBuffer}
-              onNextStep={() => setCurrentStep(currentStep + 1)}
-              onSubmit={submitImage}
-            />
-          } */}
           {currentStep === 0 && !creatingDao && (
             <NameForm
               onChange={(e: ChangeEvent<HTMLInputElement>) =>
