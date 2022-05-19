@@ -8,7 +8,7 @@ import styled from 'styled-components'
 import { useGetProjectDetails } from '../../state/projects/hooks'
 import BaseModal from '../../components/BaseModal'
 import Countdown from '../../components/Countdown'
-import NeomorphicCheckbox from '../../components/NeomorphicCheckbox';
+import NeomorphicCheckbox from '../../components/Checkbox';
 import Loading from '../../components/Loading'
 import MintSection from '../../components/MintSection'
 import ToastLink from '../../components/ToastLink';

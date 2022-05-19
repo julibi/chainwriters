@@ -1,100 +1,110 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import { BaseButton, BASE_BORDER_RADIUS, BASE_BOX_SHADOW, BG_NORMAL, INSET_BASE_BOX_SHADOW, PINK, PLAIN_WHITE } from '../themes';
+import { BG_NORMAL } from '../themes';
 
-interface RootProps {
-  agreed?: boolean;
-  description?: string;
-  onClick: () => void;
-}
+const Wrapper = styled.div`
+  display: flex;
+  margin: 1rem;
+`;
 
-interface InputProps {
-  type: string;
-  checked: boolean;
+const RadioInput = styled.input`
+  position: absolute;
+  top: 0;
+  right: 0;
+  opacity: 1e-5;
+  pointer-events: none;
+`;
+
+interface LabelProps {
   readonly: boolean;
 }
 
-interface CheckBoxProps extends RootProps{
+const Label = styled.label<LabelProps>`
+  display: inline-flex;
+  align-items: center;
+  cursor: ${({ readonly }) => readonly ? 'default' : 'pointer'};
+`;
+
+interface IndicatorProps {
   checked: boolean;
 }
 
-const Root = styled.div`
-  margin-block-end: 2rem;
-`;
+const Indicator = styled.div<IndicatorProps>`
+    position: relative;
+    border-radius: 50%;
+    height: 40px;
+    width: 40px;
+    box-shadow:
+      -4px -2px 4px 0px rgba(125,125,125,0.1),
+      4px 2px 8px 0px rgba(0,0,0,0.7);
+    overflow: hidden;
 
-const StyledLabel = styled.div`
-  display: flex;
-`;
+    ::before,
+    ::after {
+      content: '';
+      position: absolute;
+      top: 9%;
+      left: 10%;
+      height: 80%;
+      width: 80%;
+      border-radius: 50%;
+    }
 
-const StyledInput = styled.input.attrs({ type: 'checkbox' })<InputProps>`
-  // Hide checkbox visually but remain accessible to screen readers.
-  // Source: https://polished.js.org/docs/#hidevisually
-  border: 0;
-  clip: rect(0 0 0 0);
-  clippath: inset(50%);
-  height: 1px;
-  margin: -1px;
-  overflow: hidden;
-  padding: 0;
-  position: absolute;
-  white-space: nowrap;
-  width: 1px;
-`;
+    ::after {
+      // with next line and the same in before or without? unsure
+      display: ${({ checked }) => checked ? 'block' : 'none' };
+      background-color: ${BG_NORMAL};
+      box-shadow:
+        -4px -2px 4px 0px rgba(125,125,125,0.1),
+        4px 2px 8px 0px rgba(0,0,0,0.7);
+      transform: ${({ checked }) => checked ?  'scale3d(1, 1, 1)' : 'scale3d(.975, .975, 1) translate3d(0, 5%, 0)' };
+      transition: opacity .25s ease-in-out, transform .25s ease-in-out;
+      opacity:  ${({ checked }) => checked ? '0' : '1' };
+    }
 
-const CheckBox = styled(BaseButton)<CheckBoxProps>`
-  height: 30px;
-  width: 30px;
-  background-color: ${p => p.checked ? PLAIN_WHITE :BG_NORMAL};
-  box-shadow: ${p => p.checked ? INSET_BASE_BOX_SHADOW : BASE_BOX_SHADOW};
-  padding: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  :hover {
-    cursor: pointer;
-  }
-`;
-
-const InnerCircleBox = styled.div`
-  border-radius: 3px;
-  height: 10px;
-  width: 10px;
-  background-color: ${BG_NORMAL};
+    ::before {
+      display: ${({ checked }) => checked ? 'block' : 'none' };
+      box-shadow:
+        -4px -2px 4px 0px rgba(0,0,0,0.7),
+        4px 2px 8px 0px rgba(125,125,125,0.1);
+    }
 `;
 
 const BlockSpan = styled.span`
   display: inline-block;
-  margin-inline-start: 1rem;
+  margin-inline-start: 1.5rem;
 `;
 
-const Checkbox = ({ agreed, description, onClick }: RootProps) => {
-  const [checked, setChecked] = useState(agreed);
+interface CheckboxProps {
+  readonly?: boolean;
+  check: boolean;
+  label?: string;
+  onChange?: () => void;
+}
 
+const Checkbox = ({ readonly, check, label, onChange }: CheckboxProps) => {
+  const [checked, setChecked] = useState<boolean>(check);
   const toggleChecked = () => {
     setChecked(!checked);
   };
-  // TODO: where is the checkbox?
   return (
-    <Root>
-      <StyledLabel>
-        <StyledInput
-          type='checkbox'
-          checked={checked}
-          readonly
-        />   
-        <CheckBox
-          onClick={() => {
+    <Wrapper>
+      <Label readonly={readonly}>
+        <RadioInput
+          disabled={readonly}
+          type="checkbox"
+          onChange={() => {
+            !readonly && 
             toggleChecked();
-            onClick();
+            onChange();
           }}
           checked={checked}
-          type='button'
-        >{checked && <InnerCircleBox />}</CheckBox>
-        <BlockSpan>{description}</BlockSpan>
-      </StyledLabel>
-    </Root>
+        />
+        <Indicator checked={checked} />
+        {label && <BlockSpan>{label}</BlockSpan>}
+      </Label>
+    </Wrapper>
   );
-};
+}
 
-export default Checkbox;
+export default Checkbox

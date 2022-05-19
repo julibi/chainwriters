@@ -1,4 +1,5 @@
 import React from 'react'
+import styled from 'styled-components'
 import {
   FadeIn,
   SubmitButton,
@@ -17,6 +18,10 @@ interface ReviewFormProps {
   text: string;
   title: string;
 }
+
+const CheckboxWrapper = styled.div`
+  margin: 0 0 2.5rem -1rem;
+`;
 
 const ReviewForm = ({
   agreed,
@@ -46,12 +51,14 @@ const ReviewForm = ({
           <BlockSpan>Dutch Auction Starting Price (MATIC)</BlockSpan>
           <ReviewItem>{firstEdMintPrice}</ReviewItem>
         </ReviewItemWrapper>
-        <Checkbox
-          // TODO: contract - should be able to freeze a contract or destruct
-          description="I am aware that any form of plagiarism or hateful content can be banned from the platfom at any time. Other lawyer gibberish."
-          onClick={onCheck}
-          agreed={agreed}
-        />
+        <CheckboxWrapper>
+          <Checkbox
+            // TODO: contract - should be able to freeze a contract or destruct
+            label="I am aware that any form of plagiarism or hateful content can be banned from the platfom at any time. Other lawyer gibberish."
+            onChange={onCheck}
+            check={agreed}
+          />
+        </CheckboxWrapper>
         <SubmitButton
           disabled={!agreed}
           style={{ marginBlockEnd: '0', minWidth: '182px' }}
