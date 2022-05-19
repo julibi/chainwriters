@@ -24,6 +24,16 @@ const Root = styled.div`
 
 const ImageWrapper = styled.div`
   flex: 1;
+
+  span {
+    width: 100% !important;
+    height: 100% !important;
+
+    img {
+      object-fit: contain !important;
+      
+    }
+  }
 `;
 
 const InfoWrapper = styled.div`
@@ -36,6 +46,7 @@ const InfoWrapper = styled.div`
 
 const Title = styled.h4`
   color: ${PINK};
+  margin-block-end: 0;
 `;
 
 const Flex = styled.div`
@@ -49,42 +60,65 @@ const Label = styled.span`
 `;
 
 interface ProjectItemTypes {
-  title: string;
+  id: string;
+  address: string;
   author: string;
-  address?: string;
-  mintPrice: string;
-  fundedAmount: number | string;
+  title: string;
+  imgIpfsHash: string;
+  subtitle: string;
+  genre: string;
+  // get the price
 }
 
-const ProjectItem = ({title, author, address, mintPrice, fundedAmount}: ProjectItemTypes) => {
+const ProjectItem = ({
+  id,
+  address,
+  author,
+  title,
+  imgIpfsHash,
+  subtitle,
+  genre,
+}: ProjectItemTypes) => {
   const router = useRouter();
   const handleClick = (e) => {
     e.preventDefault()
     router.push(`projects/${address}`)
   }
-
+  
   return (
     <Root onClick={handleClick}>
       <ImageWrapper>
-        <Image src={'/Livi.png'} height={'100%'} width={'100%'} alt={'Project Image'}/>
+        <Image
+          src={
+            imgIpfsHash
+              ? `https://ipfs.io/ipfs/${imgIpfsHash}`
+              : '/ImgPlaceholder.png'
+          }
+          height={'100%'}
+          width={'100%'}
+          alt={'Project Image'}
+        />
       </ImageWrapper>
       <InfoWrapper>
         <Title>{title}</Title>
+        {subtitle &&
+          <Flex>
+            <Label style={{color: PINK}}>{subtitle}</Label>
+          </Flex>
+        }
+        {genre &&
+          <Flex>
+            <Label>Genre</Label>
+            <div>{genre}</div>
+          </Flex>
+        }
         <Flex>
           <Label>Author</Label>
           <div>{truncateAddress(author)}</div>
         </Flex>
-        <Flex>
-          <Label>Funded Amount</Label>
-          <div>{mintPrice}</div>
-        </Flex>
-        <Flex>
-          <Label>Mint Price</Label>
-          <div>{fundedAmount}</div>
-        </Flex>
       </InfoWrapper>
     </Root>
-  )
+  );
 }
 
 export { ProjectItem };

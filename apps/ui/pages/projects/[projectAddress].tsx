@@ -161,7 +161,7 @@ const InfoBlock = styled.div`
   width: 40%;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   padding: 2rem;
   border-radius: ${BASE_BORDER_RADIUS};
@@ -335,7 +335,7 @@ const ModalHeader = styled.h2`
 
 const ModalText = styled.span`
   display: inline-block;
-  margin-block: 1rem;
+  margin-block: 1rem 2rem;
   text-align: center;
 `;
 
@@ -378,12 +378,10 @@ const DoneAction = styled.div`
   background-color: ${BG_NORMAL};
   color: ${DISABLED_WHITE};
   border-radius: ${BASE_BORDER_RADIUS};
-  // could change to this kinda style
-  // box-shadow:
-  //   inset -4px -2px 4px 0px rgba(125,125,125,0.1),
-  //   inset 4px 2px 8px 0px rgba(0,0,0,0.7);
   box-shadow: ${INSET_BASE_BOX_SHADOW};
   font-family: 'Roboto Mono Bold';
+  font-size: 13px;
+  text-align: center;
   padding: 1rem;
   width: 230px;
 
@@ -566,13 +564,15 @@ const ProjectDetailView = () => {
   }, []);
 
   const showsAuctionText = useCallback(() => {
+    const now = Math.round((new Date()).getTime() / 1000);
+  
     if (!daoData) return;
     const { auctionsStarted, auctionsEnded, expiresAt } = daoData;
     if (auctionsEnded) {
       return <Key>{'Auctions finished'}</Key>
     }
     if (auctionsStarted) {
-      if (expiresAt > 0) {
+      if (expiresAt > now) {
         return (
           <>
               <Key>{'Auction ends in'}</Key>
@@ -589,7 +589,10 @@ const ProjectDetailView = () => {
               </Val>
             </>
         );
+      } else {
+        return <Key>{'Auction expired'}</Key>
       }
+
     }
     return <Key>{'Auction Has Not Started Yet'}</Key>;
   }, [daoData]);
@@ -635,7 +638,7 @@ const ProjectDetailView = () => {
                 <>
                   <AuctionTitle>AUCTION</AuctionTitle>
                   <FlexWrapper>
-                    <InfoBlock style={{ marginInlineEnd: '2rem' }}>
+                    <InfoBlock>
                       {showsAuctionText()}
                     </InfoBlock>
                     <InfoBlock>
@@ -658,7 +661,7 @@ const ProjectDetailView = () => {
                     />
                   </PieChartWrapper>
                   <FlexWrapper style={{ marginBlockEnd: '0' }}>
-                    <InfoBlock style={{ marginInlineEnd: '2rem' }}>
+                    <InfoBlock>
                       <Key>{'Minted'}</Key>
                       <Val
                         style={{
@@ -733,18 +736,9 @@ const ProjectDetailView = () => {
             {/* <PieChart part={Number(30)} whole={Number(90)} /> */}
           </ShareSection>
           <DescriptionSection>
-            <Title style={{ maxWidth: '200px' }}>Description</Title>
+            <Title style={{ maxWidth: '200px' }}>Blurb</Title>
             <Description>
-              Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
-              nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam
-              erat, sed diam voluptua. At vero eos et accusam et justo duo
-              dolores et ea rebum. Stet clita kasd gubergren, no sea takimata
-              sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit
-              amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
-              invidunt ut labore et dolore magna aliquyam erat, sed diam
-              voluptua. At vero eos et accusam et justo duo dolores et ea rebum.
-              Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum
-              dolor sit amet.
+              {daoData.blurbIpfsHash ? daoData.blurbIpfsHash : 'Lorem ipsum'}
             </Description>
           </DescriptionSection>
           {isAuthor && (

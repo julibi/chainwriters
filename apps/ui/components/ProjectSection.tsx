@@ -40,14 +40,16 @@ const ProjectSection = () => {
       </SectionTitleWrapper>
       {loading && !data && <Loading height={530} />}
       <ProjectList>
-        {data?.daos.map(({ title, author, address }, idx) => (
+        {data?.daos.map(({ id, title, author, address, imgIpfsHash, subtitle, genre }, idx) => (
           <ProjectItem
             key={idx}
+            id={id}
             address={address}
             title={title}
             author={author}
-            mintPrice={'25'}
-            fundedAmount={15}
+            imgIpfsHash={imgIpfsHash}
+            subtitle={subtitle}
+            genre={genre}
           />
         ))}
       </ProjectList>

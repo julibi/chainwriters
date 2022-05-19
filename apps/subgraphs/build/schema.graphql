@@ -24,15 +24,13 @@ type Dao @entity {
   createdAt: BigInt!
   title: String!
   textIpfsHash: String!
-  # firstEditionMax: BigInt!
-  # mintPrice: BigInt!
   imgIpfsHash: String
   blurbIpfsHash: String
   subtitle: String
   genre: String
   editions: [Edition!] @derivedFrom(field: "dao")
-  auctionsStarted: Boolean
-  auctionsEnded: Boolean
-  paused: Boolean
+  auctionsStarted: Boolean!
+  auctionsEnded: Boolean!
+  paused: Boolean!
   contributions: [Contribution!] @derivedFrom(field: "dao")
 }

@@ -100,7 +100,7 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
   }
 
   function retriggerAuction() external {
-    require(expiresAt > block.timestamp, "Triggering unnecessary. Auction running.");
+    require(expiresAt < block.timestamp, "Triggering unnecessary. Auction running.");
     startAt = block.timestamp;
     expiresAt = block.timestamp + AUCTION_DURATION;
     emit ExpirationSet(currentEdition, expiresAt);

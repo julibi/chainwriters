@@ -166,6 +166,9 @@ export class Dao extends Entity {
     this.set("createdAt", Value.fromBigInt(BigInt.zero()));
     this.set("title", Value.fromString(""));
     this.set("textIpfsHash", Value.fromString(""));
+    this.set("auctionsStarted", Value.fromBoolean(false));
+    this.set("auctionsEnded", Value.fromBoolean(false));
+    this.set("paused", Value.fromBoolean(false));
   }
 
   save(): void {

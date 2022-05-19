@@ -96,14 +96,16 @@ const Projects = () => {
         </Filtering>
         {loading && !data && <Loading height={530} />}
         <ProjectItems>
-          {data?.daos.map(({ title, author, address }, idx) => (
+          {data?.daos.map(({ title, author, address, genre, subtitle, imgIpfsHash, id }, idx) => (
             <ProjectItem
               key={idx}
+              id={id}
               address={address}
               title={title}
               author={author}
-              mintPrice={'25'}
-              fundedAmount={15}
+              imgIpfsHash={imgIpfsHash}
+              subtitle={subtitle}
+              genre={genre}
             />
           ))}
         </ProjectItems>

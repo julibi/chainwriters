@@ -62,27 +62,13 @@
   },
   {
     "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "bool",
-        "name": "ended",
-        "type": "bool"
-      }
-    ],
+    "inputs": [],
     "name": "AuctionsEnded",
     "type": "event"
   },
   {
     "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "bool",
-        "name": "started",
-        "type": "bool"
-      }
-    ],
+    "inputs": [],
     "name": "AuctionsStarted",
     "type": "event"
   },

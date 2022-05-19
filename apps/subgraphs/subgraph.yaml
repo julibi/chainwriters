@@ -8,7 +8,7 @@ dataSources:
     name: ProjectFactory
     network: mumbai
     source:
-      address: '0xF6852aa995835335eE710fa22BF01d78e8d05FAc'
+      address: '0xcB06459802b3Beac9A56C1FF937261Ff8503fc98'
       abi: ProjectFactory
       startBlock: 26333430
     mapping:

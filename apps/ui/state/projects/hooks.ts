@@ -145,6 +145,7 @@ export const GET_SEARCHED_DAO = gql`
 
 export const useFetchAllProjects = () => {
   const { loading, error, data, refetch } = useQuery(GET_ALL_DAOS);
+  console.log({data})
   return { loading, error, data, refetch };
 };
 

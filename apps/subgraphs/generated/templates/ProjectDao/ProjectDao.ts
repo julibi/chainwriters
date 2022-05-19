@@ -48,10 +48,6 @@ export class AuctionsEnded__Params {
   constructor(event: AuctionsEnded) {
     this._event = event;
   }
-
-  get ended(): boolean {
-    return this._event.parameters[0].value.toBoolean();
-  }
 }
 
 export class AuctionsStarted extends ethereum.Event {
@@ -65,10 +61,6 @@ export class AuctionsStarted__Params {
 
   constructor(event: AuctionsStarted) {
     this._event = event;
-  }
-
-  get started(): boolean {
-    return this._event.parameters[0].value.toBoolean();
   }
 }
 
