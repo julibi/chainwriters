@@ -408,6 +408,7 @@ const ProjectDetailView = () => {
   const [triggerPending, setTriggerPending] = useState(false);
   const [nextEditionPending, setNextEditionPending] = useState(false);
   const [showNextEditionModal, setShowNextEditionModal] = useState(false);
+  const [blurb, setBlurb] = useState<null | string>(null);
   
   const callGetProjectDetails = useCallback(async(projectAddress: string) => {
     const ProjectData: ProjectData = await getProjectDetails(projectAddress);
@@ -415,6 +416,15 @@ const ProjectDetailView = () => {
     setCoverImgLink(`https://ipfs.io/ipfs/${ProjectData.imgIpfsHash}`);
     setSuccessfullyLoaded(true);
   }, [getProjectDetails]);
+
+  const fetchBlurb = useCallback(async() => {
+    if (daoData && daoData.blurbIpfsHash) {
+      const response = await fetch(`https://ipfs.io/ipfs/${daoData.blurbIpfsHash}`);
+      if(!response.ok) return;
+      const fetchedBlurb = await response.text()
+      setBlurb(fetchedBlurb);
+    }
+  }, [daoData]);
 
   const isAuthor = useMemo(() => {
     if (daoData && account.toLowerCase() === daoData.author.toLowerCase()) {
@@ -449,6 +459,12 @@ const ProjectDetailView = () => {
       callGetProjectDetails(projectAddress);
     }
   }, [projectAddress]);
+
+  useEffect(() => {
+    if (daoData) {
+      fetchBlurb();
+    }
+  }, [daoData, fetchBlurb]);
 
   const mint = useCallback(async() => {
       setMintPending(true);
@@ -600,7 +616,7 @@ const ProjectDetailView = () => {
   // show image
   // is price going down? - understand the rate...
   // ui flow of triggering
-  console.log(daoData)
+
   return (
     <Root>
       {!daoData && !successfullyLoaded && <Loading height={530} />}
@@ -738,7 +754,7 @@ const ProjectDetailView = () => {
           <DescriptionSection>
             <Title style={{ maxWidth: '200px' }}>Blurb</Title>
             <Description>
-              {daoData.blurbIpfsHash ? daoData.blurbIpfsHash : 'Lorem ipsum'}
+              {blurb ?? <Loading height={20} dotHeight={20} />}
             </Description>
           </DescriptionSection>
           {isAuthor && (

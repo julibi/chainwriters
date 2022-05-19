@@ -1,5 +1,5 @@
 import { gql, useQuery } from '@apollo/client'
-import { BigNumber } from '@ethersproject/bignumber';
+import { BigNumber } from '@ethersproject/bignumber'
 import { Multicall } from 'ethereum-multicall'
 import client from '../../apolloclient'
 import { JsonRpcProvider } from '@ethersproject/providers'
@@ -145,7 +145,6 @@ export const GET_SEARCHED_DAO = gql`
 
 export const useFetchAllProjects = () => {
   const { loading, error, data, refetch } = useQuery(GET_ALL_DAOS);
-  console.log({data})
   return { loading, error, data, refetch };
 };
 
