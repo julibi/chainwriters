@@ -32,8 +32,8 @@ interface IndicatorProps {
 const Indicator = styled.div<IndicatorProps>`
     position: relative;
     border-radius: 50%;
-    height: 40px;
-    width: 40px;
+    min-height: 40px;
+    min-width: 40px;
     box-shadow:
       -4px -2px 4px 0px rgba(125,125,125,0.1),
       4px 2px 8px 0px rgba(0,0,0,0.7);
