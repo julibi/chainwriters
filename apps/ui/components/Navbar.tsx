@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useWeb3React } from '@web3-react/core';
 import Link from 'next/link'
 import styled from 'styled-components'
 import WalletConnection from '../components/WalletConnection'
@@ -84,10 +85,15 @@ const routes = [
 ];
 
 const Navbar = () => {
+  const { chainId } = useWeb3React();
   const hasTried = useEagerConnect();
   const isMobile = useDeviceDetect();
   const [isBurgerMenuOpen, setIsBurgerMenuOpen] = useState(false);
   
+  if (chainId !== 80001) {
+    return null;
+  }
+
   // TODO WALLET CONNECTION ON MOBILE!
   if (isMobile) {
     return (

@@ -13,6 +13,8 @@ const HeaderSection = styled.section`
 `;
 
 const TypedTextWrapper = styled.div`
+  display: flex;
+  align-items: center;
   flex: 1;
   height: 600px;
   width: 800px;
@@ -24,15 +26,23 @@ const Blocker = styled.div`
 `;
 
 export function Index() {
-  const { account } = useWeb3React();
+  const { account, chainId } = useWeb3React();
   const isMobile = useDeviceDetect();
   // const hasTried = useEagerConnect();
+
+  if (chainId !== 80001) {
+    return (
+      <TypedTextWrapper>
+        <Typewriter typedText={'This is Peppermint Poets. Stay Tuned.'} />
+      </TypedTextWrapper>
+    );
+  }
 
   return (
     <Root>
       <HeaderSection>
         <TypedTextWrapper>
-          <Typewriter typedText={'This is MOONLIT. On the left, imagine seeing a nice logo or animated illustration :)'} />
+          <Typewriter typedText={'This is Peppermint Poets. Stay Tuned.'} />
         </TypedTextWrapper>
       </HeaderSection>
       <ProjectSection />

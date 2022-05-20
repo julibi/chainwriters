@@ -9,6 +9,7 @@ interface TypewriterTypes {
 const Root = styled.h1`
   font-family: 'Roboto Mono Bold', Serif;
   font-size: 65px;
+  display: inline-block;
 
   @media (max-width: 900px) {
     font-size: 42px;
