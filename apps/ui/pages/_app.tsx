@@ -77,7 +77,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
-        <title>MOONLIT</title>
+        <title>Peppermint Poets</title>
       </Head>
       <GlobalStyle />
       <Web3ReactProvider getLibrary={getLibrary}>

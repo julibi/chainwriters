@@ -83,7 +83,7 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
       uint256 _firstEditionMax,
       address _factory
     ) ERC1155("") {
-      // is it ok to give MOONLIT_FOUNDATION_ADDRESS DEFAULT_ADMIN_ROLE and they have the ability to freeze the contract?
+      // is it ok to give PEPO_FOUNDATION_ADDRESS DEFAULT_ADMIN_ROLE and they have the ability to freeze the contract?
       _setupRole(DEFAULT_ADMIN_ROLE, _author_address);
       _setupRole(AUTHOR_ROLE, _author_address);
       _setupRole(PAUSER_ROLE, _factory);

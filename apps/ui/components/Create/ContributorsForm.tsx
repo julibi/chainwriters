@@ -196,7 +196,7 @@ const ContributorsForm = ({
             </ContribList>
           ) : null}
           <SpecialShare>
-            <span>Moonlit Foundation share:</span>
+            <span>PePo Dev Foundation share:</span>
             <span>15 %</span>
           </SpecialShare>
           <SpecialShare>
