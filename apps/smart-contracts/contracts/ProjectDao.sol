@@ -71,6 +71,7 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
   event AuthorMinted(uint256 amount);
   event Minted(uint256 edition, uint256 amount);
   event ExpirationSet(uint256 edition, uint256 expirationTime);
+  event URISet(string uri);
   event NextEditionEnabled(uint256 nextEdId, uint256 maxSupply, uint256 mintPrice);
   event Paused(bool paused);
 
@@ -258,16 +259,18 @@ contract ProjectDao is ERC1155, AccessControlEnumerable, ERC1155Supply, Pausable
     emit TextSet(_ipfsHash);
   }
 
-  function authorMint(uint256 _amount) external onlyRole(AUTHOR_ROLE) whenNotPaused {
+  function authorMint(uint256 _amount, string memory _newUri) external onlyRole(AUTHOR_ROLE) whenNotPaused {
     require(!auctionStarted, "Auctions already started");
     require(author.hasClaimedGenesis == false, "Already claimed");
     require(_amount > 0 && _amount < currentEditionMax, "Invalid amount");
+    _setURI(_newUri);
     _mint(msg.sender, 1, _amount, "");
     author.claimedAmount = _amount;
     author.hasClaimedGenesis = true;
     // subgrph is not picking this up, hence storing this in contract
     emit AuthorMinted(_amount);
     project.premintedByAuthor = _amount;
+    emit URISet(_newUri);
   }
 
   function triggerFirstAuction(uint256 _discountRate) external onlyRole(AUTHOR_ROLE) whenNotPaused {

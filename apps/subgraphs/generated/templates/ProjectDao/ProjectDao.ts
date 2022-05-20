@@ -430,6 +430,24 @@ export class URI__Params {
   }
 }
 
+export class URISet extends ethereum.Event {
+  get params(): URISet__Params {
+    return new URISet__Params(this);
+  }
+}
+
+export class URISet__Params {
+  _event: URISet;
+
+  constructor(event: URISet) {
+    this._event = event;
+  }
+
+  get uri(): string {
+    return this._event.parameters[0].value.toString();
+  }
+}
+
 export class Unpaused extends ethereum.Event {
   get params(): Unpaused__Params {
     return new Unpaused__Params(this);
@@ -1426,6 +1444,10 @@ export class AuthorMintCall__Inputs {
 
   get _amount(): BigInt {
     return this._call.inputValues[0].value.toBigInt();
+  }
+
+  get _newUri(): string {
+    return this._call.inputValues[1].value.toString();
   }
 }
 

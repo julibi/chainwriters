@@ -310,6 +310,23 @@ export class Dao extends Entity {
     }
   }
 
+  get metadataCID(): string | null {
+    let value = this.get("metadataCID");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set metadataCID(value: string | null) {
+    if (!value) {
+      this.unset("metadataCID");
+    } else {
+      this.set("metadataCID", Value.fromString(<string>value));
+    }
+  }
+
   get editions(): Array<string> | null {
     let value = this.get("editions");
     if (!value || value.kind == ValueKind.NULL) {

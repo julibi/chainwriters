@@ -10,6 +10,7 @@ import {
   Minted,
   NextEditionEnabled,
   TextSet,
+  URISet
 } from '../generated/templates/ProjectDao/ProjectDao';
 import { Contribution, Dao, Edition } from "../generated/schema"
 import { ProjectDao as ProjectDaoTemplate } from '../generated/templates'
@@ -99,6 +100,13 @@ export function handleExpirationSet(event: ExpirationSet): void {
    // NOT WORKING
   // edition.expiresAt = event.params.expirationTime
   // edition.save()
+}
+
+export function handleURISet(event: URISet): void {
+  let dao = Dao.load(event.address.toHexString())
+  if (!dao) return
+  dao.metadataCID = event.params.uri
+  dao.save()
 }
 
 export function handleNextEditionEnabled(event: NextEditionEnabled): void {

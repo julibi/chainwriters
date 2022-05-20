@@ -8,9 +8,9 @@ dataSources:
     name: ProjectFactory
     network: mumbai
     source:
-      address: '0xcB06459802b3Beac9A56C1FF937261Ff8503fc98'
+      address: '0x900D9e0e0C395e74F5f486cEcc600609748a16db'
       abi: ProjectFactory
-      startBlock: 26333430
+      startBlock: 26393090
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -64,3 +64,5 @@ templates:
           handler: handleExpirationSet
         - event: NextEditionEnabled(uint256,uint256,uint256)
           handler: handleNextEditionEnabled
+        - event: URISet(string)
+          handler: handleURISet

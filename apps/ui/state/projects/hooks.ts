@@ -39,6 +39,7 @@ export interface ProjectData {
   auctionsEnded: boolean;
   contributions: Contribution[] | null;
   editions: Edition[];
+  metadataCID: string | null;
   // coming from Contract directly
   currenEditionMaxSupply: number;
   // coming from multicall
@@ -112,6 +113,7 @@ export const GET_ONE_DAO = gql`
       textIpfsHash
       imgIpfsHash
       blurbIpfsHash
+      metadataCID
       auctionsStarted
       auctionsEnded
       contributions {
@@ -251,6 +253,7 @@ export const useGetProjectDetails = (projectAddress: string) => {
       textIpfsHash,
       imgIpfsHash,
       blurbIpfsHash,
+      metadataCID,
       auctionsStarted,
       auctionsEnded,
       contributions,
@@ -284,6 +287,7 @@ export const useGetProjectDetails = (projectAddress: string) => {
       textIpfsHash,
       imgIpfsHash,
       blurbIpfsHash,
+      metadataCID,
       currentEdition,
       currentEditionTotalSupply,
       currenEditionMaxSupply,

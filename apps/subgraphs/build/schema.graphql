@@ -28,6 +28,7 @@ type Dao @entity {
   blurbIpfsHash: String
   subtitle: String
   genre: String
+  metadataCID: String
   editions: [Edition!] @derivedFrom(field: "dao")
   auctionsStarted: Boolean!
   auctionsEnded: Boolean!
