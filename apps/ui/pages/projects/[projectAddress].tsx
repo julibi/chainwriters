@@ -437,7 +437,7 @@ const ProjectDetailView = () => {
     const ProjectData: ProjectData = await getProjectDetails(projectAddress);
     console.log({ ProjectData });
     setDaoData(ProjectData);
-    if (ProjectData.imgIpfsHash) {
+    if (ProjectData?.imgIpfsHash) {
       setCoverImgLink(`https://ipfs.io/ipfs/${ProjectData.imgIpfsHash}`);
     }
     setSuccessfullyLoaded(true);
@@ -630,7 +630,7 @@ const ProjectDetailView = () => {
       //     value: daoData.currentEdition
       //   }
       // ],
-      image: daoData.imgIpfsHash ? `ipfs://${daoData.imgIpfsHash}` : '',
+      image: daoData?.imgIpfsHash ? `ipfs://${daoData.imgIpfsHash}` : '',
     };
     const metadata = JSON.stringify(metadataObject, null, 2);
 
