@@ -435,7 +435,6 @@ const ProjectDetailView = () => {
   
   const callGetProjectDetails = useCallback(async(projectAddress: string) => {
     const ProjectData: ProjectData = await getProjectDetails(projectAddress);
-    console.log({ ProjectData });
     setDaoData(ProjectData);
     if (ProjectData?.imgIpfsHash) {
       setCoverImgLink(`https://ipfs.io/ipfs/${ProjectData.imgIpfsHash}`);
