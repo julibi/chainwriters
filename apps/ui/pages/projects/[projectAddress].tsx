@@ -893,7 +893,7 @@ const ProjectDetailView = () => {
                 Control Settings for Author
               </Title>
               <ActionItems>
-                {configured ? (
+                {(configured || daoData.auctionsStarted) ? (
                   <ActionItem>
                     <DoneAction>{'Configured'}</DoneAction>
                     <NeomorphicCheckbox check readonly />
