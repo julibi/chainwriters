@@ -21,6 +21,7 @@ export const StyledInputError = styled.span`
   color: ${PINK};
   margin-block-end: 1rem;
   text-align: center;
+  height: 24px;
 `;
 
 interface InputFieldTypes {
@@ -31,13 +32,25 @@ interface InputFieldTypes {
   placeholder?: string;
   style?: any;
   label?: string;
+  type?: string;
 }
 
-const InputField = ({ disabled = false, value, onChange, error, placeholder = '', label, style }: InputFieldTypes) => {
+const InputField = ({
+  disabled = false,
+  value,
+  onChange,
+  error,
+  placeholder = '',
+  label,
+  style,
+  type = 'text'
+}: InputFieldTypes) => {
+
   return (
     <Root>
       <StyledLabel>{label}</StyledLabel>
       <StyledInput
+        type={type}
         disabled={disabled}
         value={value}
         onChange={onChange}

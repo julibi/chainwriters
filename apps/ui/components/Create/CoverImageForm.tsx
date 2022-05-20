@@ -18,7 +18,7 @@ import {
   PLAIN_WHITE,
 } from '../../themes';
 
-const SubmitButton = styled(BaseButton)`
+export const SubmitButton = styled(BaseButton)`
   font-family: 'Roboto Mono';
   text-transform: uppercase;
   text-align: center;
@@ -45,12 +45,12 @@ const SubmitButton = styled(BaseButton)`
   }
 `;
 
-const StyledImageForm = styled.form`
+export const StyledImageForm = styled.form`
   display: flex;
   flex-direction: column;
 `;
 
-const DragNDrop = styled.div`
+export const DragNDrop = styled.div`
   width: 100%;
   height: 300px;
   align-items: center;
@@ -65,13 +65,13 @@ const DragNDrop = styled.div`
   }
 `;
 
-const UploadCTAWrapper = styled.div`
+export const UploadCTAWrapper = styled.div`
   display: flex;
   flex-direction: column;
   margin-block-end: 2rem;
 `;
 
-const StyledFileInput = styled.input`
+export const StyledFileInput = styled.input`
   color: transparent;
   margin-block: 1rem;
   
@@ -100,16 +100,16 @@ const StyledFileInput = styled.input`
   }
 `;
 
-const FileName = styled.span`
+export const FileName = styled.span`
   display: inline-block;
   height: 24px;
 `;
 
-const StyledSubmitButton = styled(SubmitButton)`
+export const StyledSubmitButton = styled(SubmitButton)`
   color: ${PINK};
 `;
 
-const shortenImageName = (filename: string) => {
+export const shortenImageName = (filename: string) => {
   const filenameStart = filename.substring(0, 6);
   const filenameLength = filename.length;
   const cut = filenameLength - 6;

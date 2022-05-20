@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react'
 import { toast } from 'react-toastify';
 import { formatEther } from '@ethersproject/units'
 import { useWeb3React } from '@web3-react/core';
@@ -8,11 +8,13 @@ import styled from 'styled-components'
 import { useGetProjectDetails } from '../../state/projects/hooks'
 import BaseModal from '../../components/BaseModal'
 import Countdown from '../../components/Countdown'
+import InputField from '../../components/InputField'
 import NeomorphicCheckbox from '../../components/Checkbox';
 import Loading from '../../components/Loading'
 import MintSection from '../../components/MintSection'
 import ToastLink from '../../components/ToastLink';
 import PieChart from '../../components/PieChart'
+import ConfigureModal from '../../components/ProjectDetails/ConfigureModal';
 import { SectionTitle } from '../../components/ProjectSection'
 import { truncateAddress } from '../../components/WalletIndicator'
 import {
@@ -29,6 +31,7 @@ import {
 import useProjectContract from '../../hooks/useProjectContract'
 
 import { ProjectData } from '../../state/projects/hooks'
+
 
 
 // TODO
@@ -200,11 +203,15 @@ export const StyledPrimaryButton = styled(PrimaryButton)`
   }
 `;
 
-const MintButton = styled(BaseButton)`
+interface MintButtonProps {
+  disabled: boolean;
+}
+
+const MintButton = styled(BaseButton)<MintButtonProps>`
   font-family: 'Roboto Mono Bold';
   padding: 1rem;
   width: 209px;
-  color: ${PINK};
+  color: ${({ disabled }) => disabled ? DISABLED_WHITE : PINK};
 
   :disabled {
     :hover {
@@ -388,7 +395,12 @@ const DoneAction = styled.div`
   @media (max-width: 900px) {
     width: 100%;
   }
-`
+`;
+
+const CTAWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
 
 const ProjectDetailView = () => {
   const { account, chainId } = useWeb3React();
@@ -409,9 +421,15 @@ const ProjectDetailView = () => {
   const [nextEditionPending, setNextEditionPending] = useState(false);
   const [showNextEditionModal, setShowNextEditionModal] = useState(false);
   const [blurb, setBlurb] = useState<null | string>(null);
+  const [showAuthorMintModal, setShowAuthorMintModal] = useState<boolean>(false);
+  const [authorMintInput, setAuthorMintInput] = useState<string>('');
+  const [authorMintPending, setAuthorMintPending] = useState<boolean>(false);
+  const [showConfigureModal, setShowConfigureModal] = useState<boolean>(false);
+  const [configurePending, setConfigurePending] = useState<boolean>(false);
   
   const callGetProjectDetails = useCallback(async(projectAddress: string) => {
     const ProjectData: ProjectData = await getProjectDetails(projectAddress);
+    console.log({ ProjectData });
     setDaoData(ProjectData);
     setCoverImgLink(`https://ipfs.io/ipfs/${ProjectData.imgIpfsHash}`);
     setSuccessfullyLoaded(true);
@@ -420,9 +438,14 @@ const ProjectDetailView = () => {
   const fetchBlurb = useCallback(async() => {
     if (daoData && daoData.blurbIpfsHash) {
       const response = await fetch(`https://ipfs.io/ipfs/${daoData.blurbIpfsHash}`);
-      if(!response.ok) return;
-      const fetchedBlurb = await response.text()
-      setBlurb(fetchedBlurb);
+      if(!response.ok) {
+        setBlurb('Something went wrong while loading this blurb. Sorry. Maybe refresh?');
+      } else {
+        const fetchedBlurb = await response.text()
+        setBlurb(fetchedBlurb);
+      }
+    } else {
+      setBlurb('Something went wrong while loading this blurb. Sorry. Maybe refresh?');
     }
   }, [daoData]);
 
@@ -451,6 +474,21 @@ const ProjectDetailView = () => {
       canTrigger = true;
     }
     return canTrigger;
+  }, [daoData]);
+
+  const configured = useMemo(() => {
+    let hasConfigured = false;
+    if (daoData) {
+      if (
+        daoData.blurbIpfsHash ||
+        daoData.imgIpfsHash ||
+        daoData.genre ||
+        daoData.subtitle
+      ) {
+        hasConfigured = true;
+      }
+    }
+    return hasConfigured;
   }, [daoData]);
 
   useEffect(() => {
@@ -513,6 +551,13 @@ const ProjectDetailView = () => {
       setLoading(true);
       const Tx = await ProjectContract.retriggerAuction();
       const { hash } = Tx;
+      toast.info(
+        <ToastLink
+          hash={hash}
+          chainId={chainId}
+          message={'Retriggering...'}
+        />
+      );
       ProjectContract.provider.once(hash, (transaction) => {
         // refetch
         // @ts-ignore
@@ -520,15 +565,87 @@ const ProjectDetailView = () => {
         setLoading(false);
       });
     } catch(e: unknown) {
-      console.log({ e });
+      // @ts-ignore
+      toast.error(e.reason ?? 'Something went wrong.');
       setLoading(false);
     }
-  }, [ProjectContract, callGetProjectDetails, projectAddress]);
+  }, [ProjectContract, callGetProjectDetails, chainId, projectAddress]);
+
+  const configure = useCallback(async(
+    imgHash: string,
+    blurbHash: string,
+    genre: string,
+    subtitle: string
+  ) => {
+    try {
+      setConfigurePending(true);
+      const Tx = await ProjectContract.configureProjectDetails(
+        imgHash,
+        blurbHash,
+        genre,
+        subtitle
+      );
+      const { hash } = Tx;
+      toast.info(
+        <ToastLink
+          hash={hash}
+          chainId={chainId}
+          message={'Configuring...'}
+        />
+      );
+      ProjectContract.provider.once(hash, (transaction) => {
+        setConfigurePending(false);
+        setShowConfigureModal(false);
+        // @ts-ignore
+        callGetProjectDetails(projectAddress);
+      });
+    } catch(e: unknown) {
+      // @ts-ignore
+      toast.error(e.reason ?? 'Something went wrong.');
+      setConfigurePending(false);
+      setShowConfigureModal(false);
+    }
+  }, [ProjectContract, callGetProjectDetails, chainId, projectAddress]);
+
+  const authorMint = useCallback(async () => {
+    setAuthorMintPending(true);
+    try {
+      const Tx = await ProjectContract.authorMint(authorMintInput);
+      const { hash } = Tx;
+      toast.info(
+        <ToastLink
+          hash={hash}
+          chainId={chainId}
+          message={'Author Mint pending...'}
+        />
+      );
+      ProjectContract.provider.once(hash, (transaction) => {
+        // refetch
+        // @ts-ignore
+        callGetProjectDetails(projectAddress);
+        setAuthorMintPending(false);
+        toast.success('Minted!');
+        setShowAuthorMintModal(false);
+      });
+    } catch (e: unknown) {
+      // @ts-ignore
+      toast.error(e.reason ?? 'Something went wrong.');
+      setAuthorMintPending(false);
+      setShowAuthorMintModal(false);
+    }
+  }, [
+    ProjectContract,
+    authorMintInput,
+    callGetProjectDetails,
+    chainId,
+    projectAddress,
+  ]);
 
   const triggerFirstAuction = useCallback(async () => {
     if (
       daoData &&
       daoData.author &&
+      account &&
       account.toLowerCase() === daoData.author.toLowerCase()
     ) {
       try {
@@ -536,6 +653,13 @@ const ProjectDetailView = () => {
         // TODO: understand the rate
         const Tx = await ProjectContract.triggerFirstAuction(100000000);
         const { hash } = Tx;
+        toast.info(
+          <ToastLink
+            hash={hash}
+            chainId={chainId}
+            message={'Triggering auctions...'}
+          />
+        );
         ProjectContract.provider.once(hash, (transaction) => {
           // refetch
           // @ts-ignore
@@ -551,9 +675,10 @@ const ProjectDetailView = () => {
       }
     }
   }, [
-    account,
     daoData,
+    account,
     ProjectContract,
+    chainId,
     callGetProjectDetails,
     projectAddress,
   ]);
@@ -564,6 +689,13 @@ const ProjectDetailView = () => {
       // TODO: make it dynamic
       const Tx = await ProjectContract.enableNextEdition(10, 500000000000000000);
       const { hash } = Tx;
+      toast.info(
+        <ToastLink
+          hash={hash}
+          chainId={chainId}
+          message={'Enabling next edition...'}
+        />
+      );
       ProjectContract.provider.once(hash, (transaction) => {
         // refetch
         // @ts-ignore
@@ -577,7 +709,7 @@ const ProjectDetailView = () => {
       console.log({ e });
       setNextEditionPending(false);
     }
-  }, []);
+  }, [ProjectContract, callGetProjectDetails, chainId, projectAddress]);
 
   const showsAuctionText = useCallback(() => {
     const now = Math.round((new Date()).getTime() / 1000);
@@ -585,7 +717,7 @@ const ProjectDetailView = () => {
     if (!daoData) return;
     const { auctionsStarted, auctionsEnded, expiresAt } = daoData;
     if (auctionsEnded) {
-      return <Key>{'Auctions finished'}</Key>
+      return <Key style={{textAlign: 'center'}}>{'Auctions finished'}</Key>
     }
     if (auctionsStarted) {
       if (expiresAt > now) {
@@ -606,11 +738,11 @@ const ProjectDetailView = () => {
             </>
         );
       } else {
-        return <Key>{'Auction expired'}</Key>
+        return <Key style={{textAlign: 'center'}}>{'Auction expired'}</Key>
       }
 
     }
-    return <Key>{'Auction Has Not Started Yet'}</Key>;
+    return <Key style={{textAlign: 'center'}}>{'Auction Has Not Started Yet'}</Key>;
   }, [daoData]);
 
   // show image
@@ -654,9 +786,7 @@ const ProjectDetailView = () => {
                 <>
                   <AuctionTitle>AUCTION</AuctionTitle>
                   <FlexWrapper>
-                    <InfoBlock>
-                      {showsAuctionText()}
-                    </InfoBlock>
+                    <InfoBlock>{showsAuctionText()}</InfoBlock>
                     <InfoBlock>
                       <Key>{'Starting Price'}</Key>
                       {daoData && (
@@ -763,50 +893,147 @@ const ProjectDetailView = () => {
                 Control Settings for Author
               </Title>
               <ActionItems>
-              {daoData.auctionsStarted ? (
-                <ActionItem>
-                  <DoneAction>{'Triggered Auctions'}</DoneAction>
-                  <NeomorphicCheckbox check readonly />
-                </ActionItem>
-              ) : (
-                <ActionItem>
-                  <TriggerButton
-                    onClick={triggerFirstAuction}
-                    disabled={triggerPending}
-                  >
-                    {triggerPending ? (
-                      <Loading height={20} dotHeight={20} />
-                    ) : (
-                      'Trigger Auctions'
-                    )}
-                  </TriggerButton>
-                  <NeomorphicCheckbox check={daoData.auctionsStarted} readonly />
-                </ActionItem>
-              )}
-              {canTriggerNextEdition ? (
-                <ActionItem>
-                 <TriggerButton
-                   onClick={() => setShowNextEditionModal(true)}
-                   disabled={nextEditionPending}
-                 >
-                   {nextEditionPending ? (
-                     <Loading height={20} dotHeight={20} />
-                   ) : (
-                     'Enable Next Edition'
-                   )}
-                 </TriggerButton>
-                 <NeomorphicCheckbox check={false} readonly />
-               </ActionItem>
-              ) : (
-                <ActionItem>
-                  <DoneAction>{'Enable Next Edition'}</DoneAction>
-                  <NeomorphicCheckbox check readonly />
-                </ActionItem>
-              )}
+                {configured ? (
+                  <ActionItem>
+                    <DoneAction>{'Configured'}</DoneAction>
+                    <NeomorphicCheckbox check readonly />
+                  </ActionItem>
+                ) : (
+                  <ActionItem>
+                    <TriggerButton
+                      onClick={() => setShowConfigureModal(true)}
+                      disabled={configurePending}
+                    >
+                      {configurePending ? (
+                        <Loading height={20} dotHeight={20} />
+                      ) : (
+                        'Configure Your Project'
+                      )}
+                    </TriggerButton>
+                    <NeomorphicCheckbox check={false} readonly />
+                  </ActionItem>
+                )}
+                {daoData.premintedByAuthor ? (
+                  <ActionItem>
+                    <DoneAction>{`Minted Your ${daoData.premintedByAuthor} Copies`}</DoneAction>
+                    <NeomorphicCheckbox check readonly />
+                  </ActionItem>
+                ) : (
+                  <ActionItem>
+                    <TriggerButton
+                      onClick={() => setShowAuthorMintModal(true)}
+                      disabled={authorMintPending}
+                    >
+                      {authorMintPending ? (
+                        <Loading height={20} dotHeight={20} />
+                      ) : (
+                        'Mint Your Copies'
+                      )}
+                    </TriggerButton>
+                    <NeomorphicCheckbox check={false} readonly />
+                  </ActionItem>
+                )}
+                {daoData.auctionsStarted ? (
+                  <ActionItem>
+                    <DoneAction>{'Triggered Auctions'}</DoneAction>
+                    <NeomorphicCheckbox check readonly />
+                  </ActionItem>
+                ) : (
+                  <ActionItem>
+                    <TriggerButton
+                      onClick={triggerFirstAuction}
+                      disabled={
+                        triggerPending || daoData.premintedByAuthor === 0
+                      }
+                    >
+                      {triggerPending ? (
+                        <Loading height={20} dotHeight={20} />
+                      ) : (
+                        'Trigger Auctions'
+                      )}
+                    </TriggerButton>
+                    <NeomorphicCheckbox
+                      check={daoData.auctionsStarted}
+                      readonly
+                    />
+                  </ActionItem>
+                )}
+                {canTriggerNextEdition ? (
+                  <ActionItem>
+                    <TriggerButton
+                      onClick={() => setShowNextEditionModal(true)}
+                      disabled={nextEditionPending}
+                    >
+                      {nextEditionPending ? (
+                        <Loading height={20} dotHeight={20} />
+                      ) : (
+                        'Enable Next Edition'
+                      )}
+                    </TriggerButton>
+                    <NeomorphicCheckbox check={false} readonly />
+                  </ActionItem>
+                ) : (
+                  <ActionItem>
+                    <DoneAction>{'Enable Next Edition'}</DoneAction>
+                    <NeomorphicCheckbox check={false} readonly />
+                  </ActionItem>
+                )}
               </ActionItems>
             </AuthorSection>
           )}
         </>
+      )}
+      {showConfigureModal && (
+        <ConfigureModal
+          onConfigure={configure}
+          configurePending={configurePending}
+        />
+      )}
+      {showAuthorMintModal && (
+        <BaseModal onClose={() => setShowAuthorMintModal(false)}>
+          <ContentWrapper>
+            <ModalHeader>Claim Your Copies</ModalHeader>
+            <ModalText>
+              {`You as an author can mint an amount of your project's Genesis
+              Edition NFTs for yourself. Only after minting this amount, can you
+              trigger the public auctions for your first edition. MAX: ${daoData.currenEditionMaxSupply}`}
+            </ModalText>
+            <CTAWrapper>
+              <InputField
+                value={authorMintInput}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                  const onlyNumbers = /^[0-9\b]+$/;
+                  if (
+                    e.target.value === '' ||
+                    onlyNumbers.test(e.target.value)
+                  ) {
+                    setAuthorMintInput(e.target.value);
+                  }
+                }}
+                error={
+                  (Number(authorMintInput) < 1 ||
+                    Number(authorMintInput) > daoData.currenEditionMaxSupply) &&
+                  'Incorrect amount.'
+                }
+              />
+
+              <MintButton
+                disabled={
+                  authorMintPending ||
+                  Number(authorMintInput) < 1 ||
+                  Number(authorMintInput) > daoData.currenEditionMaxSupply
+                }
+                onClick={authorMint}
+              >
+                {authorMintPending ? (
+                  <Loading height={20} dotHeight={20} />
+                ) : (
+                  'MINT'
+                )}
+              </MintButton>
+            </CTAWrapper>
+          </ContentWrapper>
+        </BaseModal>
       )}
       {showBuyModal && (
         <BaseModal onClose={() => setShowBuyModal(false)}>
@@ -828,9 +1055,7 @@ const ProjectDetailView = () => {
         <BaseModal onClose={() => setShowNextEditionModal(false)}>
           <ContentWrapper>
             <ModalHeader>{'Trigger Next Edition'}</ModalHeader>
-            <ModalText>
-              Specify the max amount and price per mint.
-            </ModalText>
+            <ModalText>Specify the max amount and price per mint.</ModalText>
             Two inputs and CTA with loading here
           </ContentWrapper>
         </BaseModal>

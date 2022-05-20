@@ -4,7 +4,8 @@ import Typewriter from '../components/Typewriter'
 import ProjectSection from '../components/ProjectSection'
 import { useDeviceDetect } from '../hooks/useDeviceDetect'
 
-const Root = styled.div``;
+const Root = styled.div`
+`;
 
 const HeaderSection = styled.section`
   display: flex;
