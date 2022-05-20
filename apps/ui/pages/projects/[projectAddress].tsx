@@ -630,7 +630,7 @@ const ProjectDetailView = () => {
       //     value: daoData.currentEdition
       //   }
       // ],
-      image: `ipfs://${daoData.imgIpfsHash}`,
+      image: daoData.imgIpfsHash ? `ipfs://${daoData.imgIpfsHash}` : '',
     };
     const metadata = JSON.stringify(metadataObject, null, 2);
 
