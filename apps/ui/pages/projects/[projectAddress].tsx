@@ -437,7 +437,9 @@ const ProjectDetailView = () => {
     const ProjectData: ProjectData = await getProjectDetails(projectAddress);
     console.log({ ProjectData });
     setDaoData(ProjectData);
-    setCoverImgLink(`https://ipfs.io/ipfs/${ProjectData.imgIpfsHash}`);
+    if (ProjectData.imgIpfsHash) {
+      setCoverImgLink(`https://ipfs.io/ipfs/${ProjectData.imgIpfsHash}`);
+    }
     setSuccessfullyLoaded(true);
   }, [getProjectDetails]);
 
