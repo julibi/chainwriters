@@ -411,6 +411,7 @@ const ProjectDetailView = () => {
   projectAddress = Array.isArray(projectAddress) ? projectAddress[0] : projectAddress;
   const getProjectDetails = useGetProjectDetails(projectAddress as string);
   const ProjectContract = useProjectContract(projectAddress as string);
+  // @ts-ignore
   const client = create('https://ipfs.infura.io:5001/api/v0');
   const [daoData, setDaoData] = useState<ProjectData | null>(null);
   const [coverImgLink, setCoverImgLink] = useState<string>(null);
