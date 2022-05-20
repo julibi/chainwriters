@@ -1,5 +1,6 @@
 import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react'
 import { toast } from 'react-toastify';
+import { create } from 'ipfs-http-client'
 import { formatEther } from '@ethersproject/units'
 import { useWeb3React } from '@web3-react/core';
 import Image from 'next/image'
@@ -410,6 +411,7 @@ const ProjectDetailView = () => {
   projectAddress = Array.isArray(projectAddress) ? projectAddress[0] : projectAddress;
   const getProjectDetails = useGetProjectDetails(projectAddress as string);
   const ProjectContract = useProjectContract(projectAddress as string);
+  const client = create('https://ipfs.infura.io:5001/api/v0');
   const [daoData, setDaoData] = useState<ProjectData | null>(null);
   const [coverImgLink, setCoverImgLink] = useState<string>(null);
   const [successfullyLoaded, setSuccessfullyLoaded] = useState<boolean>(false);
@@ -612,8 +614,30 @@ const ProjectDetailView = () => {
 
   const authorMint = useCallback(async () => {
     setAuthorMintPending(true);
+
+    // TODO: need to upload 10 at once with different edition in advance
+    // also the names should be hex numbers - how to upload files?
+
+    const metadataObject = {
+      name: daoData.title,
+      description: blurb ?? '',
+      // attributes: [
+      //   {
+      //     trait_type: "edition",
+      //     value: daoData.currentEdition
+      //   }
+      // ],
+      image: `ipfs://${daoData.imgIpfsHash}`,
+    };
+    const metadata = JSON.stringify(metadataObject, null, 2);
+
     try {
-      const Tx = await ProjectContract.authorMint(authorMintInput);
+      const uploadedMeta = await client.add(metadata);
+      // const Tx = await ProjectContract.authorMint(authorMintInput, `ipfs://${uploadedMeta.path}/{id}`);
+      const Tx = await ProjectContract.authorMint(
+        authorMintInput,
+        `ipfs://${uploadedMeta.path}`
+      );
       const { hash } = Tx;
       toast.info(
         <ToastLink
@@ -623,7 +647,6 @@ const ProjectDetailView = () => {
         />
       );
       ProjectContract.provider.once(hash, (transaction) => {
-        // refetch
         // @ts-ignore
         callGetProjectDetails(projectAddress);
         setAuthorMintPending(false);
@@ -637,11 +660,15 @@ const ProjectDetailView = () => {
       setShowAuthorMintModal(false);
     }
   }, [
-    ProjectContract,
     authorMintInput,
+    blurb,
     callGetProjectDetails,
     chainId,
+    client,
+    daoData.imgIpfsHash,
+    daoData.title,
     projectAddress,
+    ProjectContract
   ]);
 
   const triggerFirstAuction = useCallback(async () => {
