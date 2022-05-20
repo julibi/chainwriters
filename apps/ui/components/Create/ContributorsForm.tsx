@@ -101,7 +101,7 @@ interface ContributorsFormProps {
   contributorList: Contributor[];
   loading: boolean;
   onChange: (index: number, key: string, val: string | number) => void;
-  onNextStep: () => void;
+  onNextStep?: () => void;
   onSubmit: () => void;
 }
 
@@ -169,13 +169,10 @@ const ContributorsForm = ({
         <InputName>CONTRIBUTORS</InputName>
         <InputDescription>
           {`Do you want to set contributors like Co-Authors, Editors, Translators, Cover Artists etc.?
-          You can input their addresses and roles and most importantly what share of the funds they will receive, once the Genesis Edition sells out.
+          You can input their addresses, roles and shares of the funds raised from the Genesis Edition.
           Each share should be a number between 0 and 85. 
           You can specify up to 3. Keep in mind that the total of shares will be deducted from you own share.
-          15% are always going to the foundation.
-          So a contributor with a share of 10, will receive 10% of the funds.
-          --> editor is getting 10%, foundation 15% you will be left with 75%.
-          WARNING: This is irreversible.`}
+          15% are always going to the foundation.`}
         </InputDescription>
         <CTAContainer>
           {contributorList.length ? (
@@ -192,9 +189,7 @@ const ContributorsForm = ({
                   </ContribItem>
                   <ContribItem>
                     <span>Role:</span>
-                    <span>
-                      {item.role.length > 0 ? item.role : 'Unknown'}
-                    </span>
+                    <span>{item.role.length > 0 ? item.role : 'Unknown'}</span>
                   </ContribItem>
                 </div>
               ))}
@@ -232,13 +227,15 @@ const ContributorsForm = ({
             + Add More
           </AddContribButton>
           <ContribButtonContainer>
-            <SubmitButton
-              style={{ marginInlineEnd: '1rem' }}
-              onClick={onNextStep}
-              disabled={loading}
-            >
-              {contributorList.length > 0 ? 'Continue' : 'Skip'}
-            </SubmitButton>
+            {onNextStep && (
+              <SubmitButton
+                style={{ marginInlineEnd: '1rem' }}
+                onClick={onNextStep}
+                disabled={loading}
+              >
+                {contributorList.length > 0 ? 'Continue' : 'Skip'}
+              </SubmitButton>
+            )}
             <SubmitButton
               onClick={onSubmit}
               disabled={

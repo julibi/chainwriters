@@ -15,6 +15,7 @@ import MintSection from '../../components/MintSection'
 import ToastLink from '../../components/ToastLink';
 import PieChart from '../../components/PieChart'
 import ConfigureModal from '../../components/ProjectDetails/ConfigureModal';
+import ContributorsModal from '../../components/ProjectDetails/ContributorsModal';
 import { SectionTitle } from '../../components/ProjectSection'
 import { truncateAddress } from '../../components/WalletIndicator'
 import {
@@ -426,6 +427,8 @@ const ProjectDetailView = () => {
   const [authorMintPending, setAuthorMintPending] = useState<boolean>(false);
   const [showConfigureModal, setShowConfigureModal] = useState<boolean>(false);
   const [configurePending, setConfigurePending] = useState<boolean>(false);
+  const [showContributorsModal, setShowContributorsModal] = useState<boolean>(false);
+  const [contributorsPending, setContributorsPending] = useState<boolean>(false);
   
   const callGetProjectDetails = useCallback(async(projectAddress: string) => {
     const ProjectData: ProjectData = await getProjectDetails(projectAddress);
@@ -745,9 +748,7 @@ const ProjectDetailView = () => {
     return <Key style={{textAlign: 'center'}}>{'Auction Has Not Started Yet'}</Key>;
   }, [daoData]);
 
-  // show image
   // is price going down? - understand the rate...
-  // ui flow of triggering
 
   return (
     <Root>
@@ -893,7 +894,27 @@ const ProjectDetailView = () => {
                 Control Settings for Author
               </Title>
               <ActionItems>
-                {(configured || daoData.auctionsStarted) ? (
+                {(daoData.contributions.length > 0) || daoData.auctionsStarted ? (
+                  <ActionItem>
+                    <DoneAction>{'Contributors Added'}</DoneAction>
+                    <NeomorphicCheckbox check readonly />
+                  </ActionItem>
+                ) : (
+                  <ActionItem>
+                    <TriggerButton
+                      onClick={() => setShowContributorsModal(true)}
+                      disabled={contributorsPending}
+                    >
+                      {contributorsPending ? (
+                        <Loading height={20} dotHeight={20} />
+                      ) : (
+                        'Add Contributors'
+                      )}
+                    </TriggerButton>
+                    <NeomorphicCheckbox check={false} readonly />
+                  </ActionItem>
+                )}
+                {configured || daoData.auctionsStarted ? (
                   <ActionItem>
                     <DoneAction>{'Configured'}</DoneAction>
                     <NeomorphicCheckbox check readonly />
@@ -984,9 +1005,11 @@ const ProjectDetailView = () => {
         </>
       )}
       {showConfigureModal && (
-        <ConfigureModal
-          onConfigure={configure}
-          configurePending={configurePending}
+        <ConfigureModal onConfigure={configure} pending={configurePending} />
+      )}
+      {showContributorsModal && (
+        <ContributorsModal
+          projectAddress={projectAddress}
         />
       )}
       {showAuthorMintModal && (

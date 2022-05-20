@@ -81,10 +81,10 @@ interface ConfigureModalProps {
     genre: string,
     subtitle: string
   ) => void;
-  configurePending: boolean;
+  pending: boolean;
 }
 
-const ConfigureModal = ({ onConfigure, configurePending }: ConfigureModalProps) => {
+const ConfigureModal = ({ onConfigure, pending }: ConfigureModalProps) => {
   // @ts-ignore
   const client = create('https://ipfs.infura.io:5001/api/v0');
   const [show, setShow] = useState<boolean>(true);
@@ -180,7 +180,7 @@ const ConfigureModal = ({ onConfigure, configurePending }: ConfigureModalProps) 
           </StyledImageForm>
           <MintButton
             style={{ margin: '1rem auto' }}
-            disabled={configurePending}
+            disabled={pending}
             onClick={async() => {
               try {
                 const blurbCID = (await client.add(blurb)).path;
@@ -192,7 +192,7 @@ const ConfigureModal = ({ onConfigure, configurePending }: ConfigureModalProps) 
               }
             }}
           >
-            {configurePending ? (
+            {pending ? (
               <Loading height={20} dotHeight={20} />
             ) : (
               'Configure'
