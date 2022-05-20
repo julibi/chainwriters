@@ -668,8 +668,7 @@ const ProjectDetailView = () => {
     callGetProjectDetails,
     chainId,
     client,
-    daoData.imgIpfsHash,
-    daoData.title,
+    daoData,
     projectAddress,
     ProjectContract
   ]);
