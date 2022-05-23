@@ -17,6 +17,7 @@ import MintSection from '../../components/MintSection'
 import MoreDetails from '../../components/MoreDetails'
 import ToastLink from '../../components/ToastLink'
 import PieChart from '../../components/PieChart'
+import ProgressBar from '../../components/ProgressBar';
 import ConfigureModal from '../../components/ProjectDetails/ConfigureModal'
 import ContributorsModal from '../../components/ProjectDetails/ContributorsModal'
 import { SectionTitle } from '../../components/ProjectSection'
@@ -34,10 +35,8 @@ import {
 } from '../../themes';
 import useProjectContract from '../../hooks/useProjectContract'
 import { ProjectData } from '../../state/projects/hooks'
-import ProgressBar from 'apps/ui/components/ProgressBar';
 
 // TODO
-// author view
 // contributor view
 // anyone else
 

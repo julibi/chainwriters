@@ -11,7 +11,7 @@ const nextConfig = {
     svgr: false,
   },
   images: {
-    domains: [ "ipfs.io", "www.fillmurray.com", "picsum.photos" ]
+    domains: [ "ipfs.io/ipfs" ]
   }
 };
 
