@@ -8,15 +8,17 @@ import { useRouter } from 'next/router'
 import styled from 'styled-components'
 import { useGetProjectDetails } from '../../state/projects/hooks'
 import BaseModal from '../../components/BaseModal'
+import Checkmark from '../../components/Checkmark'
 import Countdown from '../../components/Countdown'
+import Emoji from '../../components/Emojis'
 import InputField from '../../components/InputField'
-import NeomorphicCheckbox from '../../components/Checkbox';
 import Loading from '../../components/Loading'
 import MintSection from '../../components/MintSection'
-import ToastLink from '../../components/ToastLink';
+import MoreDetails from '../../components/MoreDetails'
+import ToastLink from '../../components/ToastLink'
 import PieChart from '../../components/PieChart'
-import ConfigureModal from '../../components/ProjectDetails/ConfigureModal';
-import ContributorsModal from '../../components/ProjectDetails/ContributorsModal';
+import ConfigureModal from '../../components/ProjectDetails/ConfigureModal'
+import ContributorsModal from '../../components/ProjectDetails/ContributorsModal'
 import { SectionTitle } from '../../components/ProjectSection'
 import { truncateAddress } from '../../components/WalletIndicator'
 import {
@@ -31,10 +33,8 @@ import {
   INSET_BASE_BOX_SHADOW
 } from '../../themes';
 import useProjectContract from '../../hooks/useProjectContract'
-
 import { ProjectData } from '../../state/projects/hooks'
-
-
+import ProgressBar from 'apps/ui/components/ProgressBar';
 
 // TODO
 // author view
@@ -356,8 +356,9 @@ const TriggerButton = styled(BaseButton)<TriggerButtonTypes>`
   background-color: ${BG_NORMAL};
   color: ${({ disabled }) => disabled ? DISABLED_WHITE : PINK};
   font-family: 'Roboto Mono Bold';
-  padding: 1rem;
   width: 230px;
+  margin: 1rem 1rem 0 0;
+  padding: 1rem;
 
   :disabled {
     :hover {
@@ -369,18 +370,34 @@ const TriggerButton = styled(BaseButton)<TriggerButtonTypes>`
     width: 100%;
   }
 `;
+
+const ProgressBarWrapper = styled.div`
+  width: 100%;
+  margin-block-end: 2rem;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+`;
+
+const ProgressBarIndicator = styled.span`
+  display: inline-block;
+  margin-inline-end: 1rem;
+  margin-block-start: 0.5rem;
+`;
+
 const ActionItems = styled.div`
   display: flex;
   justify-content: center;
   flex-direction: column;
+  width: 100%;
 `;
 
-const ActionItem = styled.div`
+const Flex = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
-  width: 300px;
-  margin-block-end: 1rem;
 `;
 
 const DoneAction = styled.div`
@@ -391,6 +408,7 @@ const DoneAction = styled.div`
   font-family: 'Roboto Mono Bold';
   font-size: 13px;
   text-align: center;
+  margin-block-start: 1rem;
   padding: 1rem;
   width: 230px;
 
@@ -633,10 +651,7 @@ const ProjectDetailView = () => {
     // };
 
     const metadataObject = {
-      name:
-        daoData.currentEdition === 1
-          ? 'Genesis Edition'
-          : `Edition ${daoData.currentEdition}`,
+      name: daoData.title,
       description: blurb ? `${blurb} (Created with Peppermint Poets)` : 'Created with Peppermint Poets',
       image: daoData?.imgIpfsHash ? `ipfs://${daoData.imgIpfsHash}` : '',
     };
@@ -784,8 +799,42 @@ const ProjectDetailView = () => {
     return <Key style={{textAlign: 'center'}}>{'Auction Has Not Started Yet'}</Key>;
   }, [daoData]);
 
-  // is price going down? - understand the rate...
+  const calculatedProgress = useMemo(():number => {
+    let percentage = 0;
+    if (!daoData) return percentage;
+    if (configured) {
+      percentage = 33;
+    }
+    if (daoData.premintedByAuthor > 0) {
+      percentage = 66;
+    }
+    if (daoData.auctionsStarted) {
+      percentage = 100;
+    }
+    return percentage;
+  }, [daoData, configured]);
 
+  const calculatedProgressIndicationText = useMemo(():string => {
+    let text = 'Next: Configure';
+
+    switch (calculatedProgress) {
+      case 33:
+        text = 'Next: Premint';
+        break;
+      case 66:
+        text = 'Next: Start Auctions'
+        break;
+      case 100:
+        text = 'Done!'
+        break;
+      default:
+        break;
+    }
+
+    return text;
+  }, [calculatedProgress]);
+
+  // is price going down? - understand the rate...
   return (
     <Root>
       {!daoData && !successfullyLoaded && <Loading height={530} />}
@@ -929,112 +978,191 @@ const ProjectDetailView = () => {
               <Title style={{ maxWidth: '300px' }}>
                 Control Settings for Author
               </Title>
+              <Title>
+                Launching <Emoji symbol="🚀" label="Rocket" />
+              </Title>
+              <ProgressBarWrapper>
+                <ProgressBar completed={calculatedProgress} />
+                <ProgressBarIndicator>{calculatedProgressIndicationText}</ProgressBarIndicator>
+              </ProgressBarWrapper>
               <ActionItems>
-                {(daoData.contributions.length > 0) || daoData.auctionsStarted ? (
-                  <ActionItem>
-                    <DoneAction>{'Contributors Added'}</DoneAction>
-                    <NeomorphicCheckbox check readonly />
-                  </ActionItem>
-                ) : (
-                  <ActionItem>
-                    <TriggerButton
-                      onClick={() => setShowContributorsModal(true)}
-                      disabled={contributorsPending}
-                    >
-                      {contributorsPending ? (
-                        <Loading height={20} dotHeight={20} />
-                      ) : (
-                        'Add Contributors'
-                      )}
-                    </TriggerButton>
-                    <NeomorphicCheckbox check={false} readonly />
-                  </ActionItem>
-                )}
-                {configured || daoData.auctionsStarted ? (
-                  <ActionItem>
-                    <DoneAction>{'Configured'}</DoneAction>
-                    <NeomorphicCheckbox check readonly />
-                  </ActionItem>
-                ) : (
-                  <ActionItem>
-                    <TriggerButton
-                      onClick={() => setShowConfigureModal(true)}
-                      disabled={configurePending}
-                    >
-                      {configurePending ? (
-                        <Loading height={20} dotHeight={20} />
-                      ) : (
-                        'Configure Your Project'
-                      )}
-                    </TriggerButton>
-                    <NeomorphicCheckbox check={false} readonly />
-                  </ActionItem>
-                )}
-                {daoData.premintedByAuthor ? (
-                  <ActionItem>
-                    <DoneAction>{`Minted Your ${daoData.premintedByAuthor} Copies`}</DoneAction>
-                    <NeomorphicCheckbox check readonly />
-                  </ActionItem>
-                ) : (
-                  <ActionItem>
-                    <TriggerButton
-                      onClick={() => setShowAuthorMintModal(true)}
-                      disabled={authorMintPending}
-                    >
-                      {authorMintPending ? (
-                        <Loading height={20} dotHeight={20} />
-                      ) : (
-                        'Mint Your Copies'
-                      )}
-                    </TriggerButton>
-                    <NeomorphicCheckbox check={false} readonly />
-                  </ActionItem>
-                )}
-                {daoData.auctionsStarted ? (
-                  <ActionItem>
-                    <DoneAction>{'Triggered Auctions'}</DoneAction>
-                    <NeomorphicCheckbox check readonly />
-                  </ActionItem>
-                ) : (
-                  <ActionItem>
-                    <TriggerButton
-                      onClick={triggerFirstAuction}
-                      disabled={
-                        triggerPending || daoData.premintedByAuthor === 0
-                      }
-                    >
-                      {triggerPending ? (
-                        <Loading height={20} dotHeight={20} />
-                      ) : (
-                        'Trigger Auctions'
-                      )}
-                    </TriggerButton>
-                    <NeomorphicCheckbox
-                      check={daoData.auctionsStarted}
-                      readonly
-                    />
-                  </ActionItem>
-                )}
-                {canTriggerNextEdition ? (
-                  <ActionItem>
-                    <TriggerButton
-                      onClick={() => setShowNextEditionModal(true)}
-                      disabled={nextEditionPending}
-                    >
-                      {nextEditionPending ? (
-                        <Loading height={20} dotHeight={20} />
-                      ) : (
-                        'Enable Next Edition'
-                      )}
-                    </TriggerButton>
-                    <NeomorphicCheckbox check={false} readonly />
-                  </ActionItem>
-                ) : (
-                  <ActionItem>
-                    <DoneAction>{'Enable Next Edition'}</DoneAction>
-                    <NeomorphicCheckbox check={false} readonly />
-                  </ActionItem>
-                )}
+                <MoreDetails
+                  title={
+                    configured || daoData.auctionsStarted ? (
+                      <Flex>
+                        <span>{'1) Configure Project'}</span>
+                        <Checkmark />
+                      </Flex>
+                    ) : (
+                      '1) Configure Project'
+                    )
+                  }
+                  styles={{ marginBlockEnd: '1rem' }}
+                >
+                  <>
+                    <p>
+                      Save more information about this work in the contract, to
+                      make your project more appealing and trustworthy. This
+                      action can only be done before triggering the auctions.
+                    </p>
+                    {configured || daoData.auctionsStarted ? (
+                      <DoneAction>{'Configure Project'}</DoneAction>
+                    ) : (
+                      <TriggerButton
+                        onClick={() => setShowConfigureModal(true)}
+                        disabled={configurePending}
+                      >
+                        {configurePending ? (
+                          <Loading height={20} dotHeight={20} />
+                        ) : (
+                          'Configure Your Project'
+                        )}
+                      </TriggerButton>
+                    )}
+                  </>
+                </MoreDetails>
+                <MoreDetails
+                  title={
+                    daoData.auctionsStarted ||
+                    daoData.contributions.length > 0 ? (
+                      <Flex>
+                        <span>{'2) Add Contributors'}</span>
+                        <Checkmark />
+                      </Flex>
+                    ) : (
+                      '2) Add Contributors'
+                    )
+                  }
+                  styles={{ marginBlockEnd: '1rem' }}
+                >
+                  <>
+                    <p>
+                      This is optional. You can specify what share of the fund
+                      contributors to your project will receive. This action can
+                      only be done before triggering the auctions.
+                    </p>
+                    {daoData.auctionsStarted ||
+                    daoData.contributions.length > 0 ? (
+                      <DoneAction>{'Add Contributors'}</DoneAction>
+                    ) : (
+                      <TriggerButton
+                        onClick={() => setShowContributorsModal(true)}
+                        disabled={contributorsPending}
+                      >
+                        {contributorsPending ? (
+                          <Loading height={20} dotHeight={20} />
+                        ) : (
+                          'Add Contributors'
+                        )}
+                      </TriggerButton>
+                    )}
+                  </>
+                </MoreDetails>
+                <MoreDetails
+                  open={(daoData.premintedByAuthor === 0 && (configured || daoData.contributions.length > 0 ))}
+                  title={
+                    daoData.premintedByAuthor > 0 ? (
+                      <Flex>
+                        <span>{`3) Minted Your ${daoData.premintedByAuthor} ${
+                          daoData.premintedByAuthor === 1 ? 'Copy' : 'Copies'
+                        }`}</span>
+                        <Checkmark />
+                      </Flex>
+                    ) : (
+                      '3) Mint Your Copies'
+                    )
+                  }
+                  styles={{ marginBlockEnd: '1rem' }}
+                >
+                  <>
+                    <p>
+                      Make sure to claim some NFTs for yourself :) This is
+                      mandatory for triggering the auction in the next.
+                    </p>
+                    {daoData.premintedByAuthor > 0 ? (
+                      <DoneAction>{'Mint Your Copies'}</DoneAction>
+                    ) : (
+                      <TriggerButton
+                        onClick={() => setShowAuthorMintModal(true)}
+                        disabled={authorMintPending}
+                      >
+                        {authorMintPending ? (
+                          <Loading height={20} dotHeight={20} />
+                        ) : (
+                          'Mint Your Copies'
+                        )}
+                      </TriggerButton>
+                    )}
+                  </>
+                </MoreDetails>
+                <MoreDetails
+                  open={
+                    daoData.premintedByAuthor > 0 && !daoData.auctionsStarted
+                  }
+                  title={
+                    daoData.auctionsStarted ? (
+                      <Flex>
+                        <span>{'4) Triggered Auctions'}</span>
+                        <Checkmark />
+                      </Flex>
+                    ) : (
+                      '4) Trigger Auctions'
+                    )
+                  }
+                  styles={{ marginBlockEnd: '1rem' }}
+                >
+                  <>
+                    <p>
+                      Start the auctions for your Genesis Edition. Once you do
+                      that, you will not be able to configure or add
+                      contributors anymore. You need to claim your NFTs before
+                      you can trigger it.
+                    </p>
+                    {daoData.auctionsStarted ? (
+                      <DoneAction>{'Trigger Auctions'}</DoneAction>
+                    ) : (
+                      <TriggerButton
+                        onClick={triggerFirstAuction}
+                        disabled={triggerPending}
+                      >
+                        {triggerPending ? (
+                          <Loading height={20} dotHeight={20} />
+                        ) : (
+                          'Trigger Auctions'
+                        )}
+                      </TriggerButton>
+                    )}
+                  </>
+                </MoreDetails>
+              </ActionItems>
+              <Title style={{marginBlockStart: '1rem' }}>Others</Title>
+              <ActionItems>
+                <MoreDetails
+                  open={canTriggerNextEdition}
+                  title={'Enable Next Edition'}
+                  styles={{ marginBlockEnd: '1rem' }}
+                >
+                  <>
+                    <p>
+                      When all NFTs of the last editions have sold out, you can
+                      lick off your next one!
+                    </p>
+                    {!canTriggerNextEdition ? (
+                      <DoneAction>{'Enable Next Edition'}</DoneAction>
+                    ) : (
+                      <TriggerButton
+                        onClick={() => setShowNextEditionModal(true)}
+                        disabled={nextEditionPending || canTriggerNextEdition}
+                      >
+                        {nextEditionPending ? (
+                          <Loading height={20} dotHeight={20} />
+                        ) : (
+                          'Enable Next Edition'
+                        )}
+                      </TriggerButton>
+                    )}
+                  </>
+                </MoreDetails>
               </ActionItems>
             </AuthorSection>
           )}
@@ -1044,9 +1172,7 @@ const ProjectDetailView = () => {
         <ConfigureModal onConfigure={configure} pending={configurePending} />
       )}
       {showContributorsModal && (
-        <ContributorsModal
-          projectAddress={projectAddress}
-        />
+        <ContributorsModal projectAddress={projectAddress} />
       )}
       {showAuthorMintModal && (
         <BaseModal onClose={() => setShowAuthorMintModal(false)}>
