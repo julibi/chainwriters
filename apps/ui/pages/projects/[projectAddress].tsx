@@ -637,7 +637,7 @@ const ProjectDetailView = () => {
         daoData.currentEdition === 1
           ? 'Genesis Edition'
           : `Edition ${daoData.currentEdition}`,
-      description: blurb ?? '',
+      description: blurb ? `${blurb} (Created with Peppermint Poets)` : 'Created with Peppermint Poets',
       image: daoData?.imgIpfsHash ? `ipfs://${daoData.imgIpfsHash}` : '',
     };
     const metadata = JSON.stringify(metadataObject, null, 2);
