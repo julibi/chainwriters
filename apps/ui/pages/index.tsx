@@ -20,11 +20,6 @@ const TypedTextWrapper = styled.div`
   width: 800px;
 `;
 
-const Blocker = styled.div`
-  flex: 1;
-  height: 600px;
-`;
-
 export function Index() {
   const { account, chainId } = useWeb3React();
   const isMobile = useDeviceDetect();

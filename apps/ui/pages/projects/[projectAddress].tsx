@@ -617,25 +617,33 @@ const ProjectDetailView = () => {
   const authorMint = useCallback(async () => {
     setAuthorMintPending(true);
 
-    // TODO: need to upload 10 at once with different edition in advance
-    // also the names should be hex numbers - how to upload files?
+    // TODO: enable more differentiated metadata with EDITION trait
+    // and have this kind of URI ipfs://cidhash/{id} be setting dynamically on every net edition being enabled
+    // BE needed...
+    // const betterMetadataObjectExample = {
+    //   name: daoData.title,
+    //   description: blurb ?? '',
+    //   attributes: [
+    //     {
+    //       trait_type: "edition",
+    //       value: daoData.currentEdition
+    //     }
+    //   ],
+    //   image: daoData?.imgIpfsHash ? `ipfs://${daoData.imgIpfsHash}` : '',
+    // };
 
     const metadataObject = {
-      name: daoData.title,
+      name:
+        daoData.currentEdition === 1
+          ? 'Genesis Edition'
+          : `Edition ${daoData.currentEdition}`,
       description: blurb ?? '',
-      // attributes: [
-      //   {
-      //     trait_type: "edition",
-      //     value: daoData.currentEdition
-      //   }
-      // ],
       image: daoData?.imgIpfsHash ? `ipfs://${daoData.imgIpfsHash}` : '',
     };
     const metadata = JSON.stringify(metadataObject, null, 2);
 
     try {
       const uploadedMeta = await client.add(metadata);
-      // const Tx = await ProjectContract.authorMint(authorMintInput, `ipfs://${uploadedMeta.path}/{id}`);
       const Tx = await ProjectContract.authorMint(
         authorMintInput,
         `ipfs://${uploadedMeta.path}`
@@ -902,7 +910,7 @@ const ProjectDetailView = () => {
                 </Share>
               ))}
               <Share>
-                <ShareTitle>Moonlit Foundation</ShareTitle>
+                <ShareTitle>PePo Dev Foundation</ShareTitle>
                 <ShareAddress>{truncateAddress(daoData.factory)}</ShareAddress>
                 <SharePercentage>15 %</SharePercentage>
               </Share>
