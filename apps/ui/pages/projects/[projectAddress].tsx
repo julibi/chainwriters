@@ -1,12 +1,12 @@
 import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react'
-import { toast } from 'react-toastify';
+import { toast } from 'react-toastify'
 import { create } from 'ipfs-http-client'
 import { formatEther } from '@ethersproject/units'
-import { useWeb3React } from '@web3-react/core';
+import { useWeb3React } from '@web3-react/core'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import styled from 'styled-components'
-import { alternativeFetchApproach, useGetProjectDetails } from '../../state/projects/hooks'
+import { useGetProjectDetails } from '../../state/projects/hooks'
 import BaseModal from '../../components/BaseModal'
 import Checkmark from '../../components/Checkmark'
 import Countdown from '../../components/Countdown'
@@ -17,7 +17,7 @@ import MintSection from '../../components/MintSection'
 import MoreDetails from '../../components/MoreDetails'
 import ToastLink from '../../components/ToastLink'
 import PieChart from '../../components/PieChart'
-import ProgressBar from '../../components/ProgressBar';
+import ProgressBar from '../../components/ProgressBar'
 import ConfigureModal from '../../components/ProjectDetails/ConfigureModal'
 import ContributorsModal from '../../components/ProjectDetails/ContributorsModal'
 import { SectionTitle } from '../../components/ProjectSection'
@@ -570,6 +570,7 @@ const ProjectDetailView = () => {
   const fetchCurrentPrice = async() => {
     setLoading(true);
     const price = await ProjectContract.getPrice();
+    
     setCurrentPrice(price);
     setLoading(false);
     setShowBuyModal(true);
@@ -647,7 +648,7 @@ const ProjectDetailView = () => {
     setAuthorMintPending(true);
 
     // TODO: enable more differentiated metadata with EDITION trait
-    // and have this kind of URI ipfs://cidhash/{id} be setting dynamically on every net edition being enabled
+    // and have this kind of URI ipfs://cidhash/{id} be setting dynamically on every next edition being enabled
     // BE needed...
     // const betterMetadataObjectExample = {
     //   name: daoData.title,
@@ -710,13 +711,16 @@ const ProjectDetailView = () => {
     if (
       daoData &&
       daoData.author &&
+      daoData.editions[0] &&
       account &&
       account.toLowerCase() === daoData.author.toLowerCase()
     ) {
       try {
         setTriggerPending(true);
-        // TODO: understand the rate
-        const Tx = await ProjectContract.triggerFirstAuction(100000000);
+        // @ts-ignore
+        const discountRateBig = daoData.editions[0].mintPrice.div(60 * 60 * 24);
+        const discountRate = parseInt(discountRateBig._hex, 16);
+        const Tx = await ProjectContract.triggerFirstAuction(discountRate);
         const { hash } = Tx;
         toast.info(
           <ToastLink
@@ -846,9 +850,6 @@ const ProjectDetailView = () => {
     return text;
   }, [calculatedProgress]);
 
-  console.log(daoData);
-
-  // is price going down? - understand the rate...
   return (
     <Root>
       {!daoData && !successfullyLoaded && <Loading height={530} />}
