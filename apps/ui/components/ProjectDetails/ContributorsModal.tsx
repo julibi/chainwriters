@@ -19,9 +19,12 @@ const ContentWrapper = styled.div`
 
 interface ContributorsModalProps {
   projectAddress: string;
+  onFailure: () => void;
+  onPending: () => void;
+  onSuccess: (contributorList: { address: string, share: number, role:string }[]) => void;
 }
 
-const ContributorsModal = ({ projectAddress }: ContributorsModalProps) => {
+const ContributorsModal = ({ projectAddress, onFailure, onPending, onSuccess }: ContributorsModalProps) => {
   const getDaoContract = useDaoContract();
   const createSetContributors = useCreateSetContributors();
   const daoContract = useMemo(
@@ -53,35 +56,33 @@ const ContributorsModal = ({ projectAddress }: ContributorsModalProps) => {
       (loading) => setPending(loading),
       (x, y, z) => {
         toast.info(
-          <ToastLink
-            hash={x.toString()}
-            chainId={Number(y)}
-            message={z}
-          />
+          <ToastLink hash={x.toString()} chainId={Number(y)} message={z} />
         );
+        onPending();
       },
       (x, y, z) => {
         toast.success(
-          <ToastLink
-            hash={x.toString()}
-            chainId={Number(y)}
-            message={z}
-          />
+          <ToastLink hash={x.toString()} chainId={Number(y)} message={z} />
         );
+        onSuccess(contributorList);
         setShow(false);
       },
       (x, y, z) => {
         toast.error(
-          <ToastLink
-            hash={x.toString()}
-            chainId={Number(y)}
-            message={z}
-          />
+          <ToastLink hash={x.toString()} chainId={Number(y)} message={z} />
         );
+        onFailure();
         setShow(false);
       }
-    )
-  }, [contributorList, createSetContributors, daoContract]);
+    );
+  }, [
+    contributorList,
+    createSetContributors,
+    daoContract,
+    onFailure,
+    onPending,
+    onSuccess,
+  ]);
 
   if (!show) return null;
 

@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FormEvent, useCallback, useState } from 'react'
+import React, { ChangeEvent, useState } from 'react'
 import { create } from 'ipfs-http-client'
 import Image from 'next/image'
 import styled from 'styled-components'
@@ -8,7 +8,6 @@ import InputField from '../InputField'
 import { BaseButton, DISABLED_WHITE, PINK } from '../../themes'
 import { TextInput } from '../../pages/create'
 import {
-  StyledSubmitButton,
   StyledImageForm,
   DragNDrop,
   StyledFileInput,
@@ -183,9 +182,14 @@ const ConfigureModal = ({ onConfigure, pending }: ConfigureModalProps) => {
             disabled={pending}
             onClick={async() => {
               try {
-                const blurbCID = (await client.add(blurb)).path;
-                const coverImgCID = (await client.add(imgBuffer)).path;
-                console.log({ blurbCID, coverImgCID });
+                let blurbCID = '';
+                let coverImgCID = '';
+                if (imgBuffer) {
+                  coverImgCID = (await client.add(imgBuffer)).path;
+                }
+                if (blurb) {
+                  blurbCID =  (await client.add(blurb)).path;
+                }
                 onConfigure(coverImgCID, blurbCID, genre, subtitle)
               } catch (e: unknown) {
                 toast.error('Something went wrong while trying to uplod your data to IPFS.');

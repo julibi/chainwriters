@@ -421,6 +421,10 @@ const CTAWrapper = styled.div`
   flex-direction: column;
 `;
 
+const wait = (seconds) => new Promise((resolve, _) => {
+  setTimeout(resolve, seconds * 1000)
+})
+
 const ProjectDetailView = () => {
   const { account, chainId } = useWeb3React();
   const router = useRouter();
@@ -449,6 +453,7 @@ const ProjectDetailView = () => {
   const [configurePending, setConfigurePending] = useState<boolean>(false);
   const [showContributorsModal, setShowContributorsModal] = useState<boolean>(false);
   const [contributorsPending, setContributorsPending] = useState<boolean>(false);
+  const BLURB_FETCH_ERROR = 'Something went wrong while loading this blurb. Sorry. Maybe refresh?';
   
   const callGetProjectDetails = useCallback(async(projectAddress: string) => {
     const ProjectData: ProjectData = await getProjectDetails(projectAddress);
@@ -617,11 +622,13 @@ const ProjectDetailView = () => {
           message={'Configuring...'}
         />
       );
-      ProjectContract.provider.once(hash, (transaction) => {
+      ProjectContract.provider.once(hash, async (transaction) => {
         setConfigurePending(false);
         setShowConfigureModal(false);
+        setDaoData({ ...daoData, genre, subtitle, imgIpfsHash: imgHash, blurbIpfsHash: blurbHash, });
+        // await wait(5);
         // @ts-ignore
-        callGetProjectDetails(projectAddress);
+        // callGetProjectDetails(projectAddress);      
       });
     } catch(e: unknown) {
       // @ts-ignore
@@ -629,7 +636,13 @@ const ProjectDetailView = () => {
       setConfigurePending(false);
       setShowConfigureModal(false);
     }
-  }, [ProjectContract, callGetProjectDetails, chainId, projectAddress]);
+  }, [
+    ProjectContract,
+    // callGetProjectDetails,
+    chainId,
+    daoData,
+    // projectAddress
+  ]);
 
   const authorMint = useCallback(async () => {
     setAuthorMintPending(true);
@@ -651,7 +664,7 @@ const ProjectDetailView = () => {
 
     const metadataObject = {
       name: daoData.title,
-      description: blurb ? `${blurb} (Created with Peppermint Poets)` : 'Created with Peppermint Poets',
+      description: (blurb && blurb !== BLURB_FETCH_ERROR ) ? `${blurb} (Created with Peppermint Poets)` : 'Created with Peppermint Poets',
       image: daoData?.imgIpfsHash ? `ipfs://${daoData.imgIpfsHash}` : '',
     };
     const metadata = JSON.stringify(metadataObject, null, 2);
@@ -671,8 +684,9 @@ const ProjectDetailView = () => {
         />
       );
       ProjectContract.provider.once(hash, (transaction) => {
+        setDaoData({ ...daoData, premintedByAuthor: Number(authorMintInput) });
         // @ts-ignore
-        callGetProjectDetails(projectAddress);
+        // callGetProjectDetails(projectAddress);
         setAuthorMintPending(false);
         toast.success('Minted!');
         setShowAuthorMintModal(false);
@@ -686,11 +700,11 @@ const ProjectDetailView = () => {
   }, [
     authorMintInput,
     blurb,
-    callGetProjectDetails,
+    // callGetProjectDetails,
     chainId,
     client,
     daoData,
-    projectAddress,
+    // projectAddress,
     ProjectContract
   ]);
 
@@ -713,10 +727,11 @@ const ProjectDetailView = () => {
             message={'Triggering auctions...'}
           />
         );
-        ProjectContract.provider.once(hash, (transaction) => {
-          // refetch
+        ProjectContract.provider.once(hash, async(transaction) => {
+          setDaoData({ ...daoData, auctionsStarted: true });
+          // await wait(5);
           // @ts-ignore
-          callGetProjectDetails(projectAddress);
+          // callGetProjectDetails(projectAddress);
           setTriggerPending(false);
           toast.success('Auctions have started!');
         });
@@ -732,8 +747,8 @@ const ProjectDetailView = () => {
     account,
     ProjectContract,
     chainId,
-    callGetProjectDetails,
-    projectAddress,
+    // callGetProjectDetails,
+    // projectAddress,
   ]);
 
   const enableNextEdition = useCallback(async()=> {
@@ -982,7 +997,9 @@ const ProjectDetailView = () => {
               </Title>
               <ProgressBarWrapper>
                 <ProgressBar completed={calculatedProgress} />
-                <ProgressBarIndicator>{calculatedProgressIndicationText}</ProgressBarIndicator>
+                <ProgressBarIndicator>
+                  {calculatedProgressIndicationText}
+                </ProgressBarIndicator>
               </ProgressBarWrapper>
               <ActionItems>
                 <MoreDetails
@@ -1058,7 +1075,10 @@ const ProjectDetailView = () => {
                   </>
                 </MoreDetails>
                 <MoreDetails
-                  open={(daoData.premintedByAuthor === 0 && (configured || daoData.contributions.length > 0 ))}
+                  open={
+                    daoData.premintedByAuthor === 0 &&
+                    (configured || daoData.contributions.length > 0)
+                  }
                   title={
                     daoData.premintedByAuthor > 0 ? (
                       <Flex>
@@ -1101,7 +1121,7 @@ const ProjectDetailView = () => {
                   title={
                     daoData.auctionsStarted ? (
                       <Flex>
-                        <span>{'4) Triggered Auctions'}</span>
+                        <span>{'4) Trigger Auctions'}</span>
                         <Checkmark />
                       </Flex>
                     ) : (
@@ -1117,9 +1137,8 @@ const ProjectDetailView = () => {
                       contributors anymore. You need to claim your NFTs before
                       you can trigger it.
                     </p>
-                    {daoData.auctionsStarted ? (
-                      <DoneAction>{'Trigger Auctions'}</DoneAction>
-                    ) : (
+                    {daoData.premintedByAuthor > 0 &&
+                    !daoData.auctionsStarted ? (
                       <TriggerButton
                         onClick={triggerFirstAuction}
                         disabled={triggerPending}
@@ -1130,11 +1149,13 @@ const ProjectDetailView = () => {
                           'Trigger Auctions'
                         )}
                       </TriggerButton>
+                    ) : (
+                      <DoneAction>{'Trigger Auctions'}</DoneAction>
                     )}
                   </>
                 </MoreDetails>
               </ActionItems>
-              <Title style={{marginBlockStart: '1rem' }}>Others</Title>
+              <Title style={{ marginBlockStart: '1rem' }}>Others</Title>
               <ActionItems>
                 <MoreDetails
                   open={canTriggerNextEdition}
@@ -1171,7 +1192,16 @@ const ProjectDetailView = () => {
         <ConfigureModal onConfigure={configure} pending={configurePending} />
       )}
       {showContributorsModal && (
-        <ContributorsModal projectAddress={projectAddress} />
+        <ContributorsModal
+          projectAddress={projectAddress}
+          onFailure={() => setContributorsPending(false)}
+          onPending={() => setContributorsPending(true)}
+          onSuccess={async (contributorList) => {
+            setContributorsPending(false)
+            //@ts-ignore
+            setDaoData({ ...daoData, contributions: contributorList });
+          }}
+        />
       )}
       {showAuthorMintModal && (
         <BaseModal onClose={() => setShowAuthorMintModal(false)}>
