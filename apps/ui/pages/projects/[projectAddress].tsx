@@ -8,12 +8,10 @@ import { useRouter } from 'next/router'
 import styled from 'styled-components'
 import { useGetProjectDetails } from '../../state/projects/hooks'
 import BaseModal from '../../components/BaseModal'
-import Countdown from '../../components/Countdown'
 import InputField from '../../components/InputField'
 import Loading from '../../components/Loading'
-import MintSection from '../../components/MintSection'
+import MintSection from '../../components/ProjectDetails/MintSection'
 import ToastLink from '../../components/ToastLink'
-import PieChart from '../../components/PieChart'
 import ConfigureModal from '../../components/ProjectDetails/ConfigureModal'
 import ContributorsModal from '../../components/ProjectDetails/ContributorsModal'
 import { SectionTitle } from '../../components/ProjectSection'
@@ -25,15 +23,13 @@ import {
   PINK,
   PLAIN_WHITE,
   PrimaryButton,
-  BaseButton
+  BaseButton,
+  INSET_BASE_BOX_SHADOW
 } from '../../themes';
 import useProjectContract from '../../hooks/useProjectContract'
 import { ProjectData } from '../../state/projects/hooks'
-import AuthorSection from '../../components/ProjectDetails/AuthorSection' 
-
-// TODO
-// contributor view
-// anyone else
+import AuthorSection from '../../components/ProjectDetails/AuthorSection'
+import AuctionSection from '../../components/ProjectDetails/AuctionSection'
 
 const Root = styled.div`
   display: flex;
@@ -100,12 +96,12 @@ const Author = styled.div`
   justify-content: space-between;
 `;
 
-const Key = styled.span`
+export const Key = styled.span`
   display: inline-block;
   margin-block-end: 1rem;
 `;
 
-const Val = styled.span`
+export const Val = styled.span`
   display: inline-block;
   font-family: 'Nunito Sans Bold';
   text-transform: default;
@@ -117,12 +113,6 @@ const Genre = styled.div`
   font-family: 'Roboto Mono Bold';
   display: flex;
   justify-content: space-between;  
-`;
-
-const PieChartWrapper = styled.div`
-  display: inline-block;
-  margin: 0 auto;
-  margin-block: 2rem;
 `;
 
 const Title = styled(SectionTitle)`
@@ -145,41 +135,6 @@ const Subtitle = styled(Info)`
   margin: 0;
   padding: 0;
   box-shadow: none;
-`;
-
-const AuctionTitle = styled.h2`
-  text-align: center;
-  text-transform: uppercase;
-  font-family: 'Roboto Mono Bold';
-  margin-block-start: -1rem;
-  margin-block-end: 3rem;
-  padding: 0;
-`;
-
-const InfoBlock = styled.div`
-  width: 40%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 2rem;
-  border-radius: ${BASE_BORDER_RADIUS};
-  box-shadow: ${BASE_BOX_SHADOW};
-
-  @media (max-width: 900px) {
-    width: 100%;
-    margin-block-end: 2rem;
-  }
-`;
-
-const FlexWrapper = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 2rem;
-
-  @media (max-width: 900px) {
-    flex-direction: column;
-  }
 `;
 
 export const StyledPrimaryButton = styled(PrimaryButton)`
@@ -210,9 +165,8 @@ const MintButton = styled(BaseButton)<MintButtonProps>`
   color: ${({ disabled }) => disabled ? DISABLED_WHITE : PINK};
 
   :disabled {
-    :hover {
-      pointer-events: none;
-    }
+    box-shadow: ${INSET_BASE_BOX_SHADOW};
+    pointer-events: none;
   }
 
   @media (max-width: 900px) {
@@ -367,6 +321,8 @@ const ProjectDetailView = () => {
   const [configurePending, setConfigurePending] = useState<boolean>(false);
   const [showContributorsModal, setShowContributorsModal] = useState<boolean>(false);
   const [contributorsPending, setContributorsPending] = useState<boolean>(false);
+  const [nextEditionMaxAmount, setNextEditionMaxAmount] = useState<number>(0);
+  const [nextEditionMintPrice, setMextEditionMintPrice] = useState<string>('0');
   const BLURB_FETCH_ERROR = 'Something went wrong while loading this blurb. Sorry. Maybe refresh?';
   
   const callGetProjectDetails = useCallback(async(projectAddress: string) => {
@@ -420,7 +376,7 @@ const ProjectDetailView = () => {
       fetchBlurb();
     }
   }, [daoData, fetchBlurb]);
-
+  console.log({ daoData });
   const mint = useCallback(async() => {
       setMintPending(true);
       ProjectContract
@@ -669,40 +625,6 @@ const ProjectDetailView = () => {
     }
   }, [ProjectContract, callGetProjectDetails, chainId, projectAddress]);
 
-  const showsAuctionText = useCallback(() => {
-    const now = Math.round((new Date()).getTime() / 1000);
-  
-    if (!daoData) return;
-    const { auctionsStarted, auctionsEnded, expiresAt } = daoData;
-    if (auctionsEnded) {
-      return <Key style={{textAlign: 'center'}}>{'Auctions finished'}</Key>
-    }
-    if (auctionsStarted) {
-      if (expiresAt > now) {
-        return (
-          <>
-              <Key>{'Auction ends in'}</Key>
-              <Val
-                style={{
-                  fontSize: '22px',
-                  color: `${PINK}`,
-                  fontFamily: 'Nunito Sans Bold',
-                }}
-              >
-                <Countdown
-                  end={expiresAt}
-                />
-              </Val>
-            </>
-        );
-      } else {
-        return <Key style={{textAlign: 'center'}}>{'Auction expired'}</Key>
-      }
-
-    }
-    return <Key style={{textAlign: 'center'}}>{'Auction Has Not Started Yet'}</Key>;
-  }, [daoData]);
-
   return (
     <Root>
       {!daoData && !successfullyLoaded && <Loading height={530} />}
@@ -736,77 +658,14 @@ const ProjectDetailView = () => {
             </InfoLeft>
             <InfoRight>
               {daoData.currentEdition > 1 && <MintSection />}
-              {daoData.currentEdition === 1 && (
-                <>
-                  <AuctionTitle>AUCTION</AuctionTitle>
-                  <FlexWrapper>
-                    <InfoBlock>{showsAuctionText()}</InfoBlock>
-                    <InfoBlock>
-                      <Key>{'Starting Price'}</Key>
-                      {daoData && (
-                        <Val>{`${formatEther(
-                          parseInt(
-                            // @ts-ignore
-                            daoData.editions[0].mintPrice._hex,
-                            16
-                          ).toString()
-                        )} MATIC`}</Val>
-                      )}
-                    </InfoBlock>
-                  </FlexWrapper>
-                  <PieChartWrapper>
-                    <PieChart
-                      part={daoData.totalSupplyGenEd}
-                      whole={daoData.editions[0].maxSupply}
-                    />
-                  </PieChartWrapper>
-                  <FlexWrapper style={{ marginBlockEnd: '0' }}>
-                    <InfoBlock>
-                      <Key>{'Minted'}</Key>
-                      <Val
-                        style={{
-                          fontSize: '22px',
-                          fontFamily: 'Nunito Sans Bold',
-                        }}
-                      >
-                        {daoData.totalSupplyGenEd}
-                      </Val>
-                    </InfoBlock>
-                    {daoData.auctionsStarted && !daoData.auctionsEnded && (
-                      <>
-                        {Math.floor(Date.now() / 1000) > daoData.expiresAt ? (
-                          <StyledPrimaryButton
-                            onClick={() => retriggerAuction()}
-                            disabled={loading}
-                          >
-                            {loading ? (
-                              <Loading height={20} dotHeight={20} short />
-                            ) : (
-                              'Retrigger Auction'
-                            )}
-                          </StyledPrimaryButton>
-                        ) : (
-                          <StyledPrimaryButton
-                            onClick={() => fetchCurrentPrice()}
-                            disabled={loading}
-                          >
-                            {loading ? (
-                              <Loading height={20} dotHeight={20} short />
-                            ) : (
-                              'Get Current Price'
-                            )}
-                          </StyledPrimaryButton>
-                        )}
-                      </>
-                    )}
-                    {(!daoData.auctionsStarted || daoData.auctionsEnded) && (
-                      <StyledPrimaryButton disabled>
-                        Get Current Price
-                      </StyledPrimaryButton>
-                    )}
-                  </FlexWrapper>
-                </>
-              )}
+              {daoData.currentEdition === 1 &&
+                <AuctionSection
+                  daoData={daoData}
+                  loading={loading}
+                  onFetchCurrentPrice={fetchCurrentPrice}
+                  onRetriggerAuction={retriggerAuction}
+                />
+              }
             </InfoRight>
           </MainInfoWrapper>
           <ShareSection>
@@ -907,7 +766,6 @@ const ProjectDetailView = () => {
                   'Incorrect amount.'
                 }
               />
-
               <MintButton
                 disabled={
                   authorMintPending ||
@@ -947,7 +805,46 @@ const ProjectDetailView = () => {
           <ContentWrapper>
             <ModalHeader>{'Trigger Next Edition'}</ModalHeader>
             <ModalText>Specify the max amount and price per mint.</ModalText>
-            Two inputs and CTA with loading here
+            <CTAWrapper>
+              <InputField
+                label={'Max Amount'}
+                value={nextEditionMaxAmount}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                  const onlyNumbers = /^[0-9\b]+$/;
+                  if (
+                    e.target.value === '' ||
+                    onlyNumbers.test(e.target.value)
+                  ) {
+                    setNextEditionMaxAmount(Number(e.target.value));
+                  }
+                }}
+                error={Number(nextEditionMaxAmount) < 1 && 'Incorrect amount.'}
+              />
+              <InputField
+                label={'Mint Price'}
+                value={nextEditionMintPrice}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                  const onlyNumbers = /^[0-9\b]+$/;
+                  if (
+                    e.target.value === '' ||
+                    onlyNumbers.test(e.target.value)
+                  ) {
+                    setMextEditionMintPrice(e.target.value);
+                  }
+                }}
+                error={nextEditionMaxAmount < 1 && 'Incorrect amount.'}
+              />
+              <MintButton
+                disabled={nextEditionMaxAmount > 0}
+                onClick={authorMint}
+              >
+                {authorMintPending ? (
+                  <Loading height={20} dotHeight={20} />
+                ) : (
+                  'MINT'
+                )}
+              </MintButton>
+            </CTAWrapper>
           </ContentWrapper>
         </BaseModal>
       )}

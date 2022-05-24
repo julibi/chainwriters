@@ -1,8 +1,12 @@
 import { formatEther } from 'ethers/lib/utils'
 import React, { useCallback, useState } from 'react'
 import styled from 'styled-components'
-import { BaseButton } from '../themes'
-import { StyledPrimaryButton } from '../pages/projects/[projectAddress]'
+import { BaseButton } from '../../themes'
+import { StyledPrimaryButton } from '../../pages/projects/[projectAddress]'
+
+const Root = styled.div`
+
+`;
 
 const ControlWrapper = styled.div`
   @media (max-width: 900px) {
@@ -38,7 +42,7 @@ const MintSection = () => {
   }, [mintingAmount]); 
 
   return (
-    <div>
+    <Root>
       <ControlWrapper>
         <StyledControl onClick={handleDecrement} disabled={mintingAmount === 1}>
           -
@@ -51,7 +55,7 @@ const MintSection = () => {
       <StyledPrimaryButton onClick={handleDeposit}>
         {`Deposit For ${formatEther(500000000000000000 * mintingAmount).toString()}`}
       </StyledPrimaryButton>
-    </div>
+    </Root>
   );
 }
 

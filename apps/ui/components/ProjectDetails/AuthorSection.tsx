@@ -138,6 +138,7 @@ const AuthorSection = ({
   onEnableNextEdition
 }: AuthorSectionProps) => {
   const canTriggerNextEdition = useMemo(() => {
+    console.log({ daoData });
     let canTrigger = false;
     if (
       daoData &&
@@ -383,7 +384,7 @@ const AuthorSection = ({
           ) : (
             <TriggerButton
               onClick={onEnableNextEdition}
-              disabled={nextEditionPending || canTriggerNextEdition}
+              disabled={nextEditionPending}
             >
               {nextEditionPending ? (
                 <Loading height={20} dotHeight={20} />
