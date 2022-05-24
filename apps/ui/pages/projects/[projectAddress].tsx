@@ -6,7 +6,7 @@ import { useWeb3React } from '@web3-react/core';
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import styled from 'styled-components'
-import { useGetProjectDetails } from '../../state/projects/hooks'
+import { alternativeFetchApproach, useGetProjectDetails } from '../../state/projects/hooks'
 import BaseModal from '../../components/BaseModal'
 import Checkmark from '../../components/Checkmark'
 import Countdown from '../../components/Countdown'
@@ -426,7 +426,7 @@ const wait = (seconds) => new Promise((resolve, _) => {
 })
 
 const ProjectDetailView = () => {
-  const { account, chainId } = useWeb3React();
+  const { account, chainId, library } = useWeb3React();
   const router = useRouter();
   let projectAddress = router.query.projectAddress;
   projectAddress = Array.isArray(projectAddress) ? projectAddress[0] : projectAddress;
@@ -588,7 +588,6 @@ const ProjectDetailView = () => {
         />
       );
       ProjectContract.provider.once(hash, (transaction) => {
-        // refetch
         // @ts-ignore
         callGetProjectDetails(projectAddress);
         setLoading(false);
@@ -684,9 +683,8 @@ const ProjectDetailView = () => {
         />
       );
       ProjectContract.provider.once(hash, (transaction) => {
-        setDaoData({ ...daoData, premintedByAuthor: Number(authorMintInput) });
         // @ts-ignore
-        // callGetProjectDetails(projectAddress);
+        callGetProjectDetails(projectAddress);
         setAuthorMintPending(false);
         toast.success('Minted!');
         setShowAuthorMintModal(false);
@@ -700,11 +698,11 @@ const ProjectDetailView = () => {
   }, [
     authorMintInput,
     blurb,
-    // callGetProjectDetails,
+    callGetProjectDetails,
     chainId,
     client,
     daoData,
-    // projectAddress,
+    projectAddress,
     ProjectContract
   ]);
 
@@ -727,11 +725,13 @@ const ProjectDetailView = () => {
             message={'Triggering auctions...'}
           />
         );
-        ProjectContract.provider.once(hash, async(transaction) => {
-          setDaoData({ ...daoData, auctionsStarted: true });
-          // await wait(5);
-          // @ts-ignore
-          // callGetProjectDetails(projectAddress);
+        ProjectContract.provider.once(hash, async (transaction) => {
+          const expirationBig = await ProjectContract.expiresAt();
+          setDaoData({
+            ...daoData,
+            auctionsStarted: true,
+            expiresAt: parseInt(expirationBig._hex, 16),
+          });
           setTriggerPending(false);
           toast.success('Auctions have started!');
         });
@@ -746,9 +746,7 @@ const ProjectDetailView = () => {
     daoData,
     account,
     ProjectContract,
-    chainId,
-    // callGetProjectDetails,
-    // projectAddress,
+    chainId
   ]);
 
   const enableNextEdition = useCallback(async()=> {
@@ -847,6 +845,8 @@ const ProjectDetailView = () => {
 
     return text;
   }, [calculatedProgress]);
+
+  console.log(daoData);
 
   // is price going down? - understand the rate...
   return (

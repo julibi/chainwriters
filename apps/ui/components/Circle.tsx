@@ -19,7 +19,7 @@ const MyCircle = styled.circle<{ percentage: number }>`
 
   @keyframes anim {
     100% {
-      stroke-dashoffset: ${({ percentage }) => (552/100)*(100 - percentage)}px;
+      stroke-dashoffset: ${({ percentage }) => (560/100)*(100 - percentage)}px;
     }
   }
 `;
