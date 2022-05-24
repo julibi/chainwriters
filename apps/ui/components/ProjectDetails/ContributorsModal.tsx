@@ -19,19 +19,19 @@ const ContentWrapper = styled.div`
 
 interface ContributorsModalProps {
   projectAddress: string;
+  onClose: () => void;
   onFailure: () => void;
   onPending: () => void;
   onSuccess: (contributorList: { address: string, share: number, role:string }[]) => void;
 }
 
-const ContributorsModal = ({ projectAddress, onFailure, onPending, onSuccess }: ContributorsModalProps) => {
+const ContributorsModal = ({ projectAddress, onClose, onFailure, onPending, onSuccess }: ContributorsModalProps) => {
   const getDaoContract = useDaoContract();
   const createSetContributors = useCreateSetContributors();
   const daoContract = useMemo(
     () => (projectAddress ? getDaoContract(projectAddress) : null),
     [projectAddress, getDaoContract]
   );
-  const [show, setShow] = useState<boolean>(true);
   const [pending, setPending] = useState<boolean>(false);
   const contribInitialState = {
     1: { address: '', share: 0, role: '' },
@@ -65,29 +65,28 @@ const ContributorsModal = ({ projectAddress, onFailure, onPending, onSuccess }: 
           <ToastLink hash={x.toString()} chainId={Number(y)} message={z} />
         );
         onSuccess(contributorList);
-        setShow(false);
+        onClose();
       },
       (x, y, z) => {
         toast.error(
           <ToastLink hash={x.toString()} chainId={Number(y)} message={z} />
         );
         onFailure();
-        setShow(false);
+        onClose();
       }
     );
   }, [
     contributorList,
     createSetContributors,
     daoContract,
+    onClose,
     onFailure,
     onPending,
     onSuccess,
   ]);
 
-  if (!show) return null;
-
   return (
-    <BaseModal onClose={() => setShow(false)}>
+    <BaseModal onClose={onClose}>
       <ContentWrapper>
       <ContributorsForm
         contributors={contributors}

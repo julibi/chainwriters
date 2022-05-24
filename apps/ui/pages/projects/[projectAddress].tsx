@@ -850,6 +850,8 @@ const ProjectDetailView = () => {
     return text;
   }, [calculatedProgress]);
 
+  console.log({ showConfigureModal });
+
   return (
     <Root>
       {!daoData && !successfullyLoaded && <Loading height={530} />}
@@ -1190,15 +1192,20 @@ const ProjectDetailView = () => {
         </>
       )}
       {showConfigureModal && (
-        <ConfigureModal onConfigure={configure} pending={configurePending} />
+        <ConfigureModal
+          onClose={() => setShowConfigureModal(false)}
+          onConfigure={configure}
+          pending={configurePending}
+        />
       )}
       {showContributorsModal && (
         <ContributorsModal
           projectAddress={projectAddress}
+          onClose={() => setShowContributorsModal(false)}
           onFailure={() => setContributorsPending(false)}
           onPending={() => setContributorsPending(true)}
           onSuccess={async (contributorList) => {
-            setContributorsPending(false)
+            setContributorsPending(false);
             //@ts-ignore
             setDaoData({ ...daoData, contributions: contributorList });
           }}

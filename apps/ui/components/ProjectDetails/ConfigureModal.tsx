@@ -74,6 +74,7 @@ const MintButton = styled(BaseButton)<MintButtonProps>`
 `;
 
 interface ConfigureModalProps {
+  onClose: () => void;
   onConfigure: (
     imgHash: string,
     blurbHash: string,
@@ -83,10 +84,9 @@ interface ConfigureModalProps {
   pending: boolean;
 }
 
-const ConfigureModal = ({ onConfigure, pending }: ConfigureModalProps) => {
+const ConfigureModal = ({ onConfigure, onClose, pending }: ConfigureModalProps) => {
   // @ts-ignore
   const client = create('https://ipfs.infura.io:5001/api/v0');
-  const [show, setShow] = useState<boolean>(true);
   const [imgBuffer, setImgBuffer] = useState<null | Buffer>(null);
   const [imgFile, setImgFile] = useState(null);
   const [blurb, setBlurb] = useState<string>('');
@@ -104,10 +104,8 @@ const ConfigureModal = ({ onConfigure, pending }: ConfigureModalProps) => {
     }
   };
 
-  if (!show) return null;
-
   return (
-    <BaseModal onClose={() => setShow(false)}>
+    <BaseModal onClose={onClose}>
       <ContentWrapper>
         <ModalHeader>Configure Your Project</ModalHeader>
         <ModalText>
