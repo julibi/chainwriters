@@ -379,7 +379,7 @@ const ProjectDetailView = () => {
   console.log({ daoData });
   const mint = useCallback(async() => {
     // is this working?
-    const isLastNFT = daoData.currentEditionTotalSupply + 1 === daoData.currenEditionMaxSupply;
+    // const isLastNFT = daoData.currentEditionTotalSupply + 1 === daoData.currenEditionMaxSupply;
     setMintPending(true);
     ProjectContract
     .buy({value: currentPrice})
@@ -404,9 +404,9 @@ const ProjectDetailView = () => {
         setShowBuyModal(false);
         // @ts-ignore
         callGetProjectDetails(projectAddress);
-        if (isLastNFT) {
-          setDaoData({...daoData, auctionsEnded: true });
-        }
+        // if (isLastNFT) {
+        //   setDaoData({...daoData, auctionsEnded: true });
+        // }
       });
     })
     .catch((e: unknown) => {
@@ -579,12 +579,8 @@ const ProjectDetailView = () => {
           />
         );
         ProjectContract.provider.once(hash, async (transaction) => {
-          const expirationBig = await ProjectContract.expiresAt();
-          setDaoData({
-            ...daoData,
-            auctionsStarted: true,
-            expiresAt: parseInt(expirationBig._hex, 16),
-          });
+          // @ts-ignore
+          callGetProjectDetails(projectAddress);
           setTriggerPending(false);
           toast.success('Auctions have started!');
         });
@@ -596,10 +592,12 @@ const ProjectDetailView = () => {
       }
     }
   }, [
-    daoData,
     account,
-    ProjectContract,
-    chainId
+    callGetProjectDetails,
+    chainId,
+    daoData,
+    projectAddress,
+    ProjectContract
   ]);
 
   const unlockNextEdition = useCallback(async(amount: number, price: string)=> {

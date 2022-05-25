@@ -52,6 +52,9 @@ const MintSection = () => {
           +
         </StyledControl>
       </ControlWrapper>
+      {/* <StyledPrimaryButton onClick={handleMint}>
+        {`Deposit For ${formatEther(500000000000000000 * mintingAmount).toString()}`}
+      </StyledPrimaryButton> */}
     </Root>
   );
 }

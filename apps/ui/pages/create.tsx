@@ -333,7 +333,7 @@ const Create = () => {
   const handleAuthorMint = useCallback(async() => {
     setLoading(true);
     let uri;
-
+    // first create metadata object
     try {
       const response = await fetch(`https://ipfs.io/ipfs/${blurbIPFS}`);
       if(!response.ok) {
@@ -355,7 +355,7 @@ const Create = () => {
       setLoading(false);
       return;
     }
-
+    // then call the contract
     createAuthorMint(
       daoContract,
       authorMintAmount,
