@@ -41,13 +41,14 @@ export const useCreateAuthorMint = () => {
   return async (
     daoContract: any,
     authorMintAmount: number,
+    metadataCID: string,
     loadingFunc: (x: boolean) => void,
     onLoad: (chainId: number, hash: string, message: string) => void,
     onSuccess: (chainId: number, hash: string, message: string) => void
   ) => {
     loadingFunc(true);
     try {
-      const Tx = await daoContract.authorMint(authorMintAmount);
+      const Tx = await daoContract.authorMint(authorMintAmount, metadataCID);
       const { hash } = Tx;
       onLoad(chainId, hash, 'Pending transaction...');
 

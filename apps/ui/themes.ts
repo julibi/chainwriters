@@ -48,6 +48,10 @@ export const PrimaryButton = styled.button`
   color: ${BG_NORMAL};
   border-radius: ${BASE_BORDER_RADIUS};
 
+  :disabled {
+    pointer-events: none;
+  }
+
   :hover {
     cursor: pointer;
   }

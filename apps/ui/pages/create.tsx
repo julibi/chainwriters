@@ -38,6 +38,7 @@ import ConfigReviewForm from '../components/Create/ConfigReviewForm'
 import AuthorClaimForm from '../components/Create/AuthorClaimForm'
 import ContributorsForm from '../components/Create/ContributorsForm'
 import Finished from '../components/Create/Finished'
+import { BLURB_FETCH_ERROR } from '../constants'
 
 const Root = styled.div`
   display: flex;
@@ -330,9 +331,35 @@ const Create = () => {
   }, [createSetConfiguration, daoContract, coverImgIPFS, blurbIPFS, subtitle, genre, currentStep]);
   
   const handleAuthorMint = useCallback(async() => {
+    setLoading(true);
+    let uri;
+
+    try {
+      const response = await fetch(`https://ipfs.io/ipfs/${blurbIPFS}`);
+      if(!response.ok) {
+        setBlurb(BLURB_FETCH_ERROR);
+      } else {
+        const fetchedBlurb = await response.text()
+        setBlurb(fetchedBlurb);
+      }
+      const metadataObject = {
+        name: title,
+        description: (blurb && blurb !== BLURB_FETCH_ERROR ) ? `${blurb} (Created with Peppermint Poets)` : 'Created with Peppermint Poets',
+        image: coverImgIPFS ? `ipfs://${coverImgIPFS}` : '',
+      };
+      const metadata = JSON.stringify(metadataObject, null, 2);
+      const uploadedMeta = (await client.add(metadata)).path;
+      uri = `ipfs://${uploadedMeta}`;
+    } catch(e: unknown) {
+      toast.error('Something went wrong while uploading metadata to IPFS.');
+      setLoading(false);
+      return;
+    }
+
     createAuthorMint(
       daoContract,
       authorMintAmount,
+      uri,
       setLoading,
       PendingToast,
       (x, y, z) => {

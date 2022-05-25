@@ -7,6 +7,7 @@ import { useWeb3React } from '@web3-react/core'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import styled from 'styled-components'
+import { BLURB_FETCH_ERROR } from '../../constants'
 import { useGetProjectDetails } from '../../state/projects/hooks'
 import BaseModal from '../../components/BaseModal'
 import InputField from '../../components/InputField'
@@ -145,9 +146,6 @@ export const StyledPrimaryButton = styled(PrimaryButton)`
 
   :disabled {
     background-color: ${DISABLED_WHITE};
-    :hover {
-      pointer-events: none;
-    }
   }
 
   @media (max-width: 900px) {
@@ -314,7 +312,7 @@ const ProjectDetailView = () => {
   const [mintPending, setMintPending] = useState<boolean>(false);
   const [currentPrice, setCurrentPrice] = useState(null);
   const [triggerPending, setTriggerPending] = useState(false);
-  const [showNextEditionModal, setShowNextEditionModal] = useState(false);
+  const [showUnlockEditionModal, setShowUnlockEditionModal] = useState(false);
   const [blurb, setBlurb] = useState<null | string>(null);
   const [showAuthorMintModal, setShowAuthorMintModal] = useState<boolean>(false);
   const [authorMintInput, setAuthorMintInput] = useState<string>('');
@@ -326,7 +324,6 @@ const ProjectDetailView = () => {
   const [nextEditionMaxAmount, setNextEditionMaxAmount] = useState<number>(0);
   const [nextEditionMintPrice, setMextEditionMintPrice] = useState<string>('0');
   const [unlockEditionPending, setUnlockEditionPending] = useState<boolean>(false);
-  const BLURB_FETCH_ERROR = 'Something went wrong while loading this blurb. Sorry. Maybe refresh?';
   
   const callGetProjectDetails = useCallback(async(projectAddress: string) => {
     const ProjectData: ProjectData = await getProjectDetails(projectAddress);
@@ -341,13 +338,13 @@ const ProjectDetailView = () => {
     if (daoData && daoData.blurbIpfsHash) {
       const response = await fetch(`https://ipfs.io/ipfs/${daoData.blurbIpfsHash}`);
       if(!response.ok) {
-        setBlurb('Something went wrong while loading this blurb. Sorry. Maybe refresh?');
+        setBlurb(BLURB_FETCH_ERROR);
       } else {
         const fetchedBlurb = await response.text()
         setBlurb(fetchedBlurb);
       }
     } else {
-      setBlurb('Something went wrong while loading this blurb. Sorry. Maybe refresh?');
+      setBlurb(BLURB_FETCH_ERROR);
     }
   }, [daoData]);
 
@@ -381,37 +378,42 @@ const ProjectDetailView = () => {
   }, [daoData, fetchBlurb]);
   console.log({ daoData });
   const mint = useCallback(async() => {
-      setMintPending(true);
-      ProjectContract
-      .buy({value: currentPrice})
-      .then(mintTx => {
-        const { hash } = mintTx;
-        toast.info(
+    // is this working?
+    const isLastNFT = daoData.currentEditionTotalSupply + 1 === daoData.currenEditionMaxSupply;
+    setMintPending(true);
+    ProjectContract
+    .buy({value: currentPrice})
+    .then(mintTx => {
+      const { hash } = mintTx;
+      toast.info(
+        <ToastLink
+          hash={hash}
+          chainId={chainId}
+          message={'Mint pending...'}
+        />
+      );
+      ProjectContract.provider.once(hash, (transaction) => {
+        toast.success(
           <ToastLink
             hash={hash}
             chainId={chainId}
-            message={'Mint pending...'}
+            message={'Successfyull Minted!'}
           />
         );
-        ProjectContract.provider.once(hash, (transaction) => {
-          toast.success(
-            <ToastLink
-              hash={hash}
-              chainId={chainId}
-              message={'Successfyull Minted!'}
-            />
-          );
-          setMintPending(false);
-          setShowBuyModal(false);
-          // @ts-ignore
-          callGetProjectDetails(projectAddress);
-        });
-      })
-      .catch((e: unknown) => {
-        console.log({ e });
-        toast.error('Sorry, something went wrong...');
         setMintPending(false);
+        setShowBuyModal(false);
+        // @ts-ignore
+        callGetProjectDetails(projectAddress);
+        if (isLastNFT) {
+          setDaoData({...daoData, auctionsEnded: true });
+        }
       });
+    })
+    .catch((e: unknown) => {
+      console.log({ e });
+      toast.error('Sorry, something went wrong...');
+      setMintPending(false);
+    });
   }, [projectAddress, ProjectContract, callGetProjectDetails, chainId, currentPrice]);
 
   const fetchCurrentPrice = async() => {
@@ -618,6 +620,7 @@ const ProjectDetailView = () => {
         // @ts-ignore
         callGetProjectDetails(projectAddress);
         setUnlockEditionPending(false);
+        setShowUnlockEditionModal(false);
         toast.success('New Edition unlocked!');
       });
     } catch (e: unknown) {
@@ -625,6 +628,7 @@ const ProjectDetailView = () => {
       toast.error(e.reason ?? 'Something went wrong.');
       console.log({ e });
       setUnlockEditionPending(false);
+      setShowUnlockEditionModal(false);
     }
   }, [ProjectContract, callGetProjectDetails, chainId, projectAddress]);
 
@@ -717,7 +721,7 @@ const ProjectDetailView = () => {
               onAddContributors={() => setShowContributorsModal(true)}
               onAuthorMint={() => setShowAuthorMintModal(true)}
               onTriggerFirstAuction={triggerFirstAuction}
-              onUnlockNextEdition={() => setShowNextEditionModal(true)}
+              onUnlockNextEdition={() => setShowUnlockEditionModal(true)}
             />
           )}
         </>
@@ -794,8 +798,8 @@ const ProjectDetailView = () => {
               parseInt(currentPrice._hex, 16).toString()
             )} MATIC`}</ModalHeader>
             <ModalText>
-              In a dutch auction the price keeps going down. Don't miss the
-              chance and mint now, before someone else does.
+              {`In a dutch auction the price keeps going down. Don't miss the
+              chance and mint now!`}
             </ModalText>
             <MintButton disabled={mintPending} onClick={mint}>
               {mintPending ? <Loading height={20} dotHeight={20} /> : 'MINT'}
@@ -803,8 +807,8 @@ const ProjectDetailView = () => {
           </ContentWrapper>
         </BaseModal>
       )}
-      {showNextEditionModal && (
-        <BaseModal onClose={() => setShowNextEditionModal(false)}>
+      {showUnlockEditionModal && (
+        <BaseModal onClose={() => setShowUnlockEditionModal(false)}>
           <ContentWrapper>
             <ModalHeader>{'Unlock Next Edition'}</ModalHeader>
             <ModalText>Specify the max amount and price per mint.</ModalText>
