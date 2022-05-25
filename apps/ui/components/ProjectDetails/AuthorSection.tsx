@@ -115,13 +115,13 @@ interface AuthorSectionProps {
   contributorsPending: boolean;
   authorMintPending: boolean;
   triggerPending: boolean;
-  nextEditionPending: boolean;
+  unlockEditionPending: boolean;
 
   onConfigure: VoidFunction;
   onAddContributors: VoidFunction;
   onAuthorMint: VoidFunction;
   onTriggerFirstAuction: VoidFunction;
-  onEnableNextEdition: VoidFunction;
+  onUnlockNextEdition: VoidFunction;
 }
 
 const AuthorSection = ({
@@ -130,12 +130,12 @@ const AuthorSection = ({
   contributorsPending,
   authorMintPending,
   triggerPending,
-  nextEditionPending,
+  unlockEditionPending,
   onConfigure,
   onAddContributors,
   onAuthorMint,
   onTriggerFirstAuction,
-  onEnableNextEdition
+  onUnlockNextEdition
 }: AuthorSectionProps) => {
   const canTriggerNextEdition = useMemo(() => {
     console.log({ daoData });
@@ -371,7 +371,7 @@ const AuthorSection = ({
     <ActionItems>
       <MoreDetails
         open={canTriggerNextEdition}
-        title={'Enable Next Edition'}
+        title={'Unlock Next Edition'}
         styles={{ marginBlockEnd: '1rem' }}
       >
         <>
@@ -380,16 +380,16 @@ const AuthorSection = ({
             lick off your next one!
           </p>
           {!canTriggerNextEdition ? (
-            <DoneAction>{'Enable Next Edition'}</DoneAction>
+            <DoneAction>{'Unlock Next Edition'}</DoneAction>
           ) : (
             <TriggerButton
-              onClick={onEnableNextEdition}
-              disabled={nextEditionPending}
+              onClick={onUnlockNextEdition}
+              disabled={unlockEditionPending}
             >
-              {nextEditionPending ? (
+              {unlockEditionPending ? (
                 <Loading height={20} dotHeight={20} />
               ) : (
-                'Enable Next Edition'
+                'Unlock'
               )}
             </TriggerButton>
           )}

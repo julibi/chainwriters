@@ -1,5 +1,6 @@
-import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react'
+import React, { ChangeEvent, MouseEventHandler, useCallback, useEffect, useMemo, useState } from 'react'
 import { toast } from 'react-toastify'
+import { BigNumber } from '@ethersproject/bignumber'
 import { create } from 'ipfs-http-client'
 import { formatEther } from '@ethersproject/units'
 import { useWeb3React } from '@web3-react/core'
@@ -156,6 +157,8 @@ export const StyledPrimaryButton = styled(PrimaryButton)`
 
 interface MintButtonProps {
   disabled: boolean;
+  onClick: MouseEventHandler<HTMLButtonElement> &
+    ((amount: number, price: string) => Promise<void>);
 }
 
 const MintButton = styled(BaseButton)<MintButtonProps>`
@@ -311,7 +314,6 @@ const ProjectDetailView = () => {
   const [mintPending, setMintPending] = useState<boolean>(false);
   const [currentPrice, setCurrentPrice] = useState(null);
   const [triggerPending, setTriggerPending] = useState(false);
-  const [nextEditionPending, setNextEditionPending] = useState(false);
   const [showNextEditionModal, setShowNextEditionModal] = useState(false);
   const [blurb, setBlurb] = useState<null | string>(null);
   const [showAuthorMintModal, setShowAuthorMintModal] = useState<boolean>(false);
@@ -323,6 +325,7 @@ const ProjectDetailView = () => {
   const [contributorsPending, setContributorsPending] = useState<boolean>(false);
   const [nextEditionMaxAmount, setNextEditionMaxAmount] = useState<number>(0);
   const [nextEditionMintPrice, setMextEditionMintPrice] = useState<string>('0');
+  const [unlockEditionPending, setUnlockEditionPending] = useState<boolean>(false);
   const BLURB_FETCH_ERROR = 'Something went wrong while loading this blurb. Sorry. Maybe refresh?';
   
   const callGetProjectDetails = useCallback(async(projectAddress: string) => {
@@ -597,31 +600,31 @@ const ProjectDetailView = () => {
     chainId
   ]);
 
-  const enableNextEdition = useCallback(async()=> {
+  const unlockNextEdition = useCallback(async(amount: number, price: string)=> {
+    const formattedPrice = BigNumber.from((Number(price) * 1e18).toString());
+
     try {
-      setNextEditionPending(true);
-      // TODO: make it dynamic
-      const Tx = await ProjectContract.enableNextEdition(10, 500000000000000000);
+      setUnlockEditionPending(true);
+      const Tx = await ProjectContract.enableNextEdition(amount, formattedPrice);
       const { hash } = Tx;
       toast.info(
         <ToastLink
           hash={hash}
           chainId={chainId}
-          message={'Enabling next edition...'}
+          message={'Unlocking next edition...'}
         />
       );
       ProjectContract.provider.once(hash, (transaction) => {
-        // refetch
         // @ts-ignore
         callGetProjectDetails(projectAddress);
-        setNextEditionPending(false);
-        toast.success('Next Edition unlocked!');
+        setUnlockEditionPending(false);
+        toast.success('New Edition unlocked!');
       });
     } catch (e: unknown) {
       // @ts-ignore
       toast.error(e.reason ?? 'Something went wrong.');
       console.log({ e });
-      setNextEditionPending(false);
+      setUnlockEditionPending(false);
     }
   }, [ProjectContract, callGetProjectDetails, chainId, projectAddress]);
 
@@ -658,14 +661,14 @@ const ProjectDetailView = () => {
             </InfoLeft>
             <InfoRight>
               {daoData.currentEdition > 1 && <MintSection />}
-              {daoData.currentEdition === 1 &&
+              {daoData.currentEdition === 1 && (
                 <AuctionSection
                   daoData={daoData}
                   loading={loading}
                   onFetchCurrentPrice={fetchCurrentPrice}
                   onRetriggerAuction={retriggerAuction}
                 />
-              }
+              )}
             </InfoRight>
           </MainInfoWrapper>
           <ShareSection>
@@ -700,7 +703,7 @@ const ProjectDetailView = () => {
               {blurb ?? <Loading height={20} dotHeight={20} />}
             </Description>
           </DescriptionSection>
-          {isAuthor &&
+          {isAuthor && (
             <AuthorSection
               daoData={daoData}
               // pending state props
@@ -708,15 +711,15 @@ const ProjectDetailView = () => {
               contributorsPending={contributorsPending}
               authorMintPending={authorMintPending}
               triggerPending={triggerPending}
-              nextEditionPending={nextEditionPending}
+              unlockEditionPending={unlockEditionPending}
               // contract interaction function props
               onConfigure={() => setShowConfigureModal(true)}
               onAddContributors={() => setShowContributorsModal(true)}
               onAuthorMint={() => setShowAuthorMintModal(true)}
               onTriggerFirstAuction={triggerFirstAuction}
-              onEnableNextEdition={() => setShowNextEditionModal(true)}
+              onUnlockNextEdition={() => setShowNextEditionModal(true)}
             />
-          }
+          )}
         </>
       )}
       {showConfigureModal && (
@@ -803,7 +806,7 @@ const ProjectDetailView = () => {
       {showNextEditionModal && (
         <BaseModal onClose={() => setShowNextEditionModal(false)}>
           <ContentWrapper>
-            <ModalHeader>{'Trigger Next Edition'}</ModalHeader>
+            <ModalHeader>{'Unlock Next Edition'}</ModalHeader>
             <ModalText>Specify the max amount and price per mint.</ModalText>
             <CTAWrapper>
               <InputField
@@ -818,30 +821,65 @@ const ProjectDetailView = () => {
                     setNextEditionMaxAmount(Number(e.target.value));
                   }
                 }}
-                error={Number(nextEditionMaxAmount) < 1 && 'Incorrect amount.'}
+                error={
+                  (Number(nextEditionMaxAmount) < 1 ||
+                    Number(nextEditionMaxAmount) > 10000) &&
+                  'Must be between 1 and 10000.'
+                }
               />
+              {/* <InputField
+                label={'Mint Price'}
+                value={nextEditionMintPrice}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                  setMextEditionMintPrice(Number(e.target.value));
+                }}
+                // TODO: increase after development
+                error={nextEditionMintPrice < 1 && 'Price too low.'}
+              />
+              <MintButton
+                disabled={
+                  nextEditionMaxAmount < 1 ||
+                  nextEditionMaxAmount > 10000 ||
+                  nextEditionMintPrice < 1
+                }
+                onClick={async () =>
+                  await unlockNextEdition(
+                    nextEditionMaxAmount,
+                    nextEditionMintPrice
+                  )
+                }
+              >
+                {unlockEditionPending ? (
+                  <Loading height={20} dotHeight={20} />
+                ) : (
+                  'UNLOCK'
+                )}
+              </MintButton> */}
               <InputField
                 label={'Mint Price'}
                 value={nextEditionMintPrice}
                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                  const onlyNumbers = /^[0-9\b]+$/;
-                  if (
-                    e.target.value === '' ||
-                    onlyNumbers.test(e.target.value)
-                  ) {
-                    setMextEditionMintPrice(e.target.value);
-                  }
+                  setMextEditionMintPrice(e.target.value);
                 }}
-                error={nextEditionMaxAmount < 1 && 'Incorrect amount.'}
+                error={Number(nextEditionMintPrice) < 0.01 && 'Price too low.'}
               />
               <MintButton
-                disabled={nextEditionMaxAmount > 0}
-                onClick={authorMint}
+                disabled={
+                  Number(nextEditionMaxAmount) < 1 ||
+                  Number(nextEditionMaxAmount) > 10000 ||
+                  Number(nextEditionMintPrice) < 0.01
+                }
+                onClick={async () =>
+                  await unlockNextEdition(
+                    nextEditionMaxAmount,
+                    nextEditionMintPrice
+                  )
+                }
               >
-                {authorMintPending ? (
+                {unlockEditionPending ? (
                   <Loading height={20} dotHeight={20} />
                 ) : (
-                  'MINT'
+                  'UNLOCK'
                 )}
               </MintButton>
             </CTAWrapper>

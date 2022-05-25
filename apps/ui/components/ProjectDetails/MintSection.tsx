@@ -37,8 +37,8 @@ const MintSection = () => {
     setMintingAmount(mintingAmount - 1);
   }, [mintingAmount]); 
 
-  const handleDeposit = useCallback(() => {
-    console.log("handleDeposit");
+  const handleMint = useCallback(() => {
+    console.log("handleMint");
   }, [mintingAmount]); 
 
   return (
@@ -52,9 +52,6 @@ const MintSection = () => {
           +
         </StyledControl>
       </ControlWrapper>
-      <StyledPrimaryButton onClick={handleDeposit}>
-        {`Deposit For ${formatEther(500000000000000000 * mintingAmount).toString()}`}
-      </StyledPrimaryButton>
     </Root>
   );
 }
