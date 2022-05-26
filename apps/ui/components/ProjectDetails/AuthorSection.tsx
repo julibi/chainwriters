@@ -52,12 +52,6 @@ const TriggerButton = styled(BaseButton)<TriggerButtonTypes>`
   margin: 1rem 1rem 0 0;
   padding: 1rem;
 
-  :disabled {
-    :hover {
-      pointer-events: none;
-    }
-  }
-
   @media (max-width: 900px) {
     width: 100%;
   }
@@ -138,11 +132,10 @@ const AuthorSection = ({
   onUnlockNextEdition
 }: AuthorSectionProps) => {
   const canTriggerNextEdition = useMemo(() => {
-    console.log({ daoData });
     let canTrigger = false;
     if (
       daoData &&
-      daoData.currenEditionMaxSupply === daoData.currentEditionTotalSupply
+      daoData.currentEditionMaxSupply === daoData.currentEditionTotalSupply
     ) {
       canTrigger = true;
     }

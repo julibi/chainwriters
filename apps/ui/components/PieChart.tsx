@@ -44,7 +44,7 @@ const PieChart = ({ part, whole }: PieChart) => {
     <Pie>
       <StyledCircle percentage={parseInt((part/whole * 100).toString())} />
       <PieHole>
-        <PieHoleData>{`${part}/${whole} Sold`}</PieHoleData>
+        <PieHoleData>{`${part}/${whole} Minted`}</PieHoleData>
       </PieHole>
     </Pie>
   );

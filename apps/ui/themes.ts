@@ -38,8 +38,14 @@ export const BaseButton = styled.button`
   :hover {
     cursor: pointer;
   }
+
   :active {
     box-shadow: ${INSET_BASE_BOX_SHADOW};
+  }
+
+  :disabled {
+    box-shadow: ${INSET_BASE_BOX_SHADOW};
+    pointer-events: none;
   }
 `;
 

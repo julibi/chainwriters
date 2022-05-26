@@ -14,7 +14,6 @@ import {
   BASE_BORDER_RADIUS,
   BASE_BOX_SHADOW,
   BG_NORMAL,
-  INSET_BASE_BOX_SHADOW,
   PINK,
   PLAIN_WHITE,
 } from '../../themes'
@@ -55,20 +54,8 @@ const SubmitButton = styled(BaseButton)`
   box-shadow: ${BASE_BOX_SHADOW};
   padding: 1rem;
 
-  :hover {
-    cursor: pointer;
-  }
-
-  :active {
-    box-shadow: ${INSET_BASE_BOX_SHADOW};
-  }
-
   :disabled {
     color: grey;
-
-    :hover {
-      cursor: default;
-    }
   }
 `;
 

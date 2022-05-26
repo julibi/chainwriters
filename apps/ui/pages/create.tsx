@@ -118,20 +118,8 @@ export const SubmitButton = styled(BaseButton)`
   box-shadow: ${BASE_BOX_SHADOW};
   padding: 1rem;
 
-  :hover {
-    cursor: pointer;
-  }
-
-  :active {
-    box-shadow: ${INSET_BASE_BOX_SHADOW};
-  }
-
   :disabled {
     color: grey;
-
-    :hover {
-      cursor: default;
-    }
   }
 `;
 

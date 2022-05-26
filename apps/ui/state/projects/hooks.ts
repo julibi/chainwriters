@@ -6,9 +6,6 @@ import { JsonRpcProvider } from '@ethersproject/providers'
 import { RPC_URLS } from '../../connectors'
 import PROJECT_ABI from '../../abis/project.json'
 import useProjectContract from '../../hooks/useProjectContract'
-import ABI from '../../abis/project.json'
-import { Contract, getDefaultProvider } from 'ethers'
-
 
 interface Contribution {
   id: string;
@@ -18,10 +15,10 @@ interface Contribution {
   dao: string;
 }
 
-interface Edition {
+export interface Edition {
   id: string;
   maxSupply: number;
-  mintPrice: BigInt;
+  mintPrice: BigNumber;
   dao: string;
 }
 
@@ -41,12 +38,13 @@ export interface ProjectData {
   editions: Edition[];
   metadataCID: string | null;
   // coming from Contract directly
-  currenEditionMaxSupply: number;
+  currentEditionMaxSupply: number;
   // coming from multicall
   auctionsStarted: boolean;
   auctionsEnded: boolean;
   currentEdition: number;
   currentEditionTotalSupply: number;
+  currentEditionMintPrice: BigNumber;
   premintedByAuthor: number;
   totalSupplyGenEd: number;
   expiresAt: number;
@@ -164,16 +162,9 @@ const convertToRegularNumber = (bigInt, BigIntFromMulticall) => {
   return parseInt(bigInt._hex, 16)
 };
 
-const convertToRegularBigInt = (bigInt) => {
-  return {
-    _: bigInt.type,
-    _hex: bigInt.hex
-  }
-};
-
 export const useGetProjectDetails = (projectAddress: string) => { 
   const ProjectContract = useProjectContract(projectAddress); 
-  return async(address: string): Promise<ProjectData> => {
+  return async (address: string): Promise<ProjectData> => {
     if (!address) {
       return null;
     }
@@ -212,6 +203,16 @@ export const useGetProjectDetails = (projectAddress: string) => {
           methodParameters: [],
         },
         {
+          reference: 'currentEditionMintPrice',
+          methodName: 'currentEditionMintPrice',
+          methodParameters: [],
+        },
+        {
+          reference: 'currentEditionMax',
+          methodName: 'currentEditionMax',
+          methodParameters: [],
+        },
+        {
           reference: 'auctionsStarted',
           methodName: 'auctionStarted',
           methodParameters: [],
@@ -244,7 +245,7 @@ export const useGetProjectDetails = (projectAddress: string) => {
     // these could be fetched from subgraph,
     //but struggling with updating/refetch issue - hence using this solution for now
     const auctionsStarted = result.find((x) => x.reference == 'auctionsStarted')
-    .returnValues[0];
+      .returnValues[0];
     const auctionsEnded = result.find((x) => x.reference == 'auctionsEnded')
       .returnValues[0];
     const expiresAt = parseInt(
@@ -255,7 +256,13 @@ export const useGetProjectDetails = (projectAddress: string) => {
     );
     let mintPrice = result.find((x) => x.reference == 'mintPrice')
       .returnValues[0];
+    let currentEditionMintPrice = result.find(
+      (x) => x.reference == 'currentEditionMintPrice'
+    ).returnValues[0];
+    currentEditionMintPrice = BigNumber.from(parseInt(currentEditionMintPrice.hex, 16).toString());
     currentEdition = convertToRegularNumber(currentEdition, true);
+    const currentEditionMax = result.find((x) => x.reference === 'currentEditionMax').returnValues[0];
+    const currentEditionMaxSupply = parseInt(currentEditionMax.hex, 16);
     premintedByAuthor = convertToRegularNumber(premintedByAuthor, true);
     totalSupplyGenEd = convertToRegularNumber(totalSupplyGenEd, true);
     mintPrice = BigNumber.from(parseInt(mintPrice.hex, 16).toString());
@@ -302,9 +309,6 @@ export const useGetProjectDetails = (projectAddress: string) => {
       };
     });
 
-    const currenEditionMaxSupply = Number(
-      editions[editions.length - 1].maxSupply
-    );
     const currentEdTotalSupplyBig = await ProjectContract.totalSupply(
       currentEdition
     );
@@ -326,7 +330,8 @@ export const useGetProjectDetails = (projectAddress: string) => {
       metadataCID,
       currentEdition,
       currentEditionTotalSupply,
-      currenEditionMaxSupply,
+      currentEditionMaxSupply,
+      currentEditionMintPrice,
       auctionsStarted,
       auctionsEnded,
       contributions: contributionsFormatted,
@@ -338,5 +343,5 @@ export const useGetProjectDetails = (projectAddress: string) => {
       paused,
       factory,
     };
-  };
+  };;
 };

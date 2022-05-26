@@ -25,8 +25,7 @@ import {
   PINK,
   PLAIN_WHITE,
   PrimaryButton,
-  BaseButton,
-  INSET_BASE_BOX_SHADOW
+  BaseButton
 } from '../../themes';
 import useProjectContract from '../../hooks/useProjectContract'
 import { ProjectData } from '../../state/projects/hooks'
@@ -117,7 +116,7 @@ const Genre = styled.div`
   justify-content: space-between;  
 `;
 
-const Title = styled(SectionTitle)`
+export const Title = styled(SectionTitle)`
   text-align: center;
   margin-block-end: 2rem;
   display: flex;
@@ -164,11 +163,6 @@ const MintButton = styled(BaseButton)<MintButtonProps>`
   padding: 1rem;
   width: 209px;
   color: ${({ disabled }) => disabled ? DISABLED_WHITE : PINK};
-
-  :disabled {
-    box-shadow: ${INSET_BASE_BOX_SHADOW};
-    pointer-events: none;
-  }
 
   @media (max-width: 900px) {
     width: 100%;
@@ -662,7 +656,17 @@ const ProjectDetailView = () => {
               </Genre>
             </InfoLeft>
             <InfoRight>
-              {daoData.currentEdition > 1 && <MintSection />}
+              {daoData.currentEdition > 1 && (
+                <MintSection
+                  currentEdition={daoData.currentEdition}
+                  totalSupply={daoData.currentEditionTotalSupply}
+                  maxSupply={daoData.currentEditionMaxSupply}
+                  mintPrice={daoData.currentEditionMintPrice}
+                  projectContract={ProjectContract}
+                  // @ts-ignore
+                  refetch={() => callGetProjectDetails(projectAddress)}
+                />
+              )}
               {daoData.currentEdition === 1 && (
                 <AuctionSection
                   daoData={daoData}
@@ -879,7 +883,11 @@ const ProjectDetailView = () => {
                 }
               >
                 {unlockEditionPending ? (
-                  <Loading height={20} dotHeight={20} />
+                  <Loading
+                    disabled={unlockEditionPending}
+                    height={20}
+                    dotHeight={20}
+                  />
                 ) : (
                   'UNLOCK'
                 )}
