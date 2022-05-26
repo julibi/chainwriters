@@ -844,6 +844,7 @@ const ProjectDetailView = () => {
               />
               <MintButton
                 disabled={
+                  unlockEditionPending ||
                   nextEditionMaxAmount < 1 ||
                   nextEditionMaxAmount > 10000 ||
                   nextEditionMintPrice < 1
@@ -871,6 +872,7 @@ const ProjectDetailView = () => {
               />
               <MintButton
                 disabled={
+                  unlockEditionPending ||
                   Number(nextEditionMaxAmount) < 1 ||
                   Number(nextEditionMaxAmount) > 10000 ||
                   Number(nextEditionMintPrice) < 0.01
@@ -884,7 +886,6 @@ const ProjectDetailView = () => {
               >
                 {unlockEditionPending ? (
                   <Loading
-                    disabled={unlockEditionPending}
                     height={20}
                     dotHeight={20}
                   />
