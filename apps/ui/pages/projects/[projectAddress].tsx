@@ -373,7 +373,7 @@ const ProjectDetailView = () => {
   console.log({ daoData });
   const mint = useCallback(async() => {
     // is this working?
-    // const isLastNFT = daoData.currentEditionTotalSupply + 1 === daoData.currenEditionMaxSupply;
+    // const isLastNFT = daoData.currentEditionTotalSupply + 1 === daoData.currentEditionMaxSupply;
     setMintPending(true);
     ProjectContract
     .buy({value: currentPrice})
@@ -755,7 +755,7 @@ const ProjectDetailView = () => {
             <ModalText>
               {`You as an author can mint an amount of your project's Genesis
               Edition NFTs for yourself. Only after minting this amount, can you
-              trigger the public auctions for your first edition. MAX: ${daoData.currenEditionMaxSupply}`}
+              trigger the public auctions for your first edition. MAX: ${daoData.currentEditionMaxSupply}`}
             </ModalText>
             <CTAWrapper>
               <InputField
@@ -771,7 +771,7 @@ const ProjectDetailView = () => {
                 }}
                 error={
                   (Number(authorMintInput) < 1 ||
-                    Number(authorMintInput) > daoData.currenEditionMaxSupply) &&
+                    Number(authorMintInput) > daoData.currentEditionMaxSupply) &&
                   'Incorrect amount.'
                 }
               />
@@ -779,7 +779,7 @@ const ProjectDetailView = () => {
                 disabled={
                   authorMintPending ||
                   Number(authorMintInput) < 1 ||
-                  Number(authorMintInput) > daoData.currenEditionMaxSupply
+                  Number(authorMintInput) > daoData.currentEditionMaxSupply
                 }
                 onClick={authorMint}
               >
