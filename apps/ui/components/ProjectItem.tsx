@@ -97,6 +97,7 @@ const ProjectItem = ({
           height={'100%'}
           width={'100%'}
           alt={'Project Image'}
+          priority
         />
       </ImageWrapper>
       <InfoWrapper>
