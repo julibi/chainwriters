@@ -284,10 +284,6 @@ const CTAWrapper = styled.div`
   flex-direction: column;
 `;
 
-const wait = (seconds) => new Promise((resolve, _) => {
-  setTimeout(resolve, seconds * 1000)
-})
-
 const ProjectDetailView = () => {
   const { account, chainId, library } = useWeb3React();
   const router = useRouter();
