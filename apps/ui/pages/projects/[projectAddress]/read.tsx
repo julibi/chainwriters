@@ -1,10 +1,76 @@
-import { useWeb3React } from '@web3-react/core';
-import client from '../../../apolloclient';
-import { BigNumber } from 'ethers';
-import { useRouter } from 'next/router';
+import { useWeb3React } from '@web3-react/core'
+import { useRouter } from 'next/router'
+import styled from 'styled-components'
 import React, { useCallback, useEffect, useState } from 'react'
-import useProjectContract from '../../../hooks/useProjectContract';
-import { GET_ONE_DAO } from '../../../state/projects/hooks';
+import client from '../../../apolloclient'
+import { truncateAddress } from '../../../components/WalletIndicator'
+import useProjectContract from '../../../hooks/useProjectContract'
+import { GET_ONE_DAO } from '../../../state/projects/hooks'
+import Loading from '../../../components/Loading'
+import Typewriter from '../../../components/Typewriter'
+import { BASE_BORDER_RADIUS, BASE_BOX_SHADOW } from '../../../themes'
+
+const animation = (animationseconds: number) => `
+  animation: fadein ${animationseconds}s;
+
+  @keyframes fadein {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+  }
+`;
+
+const Root = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin: 2rem;
+`;
+
+const TitleWrapper = styled.div`
+  border-radius: ${BASE_BORDER_RADIUS};
+  box-shadow: ${BASE_BOX_SHADOW};
+  padding: 2rem;
+  margin-block-end: 1rem;
+`;
+
+const FlexWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+
+  @media (max-width: 900px) {
+    flex-direction: column;
+  }
+`;
+
+const Title = styled.h1``;
+
+const Wrapper = styled.div`
+  border-radius: ${BASE_BORDER_RADIUS};
+  box-shadow: ${BASE_BOX_SHADOW};
+  padding-inline: 2rem;
+  margin-block-end: 1rem;
+
+  ${animation(2)}
+`;
+
+const SubTitle = styled.h3`
+  font-family: 'Roboto Mono Bold', Serif;
+`;
+
+const Author = styled.h3`
+  font-family: 'Roboto Mono Bold', Serif;
+`;
+
+const TextWrapper = styled.div`
+  border-radius: ${BASE_BORDER_RADIUS};
+  box-shadow: ${BASE_BOX_SHADOW};
+  flex: 1;
+  padding: 2rem;
+  margin-block-end: 1rem;
+
+  ${animation(4)};
+`;
+
+const Text = styled.p``;
 
 interface ReadData {
   author: string;
@@ -24,9 +90,11 @@ const Read = () => {
   const [allowed, setAllowed] = useState<boolean>(false);
   const [readingData, setReadingData] = useState<ReadData | null>(null);
   const [text, setText] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const fetchAllowed = useCallback(async() => {
     if (account && ProjectContract) {
+      setLoading(true);
       const balancesOfUser = [];
       try {
         const currentEditionBigInt = await ProjectContract.currentEdition();
@@ -41,11 +109,13 @@ const Read = () => {
       } catch(e: unknown) {
         console.log({ e });
       }
+      setLoading(false);
     }
   }, [account, ProjectContract]);
 
-  const fetchMetadata = useCallback(async() => {
+  const fetchText = useCallback(async() => {
     if (ProjectContract) {
+      setLoading(true);
       const {
         data: { dao },
       } = await client.query({
@@ -54,32 +124,28 @@ const Read = () => {
         variables: { address: projectAddress.toLowerCase() },
       });
       if (dao) {
-        setReadingData({
-          author: dao.author,
-          title: dao.title,
-          subtitle: dao.subtitle,
-          genre: dao.genre,
-          textIpfsHash: dao.textIpfshash,
-          createdAt: dao.createdAt
-        });
+        try {
+          const response = await fetch(`https://ipfs.io/ipfs/${dao.textIpfsHash}`);
+          if(response.ok) {
+            const fetchedText = await response.text();
+            console.log({ fetchedText });
+            setText(fetchedText);
+          }
+          setReadingData({
+            author: dao.author,
+            title: dao.title,
+            subtitle: dao.subtitle,
+            genre: dao.genre,
+            textIpfsHash: dao.textIpfshash,
+            createdAt: dao.createdAt
+          });
+        } catch(e: unknown) {
+          console.log({ e });
+        }
       }
+      setLoading(false);
     }
   }, [ProjectContract, projectAddress]);
-
-  const fetchText = useCallback(async() => {
-    if (readingData) {
-      try {
-        const response = await fetch(`https://ipfs.io/ipfs/${readingData.textIpfsHash}`);
-        if(response.ok) {
-          const fetchedText = await response.text();
-          console.log({ fetchedText });
-          setText(fetchedText);
-        }
-      } catch(e: unknown) {
-        console.log({ e });
-      }
-    }
-  }, [readingData]);
 
   useEffect(() => {
     fetchAllowed();
@@ -87,19 +153,45 @@ const Read = () => {
 
   useEffect(() => {
     if (allowed) {
-      fetchMetadata();
-    }
-  }, [allowed, fetchMetadata]);
-
-  useEffect(() => {
-    if (readingData) {
       fetchText();
     }
-  }, [readingData, fetchText]);
-  console.log({allowed, readingData})
+  }, [allowed, fetchText]);
+
+  if (loading && !readingData) {
+    return (
+      <Root>
+        <Loading height={530} />
+      </Root>
+    );
+  }
+
+  if (!allowed && !loading) {
+    return (
+      <Root>
+        <Title>Sorry, you need to own an NFT to read this.</Title>
+      </Root>
+    );
+  }
   return (
-    <div>read</div>
-  )
+    <Root>
+      <TitleWrapper>
+        <Typewriter typedText={readingData.title} />
+      </TitleWrapper>
+      <FlexWrapper>
+      {readingData.subtitle && (
+        <Wrapper>
+          <SubTitle>{readingData.subtitle}</SubTitle>
+        </Wrapper>
+      )}
+      <Wrapper>
+        <Author>{`By ${truncateAddress(readingData.author)}`}</Author>
+      </Wrapper>
+      </FlexWrapper>
+      <TextWrapper>
+        <Text>{text}</Text>
+      </TextWrapper>
+    </Root>
+  );
 }
 
 export default Read
