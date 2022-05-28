@@ -34,17 +34,18 @@ const Filtering = styled.div`
 const Search = styled.div`
   margin: 1rem 0;
   display: flex;
-
+  align-items: center;
 `;
 
 const SearchButton = styled(BaseButton)`
   padding: 1rem;
-  margin-inline-end: 1rem;
+  margin-inline: 3rem 1rem;
   display: flex;
   align-items: center;
 
   @media (max-width: 900px) {
     margin: 0;
+    margin-inline-start: 3rem;
   }
 `;
 
@@ -56,6 +57,34 @@ const SearchInput = styled(BaseInput)`
 
   @media (max-width: 900px) {
     width: 200px;
+  }
+`;
+
+const Cross = styled.div`
+  position: relative;
+  width: 20px;
+  height: 20px;
+  opacity: 0.3;
+  margin-left: -60px;
+
+  :hover {
+    opacity: 1;
+    cursor: pointer;
+  }
+  :before,
+  :after {
+    position: absolute;
+    left: 15px;
+    content: ' ';
+    height: 20px;
+    width: 2px;
+    background-color: white;
+  }
+  :before {
+    transform: rotate(45deg);
+  }
+  :after {
+    transform: rotate(-45deg);
   }
 `;
 
@@ -88,6 +117,7 @@ const Projects = () => {
         <Filtering>
           <Search>
             <SearchInput />
+            <Cross />
             <SearchButton>
               <Image src={'/SearchIcon.svg'} height={'16px'} width={'20px'} alt='SearchIcon'/>
             </SearchButton>
