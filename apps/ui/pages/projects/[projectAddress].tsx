@@ -28,6 +28,7 @@ import {
   BaseButton
 } from '../../themes';
 import useProjectContract from '../../hooks/useProjectContract'
+import useShowText from '../../hooks/useShowText'
 import { ProjectData } from '../../state/projects/hooks'
 import AuthorSection from '../../components/ProjectDetails/AuthorSection'
 import AuctionSection from '../../components/ProjectDetails/AuctionSection'
@@ -76,6 +77,7 @@ const InfoRight = styled.div`
 `;
 
 const ImageWrapper = styled.div`
+  position: relative;
   height: 100%;
   margin-block-end: 2rem;
   span {
@@ -86,6 +88,15 @@ const ImageWrapper = styled.div`
       object-fit: contain; 
     }
   }
+`;
+
+const ReadIndicator = styled(BaseButton)`
+  position: absolute;
+  z-index: 10;
+  top: 1rem;
+  left: 1rem;
+  font-family: 'Roboto Mono Bold';
+  background-color: ${PINK};
 `;
 
 const Author = styled.div`
@@ -285,12 +296,13 @@ const CTAWrapper = styled.div`
 `;
 
 const ProjectDetailView = () => {
-  const { account, chainId, library } = useWeb3React();
+  const { account, chainId } = useWeb3React();
   const router = useRouter();
   let projectAddress = router.query.projectAddress;
   projectAddress = Array.isArray(projectAddress) ? projectAddress[0] : projectAddress;
   const getProjectDetails = useGetProjectDetails(projectAddress as string);
   const ProjectContract = useProjectContract(projectAddress as string);
+  const getShowText = useShowText(projectAddress as string);
   // @ts-ignore
   const client = create('https://ipfs.infura.io:5001/api/v0');
   const [daoData, setDaoData] = useState<ProjectData | null>(null);
@@ -314,6 +326,7 @@ const ProjectDetailView = () => {
   const [nextEditionMaxAmount, setNextEditionMaxAmount] = useState<number>(0);
   const [nextEditionMintPrice, setMextEditionMintPrice] = useState<string>('0');
   const [unlockEditionPending, setUnlockEditionPending] = useState<boolean>(false);
+  const [isNFTOwner, setIsNFTOwner] = useState<boolean>(false);
   
   const callGetProjectDetails = useCallback(async(projectAddress: string) => {
     const ProjectData: ProjectData = await getProjectDetails(projectAddress);
@@ -323,6 +336,16 @@ const ProjectDetailView = () => {
     }
     setSuccessfullyLoaded(true);
   }, [getProjectDetails]);
+
+  const callGetIsNFTOwner = useCallback(async() => {
+    if (daoData) {
+      const context = await getShowText(daoData.currentEdition);
+      if (context) {
+        const { allowed } = context;
+        setIsNFTOwner(allowed);
+      }
+    }
+  }, [daoData, getShowText]);
 
   const fetchBlurb = useCallback(async() => {
     if (daoData && daoData.blurbIpfsHash) {
@@ -366,7 +389,11 @@ const ProjectDetailView = () => {
       fetchBlurb();
     }
   }, [daoData, fetchBlurb]);
-  console.log({ daoData });
+
+  useEffect(() => {
+    callGetIsNFTOwner();
+  }, [callGetIsNFTOwner, daoData]);
+
   const mint = useCallback(async() => {
     // is this working?
     // const isLastNFT = daoData.currentEditionTotalSupply + 1 === daoData.currentEditionMaxSupply;
@@ -620,6 +647,11 @@ const ProjectDetailView = () => {
     }
   }, [ProjectContract, callGetProjectDetails, chainId, projectAddress]);
 
+  const handleClickRead = useCallback((e) => {
+    e.preventDefault();
+    router.push(`/projects/${projectAddress}/read`)
+  }, [projectAddress, router]);
+
   return (
     <Root>
       {!daoData && !successfullyLoaded && <Loading height={530} />}
@@ -632,6 +664,7 @@ const ProjectDetailView = () => {
                 {daoData.subtitle && <Subtitle>{daoData.subtitle}</Subtitle>}
               </Title>
               <ImageWrapper>
+                {isNFTOwner && <ReadIndicator onClick={handleClickRead}>READ</ReadIndicator>}
                 <Image
                   priority
                   src={coverImgLink ?? '/ImgPlaceholder.png'}
@@ -673,6 +706,12 @@ const ProjectDetailView = () => {
               )}
             </InfoRight>
           </MainInfoWrapper>
+          <DescriptionSection>
+            <Title style={{ maxWidth: '200px' }}>Blurb</Title>
+            <Description>
+              {blurb ?? <Loading height={20} dotHeight={20} />}
+            </Description>
+          </DescriptionSection>
           <ShareSection>
             <Title style={{ maxWidth: '200px' }}>Contributors</Title>
             <Shares>
@@ -699,12 +738,6 @@ const ProjectDetailView = () => {
             {/* Pie Chart for Contributions Section - also for Create Flow */}
             {/* <PieChart part={Number(30)} whole={Number(90)} /> */}
           </ShareSection>
-          <DescriptionSection>
-            <Title style={{ maxWidth: '200px' }}>Blurb</Title>
-            <Description>
-              {blurb ?? <Loading height={20} dotHeight={20} />}
-            </Description>
-          </DescriptionSection>
           {isAuthor && (
             <AuthorSection
               daoData={daoData}
