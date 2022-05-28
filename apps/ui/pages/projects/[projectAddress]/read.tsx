@@ -1,11 +1,8 @@
-import { useWeb3React } from '@web3-react/core'
 import { useRouter } from 'next/router'
 import styled from 'styled-components'
 import React, { useCallback, useEffect, useState } from 'react'
-import client from '../../../apolloclient'
 import { truncateAddress } from '../../../components/WalletIndicator'
-import useProjectContract from '../../../hooks/useProjectContract'
-import { GET_ONE_DAO } from '../../../state/projects/hooks'
+import useShowText from '../../../hooks/useShowText'
 import Loading from '../../../components/Loading'
 import Typewriter from '../../../components/Typewriter'
 import { BASE_BORDER_RADIUS, BASE_BOX_SHADOW, PLAIN_WHITE } from '../../../themes'
@@ -110,14 +107,13 @@ interface ReadData {
 }
 
 const Read = () => {
-  const { account } = useWeb3React();
   const router = useRouter();
   let projectAddress = router.query.projectAddress;
   projectAddress = Array.isArray(projectAddress) ? projectAddress[0] : projectAddress;
-  const ProjectContract = useProjectContract(projectAddress as string);
-  const [allowed, setAllowed] = useState<boolean>(false);
-  const [readingData, setReadingData] = useState<ReadData | null>(null);
-  const [text, setText] = useState<string | null>(null);
+  const getShowText = useShowText(projectAddress as string);
+  const [isNFTOwner, setIsNFTOwner] = useState<boolean>(false);
+  const [data, setData] = useState<ReadData | null>(null);
+  const [mainText, setMainText] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
   const handleClickGoBack = useCallback((e) => {
@@ -125,72 +121,25 @@ const Read = () => {
     router.push(`/projects/${projectAddress}`)
   }, [projectAddress, router]);
 
-  const fetchAllowed = useCallback(async() => {
-    if (account && ProjectContract) {
-      setLoading(true);
-      const balancesOfUser = [];
-      try {
-        const currentEditionBigInt = await ProjectContract.currentEdition();
-        const currentEdition = parseInt(currentEditionBigInt._hex, 16);
-        for (let i = 1; i < currentEdition + 1; i++) {
-          const balanceOfBig = await ProjectContract.balanceOf(account, i);
-          const balance = parseInt(balanceOfBig._hex, 16);
-          balancesOfUser.push({ id: i, balance });
-        }
-        const hasAtLeastOne = !!balancesOfUser.find(x => x.balance > 0);
-        setAllowed(hasAtLeastOne);
-      } catch(e: unknown) {
-        console.log({ e });
-      }
+  const fetchIsAllowed = useCallback(async() => {
+    setLoading(true);
+    const context = await getShowText();
+    if (context) {
+      const { allowed, text, readingData } = context;
+      setIsNFTOwner(allowed);
+      setData(readingData);
+      setMainText(text);
       setLoading(false);
+      return;
     }
-  }, [account, ProjectContract]);
-
-  const fetchText = useCallback(async() => {
-    if (ProjectContract) {
-      setLoading(true);
-      const {
-        data: { dao },
-      } = await client.query({
-        query: GET_ONE_DAO,
-        // @ts-ignore
-        variables: { address: projectAddress.toLowerCase() },
-      });
-      if (dao) {
-        try {
-          const response = await fetch(`https://ipfs.io/ipfs/${dao.textIpfsHash}`);
-          if(response.ok) {
-            const fetchedText = await response.text();
-            console.log({ fetchedText });
-            setText(fetchedText);
-          }
-          setReadingData({
-            author: dao.author,
-            title: dao.title,
-            subtitle: dao.subtitle,
-            genre: dao.genre,
-            textIpfsHash: dao.textIpfshash,
-            createdAt: dao.createdAt
-          });
-        } catch(e: unknown) {
-          console.log({ e });
-        }
-      }
-      setLoading(false);
-    }
-  }, [ProjectContract, projectAddress]);
+    setLoading(false);
+  }, [getShowText]);
 
   useEffect(() => {
-    fetchAllowed();
-  }, [account, ProjectContract, fetchAllowed]);
+    fetchIsAllowed();
+  }, [fetchIsAllowed]);
 
-  useEffect(() => {
-    if (allowed) {
-      fetchText();
-    }
-  }, [allowed, fetchText]);
-
-  if (loading && !readingData) {
+  if (loading && !data) {
     return (
       <Root>
         <Loading height={530} />
@@ -198,7 +147,7 @@ const Read = () => {
     );
   }
 
-  if (!allowed && !loading) {
+  if (!isNFTOwner && !loading) {
     return (
       <Root>
         <Title>Sorry, you need to own an NFT to read this.</Title>
@@ -209,7 +158,7 @@ const Read = () => {
     <Root>
       <TopRow>
         <TitleWrapper>
-          <Typewriter typedText={readingData.title} />
+          <Typewriter typedText={data.title} />
         </TitleWrapper>
         <BackArrow onClick={handleClickGoBack}>
           Back to Project
@@ -217,17 +166,17 @@ const Read = () => {
         </BackArrow>
       </TopRow>
       <FlexWrapper>
-        {readingData.subtitle && (
+        {data.subtitle && (
           <Wrapper>
-            <SubTitle>{readingData.subtitle}</SubTitle>
+            <SubTitle>{data.subtitle}</SubTitle>
           </Wrapper>
         )}
         <Wrapper>
-          <Author>{`By ${truncateAddress(readingData.author)}`}</Author>
+          <Author>{`By ${truncateAddress(data.author)}`}</Author>
         </Wrapper>
       </FlexWrapper>
       <TextWrapper>
-        <Text>{text}</Text>
+        <Text>{mainText}</Text>
       </TextWrapper>
     </Root>
   );

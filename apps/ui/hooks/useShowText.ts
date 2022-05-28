@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import { useWeb3React } from '@web3-react/core'
 import useProjectContract from './useProjectContract'
 import { GET_ONE_DAO } from '../state/projects/hooks'
@@ -75,6 +75,7 @@ const useShowText = (projectAddress: string) => {
         }
       }
     }
+
     return { allowed, readingData, text }
   }, [projectAddress, account, ProjectContract]);
 };

@@ -394,12 +394,9 @@ const ProjectDetailView = () => {
   useEffect(() => {
     if (daoData) {
       fetchBlurb();
+      callGetIsNFTOwner();
     }
-  }, [daoData, fetchBlurb]);
-
-  useEffect(() => {
-    callGetIsNFTOwner();
-  }, [callGetIsNFTOwner, daoData]);
+  }, [daoData, callGetIsNFTOwner, fetchBlurb]);
 
   const mint = useCallback(async() => {
     // is this working?
