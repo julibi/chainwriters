@@ -8,7 +8,7 @@ import useProjectContract from '../../../hooks/useProjectContract'
 import { GET_ONE_DAO } from '../../../state/projects/hooks'
 import Loading from '../../../components/Loading'
 import Typewriter from '../../../components/Typewriter'
-import { BASE_BORDER_RADIUS, BASE_BOX_SHADOW } from '../../../themes'
+import { BASE_BORDER_RADIUS, BASE_BOX_SHADOW, PLAIN_WHITE } from '../../../themes'
 
 const animation = (animationseconds: number) => `
   animation: fadein ${animationseconds}s;
@@ -23,13 +23,45 @@ const Root = styled.div`
   display: flex;
   flex-direction: column;
   margin: 2rem;
+
+  border-radius: ${BASE_BORDER_RADIUS};
+  box-shadow: ${BASE_BOX_SHADOW};
+`;
+
+const TopRow = styled.div`
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+`;
+
+const BackArrow = styled.div`
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+
+  :hover {
+    cursor: pointer;
+  }
+
+  @media (max-width: 900px) {
+    top: 1rem;
+  }
+`;
+
+const Arrow = styled.i`
+  border: solid ${PLAIN_WHITE};
+  border-width: 0 2px 2px 0;
+  display: inline-block;
+  margin-inline-start: .5rem;
+  padding: 3px;
+  transform: rotate(320deg);
 `;
 
 const TitleWrapper = styled.div`
-  border-radius: ${BASE_BORDER_RADIUS};
-  box-shadow: ${BASE_BOX_SHADOW};
   padding: 2rem;
-  margin-block-end: 1rem;
 `;
 
 const FlexWrapper = styled.div`
@@ -44,8 +76,6 @@ const FlexWrapper = styled.div`
 const Title = styled.h1``;
 
 const Wrapper = styled.div`
-  border-radius: ${BASE_BORDER_RADIUS};
-  box-shadow: ${BASE_BOX_SHADOW};
   padding-inline: 2rem;
   margin-block-end: 1rem;
 
@@ -61,8 +91,6 @@ const Author = styled.h3`
 `;
 
 const TextWrapper = styled.div`
-  border-radius: ${BASE_BORDER_RADIUS};
-  box-shadow: ${BASE_BOX_SHADOW};
   flex: 1;
   padding: 2rem;
   margin-block-end: 1rem;
@@ -82,7 +110,7 @@ interface ReadData {
 }
 
 const Read = () => {
-  const { account, chainId, library } = useWeb3React();
+  const { account } = useWeb3React();
   const router = useRouter();
   let projectAddress = router.query.projectAddress;
   projectAddress = Array.isArray(projectAddress) ? projectAddress[0] : projectAddress;
@@ -91,6 +119,11 @@ const Read = () => {
   const [readingData, setReadingData] = useState<ReadData | null>(null);
   const [text, setText] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+
+  const handleClickGoBack = useCallback((e) => {
+    e.preventDefault();
+    router.push(`/projects/${projectAddress}`)
+  }, [projectAddress, router]);
 
   const fetchAllowed = useCallback(async() => {
     if (account && ProjectContract) {
@@ -174,18 +207,24 @@ const Read = () => {
   }
   return (
     <Root>
-      <TitleWrapper>
-        <Typewriter typedText={readingData.title} />
-      </TitleWrapper>
+      <TopRow>
+        <TitleWrapper>
+          <Typewriter typedText={readingData.title} />
+        </TitleWrapper>
+        <BackArrow onClick={handleClickGoBack}>
+          Back to Project
+          <Arrow className="arrow" />
+        </BackArrow>
+      </TopRow>
       <FlexWrapper>
-      {readingData.subtitle && (
+        {readingData.subtitle && (
+          <Wrapper>
+            <SubTitle>{readingData.subtitle}</SubTitle>
+          </Wrapper>
+        )}
         <Wrapper>
-          <SubTitle>{readingData.subtitle}</SubTitle>
+          <Author>{`By ${truncateAddress(readingData.author)}`}</Author>
         </Wrapper>
-      )}
-      <Wrapper>
-        <Author>{`By ${truncateAddress(readingData.author)}`}</Author>
-      </Wrapper>
       </FlexWrapper>
       <TextWrapper>
         <Text>{text}</Text>

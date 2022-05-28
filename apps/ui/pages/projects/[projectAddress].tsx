@@ -97,6 +97,13 @@ const ReadIndicator = styled(BaseButton)`
   left: 1rem;
   font-family: 'Roboto Mono Bold';
   background-color: ${PINK};
+
+  animation: fadein 2s;
+
+  @keyframes fadein {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+  }
 `;
 
 const Author = styled.div`
