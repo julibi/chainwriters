@@ -115,6 +115,17 @@ const Cross = styled.div`
   }
 `;
 
+const NoResultsWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  flex: 1;
+`;
+
+const NoResults = styled.h3`
+  display: inline-block;
+  font-family: 'Roboto Mono Bold', Serif;
+`;
+
 const ProjectItems = styled.div`
   display: flex;
   flex-direction: row;
@@ -146,27 +157,29 @@ interface Dao {
 const Projects = () => {
   const [searchedDaos, setSearchedDaos] = useState<Dao[] | null>(null);
   const [searchInput, setSearchInput] = useState<string>("");
-  const { loading, error, data, refetch } = useFetchAllProjects();
-
+  const [hasSearched, setHasSearched] = useState<boolean>(false);
+  const { loading, data } = useFetchAllProjects();
 
   const search = useCallback(() => {
     if (data && (data?.daos.length > 0) && (searchInput.trim().length > 0)) {
-      const search = searchInput.toLowerCase();
+      const search = searchInput.trim().toLowerCase();
       const result = data.daos.filter((dao:Dao) => 
         dao.title.toLowerCase().includes(search) ||
         dao.subtitle?.toLowerCase().includes(search) ||
         dao.author.toLowerCase().includes(search)
       );
+      setHasSearched(true);
       if (result.length > 0) {
         setSearchedDaos(result);
       }
     }
   }, [data, searchInput]);
 
-  const reset = useCallback(() => {
+  const reset = () => {
     setSearchInput("");
     setSearchedDaos(null);
-  }, []);
+    setHasSearched(false);
+  };
 
   return (
     <Root>
@@ -188,7 +201,7 @@ const Projects = () => {
               }}
               value={searchInput}
             />
-            <Cross onClick={() => setSearchInput("")} />
+            <Cross onClick={() => setSearchInput('')} />
             <SearchButton
               onClick={search}
               disabled={!data || data.length < 1 || searchInput.length < 1}
@@ -202,7 +215,7 @@ const Projects = () => {
             </SearchButton>
             <ResetButton
               onClick={reset}
-              disabled={!searchedDaos}
+              disabled={!searchedDaos && !hasSearched}
             >
               Reset
             </ResetButton>
@@ -211,7 +224,13 @@ const Projects = () => {
         </Filtering>
         {loading && !data && <Loading height={530} />}
         <ProjectItems>
-          {searchedDaos &&
+          {hasSearched && !searchedDaos && (
+            <NoResultsWrapper>
+              <NoResults>No results</NoResults>
+            </NoResultsWrapper>
+          )}
+          {hasSearched &&
+            searchedDaos &&
             searchedDaos.map(
               (
                 { title, author, address, genre, subtitle, imgIpfsHash, id },
@@ -229,7 +248,8 @@ const Projects = () => {
                 />
               )
             )}
-          {!searchedDaos &&
+          {!hasSearched &&
+            !searchedDaos &&
             data?.daos.map(
               (
                 { title, author, address, genre, subtitle, imgIpfsHash, id },
