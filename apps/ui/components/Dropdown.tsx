@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import styled from 'styled-components'
 import { BASE_BORDER_RADIUS, BG_NORMAL, INSET_BASE_BOX_SHADOW, BaseButton, BASE_BOX_SHADOW } from '../themes'
@@ -44,12 +44,29 @@ const Option = styled.div`
 
 const Dropdown = () => {
   const [ showDropdown, setShowDropdown ] = useState(false);
+  const ref = useRef(null);
 
   const toggleDropdown = () => {
     setShowDropdown(!showDropdown)
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (ref.current && !ref.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
+    };
+    document.addEventListener('click', handleClickOutside, true);
+    return () => {
+      document.removeEventListener('click', handleClickOutside, true);
+    };
+  }, []);
+
   return (
-    <Root onClick={toggleDropdown}>
+    <Root
+      onClick={toggleDropdown}
+      ref={ref}
+    >
       {`Filter`}
       <ArrowDown>
         <Image
