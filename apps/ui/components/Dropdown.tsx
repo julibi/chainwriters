@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import styled from 'styled-components'
-import { BASE_BORDER_RADIUS, BG_NORMAL, INSET_BASE_BOX_SHADOW, BaseButton, BASE_BOX_SHADOW } from '../themes'
+import { BASE_BORDER_RADIUS, BG_NORMAL, INSET_BASE_BOX_SHADOW, BaseButton, BASE_BOX_SHADOW, PLAIN_WHITE } from '../themes'
 
 const Root = styled(BaseButton)`
   font-family: 'Nunito Sans Bold', sans-serif;
@@ -18,7 +18,7 @@ const Root = styled(BaseButton)`
 const ArrowDown = styled.div`
 `;
 
-const Options = styled.div`
+const Options = styled.button`
   position: absolute;
   top: 70px;
   left: 0;
@@ -31,9 +31,13 @@ const Options = styled.div`
 `;
 
 const Option = styled.div`
+  color: ${PLAIN_WHITE};
+  font-family: 'Nunito Sans Bold', sans-serif;
   margin-block-end: 1rem;
   padding: 1rem;
   :hover {
+    cursor: pointer;
+    border-radius: ${BASE_BORDER_RADIUS};
     box-shadow: ${INSET_BASE_BOX_SHADOW};
   }
 
@@ -42,7 +46,11 @@ const Option = styled.div`
   }
 `;
 
-const Dropdown = () => {
+interface DropdownProps {
+  options: {id:number | string, value: string, onSelect: VoidFunction }[]
+}
+
+const Dropdown = ({ options }: DropdownProps) => {
   const [ showDropdown, setShowDropdown ] = useState(false);
   const ref = useRef(null);
 
@@ -63,10 +71,7 @@ const Dropdown = () => {
   }, []);
 
   return (
-    <Root
-      onClick={toggleDropdown}
-      ref={ref}
-    >
+    <Root onClick={toggleDropdown} ref={ref}>
       {`Filter`}
       <ArrowDown>
         <Image
@@ -78,9 +83,11 @@ const Dropdown = () => {
       </ArrowDown>
       {showDropdown && (
         <Options>
-          <Option>Option 1</Option>
-          <Option>Option 2</Option>
-          <Option>Option 3</Option>
+          {options.map((option) => (
+            <Option key={option.id} onClick={() => option.onSelect()}>
+              {option.value}
+            </Option>
+          ))}
         </Options>
       )}
     </Root>

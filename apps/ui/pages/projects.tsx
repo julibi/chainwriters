@@ -220,7 +220,22 @@ const Projects = () => {
               Reset
             </ResetButton>
           </Search>
-          <Dropdown />
+          <Dropdown
+            options={
+              [
+                {
+                  id: 1,
+                  value: "option 1",
+                  onSelect: () => {console.log('option1')}
+                },
+                {
+                  id: 2,
+                  value: "option 2",
+                  onSelect: () => {console.log('option2')}
+                }
+              ]
+            }
+          />
         </Filtering>
         {loading && !data && <Loading height={530} />}
         <ProjectItems>

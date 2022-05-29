@@ -84,7 +84,7 @@ export const GET_TOP_DAOS = gql`
 
 export const GET_ALL_DAOS = gql`
   query allDaosQuery {
-    daos(orderBy: createdAt) {
+    daos(orderBy: createdAt, orderDirection: desc) {
       id
       author
       address
@@ -144,15 +144,10 @@ export const GET_SEARCHED_DAO = gql`
   }
 `;
 
+// TODO: make this  accept filters...
 export const useFetchAllProjects = () => {
   const { loading, error, data, refetch } = useQuery(GET_ALL_DAOS);
   return { loading, error, data, refetch };
-};
-
-export const useFetchSearchedProjects = () => {
-  return useCallback(() => {
-
-  }, []);
 };
 
 export const useFetchTopProjects = () => {
