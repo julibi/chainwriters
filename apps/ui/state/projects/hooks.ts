@@ -6,6 +6,7 @@ import { JsonRpcProvider } from '@ethersproject/providers'
 import { RPC_URLS } from '../../connectors'
 import PROJECT_ABI from '../../abis/project.json'
 import useProjectContract from '../../hooks/useProjectContract'
+import { useCallback } from 'react'
 
 interface Contribution {
   id: string;
@@ -89,9 +90,7 @@ export const GET_ALL_DAOS = gql`
       address
       createdAt
       title
-      textIpfsHash
       imgIpfsHash
-      blurbIpfsHash
       subtitle
       genre
       auctionsStarted
@@ -148,6 +147,12 @@ export const GET_SEARCHED_DAO = gql`
 export const useFetchAllProjects = () => {
   const { loading, error, data, refetch } = useQuery(GET_ALL_DAOS);
   return { loading, error, data, refetch };
+};
+
+export const useFetchSearchedProjects = () => {
+  return useCallback(() => {
+
+  }, []);
 };
 
 export const useFetchTopProjects = () => {

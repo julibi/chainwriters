@@ -1,11 +1,11 @@
-import React from 'react'
+import React, { ChangeEvent, KeyboardEvent, useCallback, useState } from 'react'
 import Image from 'next/image'
 import styled from 'styled-components'
 import { SectionTitleWrapper, SectionTitle } from '../components/ProjectSection'
 import { ProjectItem } from '../components/ProjectItem'
 import { useFetchAllProjects } from '../state/projects/hooks'
 import Dropdown from '../components/Dropdown'
-import { BaseButton, BaseInput } from '../themes'
+import { BaseButton, BaseInput, INSET_BASE_BOX_SHADOW } from '../themes'
 import Loading from '../components/Loading';
 
 const Root = styled.div`
@@ -35,21 +35,48 @@ const Search = styled.div`
   margin: 1rem 0;
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
 `;
 
-const SearchButton = styled(BaseButton)`
-  padding: 1rem;
-  margin-inline: 3rem 1rem;
+interface ButtonProps {
+  disabled: boolean;
+}
+
+const SearchButton = styled(BaseButton)<ButtonProps>`
   display: flex;
   align-items: center;
+  margin-inline-start: 2.5rem;
+  padding: 1rem;
+
+  :disabled {
+    pointer-events: none;
+    box-shadow: ${INSET_BASE_BOX_SHADOW};
+  }
 
   @media (max-width: 900px) {
-    margin: 0;
     margin-inline-start: 3rem;
   }
 `;
 
+const ResetButton = styled(BaseButton)`
+  display: flex;
+  align-items: center;
+  margin-inline-start: 1rem;
+  padding: 1rem;
+
+  :disabled {
+    pointer-events: none;
+    box-shadow: ${INSET_BASE_BOX_SHADOW};
+  }
+
+  @media (max-width: 900px) {
+    margin-inline-start: 0;
+    margin-block-start: 1rem;
+  }
+`;
+
 const SearchInput = styled(BaseInput)`
+  display: inline-block;
   margin-inline-end: 1rem;
   padding: 1rem;
   width: 350px;
@@ -103,10 +130,43 @@ const ProjectItems = styled.div`
   }
 `;
 
-// TODO: use grid ?
+interface Dao {
+  id: string;
+  author: string;
+  address: string;
+  createdAt: string;
+  title: string;
+  imgIpfsHash?: string;
+  subtitle?: string;
+  genre?: string;
+  auctionsStarted: boolean;
+  auctionsEnded: boolean;
+}
 
 const Projects = () => {
+  const [searchedDaos, setSearchedDaos] = useState<Dao[] | null>(null);
+  const [searchInput, setSearchInput] = useState<string>("");
   const { loading, error, data, refetch } = useFetchAllProjects();
+
+
+  const search = useCallback(() => {
+    if (data && (data?.daos.length > 0) && (searchInput.trim().length > 0)) {
+      const search = searchInput.toLowerCase();
+      const result = data.daos.filter((dao:Dao) => 
+        dao.title.toLowerCase().includes(search) ||
+        dao.subtitle?.toLowerCase().includes(search) ||
+        dao.author.toLowerCase().includes(search)
+      );
+      if (result.length > 0) {
+        setSearchedDaos(result);
+      }
+    }
+  }, [data, searchInput]);
+
+  const reset = useCallback(() => {
+    setSearchInput("");
+    setSearchedDaos(null);
+  }, []);
 
   return (
     <Root>
@@ -116,28 +176,77 @@ const Projects = () => {
       <Content>
         <Filtering>
           <Search>
-            <SearchInput />
-            <Cross />
-            <SearchButton>
-              <Image src={'/SearchIcon.svg'} height={'16px'} width={'20px'} alt='SearchIcon'/>
+            <SearchInput
+              onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
+                if (e.key === 'Enter') {
+                  search();
+                }
+              }}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                const input = e.target.value;
+                setSearchInput(input);
+              }}
+              value={searchInput}
+            />
+            <Cross onClick={() => setSearchInput("")} />
+            <SearchButton
+              onClick={search}
+              disabled={!data || data.length < 1 || searchInput.length < 1}
+            >
+              <Image
+                src={'/SearchIcon.svg'}
+                height={'16px'}
+                width={'20px'}
+                alt="SearchIcon"
+              />
             </SearchButton>
+            <ResetButton
+              onClick={reset}
+              disabled={!searchedDaos}
+            >
+              Reset
+            </ResetButton>
           </Search>
           <Dropdown />
         </Filtering>
         {loading && !data && <Loading height={530} />}
         <ProjectItems>
-          {data?.daos.map(({ title, author, address, genre, subtitle, imgIpfsHash, id }, idx) => (
-            <ProjectItem
-              key={idx}
-              id={id}
-              address={address}
-              title={title}
-              author={author}
-              imgIpfsHash={imgIpfsHash}
-              subtitle={subtitle}
-              genre={genre}
-            />
-          ))}
+          {searchedDaos &&
+            searchedDaos.map(
+              (
+                { title, author, address, genre, subtitle, imgIpfsHash, id },
+                idx
+              ) => (
+                <ProjectItem
+                  key={idx}
+                  id={id}
+                  address={address}
+                  title={title}
+                  author={author}
+                  imgIpfsHash={imgIpfsHash}
+                  subtitle={subtitle}
+                  genre={genre}
+                />
+              )
+            )}
+          {!searchedDaos &&
+            data?.daos.map(
+              (
+                { title, author, address, genre, subtitle, imgIpfsHash, id },
+                idx
+              ) => (
+                <ProjectItem
+                  key={idx}
+                  id={id}
+                  address={address}
+                  title={title}
+                  author={author}
+                  imgIpfsHash={imgIpfsHash}
+                  subtitle={subtitle}
+                  genre={genre}
+                />
+              )
+            )}
         </ProjectItems>
       </Content>
     </Root>
