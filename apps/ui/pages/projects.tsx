@@ -237,6 +237,7 @@ const Projects = () => {
                 onSelect: () => {
                   const { error, loading, data } = fetchAllAsc();
                   if (!error && !loading) {
+                    reset();
                     setDaos(data.daos);
                   }
                 },
@@ -247,6 +248,7 @@ const Projects = () => {
                 onSelect: () => {
                   const { error, loading, data } = fetchAuctions();
                   if (!error && !loading) {
+                    reset();
                     setDaos(data.daos);
                   }
                 },
