@@ -65,7 +65,7 @@ const multicall = new Multicall({
 
 export const GET_TOP_DAOS = gql`
   query topDaosQuery {
-    daos(first: 5) {
+    daos(first: 3, orderDirection: desc) {
       id
       author
       address

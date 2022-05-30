@@ -16,7 +16,7 @@ import MintSection from '../../components/ProjectDetails/MintSection'
 import ToastLink from '../../components/ToastLink'
 import ConfigureModal from '../../components/ProjectDetails/ConfigureModal'
 import ContributorsModal from '../../components/ProjectDetails/ContributorsModal'
-import { SectionTitle } from '../../components/ProjectSection'
+import { SectionTitle } from '../../components/HomePage/ProjectSection'
 import { truncateAddress } from '../../components/WalletIndicator'
 import {
   BASE_BORDER_RADIUS,

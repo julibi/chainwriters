@@ -10,7 +10,7 @@ import {
   BaseButton,
   PINK,
 } from '../../themes';
-import { SectionTitle } from '../../components/ProjectSection'
+import { SectionTitle } from '../HomePage/ProjectSection'
 import Emoji from '../Emojis'
 import Checkmark from '../Checkmark'
 import Loading from '../Loading'

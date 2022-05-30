@@ -1,9 +1,9 @@
 import React from 'react'
 import styled from 'styled-components'
-import { useFetchTopProjects } from '../state/projects/hooks';
-import { BASE_BORDER_RADIUS, BASE_BOX_SHADOW } from '../themes'
-import Loading from './Loading';
-import { ProjectItem } from './ProjectItem'
+import { useFetchTopProjects } from '../../state/projects/hooks';
+import { BASE_BORDER_RADIUS, BASE_BOX_SHADOW } from '../../themes'
+import Loading from '../Loading';
+import { ProjectItem } from '../ProjectItem'
 
 export const SectionTitleWrapper = styled.div`
   display: flex;

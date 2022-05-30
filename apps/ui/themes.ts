@@ -113,3 +113,12 @@ export const Cross = styled.div`
     transform: rotate(-45deg);
   }
 `;
+
+export const FadeInBaseAnimation = `
+  animation: fadein 2s;
+
+  @keyframes fadein {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+  }
+`;

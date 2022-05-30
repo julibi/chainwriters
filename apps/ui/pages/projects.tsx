@@ -1,7 +1,7 @@
 import React, { ChangeEvent, KeyboardEvent, useCallback, useEffect, useState } from 'react'
 import Image from 'next/image'
 import styled from 'styled-components'
-import { SectionTitleWrapper, SectionTitle } from '../components/ProjectSection'
+import { SectionTitleWrapper, SectionTitle } from '../components/HomePage/ProjectSection'
 import { ProjectItem } from '../components/ProjectItem'
 import { useFetchAllAuctions, useFetchAllProjectsDesc, useFetchAllProjectsOldAsc } from '../state/projects/hooks'
 import Dropdown from '../components/Dropdown'

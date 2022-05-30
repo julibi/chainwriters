@@ -1,9 +1,12 @@
 import { useWeb3React } from '@web3-react/core'
+import { useState } from 'react'
 import styled from 'styled-components'
-import Typewriter from '../components/Typewriter'
-import ProjectSection from '../components/ProjectSection'
+import Typewriter from '../components/MyTypewriter'
+import ProjectSection from '../components/HomePage/ProjectSection'
 import { useDeviceDetect } from '../hooks/useDeviceDetect'
 import { BG_DARK } from '../themes'
+import MainSellingPointsSection from '../components/HomePage/MainSellingPointsSection'
+import FAQSection from '../components/HomePage/FAQSection'
 
 const Root = styled.div`
 `;
@@ -11,15 +14,18 @@ const Root = styled.div`
 const HeaderSection = styled.section`
   display: flex;
   justify-content: space-between;
-  padding: 3rem;
+  padding: 8rem;
 
   @media (max-width: 900px) {
     flex-direction: column;
+    padding: 2rem;
   }
 `;
 
 const TypedTextWrapper = styled.div`
   display: flex;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
   height: 600px;
   width: 50%;
@@ -45,17 +51,28 @@ const CarouselSpace = styled.div`
 export function Index() {
   const { account, chainId } = useWeb3React();
   const isMobile = useDeviceDetect();
+  const [showMainPoints, setShowMainPoints] = useState<boolean>(false);
   // const hasTried = useEagerConnect();
 
   return (
     <Root>
       <HeaderSection>
         <TypedTextWrapper>
-          <Typewriter typedText={'This is Peppermint Poets. Stay Tuned.'} />
+          <Typewriter
+            cursor={false}
+            onLoopDone={() => setShowMainPoints(true)}
+            deleteSpeed={0}
+            typedText={['Start a literature movement on the blockchain.']}
+          />
         </TypedTextWrapper>
-        <CarouselSpace>This is a carousel that will show parts of the app</CarouselSpace>
+        <CarouselSpace>
+          This is a carousel that will show parts of the app
+        </CarouselSpace>
       </HeaderSection>
+      <MainSellingPointsSection />
       <ProjectSection />
+      <ProjectSection />
+      <FAQSection />
     </Root>
   );
 }

@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { truncateAddress } from '../../../components/WalletIndicator'
 import useShowText from '../../../hooks/useShowText'
 import Loading from '../../../components/Loading'
-import Typewriter from '../../../components/Typewriter'
+import Typewriter from '../../../components/MyTypewriter'
 import { BASE_BORDER_RADIUS, BASE_BOX_SHADOW, PLAIN_WHITE } from '../../../themes'
 
 const animation = (animationseconds: number) => `
