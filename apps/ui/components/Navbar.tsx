@@ -89,10 +89,6 @@ const Navbar = () => {
   const hasTried = useEagerConnect();
   const isMobile = useDeviceDetect();
   const [isBurgerMenuOpen, setIsBurgerMenuOpen] = useState(false);
-  
-  if (chainId !== 80001) {
-    return null;
-  }
 
   // TODO WALLET CONNECTION ON MOBILE!
   if (isMobile) {

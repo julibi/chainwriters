@@ -178,7 +178,6 @@ export const GET_SEARCHED_DAO = gql`
   }
 `;
 
-// TODO: make this  accept filters...
 export const useFetchAllProjectsDesc = () => {
   const { loading, error, data, refetch } = useQuery(GET_ALL_DAOS_DESC);
   return () => ({ loading, error, data, refetch });

@@ -1,6 +1,6 @@
 import { ReactChild } from 'react';
 import styled from 'styled-components';
-import { BASE_BOX_SHADOW, BASE_BORDER_RADIUS, BaseButton, BG_NORMAL } from '../themes';
+import { BASE_BOX_SHADOW, BASE_BORDER_RADIUS, BaseButton, BG_NORMAL, Cross } from '../themes';
 
 const Root = styled.div`
   position: fixed;
@@ -57,9 +57,19 @@ const CloseButton = styled(BaseButton)`
   position: absolute;
   top: 1rem;
   right: 1rem;
+  padding: 0.5rem;
 
   :hover {
     cursor: pointer;
+  }
+`;
+
+const CloseCross = styled(Cross)`
+  opacity: 1;
+  margin-left: 0;
+
+  :before, :after {
+    left: 10px;
   }
 `;
 
@@ -76,7 +86,7 @@ const BaseModal = ({children, onClose}: BaseModalProps) => {
           <CloseButton
             onClick={onClose}
           >
-            x
+            <CloseCross />
           </CloseButton>
         }
         {children}

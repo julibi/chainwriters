@@ -85,3 +85,31 @@ export const StyledLink = styled.a`
   font-size: 20px;
   font-weight: 500;
 `;
+
+export const Cross = styled.div`
+  position: relative;
+  width: 20px;
+  height: 20px;
+  opacity: 0.3;
+  margin-left: -60px;
+
+  :hover {
+    opacity: 1;
+    cursor: pointer;
+  }
+  :before,
+  :after {
+    position: absolute;
+    left: 15px;
+    content: ' ';
+    height: 20px;
+    width: 2px;
+    background-color: white;
+  }
+  :before {
+    transform: rotate(45deg);
+  }
+  :after {
+    transform: rotate(-45deg);
+  }
+`;

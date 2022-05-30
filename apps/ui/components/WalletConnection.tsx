@@ -9,7 +9,7 @@ import WalletIndicator from './WalletIndicator'
 import { BaseButton } from '../themes'
 
 const ContentWrapper = styled.div`
-  margin: 2rem;
+  margin: 3rem;
 `;
 
 const ConnectionButton = styled(BaseButton)`

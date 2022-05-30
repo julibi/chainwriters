@@ -1,11 +1,11 @@
-import React, { ChangeEvent, KeyboardEvent, MouseEventHandler, useCallback, useEffect, useState } from 'react'
+import React, { ChangeEvent, KeyboardEvent, useCallback, useEffect, useState } from 'react'
 import Image from 'next/image'
 import styled from 'styled-components'
 import { SectionTitleWrapper, SectionTitle } from '../components/ProjectSection'
 import { ProjectItem } from '../components/ProjectItem'
 import { useFetchAllAuctions, useFetchAllProjectsDesc, useFetchAllProjectsOldAsc } from '../state/projects/hooks'
 import Dropdown from '../components/Dropdown'
-import { BaseButton, BaseInput, INSET_BASE_BOX_SHADOW } from '../themes'
+import { BaseButton, BaseInput, Cross, INSET_BASE_BOX_SHADOW } from '../themes'
 import Loading from '../components/Loading';
 
 const Root = styled.div`
@@ -84,34 +84,6 @@ const SearchInput = styled(BaseInput)`
 
   @media (max-width: 900px) {
     width: 200px;
-  }
-`;
-
-const Cross = styled.div`
-  position: relative;
-  width: 20px;
-  height: 20px;
-  opacity: 0.3;
-  margin-left: -60px;
-
-  :hover {
-    opacity: 1;
-    cursor: pointer;
-  }
-  :before,
-  :after {
-    position: absolute;
-    left: 15px;
-    content: ' ';
-    height: 20px;
-    width: 2px;
-    background-color: white;
-  }
-  :before {
-    transform: rotate(45deg);
-  }
-  :after {
-    transform: rotate(-45deg);
   }
 `;
 
