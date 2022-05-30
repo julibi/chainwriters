@@ -1,9 +1,9 @@
-import React, { ChangeEvent, KeyboardEvent, useCallback, useState } from 'react'
+import React, { ChangeEvent, KeyboardEvent, useCallback, useEffect, useState } from 'react'
 import Image from 'next/image'
 import styled from 'styled-components'
 import { SectionTitleWrapper, SectionTitle } from '../components/ProjectSection'
 import { ProjectItem } from '../components/ProjectItem'
-import { useFetchAllProjects } from '../state/projects/hooks'
+import { useFetchAllAuctions, useFetchAllProjects, useFetchAllProjectsOldAsc } from '../state/projects/hooks'
 import Dropdown from '../components/Dropdown'
 import { BaseButton, BaseInput, INSET_BASE_BOX_SHADOW } from '../themes'
 import Loading from '../components/Loading';
@@ -155,10 +155,13 @@ interface Dao {
 }
 
 const Projects = () => {
+  const [daos, setDaos] = useState<Dao[] | null>(null);
   const [searchedDaos, setSearchedDaos] = useState<Dao[] | null>(null);
   const [searchInput, setSearchInput] = useState<string>("");
   const [hasSearched, setHasSearched] = useState<boolean>(false);
   const { loading, data } = useFetchAllProjects();
+  const fetchAllAsc = useFetchAllProjectsOldAsc();
+  const fetchAuctions = useFetchAllAuctions();
 
   const search = useCallback(() => {
     if (data && (data?.daos.length > 0) && (searchInput.trim().length > 0)) {
@@ -180,6 +183,12 @@ const Projects = () => {
     setSearchedDaos(null);
     setHasSearched(false);
   };
+
+  useEffect(() => {
+    if (data) {
+      setDaos(data.daos);
+    }
+  }, [data]);
 
   return (
     <Root>
@@ -221,23 +230,31 @@ const Projects = () => {
             </ResetButton>
           </Search>
           <Dropdown
-            options={
-              [
-                {
-                  id: 1,
-                  value: "option 1",
-                  onSelect: () => {console.log('option1')}
+            options={[
+              {
+                id: 1,
+                value: 'Oldest first',
+                onSelect: () => {
+                  const { error, loading, data } = fetchAllAsc();
+                  if (!error && !loading) {
+                    setDaos(data.daos);
+                  }
                 },
-                {
-                  id: 2,
-                  value: "option 2",
-                  onSelect: () => {console.log('option2')}
-                }
-              ]
-            }
+              },
+              {
+                id: 2,
+                value: 'Auctions only',
+                onSelect: () => {
+                  const { error, loading, data } = fetchAuctions();
+                  if (!error && !loading) {
+                    setDaos(data.daos);
+                  }
+                },
+              },
+            ]}
           />
         </Filtering>
-        {loading && !data && <Loading height={530} />}
+        {loading && !daos && <Loading height={530} />}
         <ProjectItems>
           {hasSearched && !searchedDaos && (
             <NoResultsWrapper>
@@ -265,7 +282,8 @@ const Projects = () => {
             )}
           {!hasSearched &&
             !searchedDaos &&
-            data?.daos.map(
+            daos &&
+            daos.map(
               (
                 { title, author, address, genre, subtitle, imgIpfsHash, id },
                 idx

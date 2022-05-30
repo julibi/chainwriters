@@ -82,9 +82,43 @@ export const GET_TOP_DAOS = gql`
   }
 `;
 
-export const GET_ALL_DAOS = gql`
+export const GET_ALL_DAOS_DESC = gql`
   query allDaosQuery {
     daos(orderBy: createdAt, orderDirection: desc) {
+      id
+      author
+      address
+      createdAt
+      title
+      imgIpfsHash
+      subtitle
+      genre
+      auctionsStarted
+      auctionsEnded
+    }
+  }
+`;
+
+export const GET_ALL_DAOS_ASC = gql`
+  query allDaosQuery {
+    daos(orderBy: createdAt, orderDirection: asc) {
+      id
+      author
+      address
+      createdAt
+      title
+      imgIpfsHash
+      subtitle
+      genre
+      auctionsStarted
+      auctionsEnded
+    }
+  }
+`;
+
+export const GET_ONLY_AUCTIONS = gql`
+  query allDaosQuery {
+    daos(orderBy: createdAt, orderDirection: desc, where: { auctionsStarted: true, auctionsEnded: false }) {
       id
       author
       address
@@ -146,8 +180,22 @@ export const GET_SEARCHED_DAO = gql`
 
 // TODO: make this  accept filters...
 export const useFetchAllProjects = () => {
-  const { loading, error, data, refetch } = useQuery(GET_ALL_DAOS);
+  const { loading, error, data, refetch } = useQuery(GET_ALL_DAOS_DESC);
   return { loading, error, data, refetch };
+};
+
+export const useFetchAllProjectsOldAsc = () => {
+  const { loading, error, data, refetch } = useQuery(GET_ALL_DAOS_ASC);
+  return () => ({
+    loading, error, data, refetch
+  });
+};
+
+export const useFetchAllAuctions = () => {
+  const { loading, error, data, refetch } = useQuery(GET_ONLY_AUCTIONS);
+  return () => ({
+    loading, error, data, refetch
+  });
 };
 
 export const useFetchTopProjects = () => {
