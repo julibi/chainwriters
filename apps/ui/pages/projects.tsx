@@ -1,9 +1,9 @@
-import React, { ChangeEvent, KeyboardEvent, useCallback, useEffect, useState } from 'react'
+import React, { ChangeEvent, KeyboardEvent, MouseEventHandler, useCallback, useEffect, useState } from 'react'
 import Image from 'next/image'
 import styled from 'styled-components'
 import { SectionTitleWrapper, SectionTitle } from '../components/ProjectSection'
 import { ProjectItem } from '../components/ProjectItem'
-import { useFetchAllAuctions, useFetchAllProjects, useFetchAllProjectsOldAsc } from '../state/projects/hooks'
+import { useFetchAllAuctions, useFetchAllProjectsDesc, useFetchAllProjectsOldAsc } from '../state/projects/hooks'
 import Dropdown from '../components/Dropdown'
 import { BaseButton, BaseInput, INSET_BASE_BOX_SHADOW } from '../themes'
 import Loading from '../components/Loading';
@@ -159,14 +159,16 @@ const Projects = () => {
   const [searchedDaos, setSearchedDaos] = useState<Dao[] | null>(null);
   const [searchInput, setSearchInput] = useState<string>("");
   const [hasSearched, setHasSearched] = useState<boolean>(false);
-  const { loading, data } = useFetchAllProjects();
+  const fetchAllDesc = useFetchAllProjectsDesc();
   const fetchAllAsc = useFetchAllProjectsOldAsc();
   const fetchAuctions = useFetchAllAuctions();
+  const { data, loading } = fetchAllDesc();
 
-  const search = useCallback(() => {
-    if (data && (data?.daos.length > 0) && (searchInput.trim().length > 0)) {
+  const search = useCallback((filtered?: Dao[]) => {
+    const daoArray = filtered ?? daos;
+    if (daoArray && (daoArray.length > 0) && (searchInput.trim().length > 0)) {
       const search = searchInput.trim().toLowerCase();
-      const result = data.daos.filter((dao:Dao) => 
+      const result = daoArray.filter((dao:Dao) => 
         dao.title.toLowerCase().includes(search) ||
         dao.subtitle?.toLowerCase().includes(search) ||
         dao.author.toLowerCase().includes(search)
@@ -176,7 +178,7 @@ const Projects = () => {
         setSearchedDaos(result);
       }
     }
-  }, [data, searchInput]);
+  }, [daos, searchInput]);
 
   const reset = () => {
     setSearchInput("");
@@ -212,8 +214,9 @@ const Projects = () => {
             />
             <Cross onClick={() => setSearchInput('')} />
             <SearchButton
+              // @ts-ignore
               onClick={search}
-              disabled={!data || data.length < 1 || searchInput.length < 1}
+              disabled={!daos || daos.length < 1 || searchInput.length < 1}
             >
               <Image
                 src={'/SearchIcon.svg'}
@@ -233,23 +236,43 @@ const Projects = () => {
             options={[
               {
                 id: 1,
-                value: 'Oldest first',
+                value: 'Newest first',
                 onSelect: () => {
-                  const { error, loading, data } = fetchAllAsc();
+                  const { error, loading, data } = fetchAllDesc();
                   if (!error && !loading) {
-                    reset();
-                    setDaos(data.daos);
+                    if ((searchInput.length > 0) && hasSearched) {
+                      search(data.daos);
+                    } else {
+                      setDaos(data.daos);
+                    }
                   }
                 },
               },
               {
                 id: 2,
+                value: 'Oldest first',
+                onSelect: () => {
+                  const { error, loading, data } = fetchAllAsc();
+                  if (!error && !loading) {
+                    if ((searchInput.length > 0) && hasSearched) {
+                      search(data.daos);
+                    } else {
+                      setDaos(data.daos);
+                    }
+                  }
+                },
+              },
+              {
+                id: 3,
                 value: 'Auctions only',
                 onSelect: () => {
                   const { error, loading, data } = fetchAuctions();
                   if (!error && !loading) {
-                    reset();
-                    setDaos(data.daos);
+                    if ((searchInput.length > 0) && hasSearched) {
+                      search(data.daos);
+                    } else {
+                      setDaos(data.daos);
+                    }
                   }
                 },
               },

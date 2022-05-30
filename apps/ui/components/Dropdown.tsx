@@ -47,11 +47,12 @@ const Option = styled.div`
 `;
 
 interface DropdownProps {
-  options: {id:number | string, value: string, onSelect: VoidFunction }[]
+  options: {id:number | string, value: string, onSelect: VoidFunction }[];
 }
 
 const Dropdown = ({ options }: DropdownProps) => {
   const [ showDropdown, setShowDropdown ] = useState(false);
+  const [selected, setSelected] = useState<string | null>(null);
   const ref = useRef(null);
 
   const toggleDropdown = () => {
@@ -72,7 +73,7 @@ const Dropdown = ({ options }: DropdownProps) => {
 
   return (
     <Root onClick={toggleDropdown} ref={ref}>
-      {`Filter`}
+      {selected ?? 'Filter'}
       <ArrowDown>
         <Image
           height={'12px'}
@@ -84,7 +85,13 @@ const Dropdown = ({ options }: DropdownProps) => {
       {showDropdown && (
         <Options>
           {options.map((option) => (
-            <Option key={option.id} onClick={() => option.onSelect()}>
+            <Option
+              key={option.id}
+              onClick={() => {
+                option.onSelect();
+                setSelected(option.value);
+              }}
+            >
               {option.value}
             </Option>
           ))}
