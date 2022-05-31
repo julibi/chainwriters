@@ -349,7 +349,7 @@ const ProjectDetailView = () => {
   }, [daoData]);
 
   const isAuthor = useMemo(() => {
-    if (daoData && account.toLowerCase() === daoData.author.toLowerCase()) {
+    if (daoData && account && account.toLowerCase() === daoData.author.toLowerCase()) {
       return true;
     }
     return false;

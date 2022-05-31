@@ -6,7 +6,6 @@ import { JsonRpcProvider } from '@ethersproject/providers'
 import { RPC_URLS } from '../../connectors'
 import PROJECT_ABI from '../../abis/project.json'
 import useProjectContract from '../../hooks/useProjectContract'
-import { useCallback } from 'react'
 
 interface Contribution {
   id: string;

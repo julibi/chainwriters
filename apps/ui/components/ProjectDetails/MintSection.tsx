@@ -106,7 +106,7 @@ const MintSection = ({
       }
     }
   }, [account, amount, chainId, price, projectContract, refetch]);
-  console.log({ totalSupply, maxSupply, currentEdition })
+
   return (
     <Root>
       <Title>{`MINT - EDITION ${currentEdition}`}</Title>
