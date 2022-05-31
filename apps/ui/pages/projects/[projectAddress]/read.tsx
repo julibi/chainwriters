@@ -158,7 +158,7 @@ const Read = () => {
     <Root>
       <TopRow>
         <TitleWrapper>
-          <Typewriter typedText={data.title} />
+          <Typewriter cursor={false} typedText={[data.title]} />
         </TitleWrapper>
         <BackArrow onClick={handleClickGoBack}>
           Back to Project
