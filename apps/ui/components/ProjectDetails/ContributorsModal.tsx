@@ -17,12 +17,18 @@ const ContentWrapper = styled.div`
   height: 600px;
 `;
 
+export interface Contribution {
+  address: string;
+  share: number;
+  role: string;
+}
+
 interface ContributorsModalProps {
   projectAddress: string;
   onClose: () => void;
   onFailure: () => void;
   onPending: () => void;
-  onSuccess: (contributorList: { address: string, share: number, role:string }[]) => void;
+  onSuccess: (contributorList: Contribution[]) => void;
 }
 
 const ContributorsModal = ({ projectAddress, onClose, onFailure, onPending, onSuccess }: ContributorsModalProps) => {
