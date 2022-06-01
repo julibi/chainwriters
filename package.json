@@ -9,6 +9,7 @@
   },
   "private": true,
   "dependencies": {
+    "@alch/alchemy-web3": "^1.4.2",
     "@apollo/client": "^3.5.10",
     "@ethersproject/providers": "^5.6.1",
     "@metamask/jazzicon": "^2.0.0",
@@ -17,6 +18,7 @@
     "@web3-react/injected-connector": "^6.0.7",
     "@web3-react/walletconnect-connector": "^6.2.13",
     "core-js": "^3.6.5",
+    "dotenv": "^16.0.1",
     "ethereum-multicall": "^2.10.0",
     "ethers": "^5.6.1",
     "graphql": "^16.3.0",

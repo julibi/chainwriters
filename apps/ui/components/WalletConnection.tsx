@@ -102,7 +102,7 @@ const WalletConnection = () => {
 
   useEffect(() => {
     if (chainId) {
-      console.log({ chainId });
+      // console.log({ chainId });
       const isSupported = supportedChainIds.includes(chainId);
       if (!isSupported) {
         toast.error('Wrong chain. Please connect to a supported network!');
