@@ -9,7 +9,12 @@ const Profile = () => {
   const alchemyNFTApi = createAlchemyWeb3(RPC_URLS[chainId]);
   
   const test = useCallback(async() => {
-    const nfts = await alchemyNFTApi.alchemy.getNfts({owner: account})
+    let nfts;
+    try {
+      nfts = await alchemyNFTApi.alchemy.getNfts({owner: account})
+    } catch(e: unknown) {
+      console.log({ e });
+    }
     console.log({ nfts });
   }, [account, alchemyNFTApi]);
 
