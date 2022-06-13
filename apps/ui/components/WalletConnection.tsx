@@ -26,16 +26,16 @@ const ConnectorName = styled.span`
   display: inlinel-block;
 `;
 
-const setupNetwork = async (chainId: number) => {
+const setupNetwork = async (chainId: number, onSuccess: () => void) => {
   //@ts-ignore
   const provider = window.ethereum;
-  // if (provider) {
+  if (provider) {
     try {
       await provider.request({
         method: 'wallet_switchEthereumChain',
         params: [{ chainId: `0x${chainId.toString(16)}` }],
       });
-      return true;
+      onSuccess();
     } catch (switchError) {
       // This error code indicates that the chain has not been added to MetaMask.
       // @ts-ignore
@@ -51,24 +51,18 @@ const setupNetwork = async (chainId: number) => {
               },
             ],
           });
-          return true;
+          onSuccess();
         } catch (addError) {
-          console.error(
-            'Failed to setup the network in Metamask:',
-            addError
-          );
-          return false;
+          console.error('Failed to setup the network in Metamask:', addError);
         }
+      } else {
+        // if other than 4902
+        console.log(switchError);
       }
-      // handle other "switch" errors
-      return false;
     }
-  // } else {
-  //   console.error(
-  //     "Can't setup the network on metamask because window.ethereum is undefined"
-  //   );
-  //   return false;
-  // }
+  } else {
+    toast.error('No provider found');
+  }
 };
 
 const WalletConnection = () => {
@@ -79,11 +73,16 @@ const WalletConnection = () => {
       await activate(injected, undefined, true);
       setShowConnectModal(false);
     } catch(e) {
+      console.log({ e });
       //@ts-ignore
       const provider = window.ethereum;
       if (provider && e.name === 'UnsupportedChainIdError') {
         // TODO: close modal on success etc
-        setupNetwork(80001);
+        setupNetwork(80001, async () => {
+          // onSuccess reattempt connect and close modal
+          await activate(injected, undefined, true);
+          setShowConnectModal(false);
+        });
       } else {
         toast.error(e.message);
       }
