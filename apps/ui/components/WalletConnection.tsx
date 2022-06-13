@@ -90,7 +90,7 @@ const WalletConnection = () => {
     } catch(e) {
       console.log({ e });
       console.log(e.name);
-      if (e.name === 'UnsupportedChainIdError' || e.t.includes('Unsupported chain id:')) {
+      if (e.name === 'UnsupportedChainIdError' || e.message.includes('Unsupported chain id:')) {
         // TODO: close modal on success etc
         setupNetwork(selectedNetwork, async () => {
           // onSuccess reattempt connect and close modal
