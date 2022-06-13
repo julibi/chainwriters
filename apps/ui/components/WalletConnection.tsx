@@ -89,9 +89,8 @@ const WalletConnection = () => {
       setShowConnectModal(false);
     } catch(e) {
       console.log({ e });
-      //@ts-ignore
-      const provider = window.ethereum;
-      if (provider && e.name === 'UnsupportedChainIdError') {
+      console.log(e.name);
+      if (e.name === 'UnsupportedChainIdError') {
         // TODO: close modal on success etc
         setupNetwork(selectedNetwork, async () => {
           // onSuccess reattempt connect and close modal

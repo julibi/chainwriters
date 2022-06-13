@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react'
+import React, { useCallback } from 'react'
 import { useWeb3React } from '@web3-react/core'
 import { useRouter } from 'next/router'
 import styled from 'styled-components'
