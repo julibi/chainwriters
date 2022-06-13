@@ -7,9 +7,23 @@ import { injected, RPC_URLS, supportedChainIds, supportedChainMapping, walletcon
 import BaseModal from './BaseModal'
 import WalletIndicator from './WalletIndicator'
 import { BaseButton } from '../themes'
+import Dropdown from './Dropdown';
 
 const ContentWrapper = styled.div`
   margin: 3rem;
+`;
+
+const Header = styled.h2`
+  font-family: 'Roboto Mono Bold';
+`;
+
+const SubHeader = styled.h3`
+  text-align: center;
+`;
+
+const DropdownWrapper = styled.div`
+  width: 100%;
+  margin-block-end: 1.5rem;
 `;
 
 const ConnectionButton = styled(BaseButton)`
@@ -67,6 +81,7 @@ const setupNetwork = async (chainId: number, onSuccess: () => void) => {
 
 const WalletConnection = () => {
   const [showConnectModal, setShowConnectModal] = useState(false);
+  const [selectedNetwork, setSelectedNetwork] = useState(80001);
   const { activate, account, chainId } = useWeb3React();
   const handleMetaMaskClick = async() => {
     try {
@@ -78,7 +93,7 @@ const WalletConnection = () => {
       const provider = window.ethereum;
       if (provider && e.name === 'UnsupportedChainIdError') {
         // TODO: close modal on success etc
-        setupNetwork(80001, async () => {
+        setupNetwork(selectedNetwork, async () => {
           // onSuccess reattempt connect and close modal
           await activate(injected, undefined, true);
           setShowConnectModal(false);
@@ -101,7 +116,6 @@ const WalletConnection = () => {
 
   useEffect(() => {
     if (chainId) {
-      // console.log({ chainId });
       const isSupported = supportedChainIds.includes(chainId);
       if (!isSupported) {
         toast.error('Wrong chain. Please connect to a supported network!');
@@ -109,6 +123,19 @@ const WalletConnection = () => {
     }
   }, [chainId]);
 
+  const networkDropdownItems = Object.values(supportedChainMapping).map(
+    (chain, idx) => {
+      return {
+        id: Number(Object.keys(supportedChainMapping)[idx]),
+        value: chain.name,
+        img: chain.icon,
+        onSelect: (network: number) => {
+          console.log({network})
+          setSelectedNetwork(network)
+        },
+      };
+    }
+  );
   return (
     <div>
       <WalletIndicator
@@ -120,7 +147,16 @@ const WalletConnection = () => {
       {showConnectModal && (
         <BaseModal onClose={() => setShowConnectModal(false)}>
           <ContentWrapper>
-            <h2>Connect To Your Wallet</h2>
+            <Header>Connect To Your Wallet</Header>
+            <SubHeader>Network</SubHeader>
+            <DropdownWrapper>
+              <Dropdown
+                preselected={networkDropdownItems[0]}
+                options={networkDropdownItems}
+                width={'100%'}
+              />
+            </DropdownWrapper>
+            <SubHeader>Wallets</SubHeader>
             <ConnectionButton onClick={handleMetaMaskClick}>
               <ConnectorName>METAMASK</ConnectorName>
               <div>

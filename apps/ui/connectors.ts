@@ -21,6 +21,7 @@ export const walletconnect = new WalletConnectConnector({
 interface supportedChain {
   symbol: string;
   name: string;
+  icon?: string;
 }
 
 interface supportedChainMapping {
@@ -28,6 +29,6 @@ interface supportedChainMapping {
 }
 
 export const supportedChainMapping: supportedChainMapping = {
-  137: { symbol: "MATIC", name: "Polygon Mainnet" },
-  80001: { symbol: "MUMBAI", name: "Mumbai" },
+  // 137: { symbol: "MATIC", name: "Polygon", icon: "PolygonIcon.svg" },
+  80001: { symbol: "MUMBAI", name: "Mumbai", icon: "PolygonIcon.svg" },
 };

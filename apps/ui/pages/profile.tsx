@@ -17,7 +17,7 @@ const Profile = () => {
       } catch(e: unknown) {
         console.log({ e });
       }
-      console.log({ nfts });
+      // console.log({ nfts });
     }
   }, [account, chainId]);
 

@@ -2,13 +2,18 @@ import React, { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import styled from 'styled-components'
 import { BASE_BORDER_RADIUS, BG_NORMAL, INSET_BASE_BOX_SHADOW, BaseButton, BASE_BOX_SHADOW, PLAIN_WHITE } from '../themes'
+import { FlexContainer } from '../pages/create';
 
-const Root = styled(BaseButton)`
+interface RootProps {
+  width?: string | number;
+}
+
+const Root = styled(BaseButton)<RootProps>`
   font-family: 'Nunito Sans Bold', sans-serif;
   padding: 1rem;
   display: flex;
   justify-content: space-between;
-  width: 150px;
+  width: ${({width}) => width ? width : '150px'};
   height: 50px;
   position: relative;
   display: flex;
@@ -18,7 +23,11 @@ const Root = styled(BaseButton)`
 const ArrowDown = styled.div`
 `;
 
-const Options = styled.button`
+const ImageWrapper = styled.div`
+  margin-inline-end: 1rem;
+`;
+
+const Options = styled.div`
   position: absolute;
   top: 70px;
   left: 0;
@@ -28,13 +37,19 @@ const Options = styled.button`
   box-shadow: ${BASE_BOX_SHADOW};
   width: 100%;
   padding: 1rem;
+
+  display: flex;
+  flex-direction: column;
 `;
 
-const Option = styled.div`
+const Option = styled(BaseButton)`
   color: ${PLAIN_WHITE};
   font-family: 'Nunito Sans Bold', sans-serif;
   margin-block-end: 1rem;
   padding: 1rem;
+
+  display: flex;
+
   :hover {
     cursor: pointer;
     border-radius: ${BASE_BORDER_RADIUS};
@@ -46,13 +61,22 @@ const Option = styled.div`
   }
 `;
 
-interface DropdownProps {
-  options: {id:number | string, value: string, onSelect: VoidFunction }[];
+interface OptionType {
+  id: number;
+  img?: string;
+  value: string;
+  onSelect: (network: number) => void;
 }
 
-const Dropdown = ({ options }: DropdownProps) => {
+interface DropdownProps {
+  options: OptionType[];
+  preselected?: OptionType;
+  width?: string | number;
+}
+
+const Dropdown = ({ options, preselected, width }: DropdownProps) => {
   const [ showDropdown, setShowDropdown ] = useState(false);
-  const [selected, setSelected] = useState<string | null>(null);
+  const [selected, setSelected] = useState<OptionType | null>(preselected ?? null);
   const ref = useRef(null);
 
   const toggleDropdown = () => {
@@ -72,8 +96,24 @@ const Dropdown = ({ options }: DropdownProps) => {
   }, []);
 
   return (
-    <Root onClick={toggleDropdown} ref={ref}>
-      {selected ?? 'Filter'}
+    <Root onClick={toggleDropdown} ref={ref} width={width}>
+      {selected ? (
+        <FlexContainer>
+          {selected.img && (
+            <ImageWrapper>
+              <Image
+                height={'12px'}
+                width={'16px'}
+                src={`/${selected.img}`}
+                alt={selected.value}
+              />
+            </ImageWrapper>
+          )}
+          {selected.value}
+        </FlexContainer>
+      ) : (
+        'Filter'
+      )}
       <ArrowDown>
         <Image
           height={'12px'}
@@ -84,15 +124,25 @@ const Dropdown = ({ options }: DropdownProps) => {
       </ArrowDown>
       {showDropdown && (
         <Options>
-          {options.map((option) => (
+          {options.map((opt) => (
             <Option
-              key={option.id}
+              key={opt.id}
               onClick={() => {
-                option.onSelect();
-                setSelected(option.value);
+                opt.onSelect(opt.id);
+                setSelected(opt);
               }}
             >
-              {option.value}
+              {opt.img && (
+                <ImageWrapper>
+                  <Image
+                    height={'12px'}
+                    width={'16px'}
+                    src={`/${opt.img}`}
+                    alt={opt.value}
+                  />
+                </ImageWrapper>
+              )}
+              {opt.value}
             </Option>
           ))}
         </Options>
