@@ -79,7 +79,7 @@ const ReadButton = styled(BaseButton)`
   }
 `;
 
-const Profile = () => {
+const MyBookShelf = () => {
   const { account, chainId } = useWeb3React();
   const { allNftsOfUser, loading } = useAllNftsOfUser();
   const router = useRouter();
@@ -179,4 +179,4 @@ const Profile = () => {
   );
 }
 
-export default Profile
+export default MyBookShelf

@@ -81,7 +81,7 @@ const routes = [
   {name: 'Home', path: '/'},
   {name: 'Projects', path: '/projects'},
   {name: 'Create', path: '/create'},
-  {name: 'Profile', path: '/profile'}
+  {name: 'My Bookshelf', path: '/mybookshelf'}
 ];
 
 const Navbar = () => {
