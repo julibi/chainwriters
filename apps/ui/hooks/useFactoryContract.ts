@@ -6,7 +6,7 @@ import { RPC_URLS } from '../connectors';
 import { FACTORY } from '../../constants';
 
 const useFactoryContract = () => {
-  const { account, library } = useWeb3React();
+  const { account, chainId, library } = useWeb3React();
 
   const FactoryContract = useMemo(
     () => (library && account) ?
@@ -19,9 +19,9 @@ const useFactoryContract = () => {
           FACTORY,
           ABI,
           // TODO production
-          getDefaultProvider(RPC_URLS[80001])
+          RPC_URLS[chainId] ? getDefaultProvider(RPC_URLS[chainId]) : getDefaultProvider(RPC_URLS[80001])
         ),
-    [library, account]
+    [library, account, chainId]
   );
 
   return FactoryContract;
