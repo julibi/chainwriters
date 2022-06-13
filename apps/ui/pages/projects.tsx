@@ -13,6 +13,10 @@ const Root = styled.div`
   flex-direction: column;
 `;
 
+const Padding = styled.div`
+  height: 3rem;
+`;
+
 const Content = styled.div`
   padding: 3rem;
 `;
@@ -166,6 +170,7 @@ const Projects = () => {
 
   return (
     <Root>
+      <Padding />
       <SectionTitleWrapper>
         <SectionTitle>PROJECTS</SectionTitle>
       </SectionTitleWrapper>
@@ -212,7 +217,7 @@ const Projects = () => {
                 onSelect: () => {
                   const { error, loading, data } = fetchAllDesc();
                   if (!error && !loading) {
-                    if ((searchInput.length > 0) && hasSearched) {
+                    if (searchInput.length > 0 && hasSearched) {
                       search(data.daos);
                     } else {
                       setDaos(data.daos);
@@ -226,7 +231,7 @@ const Projects = () => {
                 onSelect: () => {
                   const { error, loading, data } = fetchAllAsc();
                   if (!error && !loading) {
-                    if ((searchInput.length > 0) && hasSearched) {
+                    if (searchInput.length > 0 && hasSearched) {
                       search(data.daos);
                     } else {
                       setDaos(data.daos);
@@ -240,7 +245,7 @@ const Projects = () => {
                 onSelect: () => {
                   const { error, loading, data } = fetchAuctions();
                   if (!error && !loading) {
-                    if ((searchInput.length > 0) && hasSearched) {
+                    if (searchInput.length > 0 && hasSearched) {
                       search(data.daos);
                     } else {
                       setDaos(data.daos);
