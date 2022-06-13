@@ -156,6 +156,29 @@ export class ProjectFactory extends ethereum.SmartContract {
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toAddress());
   }
+
+  projectDaosLength(): BigInt {
+    let result = super.call(
+      "projectDaosLength",
+      "projectDaosLength():(uint256)",
+      []
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_projectDaosLength(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "projectDaosLength",
+      "projectDaosLength():(uint256)",
+      []
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
 }
 
 export class CreateDaoCall extends ethereum.Call {

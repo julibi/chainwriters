@@ -9,6 +9,7 @@ contract ProjectFactory is IProjectFactory, Ownable {
   uint256 public firstEditionMin = 1;
   uint256 public firstEditionMax = 1700;
   address[] public projectDaos;
+  uint256 public projectDaosLength = 0;
   event DaoCreated(
     address indexed caller,
     address indexed dao,
@@ -35,6 +36,7 @@ contract ProjectFactory is IProjectFactory, Ownable {
       address(this)
     );
     projectDaos.push(address(projectDao));
+    projectDaosLength++;
 
     emit DaoCreated(
       msg.sender,

@@ -17,7 +17,9 @@ const Profile = () => {
       } catch(e: unknown) {
         console.log({ e });
       }
-      // console.log({ nfts });
+      
+      const erc1155s = nfts.ownedNfts.filter(nft => nft.id.tokenMetadata.tokenType === 'ERC1155');
+      
     }
   }, [account, chainId]);
 

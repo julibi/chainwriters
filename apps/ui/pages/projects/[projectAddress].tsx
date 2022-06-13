@@ -327,6 +327,7 @@ const ProjectDetailView = () => {
   const callGetIsNFTOwner = useCallback(async() => {
     if (daoData) {
       const context = await getShowText(daoData.currentEdition);
+      console.log({ context, daoData });
       if (context) {
         const { allowed } = context;
         setIsNFTOwner(allowed);
@@ -454,7 +455,7 @@ const ProjectDetailView = () => {
     e.preventDefault();
     router.push(`/projects/${projectAddress}/read`)
   }, [projectAddress, router]);
-  console.log({ daoData });
+
   return (
     <Root>
       {!daoData && !successfullyLoaded && <Loading height={530} />}
