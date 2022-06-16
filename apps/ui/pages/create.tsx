@@ -1,11 +1,17 @@
-import React, { ChangeEvent, FormEvent, MouseEventHandler, useCallback, useMemo, useState } from 'react'
-import styled from 'styled-components'
-import { create } from 'ipfs-http-client'
-import { toast } from 'react-toastify'
-import { parseEther } from 'ethers/lib/utils'
-import { useWeb3React } from '@web3-react/core'
-import ProgressBar from '../components/ProgressBar'
-import useFactoryContract from '../hooks/useFactoryContract'
+import React, {
+  ChangeEvent,
+  FormEvent,
+  useCallback,
+  useMemo,
+  useState,
+} from 'react';
+import styled from 'styled-components';
+import { create } from 'ipfs-http-client';
+import { toast } from 'react-toastify';
+import { parseEther } from 'ethers/lib/utils';
+import { useWeb3React } from '@web3-react/core';
+import ProgressBar from '../components/ProgressBar';
+import useFactoryContract from '../hooks/useFactoryContract';
 import {
   BaseButton,
   BASE_BORDER_RADIUS,
@@ -15,30 +21,30 @@ import {
   PINK,
   PLAIN_WHITE,
 } from '../themes';
-import useDaoContract from '../state/useDaoContract'
+import useDaoContract from '../state/useDaoContract';
 import {
   useCreateAuthorMint,
   useCreateSetContributors,
   useCreateSetConfiguration,
-} from '../state/projects/create/hooks'
-import SuccessToast from '../components/SuccessToast'
-import PendingToast from '../components/PendingToast'
-import NameForm from '../components/Create/NameForm'
-import TextForm from '../components/Create/TextForm'
-import AmountForm from '../components/Create/AmountForm'
-import PriceForm from '../components/Create/PriceForm'
-import ReviewForm from '../components/Create/ReviewForm'
-import Waiting from '../components/Create/Waiting'
-import Congrats from '../components/Create/Congrats'
-import CoverImageForm from '../components/Create/CoverImageForm'
-import BlurbForm from '../components/Create/BlurbForm'
-import GenreForm from '../components/Create/GenreForm'
-import SubtitleForm from '../components/Create/SubtitleForm'
-import ConfigReviewForm from '../components/Create/ConfigReviewForm'
-import AuthorClaimForm from '../components/Create/AuthorClaimForm'
-import ContributorsForm from '../components/Create/ContributorsForm'
-import Finished from '../components/Create/Finished'
-import { BLURB_FETCH_ERROR } from '../constants'
+} from '../state/projects/create/hooks';
+import SuccessToast from '../components/SuccessToast';
+import PendingToast from '../components/PendingToast';
+import NameForm from '../components/Create/NameForm';
+import TextForm from '../components/Create/TextForm';
+import AmountForm from '../components/Create/AmountForm';
+import PriceForm from '../components/Create/PriceForm';
+import ReviewForm from '../components/Create/ReviewForm';
+import Waiting from '../components/Create/Waiting';
+import Congrats from '../components/Create/Congrats';
+import CoverImageForm from '../components/Create/CoverImageForm';
+import BlurbForm from '../components/Create/BlurbForm';
+import GenreForm from '../components/Create/GenreForm';
+import SubtitleForm from '../components/Create/SubtitleForm';
+import ConfigReviewForm from '../components/Create/ConfigReviewForm';
+import AuthorClaimForm from '../components/Create/AuthorClaimForm';
+import ContributorsForm from '../components/Create/ContributorsForm';
+import Finished from '../components/Create/Finished';
+import { BLURB_FETCH_ERROR } from '../constants';
 
 const Root = styled.div`
   display: flex;
@@ -128,8 +134,12 @@ export const FadeIn = styled.div`
   animation: fadein 2s;
 
   @keyframes fadein {
-      from { opacity: 0; }
-      to   { opacity: 1; }
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
 `;
 
@@ -184,7 +194,7 @@ export interface Contributor {
 const Create = () => {
   const { chainId } = useWeb3React();
   const FactoryContract = useFactoryContract();
-  // TODO 
+  // TODO
   // @ts-ignore
   const client = create('https://ipfs.infura.io:5001/api/v0');
   const [currentStep, setCurrentStep] = useState(0);
@@ -211,7 +221,10 @@ const Create = () => {
   const createSetConfiguration = useCreateSetConfiguration();
   const createAuthorMint = useCreateAuthorMint();
   const createSetContributors = useCreateSetContributors();
-  const daoContract = useMemo(() => daoAddress ? getDaoContract(daoAddress) : null, [daoAddress, getDaoContract]);
+  const daoContract = useMemo(
+    () => (daoAddress ? getDaoContract(daoAddress) : null),
+    [daoAddress, getDaoContract]
+  );
   const contribInitialState = {
     1: { address: '', share: 0, role: '' },
     2: { address: '', share: 0, role: '' },
@@ -220,11 +233,11 @@ const Create = () => {
   const [contributors, setContributors] = useState(contribInitialState);
   const contributorList = useMemo(() => {
     const contribsArray = [];
-    Object.entries(contributors).map(contrib => {
+    Object.entries(contributors).map((contrib) => {
       if (contrib[1].address.length > 0 && contrib[1].share > 0) {
         contribsArray.push(contrib[1]);
       }
-    })
+    });
     return contribsArray;
   }, [contributors]);
 
@@ -270,75 +283,89 @@ const Create = () => {
   };
 
   const captureFile = (file: any) => {
-    const reader = new window.FileReader()
-    reader.readAsArrayBuffer(file)
+    const reader = new window.FileReader();
+    reader.readAsArrayBuffer(file);
     reader.onloadend = () => {
       // @ts-ignore
       const buffer = Buffer.from(reader.result);
       setImgFile(file);
       setImgBuffer(buffer);
-    }
+    };
   };
 
-  const submitImage = useCallback(async(event: FormEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-    const added = await client.add(imgBuffer);
-    // const url = `https://ipfs.infura.io/ipfs/${added.path}`;
-    // TODO what about pinning?
-    setCoverImgIPFS(added.path);
-    setCurrentStep(currentStep + 1);
-  }, [client, imgBuffer, currentStep])
+  const submitImage = useCallback(
+    async (event: FormEvent<HTMLButtonElement>) => {
+      event.preventDefault();
+      const added = await client.add(imgBuffer);
+      // const url = `https://ipfs.infura.io/ipfs/${added.path}`;
+      // TODO what about pinning?
+      setCoverImgIPFS(added.path);
+      setCurrentStep(currentStep + 1);
+    },
+    [client, imgBuffer, currentStep]
+  );
 
-  const handleSetBlurb = useCallback(async() => {
+  const handleSetBlurb = useCallback(async () => {
     const added = await client.add(blurb);
     setBlurbIPFS(added.path);
     setCurrentStep(currentStep + 1);
   }, [blurb, client, currentStep]);
 
-  const handleSetConfiguration = useCallback(async() => {
-      createSetConfiguration(
-        daoContract,
-        coverImgIPFS,
-        blurbIPFS,
-        genre,
-        subtitle,
-        setLoading,
-        PendingToast,
-        (x, y, z) => {
-          setCurrentStep(currentStep + 1);
-          // @ts-ignore
-          return <SuccessToast chainId={x} hash={y} customMessage={z} />
-        }
-      )
+  const handleSetConfiguration = useCallback(async () => {
+    createSetConfiguration(
+      daoContract,
+      coverImgIPFS,
+      blurbIPFS,
+      genre,
+      subtitle,
+      setLoading,
+      PendingToast,
+      (x, y, z) => {
+        setCurrentStep(currentStep + 1);
+        // @ts-ignore
+        return <SuccessToast chainId={x} hash={y} customMessage={z} />;
+      }
+    )
       // eslint-disable-next-line @typescript-eslint/no-empty-function
       .then(() => {})
       .catch((e) => {
-        console.log({e});
+        console.log({ e });
         toast.error('Something went wrong');
       });
-  }, [createSetConfiguration, daoContract, coverImgIPFS, blurbIPFS, subtitle, genre, currentStep]);
-  
-  const handleAuthorMint = useCallback(async() => {
+  }, [
+    createSetConfiguration,
+    daoContract,
+    coverImgIPFS,
+    blurbIPFS,
+    subtitle,
+    genre,
+    currentStep,
+  ]);
+
+  const handleAuthorMint = useCallback(async () => {
     setLoading(true);
     let uri;
     // first create metadata object
     try {
       const response = await fetch(`https://ipfs.io/ipfs/${blurbIPFS}`);
-      if(!response.ok) {
+      if (!response.ok) {
         setBlurb(BLURB_FETCH_ERROR);
       } else {
-        const fetchedBlurb = await response.text()
+        const fetchedBlurb = await response.text();
         setBlurb(fetchedBlurb);
       }
       const metadataObject = {
         name: title,
-        description: (blurb && blurb !== BLURB_FETCH_ERROR ) ? `${blurb} (Created with Peppermint Poets)` : 'Created with Peppermint Poets',
+        description:
+          blurb && blurb !== BLURB_FETCH_ERROR
+            ? `${blurb} (Created with Peppermint Poets)`
+            : 'Created with Peppermint Poets',
         image: coverImgIPFS ? `ipfs://${coverImgIPFS}` : '',
       };
       const metadata = JSON.stringify(metadataObject, null, 2);
       const uploadedMeta = (await client.add(metadata)).path;
       uri = `ipfs://${uploadedMeta}`;
-    } catch(e: unknown) {
+    } catch (e: unknown) {
       toast.error('Something went wrong while uploading metadata to IPFS.');
       setLoading(false);
       return;
@@ -353,16 +380,16 @@ const Create = () => {
       (x, y, z) => {
         setCurrentStep(currentStep + 1);
         // @ts-ignore
-        return <SuccessToast chainId={x} hash={y} customMessage={z} />
+        return <SuccessToast chainId={x} hash={y} customMessage={z} />;
       }
     )
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    .then(() => {})
-    .catch((e) => {
-      console.log({ e });
-      toast.error('Something went wrong');
-    });
-}, [createAuthorMint, daoContract, authorMintAmount, currentStep]);
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      .then(() => {})
+      .catch((e) => {
+        console.log({ e });
+        toast.error('Something went wrong');
+      });
+  }, [createAuthorMint, daoContract, authorMintAmount, currentStep]);
 
   const handleSetContributors = useCallback(async () => {
     createSetContributors(
@@ -387,7 +414,7 @@ const Create = () => {
   return (
     <Root>
       <ProgressBarWrapper>
-        <ProgressBar completed={currentStep ? (currentStep/12 * 100) : 0}/>
+        <ProgressBar completed={currentStep ? (currentStep / 12) * 100 : 0} />
       </ProgressBarWrapper>
       <FormWrapper>
         <Form>
@@ -509,10 +536,12 @@ const Create = () => {
               contributors={contributors}
               contributorList={contributorList}
               loading={loading}
-              onChange={(idx,key, val) => setContributors({
-                ...contributors,
-                [idx]: { ...contributors[idx], [key]: val },
-              })}
+              onChange={(idx, key, val) =>
+                setContributors({
+                  ...contributors,
+                  [idx]: { ...contributors[idx], [key]: val },
+                })
+              }
               onNextStep={() => setCurrentStep(currentStep + 1)}
               onSubmit={handleSetContributors}
             />
@@ -526,4 +555,4 @@ const Create = () => {
   );
 };
 
-export default Create
+export default Create;
