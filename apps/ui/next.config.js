@@ -13,6 +13,7 @@ const nextConfig = {
   images: {
     domains: [ "ipfs.io" ]
   },
+  reactStrictMode: true,
   env: {
     RPC_URL_POLYGON_MAINNET: process.env.RPC_URL_POLYGON_MAINNET,
     RPC_URL_ETH_MAINNET: process.env.RPC_URL_ETH_MAINNET,
