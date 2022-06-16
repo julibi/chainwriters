@@ -6,7 +6,7 @@ import { RPC_URLS } from '../connectors'
 
 const useProjectContract = (projectAddress: string) => {
   const { account, library } = useWeb3React();
-  console.log('----process.env-----', process.env);
+  console.log('----process.env.MUMBAIRAPC-----', process.env.RPC_URL_POLYGON_MUMBAI);
   console.log('test', getDefaultProvider(RPC_URLS[80001]))
   return useMemo(
     () => {
