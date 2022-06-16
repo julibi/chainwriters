@@ -13,12 +13,11 @@ const nextConfig = {
   images: {
     domains: [ "ipfs.io" ]
   },
-  reactStrictMode: true,
   env: {
-    RPC_URL_POLYGON_MAINNET: process.env.RPC_URL_POLYGON_MAINNET,
-    RPC_URL_ETH_MAINNET: process.env.RPC_URL_ETH_MAINNET,
-    RPC_URL_POLYGON_MUMBAI: process.env.RPC_URL_POLYGON_MUMBAI,
-    RPC_URL_ETH_RINKEBY: process.env.RPC_URL_ETH_RINKEBY
+    RPC_URL_POLYGON_MAINNET: process.env.NEXT_URL_RPC_URL_POLYGON_MAINNET,
+    RPC_URL_ETH_MAINNET: process.env.NEXT_URL_RPC_URL_ETH_MAINNET,
+    RPC_URL_POLYGON_MUMBAI: process.env.NEXT_URL_RPC_URL_POLYGON_MUMBAI,
+    RPC_URL_ETH_RINKEBY: process.env.NEXT_URL_RPC_URL_ETH_RINKEBY
   }
 };
 
