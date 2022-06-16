@@ -6,17 +6,12 @@ import { RPC_URLS } from '../connectors';
 
 const useProjectContract = (projectAddress: string) => {
   const { account, library } = useWeb3React();
-  console.log(
-    '----process.env.NX_PUBLIC_RPC_URL_POLYGON_MUMBAI-----',
-    process.env.NX_PUBLIC_RPC_URL_POLYGON_MUMBAI
-  );
-  console.log('test', getDefaultProvider(RPC_URLS[80001]));
 
   return useMemo(() => {
     if (!projectAddress) {
       return null;
     }
-
+    console.log(RPC_URLS[80001]);
     return library && account
       ? new Contract(projectAddress, ABI, library?.getSigner(account))
       : new Contract(
