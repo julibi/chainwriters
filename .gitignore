@@ -26,6 +26,7 @@
 
 # misc
 .env
+.env.local
 .env.production
 /.sass-cache
 /connect.lock
