@@ -26,6 +26,7 @@
 
 # misc
 .env
+.env.production
 /.sass-cache
 /connect.lock
 /coverage
