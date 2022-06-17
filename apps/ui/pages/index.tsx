@@ -1,15 +1,14 @@
-import { useWeb3React } from '@web3-react/core'
-import { useState } from 'react'
-import styled from 'styled-components'
-import Typewriter from '../components/MyTypewriter'
-import ProjectSection from '../components/HomePage/ProjectSection'
-import { useDeviceDetect } from '../hooks/useDeviceDetect'
-import { BG_DARK } from '../themes'
-import MainSellingPointsSection from '../components/HomePage/MainSellingPointsSection'
-import FAQSection from '../components/HomePage/FAQSection'
+import { useWeb3React } from '@web3-react/core';
+import { useState } from 'react';
+import styled from 'styled-components';
+import ProjectSection from '../components/HomePage/ProjectSection';
+import { useDeviceDetect } from '../hooks/useDeviceDetect';
+import { BG_DARK } from '../themes';
+import MainSellingPointsSection from '../components/HomePage/MainSellingPointsSection';
+import FAQSection from '../components/HomePage/FAQSection';
+import StartAnimation from '../components/StartAnimation';
 
-const Root = styled.div`
-`;
+const Root = styled.div``;
 
 const HeaderSection = styled.section`
   display: flex;
@@ -32,7 +31,7 @@ const TypedTextWrapper = styled.div`
 
   @media (max-width: 900px) {
     align-items: flex-start;
-    width: 100%;  
+    width: 100%;
     flex: 1;
   }
 `;
@@ -58,12 +57,7 @@ export function Index() {
     <Root>
       <HeaderSection>
         <TypedTextWrapper>
-          <Typewriter
-            cursor={false}
-            onLoopDone={() => setShowMainPoints(true)}
-            deleteSpeed={0}
-            typedText={['Start a literature movement on the blockchain.']}
-          />
+          <StartAnimation />
         </TypedTextWrapper>
         <CarouselSpace>
           This is a carousel that will show parts of the app

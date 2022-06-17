@@ -1,8 +1,7 @@
-import React, { useState } from 'react'
-import styled from 'styled-components'
+import React from 'react';
+import styled from 'styled-components';
 import { SectionTitle, SectionTitleWrapper } from './ProjectSection';
-import { BG_DARK, FadeInBaseAnimation, PINK } from '../../themes'
-import Typewriter from '../MyTypewriter'
+import { BG_DARK, FadeInBaseAnimation, PINK } from '../../themes';
 
 const Root = styled.div`
   display: flex;
@@ -42,10 +41,6 @@ const ReaderBlock = styled.div`
 `;
 
 const MainSellingPointsSection = () => {
-  const [authorBulletIndex, setAuthorBulletIndex] = useState<number>(0);
-  const [readerBulletIndex, setReaderBulletIndex] = useState<number>(0);
-  const [showReaderBlock, setShowReaderBlock] = useState<boolean>(false);
-
   return (
     <Root>
       <SectionTitleWrapper>
@@ -53,89 +48,22 @@ const MainSellingPointsSection = () => {
       </SectionTitleWrapper>
       <BlocksWrapper>
         <AuthorBlock>
-          <Typewriter
-            loop={1}
-            cursor={false}
-            deleteSpeed={0}
-            fontSize={42}
-            typedText={['• Publish your Work as NFT']}
-            onLoopDone={() => {
-              authorBulletIndex === 0 &&
-                setAuthorBulletIndex(authorBulletIndex + 1);
-            }}
-          />
+          <div>{'• Publish your Work as NFT'}</div>
           <br />
-          {authorBulletIndex > 0 && (
-            <Typewriter
-              loop={1}
-              cursor={false}
-              deleteSpeed={0}
-              fontSize={42}
-              typedText={[
-                '• Create a community of readers and connect with it',
-              ]}
-              onLoopDone={() => {
-                authorBulletIndex === 1 &&
-                  setAuthorBulletIndex(authorBulletIndex + 1);
-              }}
-            />
-          )}
+          <div>{'• Create a community of readers and connect with it'}</div>
           <br />
-          {authorBulletIndex > 1 && (
-            <Typewriter
-              loop={1}
-              cursor={false}
-              deleteSpeed={0}
-              fontSize={42}
-              onLoopDone={() => {
-                setShowReaderBlock(true);
-              }}
-              typedText={['• Receive Creator royalties']}
-            />
-          )}
+          <div>{'• Receive Creator royalties'}</div>
         </AuthorBlock>
-        {showReaderBlock && (
-          <ReaderBlock>
-            <Typewriter
-              loop={1}
-              cursor={false}
-              deleteSpeed={0}
-              fontSize={42}
-              typedText={['• Find works that you like']}
-              onLoopDone={() => {
-                readerBulletIndex === 0 &&
-                  setReaderBulletIndex(readerBulletIndex + 1);
-              }}
-            />
-            <br />
-            {readerBulletIndex > 0 && (
-              <Typewriter
-                loop={1}
-                cursor={false}
-                deleteSpeed={0}
-                fontSize={42}
-                typedText={['• Buy their NFTs to read']}
-                onLoopDone={() => {
-                  readerBulletIndex === 1 &&
-                    setReaderBulletIndex(readerBulletIndex + 1);
-                }}
-              />
-            )}
-            <br />
-            {readerBulletIndex > 1 && (
-              <Typewriter
-                loop={1}
-                cursor={false}
-                deleteSpeed={0}
-                fontSize={42}
-                typedText={['• Vote with the NFTs - be part of a community']}
-              />
-            )}
-          </ReaderBlock>
-        )}
+        <ReaderBlock>
+          <div>{'• Find works that you like'}</div>
+          <br />
+          <div>{'• Buy their NFTs to read'}</div>
+          <br />
+          <div>{'• Vote with the NFTs - be part of a community'}</div>
+        </ReaderBlock>
       </BlocksWrapper>
     </Root>
   );
-}
+};
 
-export default MainSellingPointsSection
+export default MainSellingPointsSection;

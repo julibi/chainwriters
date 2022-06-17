@@ -1,11 +1,15 @@
-import { useRouter } from 'next/router'
-import styled from 'styled-components'
-import React, { useCallback, useEffect, useState } from 'react'
-import { truncateAddress } from '../../../components/WalletIndicator'
-import useShowText from '../../../hooks/useShowText'
-import Loading from '../../../components/Loading'
-import Typewriter from '../../../components/MyTypewriter'
-import { BASE_BORDER_RADIUS, BASE_BOX_SHADOW, PLAIN_WHITE } from '../../../themes'
+import { useRouter } from 'next/router';
+import styled from 'styled-components';
+import React, { useCallback, useEffect, useState } from 'react';
+import { truncateAddress } from '../../../components/WalletIndicator';
+import useShowText from '../../../hooks/useShowText';
+import Loading from '../../../components/Loading';
+import TypeWriter from '../../../components/TypeWriter';
+import {
+  BASE_BORDER_RADIUS,
+  BASE_BOX_SHADOW,
+  PLAIN_WHITE,
+} from '../../../themes';
 
 const animation = (animationseconds: number) => `
   animation: fadein ${animationseconds}s;
@@ -52,13 +56,15 @@ const Arrow = styled.i`
   border: solid ${PLAIN_WHITE};
   border-width: 0 2px 2px 0;
   display: inline-block;
-  margin-inline-start: .5rem;
+  margin-inline-start: 0.5rem;
   padding: 3px;
   transform: rotate(320deg);
 `;
 
 const TitleWrapper = styled.div`
   padding: 2rem;
+  font-size: 42px;
+  font-family: 'Roboto Mono Bold', Serif;
 `;
 
 const FlexWrapper = styled.div`
@@ -109,19 +115,24 @@ interface ReadData {
 const Read = () => {
   const router = useRouter();
   let projectAddress = router.query.projectAddress;
-  projectAddress = Array.isArray(projectAddress) ? projectAddress[0] : projectAddress;
+  projectAddress = Array.isArray(projectAddress)
+    ? projectAddress[0]
+    : projectAddress;
   const getShowText = useShowText(projectAddress as string);
   const [isNFTOwner, setIsNFTOwner] = useState<boolean>(false);
   const [data, setData] = useState<ReadData | null>(null);
   const [mainText, setMainText] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const handleClickGoBack = useCallback((e) => {
-    e.preventDefault();
-    router.push(`/projects/${projectAddress}`)
-  }, [projectAddress, router]);
+  const handleClickGoBack = useCallback(
+    (e) => {
+      e.preventDefault();
+      router.push(`/projects/${projectAddress}`);
+    },
+    [projectAddress, router]
+  );
 
-  const fetchIsAllowed = useCallback(async() => {
+  const fetchIsAllowed = useCallback(async () => {
     setLoading(true);
     const context = await getShowText();
     if (context) {
@@ -158,7 +169,12 @@ const Read = () => {
     <Root>
       <TopRow>
         <TitleWrapper>
-          <Typewriter cursor={false} typedText={[data.title]} />
+          <TypeWriter
+            cursor={false}
+            shouldErase={false}
+            shouldLoop={false}
+            text={data.title}
+          />
         </TitleWrapper>
         <BackArrow onClick={handleClickGoBack}>
           Back to Project
@@ -180,6 +196,6 @@ const Read = () => {
       </TextWrapper>
     </Root>
   );
-}
+};
 
-export default Read
+export default Read;
