@@ -4,16 +4,24 @@ pragma solidity ^0.8.4;
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract TestRoyalties is ERC1155, Ownable, ERC1155Supply {
     address public artist;
     uint256 public feeAmount;
+    address public feeToken;
+    string public name = "RoyaltiesTest";
 
     mapping(uint256 => bool) public excludeList;
 
-    constructor(address _artist, uint256 _feeAmount) ERC1155("") {
+    constructor(
+        address _artist,
+        uint256 _feeAmount,
+        address _feeToken
+    ) ERC1155("") {
         artist = _artist;
         feeAmount = _feeAmount;
+        feeToken = _feeToken;
     }
 
     function setURI(string memory newuri) public onlyOwner {
@@ -59,10 +67,12 @@ contract TestRoyalties is ERC1155, Ownable, ERC1155Supply {
         super._beforeTokenTransfer(operator, from, to, ids, amounts, data);
     }
 
-    function _safeTransferFrom(
+    function safeTransferFrom(
         address from,
         address to,
-        uint256 tokenId
+        uint256 tokenId,
+        uint256 amount,
+        bytes memory data
     ) public override {
         require(from != address(0x0), "invalid from address");
         require(to != address(0x0), "invalid to address");
@@ -77,11 +87,12 @@ contract TestRoyalties is ERC1155, Ownable, ERC1155Supply {
             payTxFee(from);
         }
 
-        super._safeTransferFrom(from, to, tokenId, 1, "");
+        // TODO: batch transfer
+        safeTransferFrom(from, to, tokenId, amount, data);
     }
 
     function payTxFee(address _from) internal {
-        // token.transferFrom(_from, artist, feeAmount);
-        payable(artist).transfer(feeAmount);
+        IERC20 token = IERC20(feeToken);
+        token.transferFrom(_from, artist, feeAmount);
     }
 }

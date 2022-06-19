@@ -1,8 +1,7 @@
-
 import { HardhatUserConfig, task } from "hardhat/config";
 import "@nomiclabs/hardhat-etherscan";
 import "@nomiclabs/hardhat-waffle";
-import '@nomiclabs/hardhat-ethers'
+import "@nomiclabs/hardhat-ethers";
 import "@nomiclabs/hardhat-web3";
 import "@typechain/hardhat";
 import "hardhat-gas-reporter";
@@ -45,28 +44,28 @@ const config: HardhatUserConfig = {
       throwOnCallFailures: true,
       allowUnlimitedContractSize: true,
       blockGasLimit: 0x1fffffffffffff,
-    }
+    },
   },
-  solidity:  {
+  solidity: {
     compilers: [
       {
-        version: '0.8.9',
+        version: "0.8.9",
         settings: {
           optimizer: {
             enabled: true,
-            runs: 1000,
+            runs: 200,
           },
         },
       },
       {
-        version: '0.8.4',
+        version: "0.8.4",
         settings: {
           optimizer: {
             enabled: true,
-            runs: 1000,
+            runs: 200,
           },
         },
-      }
+      },
     ],
   },
   gasReporter: {
