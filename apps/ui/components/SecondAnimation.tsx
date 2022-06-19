@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { PINK, PLAIN_WHITE } from '../themes';
 
-interface FadeTypes {
-  hide: boolean;
-}
-
-const Fade = styled.span<FadeTypes>`
-  visibility: ${({ hide }) => (hide ? 'hidden' : 'visible')};
-  animation: fadeOut ease 3s;
+const FadeOut = styled.span`
+  display: inline-block;
+  animation: fadeOut ease 3s forwards;
 
   @keyframes fadeOut {
     0% {
@@ -19,29 +16,47 @@ const Fade = styled.span<FadeTypes>`
   }
 `;
 
-const Remain = styled.span`
+const Shrink = styled.span`
+  animation: shrink ease 3s forwards;
+  animation-delay: 3s;
+
+  @keyframes shrink {
+    0% {
+      width: 100%;
+    }
+    100% {
+      width: 0;
+    }
+  }
+`;
+
+const Stress = styled.span`
   display: inline-block;
+  animation: stress ease 3s forwards;
+
+  @keyframes stress {
+    0% {
+      color: ${PLAIN_WHITE};
+      font-size: 16px;
+    }
+    100% {
+      color: ${PINK};
+      font-size: 32px;
+    }
+  }
 `;
 
 const SecondAnimation = () => {
-  const [shouldHide, setShouldHide] = useState<boolean>(false);
-
-  useEffect(() => {
-    const interval = setTimeout(() => {
-      setShouldHide(true);
-    }, 3000);
-
-    return () => clearTimeout(interval);
-  }, []);
-
   return (
     <span>
-      <Fade hide={shouldHide}>{'Start a '}</Fade>
-      <Remain>{`literature `}&nbsp;</Remain>
-      <Fade hide={shouldHide}>
-        {' movement on the blockchain now by creating and collecting '}
-      </Fade>
-      <Remain>NFTs</Remain>
+      <FadeOut>{'Start a '}&nbsp;</FadeOut>
+      <Stress>{`literature `}&nbsp;</Stress>
+      <FadeOut>
+        <Shrink>
+          {' movement on the blockchain now by creating and collecting '}&nbsp;
+        </Shrink>
+      </FadeOut>
+      <Stress>NFTs</Stress>
     </span>
   );
 };

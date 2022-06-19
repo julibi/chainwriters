@@ -9,7 +9,7 @@ const StartAnimation = () => {
       {shouldShowTyped && (
         <TypeWriter
           text={
-            'Start a literature movement on the blockchain now by creating and collecting NFTs'
+            'Start a literature movement on the blockchain now! Create and collect NFTs.'
           }
           onFinish={() => {
             setShouldShowTyped(false);

@@ -3,7 +3,7 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import ProjectSection from '../components/HomePage/ProjectSection';
 import { useDeviceDetect } from '../hooks/useDeviceDetect';
-import { BG_DARK } from '../themes';
+import { BG_DARK, PINK, PLAIN_WHITE } from '../themes';
 import MainSellingPointsSection from '../components/HomePage/MainSellingPointsSection';
 import FAQSection from '../components/HomePage/FAQSection';
 import StartAnimation from '../components/StartAnimation';
@@ -44,6 +44,22 @@ const CarouselSpace = styled.div`
   @media (max-width: 900px) {
     width: 100%;
     flex: 1;
+  }
+`;
+
+const Stress = styled.span`
+  display: inline-block;
+  animation: stress ease 3s;
+
+  @keyframes stress {
+    0% {
+      color: ${PLAIN_WHITE};
+      font-size: 16px;
+    }
+    100% {
+      color: ${PINK};
+      font-size: 32px;
+    }
   }
 `;
 
