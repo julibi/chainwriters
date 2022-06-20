@@ -109,7 +109,7 @@ contract ProjectDao is
     }
 
     modifier beforeAuction() {
-        require(!auctionStarted, "Auctions have already started.");
+        _beforeAuction();
         _;
     }
 
@@ -183,6 +183,10 @@ contract ProjectDao is
             return INITIAL_MINT_PRICE - discount;
         }
         return 0;
+    }
+
+    function _beforeAuction() private view {
+        require(!auctionStarted, "Auctions have already started.");
     }
 
     // function contractURI() public view returns (string memory) {
