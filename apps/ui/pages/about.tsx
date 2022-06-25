@@ -6,7 +6,7 @@ import {
   SectionTitle,
 } from '../components/HomePage/ProjectSection';
 import { PINK } from '../themes';
-import InlineLink from '../components/InlineLink';
+import LinkWrapper from '../components/LinkWrapper';
 
 const Root = styled.div`
   display: flex;
@@ -143,7 +143,7 @@ const Introduction = styled(Text)`
 const About = () => {
   return (
     <Root>
-      <SectionTitleWrapper>
+      <SectionTitleWrapper style={{ marginBlockEnd: '-4rem' }}>
         <SectionTitle>About</SectionTitle>
       </SectionTitleWrapper>
       <Content>
@@ -242,17 +242,15 @@ const About = () => {
                   Hyun-Kyung is an experienced developer specialising in Web3.
                   As a software engineer she has contributed to multiple
                   prestigious NFT businesses and projects such as{' '}
-                  <InlineLink
-                    text="Polychain Monsters"
-                    url="https://www.polychainmonsters.com"
-                  />
+                  <LinkWrapper url="https://www.polychainmonsters.com">
+                    Polychain Monsters
+                  </LinkWrapper>
                   {' ,'}
-                  <InlineLink
-                    text="The Lost Glitches"
-                    url="https://playlostglitches.com/"
-                  />
+                  <LinkWrapper url="https://playlostglitches.com/">
+                    The Lost Glitches
+                  </LinkWrapper>
                   {' and '}
-                  <InlineLink text="Unicly" url="https://www.unic.ly/" />.
+                  <LinkWrapper url="https://www.unic.ly/">Unicly</LinkWrapper>.
                 </Introduction>
               </FounderDescription>
             </CoFounderWithMarginBottom>

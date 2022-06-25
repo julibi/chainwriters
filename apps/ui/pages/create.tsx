@@ -45,13 +45,17 @@ import AuthorClaimForm from '../components/Create/AuthorClaimForm';
 import ContributorsForm from '../components/Create/ContributorsForm';
 import Finished from '../components/Create/Finished';
 import { BLURB_FETCH_ERROR } from '../constants';
+import {
+  SectionTitle,
+  SectionTitleWrapper,
+} from '../components/HomePage/ProjectSection';
 
 const Root = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  margin-block: 3rem;
+  margin-block: 3rem 6rem;
 `;
 
 const ProgressBarWrapper = styled.div`
@@ -413,6 +417,9 @@ const Create = () => {
 
   return (
     <Root>
+      <SectionTitleWrapper style={{ marginBlockEnd: '4rem' }}>
+        <SectionTitle>Create</SectionTitle>
+      </SectionTitleWrapper>
       <ProgressBarWrapper>
         <ProgressBar completed={currentStep ? (currentStep / 12) * 100 : 0} />
       </ProgressBarWrapper>

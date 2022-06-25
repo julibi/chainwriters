@@ -2,7 +2,6 @@ import React from 'react';
 import Image from 'next/image';
 import styled from 'styled-components';
 import { BG_DARK, PLAIN_WHITE } from '../themes';
-
 const Root = styled.div`
   display: flex;
   justify-content: center;
@@ -38,7 +37,7 @@ const Footer = () => {
         <SocialMediaLinkWrapper
           target="_blank"
           rel="noopener noreferrer"
-          href="https://medium.com/polychainmonsters"
+          href="https://mobile.twitter.com/peppermintpoets"
         >
           <Image
             height={'30px'}
@@ -48,7 +47,11 @@ const Footer = () => {
           />
           <SocialMediaName>Twitter</SocialMediaName>
         </SocialMediaLinkWrapper>
-        <SocialMediaLinkWrapper>
+        <SocialMediaLinkWrapper
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://medium.com/polychainmonsters"
+        >
           <Image
             height={'30px'}
             width={'30px'}
@@ -57,7 +60,11 @@ const Footer = () => {
           />
           <SocialMediaName>Discord</SocialMediaName>
         </SocialMediaLinkWrapper>
-        <SocialMediaLinkWrapper>
+        <SocialMediaLinkWrapper
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://medium.com/polychainmonsters"
+        >
           <Image
             height={'30px'}
             width={'28px'}
