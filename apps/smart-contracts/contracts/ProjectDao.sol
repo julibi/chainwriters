@@ -1,4 +1,4 @@
-//SPDX-License-Identifier: Unlicense
+ //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.9;
 
 import "@openzeppelin/contracts/security/Pausable.sol";
@@ -59,6 +59,15 @@ contract ProjectDao is
     string public name;
     address public splitter;
     string public openseaRoyaltiesURL;
+
+    struct Project {
+         uint256 public totalSharePercentage = 15;
+    string public name;
+    address public splitter;
+    string public openseaRoyaltiesURL;
+    }
+
+    mapping(uint256=>Project) idToProject; 
 
     event Configured(
         string imgHash,
