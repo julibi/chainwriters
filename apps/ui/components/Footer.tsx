@@ -29,19 +29,17 @@ const SocialMediaName = styled.span`
   margin-block-start: 1rem;
 `;
 
-const StyledLink = styled.a`
-  
-`;
+const StyledLink = styled.a``;
 
 const Footer = () => {
   return (
     <Root>
       <Content>
-        <SocialMediaLinkWrapper         
+        <SocialMediaLinkWrapper
           target="_blank"
           rel="noopener noreferrer"
           href="https://medium.com/polychainmonsters"
-        >            
+        >
           <Image
             height={'30px'}
             width={'30px'}
@@ -61,7 +59,7 @@ const Footer = () => {
         </SocialMediaLinkWrapper>
         <SocialMediaLinkWrapper>
           <Image
-            height={'28px'}
+            height={'30px'}
             width={'28px'}
             src={'/Medium.svg'}
             alt={'Twitter'}
