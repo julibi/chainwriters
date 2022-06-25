@@ -175,7 +175,7 @@ const About = () => {
           <Text>
             But we are convinced that there should be many more opportunities
             for creative writers to reach their readers and experiment with
-            their art. We are striving to provide an excelent service that
+            their art. We are striving to provide an excellent service that
             allows them to do so in a fun an innovative way with blockchain
             technology. We want to financially empower the authors, by earning
             crypto currency for their literature NFTs.
@@ -196,7 +196,7 @@ const About = () => {
         <QAWrapper>
           <SubHeader>Our History</SubHeader>
           <Text>
-            We met in Hildesheim, Germany, in 2013, where we both studied
+            We met in Hildesheim, Germany, in 2014, where we both studied
             Creative Writing. Works of Jack Kerouac, Breat Easton Ellis, Lucia
             Berlin, Leo Tolstoi and many more make our hearts beat faster! A few
             years in after graduation Olivia had become a published and awarded

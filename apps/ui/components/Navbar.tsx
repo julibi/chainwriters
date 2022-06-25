@@ -68,6 +68,7 @@ const MobileNavMenu = styled.div`
 
 const MobileNavList = styled.ul`
   margin-block-start: 4rem;
+  font-family: 'Roboto Mono Bold';
 `;
 
 const MobileNavListItem = styled.li`
