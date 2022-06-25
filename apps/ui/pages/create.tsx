@@ -49,9 +49,9 @@ import { BLURB_FETCH_ERROR } from '../constants';
 const Root = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
-  margin-block-start: 3rem;
+  margin-block: 3rem;
 `;
 
 const ProgressBarWrapper = styled.div`

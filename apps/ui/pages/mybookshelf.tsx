@@ -1,17 +1,28 @@
-import React, { useCallback } from 'react'
-import { useWeb3React } from '@web3-react/core'
-import { useRouter } from 'next/router'
-import styled from 'styled-components'
-import useAllNftsOfUser from '../hooks/useAllNftsOfUser'
-import { SectionTitle, SectionTitleWrapper } from '../components/HomePage/ProjectSection';
-import { BaseButton, BASE_BORDER_RADIUS, BASE_BOX_SHADOW, PINK } from '../themes';
-import Loading from '../components/Loading'
-import { useFetchContributedDaos, useFetchCreatedDaos } from '../state/mybookshelf/hooks'
+import React, { useCallback } from 'react';
+import { useWeb3React } from '@web3-react/core';
+import { useRouter } from 'next/router';
+import styled from 'styled-components';
+import useAllNftsOfUser from '../hooks/useAllNftsOfUser';
+import {
+  SectionTitle,
+  SectionTitleWrapper,
+} from '../components/HomePage/ProjectSection';
+import {
+  BaseButton,
+  BASE_BORDER_RADIUS,
+  BASE_BOX_SHADOW,
+  PINK,
+} from '../themes';
+import Loading from '../components/Loading';
+import {
+  useFetchContributedDaos,
+  useFetchCreatedDaos,
+} from '../state/mybookshelf/hooks';
 
 const Root = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 3rem;
+  margin: 3rem;
 `;
 
 const Section = styled.section`
@@ -83,26 +94,40 @@ const MyBookShelf = () => {
   const { account, chainId } = useWeb3React();
   const { allNftsOfUser, loading } = useAllNftsOfUser();
   const router = useRouter();
-  const { data: created, loading: createdLoading, error: createdError } = useFetchCreatedDaos();
-  const { data: contributed, loading: contributedLoading, error: contributedError } = useFetchContributedDaos();
+  const {
+    data: created,
+    loading: createdLoading,
+    error: createdError,
+  } = useFetchCreatedDaos();
+  const {
+    data: contributed,
+    loading: contributedLoading,
+    error: contributedError,
+  } = useFetchContributedDaos();
 
-  const handleClickRead = useCallback((e, address) => {
-    e.preventDefault();
-    router.push(`/projects/${address}/read`)
-  }, [router]);
+  const handleClickRead = useCallback(
+    (e, address) => {
+      e.preventDefault();
+      router.push(`/projects/${address}/read`);
+    },
+    [router]
+  );
 
-  const handleClickDetails = useCallback((e, address) => {
-    e.preventDefault();
-    router.push(`/projects/${address}`)
-  }, [router]);
+  const handleClickDetails = useCallback(
+    (e, address) => {
+      e.preventDefault();
+      router.push(`/projects/${address}`);
+    },
+    [router]
+  );
 
   return (
     <Root>
       <SectionTitleWrapper>
         <SectionTitle>My Bookshelf</SectionTitle>
       </SectionTitleWrapper>
-      {loading && <Loading height={200} />}
-      {!loading && !createdLoading && !createdError && (created.daos.length > 0) && (
+      {loading && <Loading height={530} />}
+      {!loading && !createdLoading && !createdError && created.daos.length > 0 && (
         <Section>
           <SubHeader>My Projects</SubHeader>
           {created.daos.map((project, idx) => (
@@ -124,25 +149,28 @@ const MyBookShelf = () => {
           ))}
         </Section>
       )}
-      {!loading && !contributedLoading && !contributedError && (contributed.contributions.length > 0) && (
-        <Section>
-          <SubHeader>My Contributions</SubHeader>
-          {contributed.contributions.map((project, idx) => (
-            <Item key={idx}>
-              <Title>{project.dao.title}</Title>
-              <BlockSpan>{project.role}</BlockSpan>
-              <BlockSpan>{`${project.share} %`}</BlockSpan>
-              <ButtonsWrapper>
-                <DetailsButton
-                  onClick={(e) => handleClickDetails(e, project.address)}
-                >
-                  View Details
-                </DetailsButton>
-              </ButtonsWrapper>
-            </Item>
-          ))}
-        </Section>
-      )}
+      {!loading &&
+        !contributedLoading &&
+        !contributedError &&
+        contributed.contributions.length > 0 && (
+          <Section>
+            <SubHeader>My Contributions</SubHeader>
+            {contributed.contributions.map((project, idx) => (
+              <Item key={idx}>
+                <Title>{project.dao.title}</Title>
+                <BlockSpan>{project.role}</BlockSpan>
+                <BlockSpan>{`${project.share} %`}</BlockSpan>
+                <ButtonsWrapper>
+                  <DetailsButton
+                    onClick={(e) => handleClickDetails(e, project.address)}
+                  >
+                    View Details
+                  </DetailsButton>
+                </ButtonsWrapper>
+              </Item>
+            ))}
+          </Section>
+        )}
       {allNftsOfUser && !loading && (
         <Section>
           <SubHeader>My NFTs</SubHeader>
@@ -177,6 +205,6 @@ const MyBookShelf = () => {
       )}
     </Root>
   );
-}
+};
 
-export default MyBookShelf
+export default MyBookShelf;
