@@ -1,25 +1,16 @@
-import React, { useState } from 'react';
+import React from 'react';
 import TypeWriter from './TypeWriter';
-import SecondAnimation from './SecondAnimation';
 
 const StartAnimation = () => {
-  const [shouldShowTyped, setShouldShowTyped] = useState<boolean>(true);
   return (
-    <>
-      {shouldShowTyped && (
-        <TypeWriter
-          text={
-            'Start a literature movement on the blockchain now! Create and collect NFTs.'
-          }
-          onFinish={() => {
-            setShouldShowTyped(false);
-          }}
-          shouldErase={false}
-          shouldLoop={false}
-        />
-      )}
-      {!shouldShowTyped && <SecondAnimation />}
-    </>
+    <TypeWriter
+      fontSize={54}
+      text={
+        'Start a literature movement on the blockchain now! Create and collect NFTs.'
+      }
+      shouldErase={false}
+      shouldLoop={false}
+    />
   );
 };
 

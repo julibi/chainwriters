@@ -21,9 +21,10 @@ const animation = (animationseconds: number) => `
 `;
 
 const Root = styled.div`
+  margin: 4rem 6rem;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  margin: 2rem;
 
   border-radius: ${BASE_BORDER_RADIUS};
   box-shadow: ${BASE_BOX_SHADOW};

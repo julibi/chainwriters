@@ -1,11 +1,24 @@
-import React, { ChangeEvent, KeyboardEvent, useCallback, useEffect, useState } from 'react'
-import Image from 'next/image'
-import styled from 'styled-components'
-import { SectionTitleWrapper, SectionTitle } from '../components/HomePage/ProjectSection'
-import { ProjectItem } from '../components/ProjectItem'
-import { useFetchAllAuctions, useFetchAllProjectsDesc, useFetchAllProjectsOldAsc } from '../state/projects/hooks'
-import Dropdown from '../components/Dropdown'
-import { BaseButton, BaseInput, Cross, INSET_BASE_BOX_SHADOW } from '../themes'
+import React, {
+  ChangeEvent,
+  KeyboardEvent,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
+import Image from 'next/image';
+import styled from 'styled-components';
+import {
+  SectionTitleWrapper,
+  SectionTitle,
+} from '../components/HomePage/ProjectSection';
+import { ProjectItem } from '../components/ProjectItem';
+import {
+  useFetchAllAuctions,
+  useFetchAllProjectsDesc,
+  useFetchAllProjectsOldAsc,
+} from '../state/projects/hooks';
+import Dropdown from '../components/Dropdown';
+import { BaseButton, BaseInput, Cross, INSET_BASE_BOX_SHADOW } from '../themes';
 import Loading from '../components/Loading';
 
 const Root = styled.div`
@@ -18,7 +31,7 @@ const Padding = styled.div`
 `;
 
 const Content = styled.div`
-  padding: 3rem;
+  margin: 3rem 2rem;
 `;
 
 const Filtering = styled.div`
@@ -30,7 +43,7 @@ const Filtering = styled.div`
   @media (max-width: 900px) {
     flex-direction: column;
     align-items: flex-start;
-    padding: 0;   
+    padding: 0;
     margin: 0 0 1rem 1rem;
   }
 `;
@@ -113,7 +126,6 @@ const ProjectItems = styled.div`
     flex-direction: column;
     justify-content: center;
     padding: 0;
-
   }
 `;
 
@@ -133,31 +145,35 @@ interface Dao {
 const Projects = () => {
   const [daos, setDaos] = useState<Dao[] | null>(null);
   const [searchedDaos, setSearchedDaos] = useState<Dao[] | null>(null);
-  const [searchInput, setSearchInput] = useState<string>("");
+  const [searchInput, setSearchInput] = useState<string>('');
   const [hasSearched, setHasSearched] = useState<boolean>(false);
   const fetchAllDesc = useFetchAllProjectsDesc();
   const fetchAllAsc = useFetchAllProjectsOldAsc();
   const fetchAuctions = useFetchAllAuctions();
   const { data, loading } = fetchAllDesc();
 
-  const search = useCallback((filtered?: Dao[]) => {
-    const daoArray = filtered ?? daos;
-    if (daoArray && (daoArray.length > 0) && (searchInput.trim().length > 0)) {
-      const search = searchInput.trim().toLowerCase();
-      const result = daoArray.filter((dao:Dao) => 
-        dao.title.toLowerCase().includes(search) ||
-        dao.subtitle?.toLowerCase().includes(search) ||
-        dao.author.toLowerCase().includes(search)
-      );
-      setHasSearched(true);
-      if (result.length > 0) {
-        setSearchedDaos(result);
+  const search = useCallback(
+    (filtered?: Dao[]) => {
+      const daoArray = filtered ?? daos;
+      if (daoArray && daoArray.length > 0 && searchInput.trim().length > 0) {
+        const search = searchInput.trim().toLowerCase();
+        const result = daoArray.filter(
+          (dao: Dao) =>
+            dao.title.toLowerCase().includes(search) ||
+            dao.subtitle?.toLowerCase().includes(search) ||
+            dao.author.toLowerCase().includes(search)
+        );
+        setHasSearched(true);
+        if (result.length > 0) {
+          setSearchedDaos(result);
+        }
       }
-    }
-  }, [daos, searchInput]);
+    },
+    [daos, searchInput]
+  );
 
   const reset = () => {
-    setSearchInput("");
+    setSearchInput('');
     setSearchedDaos(null);
     setHasSearched(false);
   };
@@ -306,6 +322,6 @@ const Projects = () => {
       </Content>
     </Root>
   );
-}
+};
 
-export default Projects
+export default Projects;

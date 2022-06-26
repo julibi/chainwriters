@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { SectionTitle, SectionTitleWrapper } from './ProjectSection';
-import { BG_DARK, FadeInBaseAnimation, PINK } from '../../themes';
+import { BG_DARK, FadeInBaseAnimation, PINK, PLAIN_WHITE } from '../../themes';
 
 const Root = styled.div`
   display: flex;
@@ -27,9 +27,20 @@ const BlocksWrapper = styled.div`
 `;
 
 const AuthorBlock = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   width: 45%;
   ${FadeInBaseAnimation}
   animation-delay: 3s;
+  background-color: ${BG_DARK};
+  border-radius: 20px;
+  padding: 2rem;
+
+  @media (max-width: 900px) {
+    width: 100%;
+    margin-block-end: 2rem;
+  }
 `;
 
 const ReaderBlock = styled.div`
@@ -37,7 +48,36 @@ const ReaderBlock = styled.div`
   ${FadeInBaseAnimation}
   background-color: ${BG_DARK};
   color: ${PINK};
-  padding: 3rem;
+
+  background-color: ${BG_DARK};
+  border-radius: 20px;
+  padding: 2rem;
+
+  @media (max-width: 900px) {
+    width: 100%;
+  }
+`;
+
+const Text = styled.p`
+  max-width: 1000px;
+  display: inline-block;
+  font-size: 24px;
+  line-height: 24px;
+
+  :after {
+    content: '';
+    width: 100%;
+    height: 1em;
+    display: inline-block;
+  }
+`;
+
+const SubHeader = styled.h3`
+  font-family: 'Roboto Mono Bold', serif;
+  font-size: 24px;
+  text-align: center;
+  text-transform: uppercase;
+  margin-block-start: 0;
 `;
 
 const MainSellingPointsSection = () => {
@@ -48,18 +88,17 @@ const MainSellingPointsSection = () => {
       </SectionTitleWrapper>
       <BlocksWrapper>
         <AuthorBlock>
-          <div>{'• Publish your Work as NFT'}</div>
-          <br />
-          <div>{'• Create a community of readers and connect with it'}</div>
-          <br />
-          <div>{'• Receive Creator royalties'}</div>
+          <SubHeader style={{ color: PINK }}>Authors</SubHeader>
+          <Text>{'Publish and sell your text as an NFT collection'}</Text>
+          <Text>{'Receive creator royalties'}</Text>
+          <Text>{'Create a community of readers and connect with it'}</Text>
         </AuthorBlock>
         <ReaderBlock>
-          <div>{'• Find works that you like'}</div>
-          <br />
-          <div>{'• Buy their NFTs to read'}</div>
-          <br />
-          <div>{'• Vote with the NFTs - be part of a community'}</div>
+          <SubHeader style={{ color: PLAIN_WHITE }}>Collectors</SubHeader>
+          <Text>{'Find works that you like'}</Text>
+          <Text>{'Collect superrare NFTs and unlock the text'}</Text>
+          <Text>{'Be part of an exclusive community'}</Text>
+          <Text>{'(Beta) Vote with the NFTs'}</Text>
         </ReaderBlock>
       </BlocksWrapper>
     </Root>

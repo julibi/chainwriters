@@ -34,11 +34,15 @@ const QAWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 3rem;
+  margin: 3rem 2rem;
 `;
 
 const CoFoundersWrapper = styled.div`
   margin: 5rem 0 3rem 0;
+
+  @media (max-width: 900px) {
+    margin: 5rem 0 2rem 0;
+  }
 `;
 
 const CoFounders = styled.div`
@@ -46,6 +50,10 @@ const CoFounders = styled.div`
   justify-content: space-evenly;
   flex-wrap: wrap;
   padding: 3rem;
+
+  @media (max-width: 900px) {
+    padding: 3rem 2rem;
+  }
 `;
 
 const CoFounder = styled.div`
@@ -70,6 +78,7 @@ const Text = styled.p`
     width: 100%;
     height: 1em;
     display: inline-block;
+  }
 `;
 
 const MockText = `Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
@@ -277,10 +286,7 @@ const About = () => {
                 <Title>Co-Founder</Title>
                 <Field>Marketing & Community Manager</Field>
                 <Introduction>
-                  {`Olivia Kuderewski is a novelist, independent editor &
-                  co-founder of Peppermint Poets. She studied literature and
-                  creative writing in Augsburg, Seville and Hildesheim and has
-                  worked in publishing houses and literary agencies. Her novel
+                  {`Olivia Kuderewski is a novelist and editor. Her novel
                   "Lux" was awarded the Klaus Michael Kühne Prize for the best
                   German-language debut in 2021. In 2022, her second novel "Haha
                   Heartbreak" will be published by Voland & Quist. She lives and

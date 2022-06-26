@@ -5,6 +5,20 @@ interface CursorProps {
   hasCursor: boolean;
 }
 
+interface RootProps {
+  fontSizeDesktop: number;
+  fontSizeMobile: number;
+}
+
+const Root = styled.span<RootProps>`
+  font-family: 'Roboto Mono Bold', Serif;
+  font-size: ${({ fontSizeDesktop }) => fontSizeDesktop}px;
+
+  @media (max-width: 900px) {
+    font-size: ${({ fontSizeMobile }) => fontSizeMobile}px;
+  }
+`;
+
 const Cursor = styled.span<CursorProps>`
   display: inline-block;
   color: ${({ hasCursor }) => (hasCursor ? 'currentColor' : 'transparent')};
@@ -29,6 +43,8 @@ interface TypeWriterProps {
   shouldLoop?: boolean;
   speed?: number;
   text: string;
+  fontSizeDesktop?: number;
+  fontSizeMobile?: number;
 }
 
 const TypeWriter = ({
@@ -38,6 +54,8 @@ const TypeWriter = ({
   shouldErase = true,
   shouldLoop = true,
   speed = 100,
+  fontSizeDesktop = 54,
+  fontSizeMobile = 42,
   text,
 }: TypeWriterProps) => {
   const [currentText, setCurrentText] = useState<string>('');
@@ -53,11 +71,13 @@ const TypeWriter = ({
       setCurrentText(displayText);
     } else {
       await delay();
-      setTypeForward(false);
+      if (shouldErase) {
+        setTypeForward(false);
+      }
       setTypedOnce(true);
       onFinish && onFinish();
     }
-  }, [currentText, delay, onFinish, text]);
+  }, [currentText, delay, onFinish, shouldErase, text]);
 
   const erase = useCallback(async () => {
     if (currentText.length) {
@@ -74,23 +94,23 @@ const TypeWriter = ({
       if (typeForward) {
         if (typedOnce && !shouldLoop) return;
         type();
-      }
-      if (!typeForward && shouldErase) {
-        erase();
+      } else {
+        if (shouldErase) {
+          erase();
+        }
       }
     }, speed);
 
     return () => {
-      console.log('unmounting');
       clearInterval(interval);
     };
   }, [speed, type, erase, shouldErase, shouldLoop, typeForward, typedOnce]);
 
   return (
-    <span>
+    <Root fontSizeDesktop={fontSizeDesktop} fontSizeMobile={fontSizeMobile}>
       {currentText}
       <Cursor hasCursor={cursor}>|</Cursor>
-    </span>
+    </Root>
   );
 };
 

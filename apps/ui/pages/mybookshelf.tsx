@@ -23,6 +23,10 @@ const Root = styled.div`
   display: flex;
   flex-direction: column;
   margin: 3rem;
+
+  @media (max-width: 900px) {
+    margin: 3rem 2rem;
+  }
 `;
 
 const Section = styled.section`
