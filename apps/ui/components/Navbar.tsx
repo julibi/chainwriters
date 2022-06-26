@@ -1,11 +1,11 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import { useWeb3React } from '@web3-react/core';
-import Link from 'next/link'
-import styled from 'styled-components'
-import WalletConnection from '../components/WalletConnection'
-import { useDeviceDetect } from '../hooks/useDeviceDetect'
-import { useEagerConnect } from '../hooks/useEagerConnect'
-import { BG_NORMAL, StyledLink } from '../themes'
+import Link from 'next/link';
+import styled from 'styled-components';
+import WalletConnection from '../components/WalletConnection';
+import { useDeviceDetect } from '../hooks/useDeviceDetect';
+import { useEagerConnect } from '../hooks/useEagerConnect';
+import { BG_NORMAL, StyledLink } from '../themes';
 
 const Root = styled.div`
   display: flex;
@@ -21,13 +21,12 @@ const NavList = styled.ul`
   display: flex;
   margin: 2rem;
   align-items: center;
-  font-family: 'Roboto Mono';
+  font-family: 'Roboto Mono Bold';
 `;
 
 const NavListItem = styled.li`
   list-style-type: none;
   margin-inline-end: 4rem;
-  text-transform: uppercase;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -69,6 +68,7 @@ const MobileNavMenu = styled.div`
 
 const MobileNavList = styled.ul`
   margin-block-start: 4rem;
+  font-family: 'Roboto Mono Bold';
 `;
 
 const MobileNavListItem = styled.li`
@@ -78,10 +78,11 @@ const MobileNavListItem = styled.li`
 `;
 
 const routes = [
-  {name: 'Home', path: '/'},
-  {name: 'Projects', path: '/projects'},
-  {name: 'Create', path: '/create'},
-  {name: 'My Bookshelf', path: '/mybookshelf'}
+  { name: 'Home', path: '/' },
+  { name: 'Projects', path: '/projects' },
+  { name: 'Create', path: '/create' },
+  { name: 'My Bookshelf', path: '/mybookshelf' },
+  { name: 'About', path: '/about' },
 ];
 
 const Navbar = () => {
@@ -125,11 +126,14 @@ const Navbar = () => {
             }
           />
         </BurgerButton>
-        {isBurgerMenuOpen &&
+        {isBurgerMenuOpen && (
           <MobileNavMenu>
             <MobileNavList>
               {routes.map((route, idx) => (
-                <MobileNavListItem key={idx} onClick={() => setIsBurgerMenuOpen(false)}>
+                <MobileNavListItem
+                  key={idx}
+                  onClick={() => setIsBurgerMenuOpen(false)}
+                >
                   <Link href={route.path} passHref>
                     <StyledLink>{route.name}</StyledLink>
                   </Link>
@@ -137,24 +141,24 @@ const Navbar = () => {
               ))}
             </MobileNavList>
           </MobileNavMenu>
-        }
+        )}
       </RootMobile>
     );
   }
   return (
     <Root>
       <NavList>
-        {routes.map((route, idx) =>
+        {routes.map((route, idx) => (
           <NavListItem key={idx}>
             <Link href={route.path} passHref>
               <StyledLink>{route.name}</StyledLink>
             </Link>
           </NavListItem>
-        )}
+        ))}
         <WalletConnection />
       </NavList>
     </Root>
   );
-}
+};
 
-export default Navbar
+export default Navbar;

@@ -1,8 +1,13 @@
-import React from 'react'
-import Image from 'next/image'
-import styled from 'styled-components'
-import { useRouter } from 'next/router'
-import { BASE_BORDER_RADIUS, BASE_BOX_SHADOW, PINK, PLAIN_WHITE } from '../themes';
+import React from 'react';
+import Image from 'next/image';
+import styled from 'styled-components';
+import { useRouter } from 'next/router';
+import {
+  BASE_BORDER_RADIUS,
+  BASE_BOX_SHADOW,
+  PINK,
+  PLAIN_WHITE,
+} from '../themes';
 import { truncateAddress } from './WalletIndicator';
 
 const Root = styled.div`
@@ -31,7 +36,6 @@ const ImageWrapper = styled.div`
 
     img {
       object-fit: contain !important;
-      
     }
   }
 `;
@@ -81,10 +85,10 @@ const ProjectItem = ({
 }: ProjectItemTypes) => {
   const router = useRouter();
   const handleClick = (e) => {
-    e.preventDefault()
-    router.push(`projects/${address}`)
-  }
-  
+    e.preventDefault();
+    router.push(`projects/${address}`);
+  };
+
   return (
     <Root onClick={handleClick}>
       <ImageWrapper>
@@ -102,17 +106,17 @@ const ProjectItem = ({
       </ImageWrapper>
       <InfoWrapper>
         <Title>{title}</Title>
-        {subtitle &&
+        {subtitle && (
           <Flex>
-            <Label style={{color: PINK}}>{subtitle}</Label>
+            <Label style={{ color: PINK }}>{subtitle}</Label>
           </Flex>
-        }
-        {genre &&
+        )}
+        {genre && (
           <Flex>
             <Label>Genre</Label>
             <div>{genre}</div>
           </Flex>
-        }
+        )}
         <Flex>
           <Label>Author</Label>
           <div>{truncateAddress(author)}</div>
@@ -120,6 +124,6 @@ const ProjectItem = ({
       </InfoWrapper>
     </Root>
   );
-}
+};
 
 export { ProjectItem };

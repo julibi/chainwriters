@@ -45,25 +45,36 @@ import AuthorClaimForm from '../components/Create/AuthorClaimForm';
 import ContributorsForm from '../components/Create/ContributorsForm';
 import Finished from '../components/Create/Finished';
 import { BLURB_FETCH_ERROR } from '../constants';
+import {
+  SectionTitle,
+  SectionTitleWrapper,
+} from '../components/HomePage/ProjectSection';
 
 const Root = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
-  margin-block-start: 3rem;
+  margin-block: 3rem 6rem;
+`;
+
+const Content = styled.div`
+  padding-inline: 6rem;
+  width: 100%;
+
+  @media (max-width: 900px) {
+    padding-inline: 2rem;
+  }
 `;
 
 const ProgressBarWrapper = styled.div`
   display: flex;
   justify-content: center;
-  width: 90%;
+  width: 100%;
   max-width: 1200px;
-  padding: 0 3rem;
   margin-block-end: 3rem;
 
   @media (max-width: 900px) {
-    padding: 0 1rem;
     margin-block-end: 2rem;
   }
 `;
@@ -71,13 +82,13 @@ const ProgressBarWrapper = styled.div`
 const FormWrapper = styled.div`
   display: flex;
   justify-content: center;
-  width: 90%;
+  width: 100%;
   max-width: 1200px;
   margin-block-start: 1rem;
 `;
 
 const Form = styled.div`
-  width: 90%;
+  width: 100%;
   max-width: 1200px;
   border-radius: ${BASE_BORDER_RADIUS};
   box-shadow: ${BASE_BOX_SHADOW};
@@ -413,144 +424,149 @@ const Create = () => {
 
   return (
     <Root>
-      <ProgressBarWrapper>
-        <ProgressBar completed={currentStep ? (currentStep / 12) * 100 : 0} />
-      </ProgressBarWrapper>
-      <FormWrapper>
-        <Form>
-          {currentStep === 0 && !creatingDao && (
-            <NameForm
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                setTitle(e.target.value)
-              }
-              onSubmit={() => setCurrentStep(currentStep + 1)}
-              title={title}
-            />
-          )}
-          {currentStep === 1 && !creatingDao && (
-            <TextForm
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                setText(e.target.value)
-              }
-              onSubmit={() => setCurrentStep(currentStep + 1)}
-              text={text}
-            />
-          )}
-          {currentStep === 2 && !creatingDao && (
-            <AmountForm
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                setFirstEdMaxAmount(Number(e.target.value))
-              }
-              onSubmit={() => setCurrentStep(currentStep + 1)}
-              firstEdMaxAmount={firstEdMaxAmount}
-            />
-          )}
-          {currentStep === 3 && !creatingDao && (
-            <PriceForm
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                setFirstEdMintPrice(e.target.value)
-              }
-              onSubmit={() => setCurrentStep(currentStep + 1)}
-              firstEdMintPrice={firstEdMintPrice}
-            />
-          )}
-          {currentStep === 4 && !creatingDao && (
-            <ReviewForm
-              agreed={agreed}
-              title={title}
-              text={text}
-              firstEdMaxAmount={firstEdMaxAmount}
-              firstEdMintPrice={firstEdMintPrice}
-              onCheck={() => setAgreed(!agreed)}
-              createDao={createDao}
-            />
-          )}
-          {creatingDao && <Waiting />}
-          {currentStep === 5 && !creatingDao && (
-            <Congrats
-              daoAddress={daoAddress}
-              onSubmit={() => setCurrentStep(currentStep + 1)}
-            />
-          )}
-          {currentStep === 6 && !creatingDao && (
-            <CoverImageForm
-              captureFile={captureFile}
-              imgFile={imgFile}
-              imgBuffer={imgBuffer}
-              onNextStep={() => setCurrentStep(currentStep + 1)}
-              onSubmit={submitImage}
-            />
-          )}
-          {currentStep === 7 && !creatingDao && (
-            <BlurbForm
-              blurb={blurb}
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                setBlurb(e.target.value)
-              }
-              onNextStep={() => setCurrentStep(currentStep + 1)}
-              onSubmit={handleSetBlurb}
-            />
-          )}
-          {currentStep === 8 && !creatingDao && (
-            <GenreForm
-              genre={genre}
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                setGenre(e.target.value)
-              }
-              onNextStep={() => setCurrentStep(currentStep + 1)}
-            />
-          )}
-          {currentStep === 9 && !creatingDao && (
-            <SubtitleForm
-              subtitle={subtitle}
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                setSubtitle(e.target.value)
-              }
-              onNextStep={() => setCurrentStep(currentStep + 1)}
-            />
-          )}
-          {currentStep === 10 && !creatingDao && (
-            <ConfigReviewForm
-              genre={genre}
-              subtitle={subtitle}
-              blurb={blurb}
-              imgFile={imgFile}
-              loading={loading}
-              blurbIPFS={blurbIPFS}
-              onSubmit={handleSetConfiguration}
-            />
-          )}
-          {currentStep === 11 && !creatingDao && (
-            <AuthorClaimForm
-              loading={loading}
-              authorMintAmount={authorMintAmount}
-              firstEdMaxAmount={firstEdMaxAmount}
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                setAuthorMintAmount(Number(e.target.value))
-              }
-              onSubmit={handleAuthorMint}
-            />
-          )}
-          {currentStep === 12 && !creatingDao && (
-            <ContributorsForm
-              contributors={contributors}
-              contributorList={contributorList}
-              loading={loading}
-              onChange={(idx, key, val) =>
-                setContributors({
-                  ...contributors,
-                  [idx]: { ...contributors[idx], [key]: val },
-                })
-              }
-              onNextStep={() => setCurrentStep(currentStep + 1)}
-              onSubmit={handleSetContributors}
-            />
-          )}
-          {currentStep === 13 && !creatingDao && (
-            <Finished daoAddress={daoAddress} />
-          )}
-        </Form>
-      </FormWrapper>
+      <SectionTitleWrapper style={{ marginBlockEnd: '4rem' }}>
+        <SectionTitle>Create</SectionTitle>
+      </SectionTitleWrapper>
+      <Content>
+        <ProgressBarWrapper>
+          <ProgressBar completed={currentStep ? (currentStep / 12) * 100 : 0} />
+        </ProgressBarWrapper>
+        <FormWrapper>
+          <Form>
+            {currentStep === 0 && !creatingDao && (
+              <NameForm
+                onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                  setTitle(e.target.value)
+                }
+                onSubmit={() => setCurrentStep(currentStep + 1)}
+                title={title}
+              />
+            )}
+            {currentStep === 1 && !creatingDao && (
+              <TextForm
+                onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                  setText(e.target.value)
+                }
+                onSubmit={() => setCurrentStep(currentStep + 1)}
+                text={text}
+              />
+            )}
+            {currentStep === 2 && !creatingDao && (
+              <AmountForm
+                onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                  setFirstEdMaxAmount(Number(e.target.value))
+                }
+                onSubmit={() => setCurrentStep(currentStep + 1)}
+                firstEdMaxAmount={firstEdMaxAmount}
+              />
+            )}
+            {currentStep === 3 && !creatingDao && (
+              <PriceForm
+                onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                  setFirstEdMintPrice(e.target.value)
+                }
+                onSubmit={() => setCurrentStep(currentStep + 1)}
+                firstEdMintPrice={firstEdMintPrice}
+              />
+            )}
+            {currentStep === 4 && !creatingDao && (
+              <ReviewForm
+                agreed={agreed}
+                title={title}
+                text={text}
+                firstEdMaxAmount={firstEdMaxAmount}
+                firstEdMintPrice={firstEdMintPrice}
+                onCheck={() => setAgreed(!agreed)}
+                createDao={createDao}
+              />
+            )}
+            {creatingDao && <Waiting />}
+            {currentStep === 5 && !creatingDao && (
+              <Congrats
+                daoAddress={daoAddress}
+                onSubmit={() => setCurrentStep(currentStep + 1)}
+              />
+            )}
+            {currentStep === 6 && !creatingDao && (
+              <CoverImageForm
+                captureFile={captureFile}
+                imgFile={imgFile}
+                imgBuffer={imgBuffer}
+                onNextStep={() => setCurrentStep(currentStep + 1)}
+                onSubmit={submitImage}
+              />
+            )}
+            {currentStep === 7 && !creatingDao && (
+              <BlurbForm
+                blurb={blurb}
+                onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                  setBlurb(e.target.value)
+                }
+                onNextStep={() => setCurrentStep(currentStep + 1)}
+                onSubmit={handleSetBlurb}
+              />
+            )}
+            {currentStep === 8 && !creatingDao && (
+              <GenreForm
+                genre={genre}
+                onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                  setGenre(e.target.value)
+                }
+                onNextStep={() => setCurrentStep(currentStep + 1)}
+              />
+            )}
+            {currentStep === 9 && !creatingDao && (
+              <SubtitleForm
+                subtitle={subtitle}
+                onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                  setSubtitle(e.target.value)
+                }
+                onNextStep={() => setCurrentStep(currentStep + 1)}
+              />
+            )}
+            {currentStep === 10 && !creatingDao && (
+              <ConfigReviewForm
+                genre={genre}
+                subtitle={subtitle}
+                blurb={blurb}
+                imgFile={imgFile}
+                loading={loading}
+                blurbIPFS={blurbIPFS}
+                onSubmit={handleSetConfiguration}
+              />
+            )}
+            {currentStep === 11 && !creatingDao && (
+              <AuthorClaimForm
+                loading={loading}
+                authorMintAmount={authorMintAmount}
+                firstEdMaxAmount={firstEdMaxAmount}
+                onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                  setAuthorMintAmount(Number(e.target.value))
+                }
+                onSubmit={handleAuthorMint}
+              />
+            )}
+            {currentStep === 12 && !creatingDao && (
+              <ContributorsForm
+                contributors={contributors}
+                contributorList={contributorList}
+                loading={loading}
+                onChange={(idx, key, val) =>
+                  setContributors({
+                    ...contributors,
+                    [idx]: { ...contributors[idx], [key]: val },
+                  })
+                }
+                onNextStep={() => setCurrentStep(currentStep + 1)}
+                onSubmit={handleSetContributors}
+              />
+            )}
+            {currentStep === 13 && !creatingDao && (
+              <Finished daoAddress={daoAddress} />
+            )}
+          </Form>
+        </FormWrapper>
+      </Content>
     </Root>
   );
 };

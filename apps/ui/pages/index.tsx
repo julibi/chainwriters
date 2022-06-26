@@ -3,21 +3,22 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import ProjectSection from '../components/HomePage/ProjectSection';
 import { useDeviceDetect } from '../hooks/useDeviceDetect';
-import { BG_DARK, PINK, PLAIN_WHITE } from '../themes';
+import { BASE_BORDER_RADIUS, BG_DARK, PINK, PLAIN_WHITE } from '../themes';
 import MainSellingPointsSection from '../components/HomePage/MainSellingPointsSection';
 import FAQSection from '../components/HomePage/FAQSection';
 import StartAnimation from '../components/StartAnimation';
+import HowItWorksSection from '../components/HomePage/HowItWorksSection';
 
 const Root = styled.div``;
 
 const HeaderSection = styled.section`
   display: flex;
   justify-content: space-between;
-  padding: 8rem;
+  margin: 8rem 6rem;
 
   @media (max-width: 900px) {
     flex-direction: column;
-    padding: 2rem;
+    margin: 2rem;
   }
 `;
 
@@ -40,26 +41,18 @@ const CarouselSpace = styled.div`
   min-height: 500px;
   width: 50%;
   background-color: ${BG_DARK};
+  border-radius: 20px;
+  padding: 1rem;
+  margin-inline-start: 3rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 
   @media (max-width: 900px) {
     width: 100%;
     flex: 1;
-  }
-`;
-
-const Stress = styled.span`
-  display: inline-block;
-  animation: stress ease 3s;
-
-  @keyframes stress {
-    0% {
-      color: ${PLAIN_WHITE};
-      font-size: 16px;
-    }
-    100% {
-      color: ${PINK};
-      font-size: 32px;
-    }
+    margin-inline-start: 0;
+    margin-block-start: 3rem;
   }
 `;
 
@@ -76,11 +69,15 @@ export function Index() {
           <StartAnimation />
         </TypedTextWrapper>
         <CarouselSpace>
-          This is a carousel that will show parts of the app
+          <span style={{ display: 'inlineBlock' }}>
+            This is a carousel that will loop through the cover images!
+          </span>
         </CarouselSpace>
       </HeaderSection>
       <MainSellingPointsSection />
+      <HowItWorksSection />
       <ProjectSection />
+      {/* exchange with top auctions */}
       <ProjectSection />
       <FAQSection />
     </Root>

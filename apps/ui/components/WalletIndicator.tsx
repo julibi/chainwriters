@@ -1,15 +1,16 @@
-import React, { ReactElement } from 'react'
-import styled from 'styled-components'
-import AccountAvatar from './AccountAvatar'
-import { supportedChainIds, supportedChainMapping } from '../connectors'
-import { PrimaryButton } from '../themes'
+import React, { ReactElement } from 'react';
+import styled from 'styled-components';
+import AccountAvatar from './AccountAvatar';
+import { supportedChainIds, supportedChainMapping } from '../connectors';
+import { PrimaryButton } from '../themes';
 
 const Root = styled.div`
   display: flex;
   justify-content: space-evenly;
   max-width: 320px;
-  `;
-  
+  font-family: 'Roboto Mono Bold';
+`;
+
 const ConnectionModalOpener = styled(PrimaryButton)`
   font-family: 'Roboto Mono Bold';
   padding: 1rem;
@@ -48,7 +49,6 @@ const WalletIndicator = ({
   handleClick,
   showLoading = false,
 }: WalletIndicatorProps) => {
-
   const getNetwork = (chain): ReactElement => {
     if (chain) {
       if (supportedChainIds.includes(chain)) {
@@ -75,11 +75,9 @@ const WalletIndicator = ({
       ) : (
         <>
           <div>{getNetwork(chain)}</div>
-          {address &&
-            chain &&
-            supportedChainIds.includes(chain) &&
+          {address && chain && supportedChainIds.includes(chain) && (
             <Item>{truncateAddress(address)}</Item>
-          }
+          )}
           {chain && supportedChainIds.includes(chain) && (
             <AccountAvatar address={address} />
           )}

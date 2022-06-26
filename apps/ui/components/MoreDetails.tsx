@@ -1,13 +1,19 @@
-import React, { ReactChild, useState } from 'react'
-import styled from 'styled-components'
-import { BASE_BORDER_RADIUS, BASE_BOX_SHADOW, BG_NORMAL, INSET_BASE_BOX_SHADOW, PLAIN_WHITE } from '../themes'
-import CSS from 'csstype'
+import React, { ReactChild, useState } from 'react';
+import styled from 'styled-components';
+import {
+  BASE_BORDER_RADIUS,
+  BASE_BOX_SHADOW,
+  BG_NORMAL,
+  INSET_BASE_BOX_SHADOW,
+  PLAIN_WHITE,
+} from '../themes';
+import CSS from 'csstype';
 
 const Root = styled.div`
   box-shadow: ${BASE_BOX_SHADOW};
   border-radius: ${BASE_BORDER_RADIUS};
   width: 100%;
-  
+
   padding: 1rem;
   display: flex;
   justify-content: space-between;
@@ -30,8 +36,12 @@ const Content = styled.div`
   animation: fadein 1s;
 
   @keyframes fadein {
-      from { opacity: 0; }
-      to   { opacity: 1; }
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
 `;
 
@@ -54,7 +64,7 @@ const ArrowWrapper = styled.button`
       cursor: default;
     }
   }
-  
+
   :active {
     box-shadow: ${INSET_BASE_BOX_SHADOW};
   }
@@ -70,8 +80,8 @@ const Arrow = styled.i<ArrowProps>`
   display: inline-block;
   padding: 3px;
 
-  transform: ${({ up }) => up ? "rotateZ(225deg)" : "rotate(45deg)"};
-  transition: all .4s ease-in-out;
+  transform: ${({ up }) => (up ? 'rotateZ(225deg)' : 'rotate(45deg)')};
+  transition: all 0.4s ease-in-out;
 `;
 
 interface MoreDetailsProps {
@@ -91,14 +101,13 @@ const MoreDetails = ({ children, styles, title, open }: MoreDetailsProps) => {
         <Title>{title}</Title>
         {!up && <Content>{children}</Content>}
       </Header>
-      <ArrowWrapper onClick={() => setUp(!up)}>
-        <Arrow
-          className="arrow"
-          up={up}  
-        />
-      </ArrowWrapper>
+      <div>
+        <ArrowWrapper onClick={() => setUp(!up)}>
+          <Arrow className="arrow" up={up} />
+        </ArrowWrapper>
+      </div>
     </Root>
   );
-}
+};
 
-export default MoreDetails
+export default MoreDetails;
