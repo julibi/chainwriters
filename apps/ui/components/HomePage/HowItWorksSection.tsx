@@ -18,7 +18,7 @@ const Root = styled.section`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 0 6rem 6rem 6rem;
+  margin: 0 6rem 3rem 6rem;
   @media (max-width: 900px) {
     margin: 2rem;
   }
@@ -35,6 +35,7 @@ const Wrapper = styled.div`
   display: flex;
   border-radius: ${BASE_BORDER_RADIUS};
   box-shadow: ${INSET_BASE_BOX_SHADOW};
+  margin-block-end: 3rem;
   padding: 2rem 2rem 0 2rem;
 
   @media (max-width: 900px) {
@@ -142,6 +143,23 @@ const Video = styled(ReactPlayer)`
   }
 `;
 
+const Collectors = styled(Authors)`
+  margin-inline-start: 2rem;
+
+  @media (max-width: 900px) {
+    margin-inline-start: 0;
+  }
+`;
+
+const CollectorsWrapper = styled(Wrapper)`
+  flex-direction: row-reverse;
+
+  @media (max-width: 900px) {
+    flex-direction: column;
+    margin-block-end: 0;
+  }
+`;
+
 const InstructionComp = ({
   currentStep,
   index,
@@ -171,7 +189,10 @@ const InstructionComp = ({
 
 const HowItWorksSection = () => {
   const [authorInstructionsStep, setAuthorInstructionsStep] = useState<
-    1 | 2 | 3 | 4 | 5 | 6
+    1 | 2 | 3 | 4
+  >(1);
+  const [collectorInstructionsStep, setCollectorInstructionsStep] = useState<
+    1 | 2 | 3 | 4
   >(1);
   return (
     <Root>
@@ -253,6 +274,56 @@ const HowItWorksSection = () => {
             />
           </VideoWrapper>
         </Wrapper>
+        <NavButton disabled>Collectors</NavButton>
+        <CollectorsWrapper>
+          <Collectors>
+            <InstructionComp
+              index={1}
+              currentStep={collectorInstructionsStep}
+              onClick={() => setCollectorInstructionsStep(1)}
+              title="Browse Projects"
+              description={[
+                `After connecting your wallet, click on "Projects" in the navigation.`,
+                `You can search or filter for all kinds of projects here. You can also find top projects on the homepage right below this section.`,
+              ]}
+            />
+            <InstructionComp
+              index={2}
+              currentStep={collectorInstructionsStep}
+              onClick={() => setCollectorInstructionsStep(2)}
+              title="Mint"
+              description={[
+                `Every project is an ERC-1155 collection and each edition has a different ID,
+                meaning that all Genesis Edition NFTs have the token ID 1, the second edition NFTs have the ID 2 etc.`,
+                `Only the Genesis Edition NFTs are sold over a dutch auction. On a project's page click on the big "Get Current Price"-button.
+                This will open a modal with the current price and the option to mint.
+                If it is not a Genesis Edition, you will see the mint button right away. Click and confirm the transaction.`,
+                `After a while the transaction will go through and tataaa, you are the owner of a literature NFT!`,
+              ]}
+            />
+            <InstructionComp
+              index={3}
+              currentStep={collectorInstructionsStep}
+              onClick={() => setCollectorInstructionsStep(3)}
+              title="My Bookshelf"
+              description={[
+                `As an NFT owner, you see a little "READ" button on the cover of the matching project's page. Click on it to read.`,
+                `Alternatively, you can go to "My Bookshelf", where you find a list of the NFTs you own, the ones you contributed to and the ones you created.`,
+                `Further features for NFT + Genesis Edition NFT owners will be unlocked in the future, so hold on tight!`,
+              ]}
+            />
+          </Collectors>
+          <VideoWrapper>
+            <Video
+              url={'author_step_2.mov'}
+              controls={false}
+              loop
+              muted
+              playing
+              playsinline
+            />
+          </VideoWrapper>
+        </CollectorsWrapper>
       </Content>
     </Root>
   );
