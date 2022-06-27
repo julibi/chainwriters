@@ -92,7 +92,7 @@ const Arrow = styled.i<ArrowProps>`
 interface MoreDetailsProps {
   active?: boolean;
   children: ReactChild;
-  styles: CSS.Properties;
+  styles?: CSS.Properties;
   title: string | ReactChild;
   open?: boolean;
 }

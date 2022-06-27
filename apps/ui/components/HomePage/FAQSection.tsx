@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import LinkWrapper from '../LinkWrapper';
 import MoreDetails from '../MoreDetails';
 import { SectionTitle, SectionTitleWrapper } from './ProjectSection';
 
@@ -29,7 +30,76 @@ const FAQSection = () => {
       </SectionTitleWrapper>
       <br></br>
       <MoreDetailsWrapper>
-        <MoreDetails styles={{}} title={'Lorem Ipsum'}>
+        <MoreDetails
+          title={
+            'I am new to Crypto. What do I need to interact with the platform?'
+          }
+        >
+          <>
+            <p>
+              First off, you need a crypto wallet. We recommend{' '}
+              <LinkWrapper url="https://metamask.io/download/">
+                MetaMask
+              </LinkWrapper>
+              . It is a browser wallet that is easy and fast to create and use.
+              You can also find a step by step guide{' '}
+              <LinkWrapper url="https://medium.com/robotos/how-to-setup-a-crypto-wallet-to-buy-nfts-4a5ce37b8159">
+                here
+              </LinkWrapper>
+              .
+            </p>
+          </>
+        </MoreDetails>
+        <br></br>
+        <MoreDetails title={'NF... tea.. wut?!'}>
+          <>
+            <p>
+              <LinkWrapper url="https://blog.opensea.io/guides/non-fungible-tokens/">
+                This
+              </LinkWrapper>{' '}
+              is a great introduction, if you want to understand what NFTs are.
+            </p>
+          </>
+        </MoreDetails>
+        <br></br>
+        <MoreDetails title={'Why collect literature NFTs?'}>
+          <>
+            <p>
+              Fun, Support Writers, Access, show off ur bookshelf (show off who
+              u are!)
+            </p>
+          </>
+        </MoreDetails>
+        <br></br>
+        <MoreDetails title={'Why publish on the Blockchain? Why Polygon?'}>
+          <>
+            <p>
+              Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
+              nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam
+              erat, sed diam voluptua. Polygon is an amazing scaling solution
+              for the Ethereum blockchain that keeps transaction fees low
+              without sacrificing on security. Learn more about it{' '}
+              <LinkWrapper url="https://polygon.technology/">here</LinkWrapper>.
+              Peppermint Poets will be brought to more networks in the future.
+            </p>
+          </>
+        </MoreDetails>
+        <br></br>
+        <MoreDetails
+          title={'Is it safe to publish and collect on Peppermint Poets?'}
+        >
+          <>
+            <p>Mention IPFS! Transparent Code.</p>
+          </>
+        </MoreDetails>
+        <br></br>
+        <MoreDetails title={'Rights and Ownership'}>
+          <>
+            <p>If anything we pause the according ERC-1155 contract.</p>
+          </>
+        </MoreDetails>
+        <br></br>
+        <MoreDetails title={'Why Peppermint Poets?'}>
           <>
             <p>
               Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
@@ -46,58 +116,24 @@ const FAQSection = () => {
           </>
         </MoreDetails>
         <br></br>
-        <MoreDetails styles={{}} title={'Lorem Ipsum'}>
+        <MoreDetails title={'How do I publish text on Peppermint Poets?'}>
           <>
             <p>
-              Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
-              nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam
-              erat, sed diam voluptua. At vero eos et accusam et justo duo
-              dolores et ea rebum. Stet clita kasd gubergren, no sea takimata
-              sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit
-              amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
-              invidunt ut labore et dolore magna aliquyam erat, sed diam
-              voluptua. At vero eos et accusam et justo duo dolores et ea rebum.
-              Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum
-              dolor sit amet.
+              Find a step by step guide{' '}
+              <LinkWrapper url="/#howitworks">here</LinkWrapper>.
             </p>
           </>
         </MoreDetails>
         <br></br>
-        <MoreDetails styles={{}} title={'Lorem Ipsum'}>
+        <MoreDetails title={'Who is building Peppermint Poets?'}>
           <>
             <p>
-              Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
-              nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam
-              erat, sed diam voluptua. At vero eos et accusam et justo duo
-              dolores et ea rebum. Stet clita kasd gubergren, no sea takimata
-              sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit
-              amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
-              invidunt ut labore et dolore magna aliquyam erat, sed diam
-              voluptua. At vero eos et accusam et justo duo dolores et ea rebum.
-              Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum
-              dolor sit amet.
+              <LinkWrapper url="/about#founders">Us</LinkWrapper> :)
             </p>
           </>
         </MoreDetails>
         <br></br>
-        <MoreDetails styles={{}} title={'Lorem Ipsum'}>
-          <>
-            <p>
-              Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
-              nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam
-              erat, sed diam voluptua. At vero eos et accusam et justo duo
-              dolores et ea rebum. Stet clita kasd gubergren, no sea takimata
-              sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit
-              amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
-              invidunt ut labore et dolore magna aliquyam erat, sed diam
-              voluptua. At vero eos et accusam et justo duo dolores et ea rebum.
-              Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum
-              dolor sit amet.
-            </p>
-          </>
-        </MoreDetails>
-        <br></br>
-        <MoreDetails styles={{}} title={'Lorem Ipsum'}>
+        <MoreDetails title={'What is next?'}>
           <>
             <p>
               Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam

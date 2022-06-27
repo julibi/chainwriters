@@ -224,7 +224,7 @@ const About = () => {
           <SectionTitleWrapper>
             <SectionTitle>Team</SectionTitle>
           </SectionTitleWrapper>
-          <CoFounders>
+          <CoFounders id="founders">
             <CoFounderWithMarginBottom>
               <CoFounderImgWrapper>
                 <Image
