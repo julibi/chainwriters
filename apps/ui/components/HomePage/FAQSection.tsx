@@ -1,5 +1,5 @@
-import React from 'react'
-import styled from 'styled-components'
+import React from 'react';
+import styled from 'styled-components';
 import MoreDetails from '../MoreDetails';
 import { SectionTitle, SectionTitleWrapper } from './ProjectSection';
 
@@ -18,6 +18,7 @@ const MoreDetailsWrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  align-items: center;
 `;
 
 const FAQSection = () => {
@@ -115,6 +116,6 @@ const FAQSection = () => {
       </MoreDetailsWrapper>
     </Root>
   );
-}
+};
 
-export default FAQSection
+export default FAQSection;

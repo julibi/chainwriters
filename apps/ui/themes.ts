@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 export const BG_LIGHT = '#222632';
 export const BG_NORMAL = '#1B1E28';
-export const BG_DARK = '#0E1018';
+export const BG_DARK = '#151A25';
 export const PLAIN_WHITE = '#FFF';
 export const PINK = '#F50A48';
 export const DISABLED_WHITE = '#808080';
@@ -23,6 +23,10 @@ export const BASE_BOX_SHADOW = `
 //   inset 10px 10px 10px rgba(0,0,0,0.2);
 // `;
 
+export const ROBOTO_FONT_BOLD = `
+  'Roboto Mono Bold', Serif;
+`;
+
 export const INSET_BASE_BOX_SHADOW = `
   inset -4px -2px 4px 0px rgba(125,125,125,0.1),
   inset 4px 2px 8px 0px rgba(0,0,0,0.7);
@@ -31,6 +35,7 @@ export const INSET_BASE_BOX_SHADOW = `
 export const BaseButton = styled.button`
   background-color: ${BG_NORMAL};
   color: ${PLAIN_WHITE};
+  font-family: ${ROBOTO_FONT_BOLD};
   border-radius: ${BASE_BORDER_RADIUS};
   box-shadow: ${BASE_BOX_SHADOW};
   padding: 1rem;
@@ -71,7 +76,7 @@ export const BaseInput = styled.input`
   color: ${PLAIN_WHITE};
   background-color: ${BG_NORMAL};
   outline: none;
-  
+
   ::-webkit-outer-spin-button,
   ::-webkit-inner-spin-button {
     -webkit-appearance: none;
@@ -80,7 +85,7 @@ export const BaseInput = styled.input`
 `;
 
 export const StyledLink = styled.a`
-  color: #F50A48;
+  color: #f50a48;
   text-decoration: none;
   font-size: 20px;
   font-weight: 500;

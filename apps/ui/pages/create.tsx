@@ -61,6 +61,9 @@ const Root = styled.div`
 const Content = styled.div`
   padding-inline: 6rem;
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 
   @media (max-width: 900px) {
     padding-inline: 2rem;

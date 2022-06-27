@@ -10,11 +10,12 @@ import {
 import CSS from 'csstype';
 
 const Root = styled.div`
+  width: 100%;
+  max-width: 1200px;
+  padding: 1rem;
   box-shadow: ${BASE_BOX_SHADOW};
   border-radius: ${BASE_BORDER_RADIUS};
-  width: 100%;
 
-  padding: 1rem;
   display: flex;
   justify-content: space-between;
 `;

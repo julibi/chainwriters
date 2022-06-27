@@ -15,8 +15,6 @@ export const SectionTitle = styled.h1`
   text-transform: uppercase;
   font-family: 'Roboto Mono Bold';
   font-size: 36px;
-  border-radius: ${BASE_BORDER_RADIUS};
-  box-shadow: ${BASE_BOX_SHADOW};
   padding: 1rem;
 
   @media (max-width: 900px) {

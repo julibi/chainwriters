@@ -77,8 +77,7 @@ export function Index() {
       <MainSellingPointsSection />
       <HowItWorksSection />
       <ProjectSection />
-      {/* exchange with top auctions */}
-      <ProjectSection />
+      {/* top auctions */}
       <FAQSection />
     </Root>
   );

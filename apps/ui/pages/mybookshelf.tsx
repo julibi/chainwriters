@@ -130,7 +130,7 @@ const MyBookShelf = () => {
       <SectionTitleWrapper>
         <SectionTitle>My Bookshelf</SectionTitle>
       </SectionTitleWrapper>
-      {loading && <Loading height={530} />}
+      {loading && <Loading height={560} />}
       {!loading && !createdLoading && !createdError && created.daos.length > 0 && (
         <Section>
           <SubHeader>My Projects</SubHeader>

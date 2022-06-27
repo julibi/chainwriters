@@ -63,7 +63,7 @@ const Footer = () => {
         <SocialMediaLinkWrapper
           target="_blank"
           rel="noopener noreferrer"
-          href="https://medium.com/polychainmonsters"
+          href="https://medium.com/peppermintpoets"
         >
           <Image
             height={'30px'}

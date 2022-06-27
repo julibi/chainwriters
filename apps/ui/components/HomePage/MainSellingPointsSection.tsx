@@ -16,7 +16,7 @@ const Root = styled.div`
 
 const BlocksWrapper = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: space-evenly;
   flex-wrap: wrap;
   width: 100%;
   margin-top: 4rem;
@@ -31,6 +31,7 @@ const AuthorBlock = styled.div`
   flex-direction: column;
   justify-content: space-between;
   width: 45%;
+  max-width: 600px;
   ${FadeInBaseAnimation}
   animation-delay: 3s;
   background-color: ${BG_DARK};
@@ -45,6 +46,7 @@ const AuthorBlock = styled.div`
 
 const ReaderBlock = styled.div`
   width: 45%;
+  max-width: 600px;
   ${FadeInBaseAnimation}
   background-color: ${BG_DARK};
   color: ${PINK};
