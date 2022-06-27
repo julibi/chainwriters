@@ -71,7 +71,7 @@ const FAQSection = () => {
           </>
         </MoreDetails>
         <br></br>
-        <MoreDetails title={'Why publish on the Blockchain? Why Polygon?'}>
+        <MoreDetails title={'Why Polygon?'}>
           <>
             <p>
               Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
@@ -96,32 +96,6 @@ const FAQSection = () => {
         <MoreDetails title={'Rights and Ownership'}>
           <>
             <p>If anything we pause the according ERC-1155 contract.</p>
-          </>
-        </MoreDetails>
-        <br></br>
-        <MoreDetails title={'Why Peppermint Poets?'}>
-          <>
-            <p>
-              Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
-              nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam
-              erat, sed diam voluptua. At vero eos et accusam et justo duo
-              dolores et ea rebum. Stet clita kasd gubergren, no sea takimata
-              sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit
-              amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
-              invidunt ut labore et dolore magna aliquyam erat, sed diam
-              voluptua. At vero eos et accusam et justo duo dolores et ea rebum.
-              Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum
-              dolor sit amet.
-            </p>
-          </>
-        </MoreDetails>
-        <br></br>
-        <MoreDetails title={'How do I publish text on Peppermint Poets?'}>
-          <>
-            <p>
-              Find a step by step guide{' '}
-              <LinkWrapper url="/#howitworks">here</LinkWrapper>.
-            </p>
           </>
         </MoreDetails>
         <br></br>
