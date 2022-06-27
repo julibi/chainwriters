@@ -1,10 +1,10 @@
-import React, { ChangeEvent, useCallback, useMemo, useState } from 'react'
-import { toast } from 'react-toastify'
-import styled from 'styled-components'
-import { BigNumber } from '@ethersproject/bignumber'
-import { Contract } from '@ethersproject/contracts'
-import { useWeb3React } from '@web3-react/core'
-import { create } from 'ipfs-http-client'
+import React, { ChangeEvent, useCallback, useMemo, useState } from 'react';
+import { toast } from 'react-toastify';
+import styled from 'styled-components';
+import { BigNumber } from '@ethersproject/bignumber';
+import { Contract } from '@ethersproject/contracts';
+import { useWeb3React } from '@web3-react/core';
+import { create } from 'ipfs-http-client';
 import {
   PLAIN_WHITE,
   BASE_BORDER_RADIUS,
@@ -15,19 +15,25 @@ import {
   BaseButton,
   PINK,
 } from '../../themes';
-import { SectionTitle } from '../HomePage/ProjectSection'
-import Emoji from '../Emojis'
-import Checkmark from '../Checkmark'
-import Loading from '../Loading'
-import MoreDetails from '../MoreDetails'
-import { ProjectData } from '../../state/projects/hooks'
-import ProgressBar from '../ProgressBar'
+import { SectionTitle } from '../HomePage/ProjectSection';
+import Emoji from '../Emojis';
+import Checkmark from '../Checkmark';
+import Loading from '../Loading';
+import MoreDetails from '../MoreDetails';
+import { ProjectData } from '../../state/projects/hooks';
+import ProgressBar from '../ProgressBar';
 import ConfigureModal from './ConfigureModal';
 import ToastLink from '../ToastLink';
 import ContributorsModal, { Contribution } from './ContributorsModal';
 import BaseModal from '../BaseModal';
 import InputField from '../InputField';
-import { ContentWrapper, ModalHeader, ModalText, CTAWrapper, MintButton } from '../../pages/projects/[projectAddress]'
+import {
+  ContentWrapper,
+  ModalHeader,
+  ModalText,
+  CTAWrapper,
+  MintButton,
+} from '../../pages/projects/[projectAddress]';
 import { BLURB_FETCH_ERROR } from '../../constants';
 
 const Root = styled.section`
@@ -50,14 +56,13 @@ const Title = styled(SectionTitle)`
   flex-direction: column;
 `;
 
-
 interface TriggerButtonTypes {
   disabled: boolean;
 }
 
 const TriggerButton = styled(BaseButton)<TriggerButtonTypes>`
   background-color: ${BG_NORMAL};
-  color: ${({ disabled }) => disabled ? DISABLED_WHITE : PINK};
+  color: ${({ disabled }) => (disabled ? DISABLED_WHITE : PINK)};
   font-family: 'Roboto Mono Bold';
   width: 230px;
   margin: 1rem 1rem 0 0;
@@ -117,7 +122,12 @@ const DoneAction = styled.div`
 interface AuthorSectionProps {
   blurb: string;
   daoData: ProjectData;
-  onConfigure: (genre: string, subtitle: string, imgHash: string, blurbHash: string) => void;
+  onConfigure: (
+    genre: string,
+    subtitle: string,
+    imgHash: string,
+    blurbHash: string
+  ) => void;
   onAddContributors: (contribs: Contribution[]) => void;
   ProjectContract: Contract;
   projectAddress: string;
@@ -131,62 +141,61 @@ const AuthorSection = ({
   onAddContributors,
   ProjectContract,
   projectAddress,
-  refetch
+  refetch,
 }: AuthorSectionProps) => {
   const { account, chainId } = useWeb3React();
-    // @ts-ignore
-    const client = create('https://ipfs.infura.io:5001/api/v0');
+  // @ts-ignore
+  const client = create('https://ipfs.infura.io:5001/api/v0');
   const [showConfigureModal, setShowConfigureModal] = useState<boolean>(false);
   const [configurePending, setConfigurePending] = useState<boolean>(false);
-  const [showContributorsModal, setShowContributorsModal] = useState<boolean>(false);
-  const [contributorsPending, setContributorsPending] = useState<boolean>(false);
-  const [showAuthorMintModal, setShowAuthorMintModal] = useState<boolean>(false);
+  const [showContributorsModal, setShowContributorsModal] =
+    useState<boolean>(false);
+  const [contributorsPending, setContributorsPending] =
+    useState<boolean>(false);
+  const [showAuthorMintModal, setShowAuthorMintModal] =
+    useState<boolean>(false);
   const [authorMintInput, setAuthorMintInput] = useState<string>('');
   const [authorMintPending, setAuthorMintPending] = useState<boolean>(false);
   const [triggerPending, setTriggerPending] = useState(false);
   const [showUnlockEditionModal, setShowUnlockEditionModal] = useState(false);
   const [nextEditionMaxAmount, setNextEditionMaxAmount] = useState<number>(0);
   const [nextEditionMintPrice, setMextEditionMintPrice] = useState<string>('0');
-  const [unlockEditionPending, setUnlockEditionPending] = useState<boolean>(false);
+  const [unlockEditionPending, setUnlockEditionPending] =
+    useState<boolean>(false);
 
-  const configure = useCallback(async(
-    imgHash: string,
-    blurbHash: string,
-    genre: string,
-    subtitle: string
-  ) => {
-    try {
-      setConfigurePending(true);
-      const Tx = await ProjectContract.configureProjectDetails(
-        imgHash,
-        blurbHash,
-        genre,
-        subtitle
-      );
-      const { hash } = Tx;
-      toast.info(
-        <ToastLink
-          hash={hash}
-          chainId={chainId}
-          message={'Configuring...'}
-        />
-      );
-      ProjectContract.provider.once(hash, async (transaction) => {
+  const configure = useCallback(
+    async (
+      imgHash: string,
+      blurbHash: string,
+      genre: string,
+      subtitle: string
+    ) => {
+      try {
+        setConfigurePending(true);
+        const Tx = await ProjectContract.configureProjectDetails(
+          imgHash,
+          blurbHash,
+          genre,
+          subtitle
+        );
+        const { hash } = Tx;
+        toast.info(
+          <ToastLink hash={hash} chainId={chainId} message={'Configuring...'} />
+        );
+        ProjectContract.provider.once(hash, async (transaction) => {
+          setConfigurePending(false);
+          setShowConfigureModal(false);
+          onConfigure(genre, subtitle, imgHash, blurbHash);
+        });
+      } catch (e: unknown) {
+        // @ts-ignore
+        toast.error(e.reason ?? 'Something went wrong.');
         setConfigurePending(false);
         setShowConfigureModal(false);
-        onConfigure(genre, subtitle, imgHash, blurbHash);     
-      });
-    } catch(e: unknown) {
-      // @ts-ignore
-      toast.error(e.reason ?? 'Something went wrong.');
-      setConfigurePending(false);
-      setShowConfigureModal(false);
-    }
-  }, [
-    ProjectContract,
-    chainId,
-    onConfigure
-  ]);
+      }
+    },
+    [ProjectContract, chainId, onConfigure]
+  );
 
   const authorMint = useCallback(async () => {
     setAuthorMintPending(true);
@@ -208,7 +217,10 @@ const AuthorSection = ({
 
     const metadataObject = {
       name: daoData.title,
-      description: (blurb && blurb !== BLURB_FETCH_ERROR ) ? `${blurb} (Created with Peppermint Poets)` : 'Created with Peppermint Poets',
+      description:
+        blurb && blurb !== BLURB_FETCH_ERROR
+          ? `${blurb} (Created with Peppermint Poets)`
+          : 'Created with Peppermint Poets',
       image: daoData?.imgIpfsHash ? `ipfs://${daoData.imgIpfsHash}` : '',
     };
     const metadata = JSON.stringify(metadataObject, null, 2);
@@ -239,7 +251,16 @@ const AuthorSection = ({
       setAuthorMintPending(false);
       setShowAuthorMintModal(false);
     }
-  }, [daoData.title, daoData.imgIpfsHash, blurb, client, ProjectContract, authorMintInput, chainId, refetch]);
+  }, [
+    daoData.title,
+    daoData.imgIpfsHash,
+    blurb,
+    client,
+    ProjectContract,
+    authorMintInput,
+    chainId,
+    refetch,
+  ]);
 
   const triggerFirstAuction = useCallback(async () => {
     if (
@@ -277,33 +298,39 @@ const AuthorSection = ({
     }
   }, [daoData, account, ProjectContract, chainId, refetch]);
 
-  const unlockNextEdition = useCallback(async(amount: number, price: string)=> {
-    const formattedPrice = BigNumber.from((Number(price) * 1e18).toString());
+  const unlockNextEdition = useCallback(
+    async (amount: number, price: string) => {
+      const formattedPrice = BigNumber.from((Number(price) * 1e18).toString());
 
-    try {
-      setUnlockEditionPending(true);
-      const Tx = await ProjectContract.enableNextEdition(amount, formattedPrice);
-      const { hash } = Tx;
-      toast.info(
-        <ToastLink
-          hash={hash}
-          chainId={chainId}
-          message={'Unlocking next edition...'}
-        />
-      );
-      ProjectContract.provider.once(hash, (transaction) => {
-        refetch();
+      try {
+        setUnlockEditionPending(true);
+        const Tx = await ProjectContract.enableNextEdition(
+          amount,
+          formattedPrice
+        );
+        const { hash } = Tx;
+        toast.info(
+          <ToastLink
+            hash={hash}
+            chainId={chainId}
+            message={'Unlocking next edition...'}
+          />
+        );
+        ProjectContract.provider.once(hash, (transaction) => {
+          refetch();
+          setUnlockEditionPending(false);
+          setShowUnlockEditionModal(false);
+          toast.success('New Edition unlocked!');
+        });
+      } catch (e: unknown) {
+        // @ts-ignore
+        toast.error(e.reason ?? 'Something went wrong.');
         setUnlockEditionPending(false);
         setShowUnlockEditionModal(false);
-        toast.success('New Edition unlocked!');
-      });
-    } catch (e: unknown) {
-      // @ts-ignore
-      toast.error(e.reason ?? 'Something went wrong.');
-      setUnlockEditionPending(false);
-      setShowUnlockEditionModal(false);
-    }
-  }, [ProjectContract, chainId, refetch]);
+      }
+    },
+    [ProjectContract, chainId, refetch]
+  );
 
   const configured = useMemo(() => {
     let hasConfigured = false;
@@ -331,7 +358,7 @@ const AuthorSection = ({
     return canTrigger;
   }, [daoData]);
 
-  const calculatedProgress = useMemo(():number => {
+  const calculatedProgress = useMemo((): number => {
     let percentage = 0;
     if (!daoData) return percentage;
     if (configured) {
@@ -346,7 +373,7 @@ const AuthorSection = ({
     return percentage;
   }, [daoData, configured]);
 
-  const calculatedProgressIndicationText = useMemo(():string => {
+  const calculatedProgressIndicationText = useMemo((): string => {
     let text = 'Next: Configure';
 
     switch (calculatedProgress) {
@@ -354,10 +381,10 @@ const AuthorSection = ({
         text = 'Next: Premint';
         break;
       case 66:
-        text = 'Next: Start Auctions'
+        text = 'Next: Start Auctions';
         break;
       case 100:
-        text = 'Done!'
+        text = 'Done!';
         break;
       default:
         break;
@@ -537,8 +564,8 @@ const AuthorSection = ({
         >
           <>
             <p>
-              When all NFTs of the last editions have sold out, you can lick off
-              your next one!
+              When all NFTs of the last editions have sold out, you can start
+              the next one!
             </p>
             {!canTriggerNextEdition ? (
               <DoneAction>{'Unlock Next Edition'}</DoneAction>
@@ -709,6 +736,6 @@ const AuthorSection = ({
       )}
     </Root>
   );
-}
+};
 
-export default AuthorSection
+export default AuthorSection;

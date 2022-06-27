@@ -18,6 +18,10 @@ const Root = styled.div`
 
   display: flex;
   justify-content: space-between;
+
+  @media (max-width: 900px) {
+    padding: 1rem;
+  }
 `;
 
 const Header = styled.div`
