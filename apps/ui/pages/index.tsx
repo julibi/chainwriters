@@ -8,12 +8,13 @@ import MainSellingPointsSection from '../components/HomePage/MainSellingPointsSe
 import FAQSection from '../components/HomePage/FAQSection';
 import StartAnimation from '../components/StartAnimation';
 import HowItWorksSection from '../components/HomePage/HowItWorksSection';
+import BubbleAnimation from '../components/BubbleAnimation';
 
 const Root = styled.div``;
 
 const HeaderSection = styled.section`
   display: flex;
-  justify-content: space-between;
+  justify-content: space-evenly;
   margin: 8rem 6rem;
 
   @media (max-width: 900px) {
@@ -25,9 +26,9 @@ const HeaderSection = styled.section`
 const TypedTextWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
-  height: 600px;
+  height: 400px;
   width: 50%;
 
   @media (max-width: 900px) {
@@ -37,29 +38,11 @@ const TypedTextWrapper = styled.div`
   }
 `;
 
-const CarouselSpace = styled.div`
-  min-height: 500px;
-  width: 50%;
-  background-color: ${BG_DARK};
-  border-radius: 20px;
-  padding: 1rem;
-  margin-inline-start: 3rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-
-  @media (max-width: 900px) {
-    width: 100%;
-    flex: 1;
-    margin-inline-start: 0;
-    margin-block-start: 3rem;
-  }
-`;
-
 export function Index() {
   const { account, chainId } = useWeb3React();
   const isMobile = useDeviceDetect();
   const [showMainPoints, setShowMainPoints] = useState<boolean>(false);
+
   // const hasTried = useEagerConnect();
 
   return (
@@ -68,15 +51,11 @@ export function Index() {
         <TypedTextWrapper>
           <StartAnimation />
         </TypedTextWrapper>
-        <CarouselSpace>
-          <span style={{ display: 'inlineBlock' }}>
-            This is a carousel that will loop through the cover images!
-          </span>
-        </CarouselSpace>
+        <BubbleAnimation />
       </HeaderSection>
       <MainSellingPointsSection />
-      <HowItWorksSection />
       <ProjectSection />
+      <HowItWorksSection />
       {/* top auctions */}
       <FAQSection />
     </Root>

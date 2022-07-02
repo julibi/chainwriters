@@ -195,7 +195,7 @@ const HowItWorksSection = () => {
     1 | 2 | 3 | 4
   >(1);
   return (
-    <Root>
+    <Root id="howitworks">
       <SectionTitleWrapper>
         <SectionTitle>How does it work?</SectionTitle>
       </SectionTitleWrapper>
