@@ -1,41 +1,38 @@
-import React, { ChangeEvent } from 'react'
-import { FadeIn, Wrapper, InputName, InputDescription, SubmitButton, TextInput } from '../../pages/create'
-import { StyledInputError } from '../InputField'
+import React from 'react';
+import { FadeIn, Wrapper, InputName, SubmitButton } from '../../pages/create';
+import { StyledInputError } from '../InputField';
+import RichText from './RichText';
 
 interface TextFormProps {
-  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   onSubmit: () => void;
+  onKeyDown: (val: string) => void;
   text: string;
 }
 
 // TODO was this text already uploaded?
 
-const TextForm = ({ onChange, onSubmit, text }:TextFormProps) => {
+const TextForm = ({ onSubmit, onKeyDown, text }: TextFormProps) => {
+  console.log({ text });
   return (
     <FadeIn>
       <Wrapper>
         <InputName>TEXT</InputName>
-        <InputDescription>
-          Type in the main text of your project. The material all this magic is
-          about.
-        </InputDescription>
-        <TextInput
+        {/* <TextInput
           value={text}
           // @ts-ignore
           onChange={onChange}
-        />
+  /> */}
+        <RichText onKeyDown={(val) => onKeyDown(val)} />
         <StyledInputError>
-          {text.length < 1 ? 'At least 1 character.' : ' '}
+          {text.trim().length < 1 ? 'At least 1 character.' : ' '}
         </StyledInputError>
-        <SubmitButton
-          onClick={onSubmit}
-          disabled={text.length < 1}
-        >
+
+        <SubmitButton onClick={onSubmit} disabled={text.length < 1}>
           {'Continue'}
         </SubmitButton>
       </Wrapper>
     </FadeIn>
-  )
-}
+  );
+};
 
-export default TextForm
+export default TextForm;

@@ -100,6 +100,10 @@ function CustomApp({ Component, pageProps }: AppProps) {
         <meta property="og:url" content="http://www.peppermintpoets.com" />
         <meta property="og:type" content="website" />
         <meta property="og:locale" content="en_US" />
+        <link
+          href="https://fonts.googleapis.com/icon?family=Material+Icons"
+          rel="stylesheet"
+        />
       </Head>
       <GlobalStyle />
       <Web3ReactProvider getLibrary={getLibrary}>

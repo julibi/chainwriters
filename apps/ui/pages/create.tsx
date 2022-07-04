@@ -447,9 +447,7 @@ const Create = () => {
             )}
             {currentStep === 1 && !creatingDao && (
               <TextForm
-                onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                  setText(e.target.value)
-                }
+                onKeyDown={(val: string) => setText(val)}
                 onSubmit={() => setCurrentStep(currentStep + 1)}
                 text={text}
               />

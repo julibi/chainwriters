@@ -3,14 +3,13 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import ProjectSection from '../components/HomePage/ProjectSection';
 import { useDeviceDetect } from '../hooks/useDeviceDetect';
-import { BASE_BORDER_RADIUS, BG_DARK, PINK, PLAIN_WHITE } from '../themes';
 import MainSellingPointsSection from '../components/HomePage/MainSellingPointsSection';
 import FAQSection from '../components/HomePage/FAQSection';
 import StartAnimation from '../components/StartAnimation';
 import HowItWorksSection from '../components/HomePage/HowItWorksSection';
-import BubbleAnimation from '../components/BubbleAnimation';
+import RichText from '../components/Create/RichText';
 
-const Root = styled.div``;
+const Root = styled.section``;
 
 const HeaderSection = styled.section`
   display: flex;
@@ -34,7 +33,6 @@ export function Index() {
     <Root>
       <HeaderSection>
         <StartAnimation />
-        {/* <BubbleAnimation /> */}
       </HeaderSection>
       <MainSellingPointsSection />
       <ProjectSection />

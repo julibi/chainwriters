@@ -32,7 +32,12 @@ export const INSET_BASE_BOX_SHADOW = `
   inset 4px 2px 8px 0px rgba(0,0,0,0.7);
 `;
 
-export const BaseButton = styled.button`
+interface BaseButtonProps {
+  active?: boolean;
+  disabled?: boolean;
+}
+
+export const BaseButton = styled.button<BaseButtonProps>`
   background-color: ${BG_NORMAL};
   color: ${PLAIN_WHITE};
   font-family: ${ROBOTO_FONT_BOLD};
@@ -50,6 +55,25 @@ export const BaseButton = styled.button`
 
   :disabled {
     box-shadow: ${INSET_BASE_BOX_SHADOW};
+    pointer-events: none;
+  }
+`;
+
+export const FlatButton = styled.button<BaseButtonProps>`
+  background-color: ${BG_DARK};
+  color: ${PLAIN_WHITE};
+  font-family: ${ROBOTO_FONT_BOLD};
+  border-radius: ${BASE_BORDER_RADIUS};
+  padding: 10px;
+  margin: 5px;
+
+  :hover {
+    cursor: pointer;
+  }
+
+  :disabled {
+    background-color: ${BG_LIGHT};
+    color: grey;
     pointer-events: none;
   }
 `;

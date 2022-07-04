@@ -12,6 +12,7 @@ const Root = styled.div`
   align-items: center;
   background-color: ${PINK};
   padding: 1rem;
+  z-index: 1;
 
   ${FadeInBaseAnimation};
 `;
