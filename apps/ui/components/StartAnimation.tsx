@@ -38,6 +38,7 @@ const StartAnimation = () => {
     }, 3000);
     return () => clearTimeout(timer);
   }, []);
+
   return (
     <Root>
       <TypeWriterWrapper>
