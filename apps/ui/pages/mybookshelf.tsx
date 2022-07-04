@@ -29,6 +29,17 @@ const Root = styled.div`
   }
 `;
 
+const NoWallet = styled.div`
+  min-height: 500px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const NoWalletText = styled.span`
+  display: inline-block;
+`;
+
 const Section = styled.section`
   display: flex;
   flex-direction: column;
@@ -130,6 +141,11 @@ const MyBookShelf = () => {
       <SectionTitleWrapper>
         <SectionTitle>My Bookshelf</SectionTitle>
       </SectionTitleWrapper>
+      {!account && (
+        <NoWallet>
+          <NoWalletText>Looks like you're not connected.</NoWalletText>
+        </NoWallet>
+      )}
       {loading && <Loading height={560} />}
       {!loading && !createdLoading && !createdError && created.daos.length > 0 && (
         <Section>
