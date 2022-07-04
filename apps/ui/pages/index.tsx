@@ -23,21 +23,6 @@ const HeaderSection = styled.section`
   }
 `;
 
-const TypedTextWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  height: 400px;
-  width: 50%;
-
-  @media (max-width: 900px) {
-    align-items: flex-start;
-    width: 100%;
-    flex: 1;
-  }
-`;
-
 export function Index() {
   const { account, chainId } = useWeb3React();
   const isMobile = useDeviceDetect();
@@ -48,10 +33,8 @@ export function Index() {
   return (
     <Root>
       <HeaderSection>
-        <TypedTextWrapper>
-          <StartAnimation />
-        </TypedTextWrapper>
-        <BubbleAnimation />
+        <StartAnimation />
+        {/* <BubbleAnimation /> */}
       </HeaderSection>
       <MainSellingPointsSection />
       <ProjectSection />

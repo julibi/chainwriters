@@ -13,15 +13,6 @@ const Root = styled.section`
   }
 `;
 
-const BlurLayer = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 10;
-  height: 100%;
-  width: 100%;
-`;
-
 const Circle = styled.div`
   position: absolute;
   left: 0;
@@ -74,7 +65,6 @@ const BubbleTwo = styled(Circle)`
 const BubbleAnimation = () => {
   return (
     <Root>
-      <BlurLayer />
       <BubbleOne />
       <BubbleTwo />
     </Root>
