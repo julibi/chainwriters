@@ -95,7 +95,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
         <meta
           property="og:image"
           itemProp="image"
-          content="%PUBLIC_URL%/website.png"
+          content="https://www.peppermintpoets.com/website.png"
         />
         <meta property="og:url" content="http://www.peppermintpoets.com" />
         <meta property="og:type" content="website" />
