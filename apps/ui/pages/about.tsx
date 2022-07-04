@@ -266,7 +266,7 @@ const About = () => {
             <CoFounder>
               <CoFounderImgWrapper>
                 <Image
-                  src="/Livi.png"
+                  src="/Livi.jpg"
                   quality={65}
                   layout="responsive"
                   height={'100%'}
