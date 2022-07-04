@@ -1,18 +1,18 @@
-import { AppProps } from 'next/app'
-import Head from 'next/head'
-import { Web3ReactProvider } from '@web3-react/core'
-import { createGlobalStyle} from "styled-components"
+import { AppProps } from 'next/app';
+import Head from 'next/head';
+import { Web3ReactProvider } from '@web3-react/core';
+import { createGlobalStyle } from 'styled-components';
 import {
   ExternalProvider,
   JsonRpcFetchFunc,
   Web3Provider,
-} from '@ethersproject/providers'
-import Layout from '../components/Layout'
-import { BG_NORMAL, PLAIN_WHITE } from "../themes"
-import './styles.css'
-import ToastContainer from '../components/ToastContainer'
-import client from '../apolloclient'
-import { ApolloProvider } from '@apollo/client'
+} from '@ethersproject/providers';
+import Layout from '../components/Layout';
+import { BG_NORMAL, PLAIN_WHITE } from '../themes';
+import './styles.css';
+import ToastContainer from '../components/ToastContainer';
+import client from '../apolloclient';
+import { ApolloProvider } from '@apollo/client';
 
 const GlobalStyle = createGlobalStyle`
 html{
@@ -78,12 +78,34 @@ function CustomApp({ Component, pageProps }: AppProps) {
     <>
       <Head>
         <title>Peppermint Poets</title>
+
+        <meta charSet="utf-8" />
+        <meta property="og:locale" content="en_US" />
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1, shrink-to-fit=no"
+        />
+        <meta name="theme-color" content="#1B1E28" />
+        <meta property="og:site_name" content="Peppermint Poets" />
+        <meta property="og:title" content="Literature NFTs" />
+        <meta
+          property="og:description"
+          content="Start a literature movement on the blockchain. Create and collect NFTs."
+        />
+        <meta
+          property="og:image"
+          itemProp="image"
+          content="%PUBLIC_URL%/website.png"
+        />
+        <meta property="og:url" content="http://www.peppermintpoets.com" />
+        <meta property="og:type" content="website" />
+        <meta property="og:locale" content="en_US" />
       </Head>
       <GlobalStyle />
       <Web3ReactProvider getLibrary={getLibrary}>
         <ApolloProvider client={client}>
           <main className="app">
-          <ToastContainer />
+            <ToastContainer />
             <Layout>
               <Component {...pageProps} />
             </Layout>

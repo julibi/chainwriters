@@ -44,7 +44,7 @@ const StartAnimation = () => {
         {shouldStart && (
           <TypeWriter
             text={
-              'Start a literature movement on the blockchain! Create and collect NFTs.'
+              'Start a literature movement on the blockchain. Create and collect NFTs.'
             }
             shouldErase={false}
             shouldLoop={false}
