@@ -1,0 +1,282 @@
+//SPDX-License-Identifier: Unlicense
+pragma solidity ^0.8.9;
+
+// dao:
+// general info
+// - contributors
+// - edition info
+// - auctionsInfo
+// - authorShareInfo
+
+// collection:
+//
+
+import "@openzeppelin/contracts/security/Pausable.sol";
+import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
+import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
+import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
+
+contract ProjectCollection is
+    ERC1155,
+    AccessControlEnumerable,
+    ERC1155Supply,
+    Pausable
+{
+    bytes32 public constant AUTHOR_ROLE = keccak256("AUTHOR_ROLE");
+    bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
+
+    uint256 public totalSharePercentage = 15;
+    address public factory;
+    string public name;
+
+    uint256 public discountRate;
+    uint256 public startAt;
+    uint256 public expiresAt;
+    bool public auctionStarted = false;
+    bool public auctionPhaseFinished = false;
+
+    event AuctionsStarted();
+    event AuctionsEnded();
+    event AuthorMinted(uint256 amount);
+    event Minted(uint256 edition, uint256 amount);
+    event ExpirationSet(uint256 edition, uint256 expirationTime);
+    event NextEditionEnabled(
+        uint256 nextEdId,
+        uint256 maxSupply,
+        uint256 mintPrice
+    );
+
+    constructor(address _title) ERC1155("") {
+        name = _title;
+        factory = _factory;
+    }
+
+    function showTimestamp() public view returns (uint256) {
+        return block.timestamp;
+    }
+
+    function retriggerAuction() external {
+        require(
+            expiresAt < block.timestamp,
+            "Triggering unnecessary. Auction running."
+        );
+        startAt = block.timestamp;
+        expiresAt = block.timestamp + AUCTION_DURATION;
+        emit ExpirationSet(currentEdition, expiresAt);
+    }
+
+    function buy() external payable whenNotPaused {
+        require(auctionStarted, "Auctions have not started");
+        require(!auctionPhaseFinished, "Auctions finished");
+        require(
+            expiresAt > block.timestamp,
+            "Auction ended. Trigger a new one."
+        );
+        // this require needed?
+        require(totalSupply(1) + 1 <= currentEditionMax, "Sold out");
+        uint256 price = getPrice();
+        bool shouldFinalize = (totalSupply(1) + 1) == currentEditionMax;
+        require(msg.value >= price, "Value sent not sufficient.");
+
+        _mint(msg.sender, 1, 1, "");
+        // uint refund = msg.value - price;
+        // if (refund > 0) {
+        //     payable(msg.sender).transfer(refund);
+        // }
+        emit Minted(currentEdition, 1);
+        if (shouldFinalize) {
+            auctionPhaseFinished = true;
+            distributeShares();
+            emit AuctionsEnded();
+        } else {
+            triggerNextAuction();
+        }
+    }
+
+    function mint(uint256 _amount) external payable whenNotPaused {
+        require(
+            currentEdition != 1,
+            "Public minting only possible from edition 2"
+        );
+        require(
+            (balanceOf(msg.sender, currentEdition) + _amount) <= MAX_PER_WALLET,
+            "Exceeds max per wallet."
+        );
+        require(
+            (totalSupply(currentEdition) + _amount) <= currentEditionMax,
+            "Amount exceeds cap."
+        );
+        require(
+            msg.value >= currentEditionMintPrice * _amount,
+            "Value sent not sufficient."
+        );
+        _mint(msg.sender, currentEdition, _amount, "");
+        emit Minted(currentEdition, _amount);
+    }
+
+    // ------------------
+    // View functions
+    // -----------------
+
+    function getPrice() public view returns (uint256) {
+        if (auctionStarted && !auctionPhaseFinished) {
+            uint256 timeElapsed = block.timestamp - startAt;
+            uint256 discount = discountRate * timeElapsed;
+            return INITIAL_MINT_PRICE - discount;
+        }
+        return 0;
+    }
+
+    // ------------------
+    // Private functions
+    // ------------------
+
+    function triggerNextAuction() private {
+        startAt = block.timestamp;
+        expiresAt = block.timestamp + AUCTION_DURATION;
+        emit ExpirationSet(currentEdition, expiresAt);
+    }
+
+    // test from private to internal
+    function withdraw(address _to, uint256 _amount) internal {
+        require(_to != address(0), "Cannot withdraw to the 0 address");
+        payable(_to).transfer(_amount);
+    }
+
+    // ------------------
+    // Functions for the author
+    // ------------------
+
+    // add role of contributor
+    function addContributors(
+        address[] calldata _contributors,
+        uint256[] calldata _shares,
+        string[] calldata _roles
+    ) external onlyRole(AUTHOR_ROLE) whenNotPaused {
+        // in theory user can put the same contributor 3 times - we don't care
+        require(!auctionStarted, "Cannot change after auction started");
+        require(
+            (contributorIndex + _contributors.length) <= 3,
+            "Max 3 contributors"
+        );
+        require(
+            (_contributors.length == _shares.length) &&
+                (_contributors.length == _roles.length),
+            "Same length required"
+        );
+        uint256 contribTotalShares = 0;
+        for (uint8 i = 0; i < _contributors.length; i++) {
+            contribTotalShares += _shares[i];
+        }
+        require(contribTotalShares <= 85, "Contributor shares too high");
+
+        totalSharePercentage += contribTotalShares;
+        for (uint8 i = 0; i < _contributors.length; i++) {
+            require(
+                _contributors[i] != address(0),
+                "Contributor cannot be 0 address"
+            );
+            contributors[contributorIndex].shareRecipient = _contributors[i];
+            contributors[contributorIndex].share = _shares[i];
+            contributors[contributorIndex].role = _roles[i];
+            contributorIndex++;
+            emit ContributorAdded(_contributors[i], _shares[i], _roles[i]);
+        }
+    }
+
+    function authorMint(uint256 _amount, string memory _newUri)
+        external
+        onlyRole(AUTHOR_ROLE)
+        whenNotPaused
+    {
+        require(!auctionStarted, "Auctions already started");
+        require(author.hasClaimedGenesis == false, "Already claimed");
+        require(_amount > 0 && _amount < currentEditionMax, "Invalid amount");
+        _setURI(_newUri);
+        _mint(msg.sender, 1, _amount, "");
+        author.claimedAmount = _amount;
+        author.hasClaimedGenesis = true;
+        // subgrph is not picking this up, hence storing this in contract
+        emit AuthorMinted(_amount);
+        project.premintedByAuthor = _amount;
+        emit URISet(_newUri);
+    }
+
+    function triggerFirstAuction(uint256 _discountRate)
+        external
+        onlyRole(AUTHOR_ROLE)
+        whenNotPaused
+    {
+        require(
+            author.hasClaimedGenesis,
+            "Mint tokens before triggering auctions"
+        );
+        discountRate = _discountRate;
+        startAt = block.timestamp;
+        expiresAt = block.timestamp + AUCTION_DURATION;
+        auctionStarted = true;
+        emit AuctionsStarted();
+        emit ExpirationSet(currentEdition, expiresAt);
+    }
+
+    function enableNextEdition(
+        uint256 _maxNftAmountOfNewEdition,
+        uint256 _newEditionMintPrice
+    ) external onlyRole(AUTHOR_ROLE) whenNotPaused {
+        if (currentEdition == 1) {
+            require(auctionPhaseFinished, "Auctions must finish first");
+        } else {
+            // what if some nfts are sent to zero address? Is there a case that prevents this check from being true?
+            require(
+                totalSupply(currentEdition) == currentEditionMax,
+                "Current edition needs to sellout first"
+            );
+        }
+        require(_maxNftAmountOfNewEdition < 10000, "Max Amount too big");
+        currentEdition = currentEdition + 1;
+        currentEditionMax = _maxNftAmountOfNewEdition;
+        currentEditionMintPrice = _newEditionMintPrice;
+        emit NextEditionEnabled(
+            currentEdition + 1,
+            _maxNftAmountOfNewEdition,
+            _newEditionMintPrice
+        );
+    }
+
+    // author should also have the right to pause
+    function pause() external onlyRole(PAUSER_ROLE) {
+        _pause();
+        emit Paused(true);
+    }
+
+    function unpause() external onlyRole(PAUSER_ROLE) {
+        emit Paused(false);
+        _unpause();
+    }
+
+    // ------------------
+    // Explicit overrides
+    // ------------------
+
+    // The following functions are overrides required by Solidity.
+
+    function _beforeTokenTransfer(
+        address operator,
+        address from,
+        address to,
+        uint256[] memory ids,
+        uint256[] memory amounts,
+        bytes memory data
+    ) internal override(ERC1155, ERC1155Supply) {
+        super._beforeTokenTransfer(operator, from, to, ids, amounts, data);
+    }
+
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        override(ERC1155, AccessControlEnumerable)
+        returns (bool)
+    {
+        return super.supportsInterface(interfaceId);
+    }
+}
