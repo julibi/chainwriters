@@ -18,13 +18,11 @@ contract ProjectDao is AccessControlEnumerable, Pausable {
         string textIpfsHash;
         string imgIpfsHash;
         string blurbIpfsHash;
-        uint256 premintedByAuthor;
+        bool paused;
     }
     struct AuthorShare {
         uint256 share;
         uint256 shareInMatic;
-        uint256 claimedAmount;
-        bool hasClaimedGenesis;
     }
     struct Contribution {
         address shareRecipient;
@@ -38,16 +36,13 @@ contract ProjectDao is AccessControlEnumerable, Pausable {
         uint256 currentEditionMax;
         uint256 currentEditionMintPrice;
     }
-    struct Project {
-        Edition edition;
-        BaseData baseData;
-        AuthorShare authorShare;
-        // Contribution[] contributions;
-        // mapping(uint256 => Contribution) contributions;
-        bool paused;
-        address collection;
-    }
-    mapping(uint256 => Project) public projects;
+
+    // Contribution[] contributions;
+    // mapping(uint256 => Contribution) contributions;
+
+    mapping(address => Edition) public editions;
+    mapping(address => BaseData) public baseDatas;
+    mapping(address => AuthorShare) public authorShares;
 
     event Configured(
         string imgHash,
@@ -65,19 +60,16 @@ contract ProjectDao is AccessControlEnumerable, Pausable {
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
     }
 
-    modifier onlyAuthor(uint256 _id) {
+    modifier onlyAuthor(address _collection) {
         require(
-            msg.sender == projects[_id].baseData.author_address,
+            msg.sender == baseDatas[_collection].author_address,
             "Not author."
         );
         _;
     }
 
     modifier onlyFactory() {
-        require(
-            msg.sender == address(factory),
-            "Can only be called by Factory."
-        );
+        require(msg.sender == address(factory), "Not authorized.");
         _;
     }
 
@@ -88,6 +80,7 @@ contract ProjectDao is AccessControlEnumerable, Pausable {
 
     // TODO: test if dao has already been created (if textcidhash is the same)
     function setupDao(
+        address _collection,
         string calldata _title,
         string calldata _textCID,
         uint256 _startPrice,
@@ -102,31 +95,22 @@ contract ProjectDao is AccessControlEnumerable, Pausable {
             _textCID,
             "",
             "",
-            0
+            false
         );
-        AuthorShare memory newAuthorShare = AuthorShare(100 - fee, 0, 0, false);
-        // Contribution calldata newContribution = Contribution(address(0), "", 0, 0, 0);
-        // Contribution[] storage newContributions;
-        //mapping(uint256 => Contribution) memory newContributions;
-        //newContributions.push(newContribution);
-        Project memory newProject = Project(
-            newEdition,
-            newBaseData,
-            newAuthorShare,
-            //   newContributions,
-            false,
-            address(0)
-        );
+        AuthorShare memory newAuthorShare = AuthorShare(100 - fee, 0);
+
         projectsLength++;
-        projects[projectsLength] = newProject;
+        editions[_collection] = newEdition;
+        baseDatas[_collection] = newBaseData;
+        authorShares[_collection] = newAuthorShare;
     }
 
     // TODO: let the auhor call the func in collection which then calls the funcs here
-    function setGenre(uint256 _id, string calldata _genre)
+    function setGenre(address _collection, string calldata _genre)
         external
-        onlyAuthor(_id)
+        onlyAuthor(_collection)
     {
-        projects[_id].baseData.genre = _genre;
+        baseDatas[_collection].genre = _genre;
     }
 
     function setFactory(address _factory)

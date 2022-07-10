@@ -4,7 +4,7 @@ pragma solidity ^0.8.9;
 // Make it pausable!
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "../interfaces/IProjectDao.sol";
-import "../interfaces/IProjectCollection.sol";
+import "./ProjectCollection.sol";
 
 contract ProjectFactory is Ownable {
     uint256 public firstEditionMin = 1;
@@ -24,13 +24,20 @@ contract ProjectFactory is Ownable {
         uint256 _initialMintPrice,
         uint256 _firstEditionAmount
     ) external {
+        ProjectCollection collection = new ProjectCollection(
+            _title,
+            msg.sender,
+            address(this),
+            address(projectDao)
+        );
         projectDao.setupDao(
+            address(collection),
             _title,
             _textIpfsHash,
             _initialMintPrice,
             _firstEditionAmount
         );
-
+        collections.push(address(collection));
         collectionsLength++;
     }
 

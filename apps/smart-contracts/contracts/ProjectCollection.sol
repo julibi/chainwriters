@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
+import "../interfaces/IProjectDao.sol";
 
 contract ProjectCollection is
     ERC1155,
@@ -17,38 +18,34 @@ contract ProjectCollection is
 
     uint256 public totalSharePercentage = 15;
     address public factory;
+    IProjectDao public daoManager;
     string public name;
+    uint256 premintedByAuthor = 0;
 
     uint256 public discountRate;
     uint256 public startAt;
     uint256 public expiresAt;
-    bool public auctionStarted = false;
+    bool public auctionsStarted = false;
     bool public auctionPhaseFinished = false;
+
+    struct Edition {
+        uint256 currentEdition;
+        uint256 currentEditionMax;
+        uint256 currentEditionMintPrice;
+    }
 
     constructor(
         string memory _title,
         address _caller,
-        address _factory
+        address _factory,
+        address _daoManager
     ) ERC1155("") {
         name = _title;
         factory = _factory;
+        daoManager = IProjectDao(_daoManager);
         _setupRole(PAUSER_ROLE, _factory);
         _setupRole(PAUSER_ROLE, _caller);
         _setupRole(AUTHOR_ROLE, _caller);
-    }
-
-    function authorMint(uint256 _amount, string memory _newUri)
-        external
-        onlyRole(AUTHOR_ROLE)
-        whenNotPaused
-    {
-        _setURI(_newUri);
-        _mint(msg.sender, 1, _amount, "");
-    }
-
-    function mint(uint256 _amount) external payable whenNotPaused {
-        // currentEdition second argument
-        _mint(msg.sender, 1, _amount, "");
     }
 
     function pause() external onlyRole(PAUSER_ROLE) {
@@ -57,6 +54,23 @@ contract ProjectCollection is
 
     function unpause() external onlyRole(PAUSER_ROLE) {
         _unpause();
+    }
+
+    function authorMint(uint256 _amount, string memory _newUri)
+        external
+        onlyRole(AUTHOR_ROLE)
+        whenNotPaused
+    {
+        require(!auctionsStarted, "Auctions already started");
+        require(premintedByAuthor == 0, "Already claimed");
+
+        // require(
+        //     _amount > 0 && _amount < edition.currentEditionMax,
+        //     "Invalid amount"
+        // );
+        _setURI(_newUri);
+        _mint(msg.sender, 1, _amount, "");
+        premintedByAuthor = _amount;
     }
 
     // ------------------

@@ -34,6 +34,9 @@ async function deployAll() {
   const initialMintPrice = hre.ethers.utils.parseUnits("0.05", 18);
   const firstEditionMax = 4;
 
+  // setFactory
+  await ProjectDao.setFactory(ProjectFactory.address);
+
   // deploy dao
   const tx = await ProjectFactory.createDao(
     title,
