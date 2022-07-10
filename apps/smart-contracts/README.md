@@ -57,8 +57,9 @@ When you run into an error like this:
   path: '/Users/hyun-kyungyi/elbstack/chainwriters/apps/smart-contracts/artifacts/build-info/ea17654ae42ed5600238694dff0706ba.json'
 }
 ```
+
 run `npx hardhat clean`
 
 For generating Interfaces
 
-run `npm hardhat gen-interface <contractname>`
+run `npx hardhat gen-interface <contractname>`

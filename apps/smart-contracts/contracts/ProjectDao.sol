@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
 contract ProjectDao is AccessControlEnumerable, Pausable {
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
     uint256 public projectsLength = 0;
-    string public factory;
+    address public factory;
     uint256 public fee = 15;
     uint256 public MAX_PER_WALLET = 5;
     struct BaseData {
@@ -61,11 +61,11 @@ contract ProjectDao is AccessControlEnumerable, Pausable {
     event Paused(bool paused);
 
     constructor() {
-        // _setupRole(PAUSER_ROLE, _factory);
-        factory = "HELLO";
+        _setupRole(PAUSER_ROLE, msg.sender);
+        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
     }
 
-    modifier isAuthor(uint256 _id) {
+    modifier onlyAuthor(uint256 _id) {
         require(
             msg.sender == projects[_id].baseData.author_address,
             "Not author."
@@ -73,12 +73,26 @@ contract ProjectDao is AccessControlEnumerable, Pausable {
         _;
     }
 
+    modifier onlyFactory() {
+        require(
+            msg.sender == address(factory),
+            "Can only be called by Factory."
+        );
+        _;
+    }
+
+    // call create on the factory with the four main parameters -> create a 1155 --> what is returned is the address
+    // create a project instance with an address mapping(address => project)
+    // also keep the lenght of array and the index
+    // then inside dao set image blurb and genre at ONCE
+
+    // TODO: test if dao has already been created (if textcidhash is the same)
     function setupDao(
         string calldata _title,
         string calldata _textCID,
         uint256 _startPrice,
         uint256 _maxAmount
-    ) external {
+    ) external onlyFactory {
         Edition memory newEdition = Edition(1, _maxAmount, _startPrice);
         BaseData memory newBaseData = BaseData(
             _title,
@@ -107,11 +121,19 @@ contract ProjectDao is AccessControlEnumerable, Pausable {
         projects[projectsLength] = newProject;
     }
 
+    // TODO: let the auhor call the func in collection which then calls the funcs here
     function setGenre(uint256 _id, string calldata _genre)
         external
-        isAuthor(_id)
+        onlyAuthor(_id)
     {
         projects[_id].baseData.genre = _genre;
+    }
+
+    function setFactory(address _factory)
+        external
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
+        factory = address(_factory);
     }
 
     // ------------------
