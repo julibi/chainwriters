@@ -36,7 +36,7 @@ async function deployAll() {
 
   // setFactory
   await ProjectDao.setFactory(ProjectFactory.address);
-
+  const FirstCollection = await ProjectFactory.collections(0);
   // deploy dao
   const tx = await ProjectFactory.createDao(
     title,
@@ -65,6 +65,15 @@ async function deployAll() {
     hre.run("verify:verify", {
       address: ProjectFactory.address,
       constructorArguments: [ProjectDao.address],
+    }),
+    hre.run("verify:verify", {
+      address: FirstCollection,
+      constructorArguments: [
+        title,
+        deployer.address,
+        ProjectFactory.address,
+        ProjectDao.address,
+      ],
     }),
   ]);
 }

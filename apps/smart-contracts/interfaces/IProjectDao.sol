@@ -3,6 +3,7 @@ pragma solidity ^0.8.9;
 
 interface IProjectDao {
     function setupDao(
+        address _caller,
         address _collection,
         string calldata _title,
         string calldata _textCID,
@@ -10,22 +11,23 @@ interface IProjectDao {
         uint256 _maxAmount
     ) external;
 
-    function baseDatas(address)
+    function distributeShares() external;
+
+    function readBaseData(address _collection)
         external
         view
         returns (
-            string calldata,
-            string calldata,
-            string calldata,
+            string memory,
+            string memory,
+            string memory,
             address,
-            string calldata,
-            string calldata,
-            string calldata,
-            uint256,
+            string memory,
+            string memory,
+            string memory,
             bool
         );
 
-    function editions(address)
+    function readEdition(address _collection)
         external
         view
         returns (
@@ -34,12 +36,23 @@ interface IProjectDao {
             uint256
         );
 
-    function authorShares(address)
+    function readAuthorShare(address _collection)
+        external
+        view
+        returns (uint256, uint256);
+
+    function readContribution(address _collection, uint256 _index)
         external
         view
         returns (
-            uint256,
+            address,
+            string memory,
             uint256,
             uint256
         );
+
+    function readContributionIndex(address _collection)
+        external
+        view
+        returns (uint256);
 }

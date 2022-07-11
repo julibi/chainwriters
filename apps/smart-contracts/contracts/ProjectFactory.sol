@@ -31,6 +31,7 @@ contract ProjectFactory is Ownable {
             address(projectDao)
         );
         projectDao.setupDao(
+            msg.sender,
             address(collection),
             _title,
             _textIpfsHash,
