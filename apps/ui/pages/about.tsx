@@ -158,67 +158,59 @@ const About = () => {
       <Content>
         <QAWrapper>
           <SubHeader>Why Literature NFTs?</SubHeader>
-          <Text>{MockText + 'Literature NFTs are just the beginning.'}</Text>
+          <Text>{`What if you, as a writer, could publish your writings, earn the lion share, receive royalties and create communities around your work – all of this settled in a DAO, where the rules are coded in an immutable ledger? Doesn't it sound awesome?!`}</Text>
+          <Text>{`There is an insane amount of visual digital collectibles but literature NFTs aren’t as common yet – the flashy avantgarde among writers has just started to use the blockchain to publish their art. `}</Text>
+          <Text>{`Instead of struggling with the traditional bookmarket and its gatekeepers you can experiment with new digital forms and keep total control over the whole process. Choose your own collaborators, price, number of copies and form of your texts and be part of a web 3 literary movement.`}</Text>
+          <Text>{`And NFT collectors beware: you never know if there’s a hidden J.K. Rowling or Stephen King among these web 3 poets … Browse projects, read brand new stuff, get your literature NFTs of hidden future stars and see them moon!`}</Text>
         </QAWrapper>
         <QAWrapper>
           <SubHeader>Why Moonpage?</SubHeader>
-          <Text>{MockText}</Text>
+          <Text>{`Using Moonpage is easy – there’s a simple creation flow and we also guide you through the steps. If you’re a literal bookworm and don’t know the web3 space so well, no worries, we got ya!`}</Text>
+          <Text>{`Since it‘s the only all-text NFT platform that combines minting and selling you don’t have to switch to other spaces. You create and sell all in one place.`}</Text>
+          <Text>{`And you’ll be among kindred spirits – we want to build a strong community since writing can be a very lonely business. So don’t be shy, visit our Dischord and Twitter Channel and get connected to other poets, literature lovers and collectors. `}</Text>
+          <Text>{`And this just the beginning of this community … in the future we want to explore more innovative ways how we can connect writers, and cutting edge tech. Stay tuned :) – and please... don't sleep on it!`}</Text>
         </QAWrapper>
         <QAWrapper>
           <SubHeader>Our Vision</SubHeader>
           <Text>
             {/* sehr beschränkt auf die Autoren */}
             <PunchLine>
-              A breaking ground for the literature of the future.
+              A breaking ground for the literature of the future
             </PunchLine>
             <br />
-            As much as we love traditional books, we believe there are many more
+          </Text>
+          <Text>{`As much as we love traditional books, we believe there are many
             forms in which literature can be explored. Publishing houses are
             doing a great job finding and forming talent and maintaining a high
-            level of quality. But they are also strong gatekeepers. A lot of
-            writers - especially young writers – struggle to find a platform for
-            their writing. A gifted, bohemian, penniless writer... – might sound
-            cool in theory. But more often than not, it's a frustrating hassle.
-            Trust us, we know, because we have been there ourselves!
-          </Text>
+            level of quality, but they are also strong gatekeepers.`}</Text>
+          <Text>{`A lot of
+            writers – especially young ones – struggle to find a platform for
+            their writing. „Gifted, bohemian, penniless writer“ might sound cool
+            in theory but in reality it’s a frustrating hassle. Trust us, we‘ve
+            been there ourselves!`}</Text>
           <Text>
-            But we are convinced that there should be many more opportunities
-            for creative writers to reach their readers and experiment with
-            their art. We are striving to provide an excellent service that
-            allows them to do so in a fun an innovative way with blockchain
-            technology. We want to financially empower the authors, by earning
-            crypto currency for their literature NFTs.
-          </Text>
-          <Text>
-            So why not infuse publishing with the possibilities and the sheer
-            fun and craziness of NFTs? What if you could publish, earn the lion
-            share, receive royalties, create communities around your work, and
-            all of this settled in a DAO, where the rules are coded in an
-            immutable ledger? Doesn't it sound awesome?!
-          </Text>
-          <Text>
-            This is just the beginning of this community. In the future we want
-            to explore more innovative ways that we can connect writers, and
-            cutting edge tech. Stay tuned :) – and please... don't sleep on it!
+            {`In web3 it’s easier for creative writers to
+            reach their readers directly and experiment with their art, besides
+            earning crypto currency for their literature NFTs empowers them
+            financially. So why not infuse publishing with the possibilities and
+            the sheer fun and craziness of NFTs?`}
           </Text>
         </QAWrapper>
         <QAWrapper>
           <SubHeader>Our History</SubHeader>
-          <Text>
-            We met in Hildesheim, Germany, in 2014, where we both studied
+          <Text>{`We met in Hildesheim, Germany, in 2014, where we both studied
             Creative Writing. Works of Jack Kerouac, Breat Easton Ellis, Lucia
             Berlin, Leo Tolstoi and many more make our hearts beat faster! A few
-            years in after graduation Olivia had become a published and awarded
+            years after graduation Olivia had become a published and awarded
             writer and Hyun-Kyung had professionally immersed herself in web3
-            code. After exchanging experiences of being a young, struggling
+            code.`}</Text>
+          <Text>
+            {`After exchanging experiences of being a young, struggling
             writer and discussing how web3 technology and publishing could be
             merged into something that would address many of the pain points in
             the publishing industry that we had encountered, we knew
-            immediately, what we had to do. Something that has never been done
-            in this form: Moonpage.
+            immediately, what we had to do: Moonpage.`}
           </Text>
-          <Text></Text>
-          <Text></Text>
         </QAWrapper>
         <CoFoundersWrapper>
           <SectionTitleWrapper>
