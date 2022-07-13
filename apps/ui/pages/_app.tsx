@@ -26,40 +26,33 @@ html{
   body{
     background-color: ${BG_NORMAL};
     color: ${PLAIN_WHITE};
-    font-family: 'Nunito Sans';
-  
+    font-family: 'Inter';
+
     @font-face {
-      font-family: "Roboto Mono";
-      src: url("/fonts/RobotoMono/RobotoMono-Regular.ttf");
+      font-family: "Inter Light";
+      src: url("/fonts/Inter/Inter-ExtraLight.ttf");
       font-style: variable;
       font-display: swap;
     }
 
     @font-face {
-      font-family: "Roboto Mono Bold";
-      src: url("/fonts/RobotoMono/RobotoMono-Bold.ttf");
+      font-family: "Inter";
+      src: url("/fonts/Inter/Inter-Regular.ttf");
       font-style: variable;
       font-display: swap;
     }
 
     @font-face {
-      font-family: "Nunito Sans";
-      src: url("/fonts/NunitoSans/NunitoSans-Regular.ttf");
-      font-style: normal;
+      font-family: "Inter Bold";
+      src: url("/fonts/Inter/Inter-Bold.ttf");
+      font-style: variable;
       font-display: swap;
     }
 
     @font-face {
-      font-family: "Nunito Sans Bold";
-      src: url("/fonts/NunitoSans/NunitoSans-Bold.ttf");
-      font-style: normal;
-      font-display: swap;
-    }
-
-    @font-face {
-      font-family: "Nunito Sans Black";
-      src: url("/fonts/NunitoSans/NunitoSans-Black.ttf");
-      font-style: normal;
+      font-family: "Inter Black";
+      src: url("/fonts/Inter/Inter-Black.ttf");
+      font-style: variable;
       font-display: swap;
     }
   }
@@ -104,6 +97,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
           href="https://fonts.googleapis.com/icon?family=Material+Icons"
           rel="stylesheet"
         />
+        <link rel="shortcut icon" href="/logo/favicon.ico" />
       </Head>
       <GlobalStyle />
       <Web3ReactProvider getLibrary={getLibrary}>

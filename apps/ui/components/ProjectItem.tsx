@@ -7,6 +7,7 @@ import {
   BASE_BOX_SHADOW,
   PINK,
   PLAIN_WHITE,
+  INTER_BOLD,
 } from '../themes';
 import { truncateAddress } from './WalletIndicator';
 
@@ -42,7 +43,7 @@ const ImageWrapper = styled.div`
 
 const InfoWrapper = styled.div`
   flex: 1;
-  font-family: 'Roboto Mono Bold', Serif;
+  font-family: ${INTER_BOLD};
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -60,7 +61,6 @@ const Flex = styled.div`
 
 const Label = styled.span`
   color: ${PLAIN_WHITE};
-  font-family: 'Nunito Sans', Sans-serif;
 `;
 
 interface ProjectItemTypes {

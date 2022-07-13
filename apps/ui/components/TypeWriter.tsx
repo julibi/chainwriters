@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { INTER_BOLD } from '../themes';
 
 interface CursorProps {
   hasCursor: boolean;
@@ -11,7 +12,7 @@ interface RootProps {
 }
 
 const Root = styled.span<RootProps>`
-  font-family: 'Roboto Mono Bold', Serif;
+  font-family: ${INTER_BOLD};
   font-size: ${({ fontSizeDesktop }) => fontSizeDesktop}px;
 
   @media (max-width: 900px) {

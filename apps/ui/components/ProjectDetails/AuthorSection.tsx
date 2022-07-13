@@ -14,6 +14,7 @@ import {
   INSET_BASE_BOX_SHADOW,
   BaseButton,
   PINK,
+  INTER_BOLD,
 } from '../../themes';
 import { SectionTitle } from '../HomePage/ProjectSection';
 import Emoji from '../Emojis';
@@ -63,7 +64,7 @@ interface TriggerButtonTypes {
 const TriggerButton = styled(BaseButton)<TriggerButtonTypes>`
   background-color: ${BG_NORMAL};
   color: ${({ disabled }) => (disabled ? DISABLED_WHITE : PINK)};
-  font-family: 'Roboto Mono Bold';
+  font-family: ${INTER_BOLD};
   width: 230px;
   margin: 1rem 1rem 0 0;
   padding: 1rem;
@@ -107,7 +108,7 @@ const DoneAction = styled.div`
   color: ${DISABLED_WHITE};
   border-radius: ${BASE_BORDER_RADIUS};
   box-shadow: ${INSET_BASE_BOX_SHADOW};
-  font-family: 'Roboto Mono Bold';
+  font-family: ${INTER_BOLD};
   font-size: 13px;
   text-align: center;
   margin-block-start: 1rem;

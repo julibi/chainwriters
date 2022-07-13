@@ -23,8 +23,20 @@ export const BASE_BOX_SHADOW = `
 //   inset 10px 10px 10px rgba(0,0,0,0.2);
 // `;
 
-export const ROBOTO_FONT_BOLD = `
-  'Roboto Mono Bold', Serif;
+export const INTER_LIGHT = `
+  'Inter Light', sans-serif;
+`;
+
+export const INTER_REGULAR = `
+  'Inter', sans-serif;
+`;
+
+export const INTER_BOLD = `
+  'Inter Bold', sans-serif;
+`;
+
+export const INTER_BLACK = `
+  'Inter Black', sans-serif;
 `;
 
 export const INSET_BASE_BOX_SHADOW = `
@@ -40,7 +52,7 @@ interface BaseButtonProps {
 export const BaseButton = styled.button<BaseButtonProps>`
   background-color: ${BG_NORMAL};
   color: ${PLAIN_WHITE};
-  font-family: ${ROBOTO_FONT_BOLD};
+  font-family: ${INTER_BOLD};
   border-radius: ${BASE_BORDER_RADIUS};
   box-shadow: ${BASE_BOX_SHADOW};
   padding: 1rem;
@@ -62,7 +74,7 @@ export const BaseButton = styled.button<BaseButtonProps>`
 export const FlatButton = styled.button<BaseButtonProps>`
   background-color: ${BG_DARK};
   color: ${PLAIN_WHITE};
-  font-family: ${ROBOTO_FONT_BOLD};
+  font-family: ${INTER_BOLD};
   border-radius: ${BASE_BORDER_RADIUS};
   padding: 10px;
   margin: 5px;
@@ -93,7 +105,7 @@ export const PrimaryButton = styled.button`
 `;
 
 export const BaseInput = styled.input`
-  font-family: 'Nunito Sans Bold', sans-serif;
+  font-family: ${INTER_BOLD};
   border-radius: ${BASE_BORDER_RADIUS};
   box-shadow: ${INSET_BASE_BOX_SHADOW};
   padding: 1rem;

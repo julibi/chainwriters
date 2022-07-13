@@ -9,7 +9,7 @@ import {
   INSET_BASE_BOX_SHADOW,
   PINK,
   PLAIN_WHITE,
-  ROBOTO_FONT_BOLD,
+  INTER_BOLD,
 } from '../../themes';
 
 import { SectionTitle, SectionTitleWrapper } from './ProjectSection';
@@ -96,7 +96,7 @@ const InstructionStep = styled(BaseButton)<InstructionStepProps>`
 const InstructionHeader = styled.h5`
   display: inline-block;
   color: ${PINK};
-  font-family: ${ROBOTO_FONT_BOLD};
+  font-family: ${INTER_BOLD};
   font-size: 18px;
   margin: 1rem;
 

@@ -1,13 +1,13 @@
-import React, { ChangeEvent, useMemo, useState } from 'react'
-import styled from 'styled-components'
-import InputField from '../InputField'
-import Loading from '../Loading'
+import React, { ChangeEvent, useMemo, useState } from 'react';
+import styled from 'styled-components';
+import InputField from '../InputField';
+import Loading from '../Loading';
 import {
   FadeIn,
   Wrapper,
   InputName,
   InputDescription,
-  Contributor
+  Contributor,
 } from '../../pages/create';
 import {
   BaseButton,
@@ -16,8 +16,8 @@ import {
   BG_NORMAL,
   PINK,
   PLAIN_WHITE,
-} from '../../themes'
-import validateAddress from '../../utils/validateAddress'
+} from '../../themes';
+import validateAddress from '../../utils/validateAddress';
 import { truncateAddress } from '../WalletIndicator';
 
 const ContribList = styled.ul`
@@ -45,7 +45,6 @@ const ContribsError = styled.div`
 `;
 
 const SubmitButton = styled(BaseButton)`
-  font-family: 'Roboto Mono';
   text-transform: uppercase;
   text-align: center;
   color: ${PLAIN_WHITE};
@@ -98,7 +97,7 @@ const ContributorsForm = ({
   loading,
   onChange,
   onNextStep,
-  onSubmit
+  onSubmit,
 }: ContributorsFormProps) => {
   const [formsAmount, setFormsAmount] = useState(1);
   const shareSelf = useMemo(() => {
@@ -244,6 +243,6 @@ const ContributorsForm = ({
       </Wrapper>
     </FadeIn>
   );
-}
+};
 
-export default ContributorsForm
+export default ContributorsForm;

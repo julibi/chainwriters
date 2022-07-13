@@ -5,7 +5,7 @@ import {
   SectionTitleWrapper,
   SectionTitle,
 } from '../components/HomePage/ProjectSection';
-import { PINK } from '../themes';
+import { PINK, INTER_BOLD } from '../themes';
 import LinkWrapper from '../components/LinkWrapper';
 
 const Root = styled.div`
@@ -25,7 +25,7 @@ const Content = styled.div`
 `;
 
 const SubHeader = styled.h3`
-  font-family: 'Roboto Mono Bold', Serif;
+  font-family: ${INTER_BOLD};
   text-align: center;
   font-size: 32px;
 `;
@@ -118,7 +118,7 @@ const FounderDescription = styled.div`
 const StyledLink = styled.a`
   color: ${PINK};
   text-decoration: none;
-  font-family: 'Roboto Mono Bold';
+  font-family: ${INTER_BOLD};
   margin-block-end: 1rem;
 `;
 
@@ -130,17 +130,17 @@ const PunchLine = styled.span`
 
 const Name = styled.span`
   display: inline-block;
-  font-family: 'Roboto Mono Bold';
+  font-family: ${INTER_BOLD};
 `;
 
 const Title = styled.span`
   display: inline-block;
-  font-family: 'Roboto Mono Bold';
+  font-family: ${INTER_BOLD};
 `;
 
 const Field = styled.span`
   display: inline-block;
-  font-family: 'Roboto Mono Bold';
+  font-family: ${INTER_BOLD};
 `;
 
 const Introduction = styled(Text)`

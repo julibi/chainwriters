@@ -1,12 +1,12 @@
-import React, { ChangeEvent, useState } from 'react'
-import { create } from 'ipfs-http-client'
-import Image from 'next/image'
-import styled from 'styled-components'
-import BaseModal from '../BaseModal'
-import Loading from '../Loading'
-import InputField from '../InputField'
-import { BaseButton, DISABLED_WHITE, PINK } from '../../themes'
-import { TextInput } from '../../pages/create'
+import React, { ChangeEvent, useState } from 'react';
+import { create } from 'ipfs-http-client';
+import Image from 'next/image';
+import styled from 'styled-components';
+import BaseModal from '../BaseModal';
+import Loading from '../Loading';
+import InputField from '../InputField';
+import { BaseButton, DISABLED_WHITE, PINK, INTER_BOLD } from '../../themes';
+import { TextInput } from '../../pages/create';
 import {
   StyledImageForm,
   DragNDrop,
@@ -14,7 +14,7 @@ import {
   FileName,
   shortenImageName,
 } from '../Create/CoverImageForm';
-import { toast } from 'react-toastify'
+import { toast } from 'react-toastify';
 
 const ContentWrapper = styled.div`
   margin: 2rem;
@@ -22,8 +22,8 @@ const ContentWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  overflow:scroll;
-  height:600px;
+  overflow: scroll;
+  height: 600px;
 `;
 
 const ModalHeader = styled.h2`
@@ -57,10 +57,10 @@ interface MintButtonProps {
 }
 
 const MintButton = styled(BaseButton)<MintButtonProps>`
-  font-family: 'Roboto Mono Bold';
+  font-family: ${INTER_BOLD};
   padding: 1rem;
   width: 209px;
-  color: ${({ disabled }) => disabled ? DISABLED_WHITE : PINK};
+  color: ${({ disabled }) => (disabled ? DISABLED_WHITE : PINK)};
 
   :disabled {
     :hover {
@@ -84,7 +84,11 @@ interface ConfigureModalProps {
   pending: boolean;
 }
 
-const ConfigureModal = ({ onConfigure, onClose, pending }: ConfigureModalProps) => {
+const ConfigureModal = ({
+  onConfigure,
+  onClose,
+  pending,
+}: ConfigureModalProps) => {
   // @ts-ignore
   const client = create('https://ipfs.infura.io:5001/api/v0');
   const [imgBuffer, setImgBuffer] = useState<null | Buffer>(null);
@@ -94,14 +98,14 @@ const ConfigureModal = ({ onConfigure, onClose, pending }: ConfigureModalProps) 
   const [subtitle, setSubtitle] = useState<string>('');
 
   const captureFile = (file: any) => {
-    const reader = new window.FileReader()
-    reader.readAsArrayBuffer(file)
+    const reader = new window.FileReader();
+    reader.readAsArrayBuffer(file);
     reader.onloadend = () => {
       // @ts-ignore
       const buffer = Buffer.from(reader.result);
       setImgFile(file);
       setImgBuffer(buffer);
-    }
+    };
   };
 
   return (
@@ -124,7 +128,9 @@ const ConfigureModal = ({ onConfigure, onClose, pending }: ConfigureModalProps) 
             <InputField
               label={'Genre: '}
               value={genre}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => setGenre(e.target.value)}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setGenre(e.target.value)
+              }
             />
           </FlexRow>
           <Label>{'Blurb:'}</Label>
@@ -178,7 +184,7 @@ const ConfigureModal = ({ onConfigure, onClose, pending }: ConfigureModalProps) 
           <MintButton
             style={{ margin: '1rem auto' }}
             disabled={pending}
-            onClick={async() => {
+            onClick={async () => {
               try {
                 let blurbCID = '';
                 let coverImgCID = '';
@@ -186,24 +192,22 @@ const ConfigureModal = ({ onConfigure, onClose, pending }: ConfigureModalProps) 
                   coverImgCID = (await client.add(imgBuffer)).path;
                 }
                 if (blurb) {
-                  blurbCID =  (await client.add(blurb)).path;
+                  blurbCID = (await client.add(blurb)).path;
                 }
-                onConfigure(coverImgCID, blurbCID, genre, subtitle)
+                onConfigure(coverImgCID, blurbCID, genre, subtitle);
               } catch (e: unknown) {
-                toast.error('Something went wrong while trying to uplod your data to IPFS.');
+                toast.error(
+                  'Something went wrong while trying to uplod your data to IPFS.'
+                );
               }
             }}
           >
-            {pending ? (
-              <Loading height={20} dotHeight={20} />
-            ) : (
-              'Configure'
-            )}
+            {pending ? <Loading height={20} dotHeight={20} /> : 'Configure'}
           </MintButton>
         </FlexColumn>
       </ContentWrapper>
     </BaseModal>
   );
-}
+};
 
-export default ConfigureModal
+export default ConfigureModal;

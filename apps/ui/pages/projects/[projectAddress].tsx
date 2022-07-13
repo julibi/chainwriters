@@ -1,18 +1,24 @@
-import React, { MouseEventHandler, useCallback, useEffect, useMemo, useState } from 'react'
-import { toast } from 'react-toastify'
-import { formatEther } from '@ethersproject/units'
-import { useWeb3React } from '@web3-react/core'
-import Image from 'next/image'
-import { useRouter } from 'next/router'
-import styled from 'styled-components'
-import { BLURB_FETCH_ERROR } from '../../constants'
-import { useGetProjectDetails } from '../../state/projects/hooks'
-import BaseModal from '../../components/BaseModal'
-import Loading from '../../components/Loading'
-import MintSection from '../../components/ProjectDetails/MintSection'
-import ToastLink from '../../components/ToastLink'
-import { SectionTitle } from '../../components/HomePage/ProjectSection'
-import { truncateAddress } from '../../components/WalletIndicator'
+import React, {
+  MouseEventHandler,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
+import { toast } from 'react-toastify';
+import { formatEther } from '@ethersproject/units';
+import { useWeb3React } from '@web3-react/core';
+import Image from 'next/image';
+import { useRouter } from 'next/router';
+import styled from 'styled-components';
+import { BLURB_FETCH_ERROR } from '../../constants';
+import { useGetProjectDetails } from '../../state/projects/hooks';
+import BaseModal from '../../components/BaseModal';
+import Loading from '../../components/Loading';
+import MintSection from '../../components/ProjectDetails/MintSection';
+import ToastLink from '../../components/ToastLink';
+import { SectionTitle } from '../../components/HomePage/ProjectSection';
+import { truncateAddress } from '../../components/WalletIndicator';
 import {
   BASE_BORDER_RADIUS,
   BASE_BOX_SHADOW,
@@ -20,13 +26,14 @@ import {
   PINK,
   PLAIN_WHITE,
   PrimaryButton,
-  BaseButton
+  BaseButton,
+  INTER_BOLD,
 } from '../../themes';
-import useProjectContract from '../../hooks/useProjectContract'
-import useShowText from '../../hooks/useShowText'
-import { ProjectData } from '../../state/projects/hooks'
-import AuthorSection from '../../components/ProjectDetails/AuthorSection'
-import AuctionSection from '../../components/ProjectDetails/AuctionSection'
+import useProjectContract from '../../hooks/useProjectContract';
+import useShowText from '../../hooks/useShowText';
+import { ProjectData } from '../../state/projects/hooks';
+import AuthorSection from '../../components/ProjectDetails/AuthorSection';
+import AuctionSection from '../../components/ProjectDetails/AuctionSection';
 
 const Root = styled.div`
   display: flex;
@@ -46,8 +53,12 @@ const MainInfoWrapper = styled.section`
   animation: fadein 2s;
 
   @keyframes fadein {
-      from { opacity: 0; }
-      to   { opacity: 1; }
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
 
   @media (max-width: 900px) {
@@ -60,7 +71,7 @@ const InfoRight = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  font-family: 'Roboto Mono Bold';
+  font-family: ${INTER_BOLD};
 
   border-radius: ${BASE_BORDER_RADIUS};
   box-shadow: ${BASE_BOX_SHADOW};
@@ -80,7 +91,7 @@ const ImageWrapper = styled.div`
     height: 100% !important;
 
     img {
-      object-fit: contain; 
+      object-fit: contain;
     }
   }
 `;
@@ -90,14 +101,18 @@ const ReadIndicator = styled(BaseButton)`
   z-index: 10;
   top: 1rem;
   left: 1rem;
-  font-family: 'Roboto Mono Bold';
+  font-family: ${INTER_BOLD};
   background-color: ${PINK};
 
   animation: fadein 2s;
 
   @keyframes fadein {
-      from { opacity: 0; }
-      to   { opacity: 1; }
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
 `;
 
@@ -105,7 +120,7 @@ const Author = styled.div`
   margin-block-end: 2rem;
   padding: 1rem !important;
   text-transform: uppercase;
-  font-family: 'Roboto Mono Bold';
+  font-family: ${INTER_BOLD};
   display: flex;
   justify-content: space-between;
 `;
@@ -117,16 +132,16 @@ export const Key = styled.span`
 
 export const Val = styled.span`
   display: inline-block;
-  font-family: 'Nunito Sans Bold';
+  font-family: ${INTER_BOLD};
   text-transform: default;
 `;
 
 const Genre = styled.div`
   padding: 1rem !important;
   text-transform: uppercase;
-  font-family: 'Roboto Mono Bold';
+  font-family: ${INTER_BOLD};
   display: flex;
-  justify-content: space-between;  
+  justify-content: space-between;
 `;
 
 export const Title = styled(SectionTitle)`
@@ -139,7 +154,7 @@ export const Title = styled(SectionTitle)`
 const Info = styled.h4`
   display: inline-block;
   margin-block-start: 0;
-  padding: .5rem 1rem;
+  padding: 0.5rem 1rem;
   border-radius: ${BASE_BORDER_RADIUS};
   box-shadow: ${BASE_BOX_SHADOW};
 `;
@@ -152,7 +167,7 @@ const Subtitle = styled(Info)`
 `;
 
 export const StyledPrimaryButton = styled(PrimaryButton)`
-  font-family: 'Roboto Mono Bold';
+  font-family: ${INTER_BOLD};
   padding: 1rem;
   width: 209px;
 
@@ -181,7 +196,7 @@ const InfoLeft = styled.div`
     margin-inline: 0;
     margin-block-end: 2rem;
   }
-`
+`;
 
 const ShareSection = styled.section`
   display: flex;
@@ -198,8 +213,12 @@ const ShareSection = styled.section`
   animation: fadein 2s;
 
   @keyframes fadein {
-      from { opacity: 0; }
-      to   { opacity: 1; }
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
 `;
 
@@ -244,14 +263,18 @@ const DescriptionSection = styled.section`
   animation: fadein 2s;
 
   @keyframes fadein {
-      from { opacity: 0; }
-      to   { opacity: 1; }
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
 `;
 
 const Description = styled.p`
   display: inline-block;
-  font-family: 'Nunito Sans', sans-serif;
+
   font-size: 14px;
   line-height: 170%;
 `;
@@ -286,10 +309,10 @@ export interface MintButtonProps {
 }
 
 export const MintButton = styled(BaseButton)<MintButtonProps>`
-  font-family: 'Roboto Mono Bold';
+  font-family: ${INTER_BOLD};
   padding: 1rem;
   width: 209px;
-  color: ${({ disabled }) => disabled ? DISABLED_WHITE : PINK};
+  color: ${({ disabled }) => (disabled ? DISABLED_WHITE : PINK)};
 
   @media (max-width: 900px) {
     width: 100%;
@@ -300,7 +323,9 @@ const ProjectDetailView = () => {
   const { account, chainId } = useWeb3React();
   const router = useRouter();
   let projectAddress = router.query.projectAddress;
-  projectAddress = Array.isArray(projectAddress) ? projectAddress[0] : projectAddress;
+  projectAddress = Array.isArray(projectAddress)
+    ? projectAddress[0]
+    : projectAddress;
   const getProjectDetails = useGetProjectDetails(projectAddress as string);
   const ProjectContract = useProjectContract(projectAddress as string);
   const getShowText = useShowText(projectAddress as string);
@@ -314,17 +339,20 @@ const ProjectDetailView = () => {
   const [currentPrice, setCurrentPrice] = useState(null);
   const [blurb, setBlurb] = useState<null | string>(null);
   const [isNFTOwner, setIsNFTOwner] = useState<boolean>(false);
-  
-  const callGetProjectDetails = useCallback(async(projectAddress: string) => {
-    const ProjectData: ProjectData = await getProjectDetails(projectAddress);
-    setDaoData(ProjectData);
-    if (ProjectData?.imgIpfsHash) {
-      setCoverImgLink(`https://ipfs.io/ipfs/${ProjectData.imgIpfsHash}`);
-    }
-    setSuccessfullyLoaded(true);
-  }, [getProjectDetails]);
 
-  const callGetIsNFTOwner = useCallback(async() => {
+  const callGetProjectDetails = useCallback(
+    async (projectAddress: string) => {
+      const ProjectData: ProjectData = await getProjectDetails(projectAddress);
+      setDaoData(ProjectData);
+      if (ProjectData?.imgIpfsHash) {
+        setCoverImgLink(`https://ipfs.io/ipfs/${ProjectData.imgIpfsHash}`);
+      }
+      setSuccessfullyLoaded(true);
+    },
+    [getProjectDetails]
+  );
+
+  const callGetIsNFTOwner = useCallback(async () => {
     if (daoData) {
       const context = await getShowText(daoData.currentEdition);
       console.log({ context, daoData });
@@ -335,13 +363,15 @@ const ProjectDetailView = () => {
     }
   }, [daoData, getShowText]);
 
-  const fetchBlurb = useCallback(async() => {
+  const fetchBlurb = useCallback(async () => {
     if (daoData && daoData.blurbIpfsHash) {
-      const response = await fetch(`https://ipfs.io/ipfs/${daoData.blurbIpfsHash}`);
-      if(!response.ok) {
+      const response = await fetch(
+        `https://ipfs.io/ipfs/${daoData.blurbIpfsHash}`
+      );
+      if (!response.ok) {
         setBlurb(BLURB_FETCH_ERROR);
       } else {
-        const fetchedBlurb = await response.text()
+        const fetchedBlurb = await response.text();
         setBlurb(fetchedBlurb);
       }
     } else {
@@ -350,7 +380,11 @@ const ProjectDetailView = () => {
   }, [daoData]);
 
   const isAuthor = useMemo(() => {
-    if (daoData && account && account.toLowerCase() === daoData.author.toLowerCase()) {
+    if (
+      daoData &&
+      account &&
+      account.toLowerCase() === daoData.author.toLowerCase()
+    ) {
       return true;
     }
     return false;
@@ -358,8 +392,11 @@ const ProjectDetailView = () => {
 
   const authorShare = useMemo(() => {
     let result = 85;
-    if (daoData && daoData.contributions.length > 0) {      
-      const contributorsShareTotal = daoData.contributions.reduce((partialSum, a) => partialSum + a.share, 0);
+    if (daoData && daoData.contributions.length > 0) {
+      const contributorsShareTotal = daoData.contributions.reduce(
+        (partialSum, a) => partialSum + a.share,
+        0
+      );
       result = result - contributorsShareTotal;
     }
     return result;
@@ -379,82 +416,86 @@ const ProjectDetailView = () => {
     }
   }, [daoData, callGetIsNFTOwner, fetchBlurb]);
 
-  const mint = useCallback(async() => {
+  const mint = useCallback(async () => {
     // is this working?
     // const isLastNFT = daoData.currentEditionTotalSupply + 1 === daoData.currentEditionMaxSupply;
     setMintPending(true);
-    ProjectContract
-    .buy({value: currentPrice})
-    .then(mintTx => {
-      const { hash } = mintTx;
-      toast.info(
-        <ToastLink
-          hash={hash}
-          chainId={chainId}
-          message={'Mint pending...'}
-        />
-      );
-      ProjectContract.provider.once(hash, (transaction) => {
-        toast.success(
+    ProjectContract.buy({ value: currentPrice })
+      .then((mintTx) => {
+        const { hash } = mintTx;
+        toast.info(
           <ToastLink
             hash={hash}
             chainId={chainId}
-            message={'Successfyull Minted!'}
+            message={'Mint pending...'}
           />
         );
+        ProjectContract.provider.once(hash, (transaction) => {
+          toast.success(
+            <ToastLink
+              hash={hash}
+              chainId={chainId}
+              message={'Successfyull Minted!'}
+            />
+          );
+          setMintPending(false);
+          setShowBuyModal(false);
+          // @ts-ignore
+          callGetProjectDetails(projectAddress);
+          // if (isLastNFT) {
+          //   setDaoData({...daoData, auctionsEnded: true });
+          // }
+        });
+      })
+      .catch((e: unknown) => {
+        console.log({ e });
+        toast.error('Sorry, something went wrong...');
         setMintPending(false);
-        setShowBuyModal(false);
-        // @ts-ignore
-        callGetProjectDetails(projectAddress);
-        // if (isLastNFT) {
-        //   setDaoData({...daoData, auctionsEnded: true });
-        // }
       });
-    })
-    .catch((e: unknown) => {
-      console.log({ e });
-      toast.error('Sorry, something went wrong...');
-      setMintPending(false);
-    });
-  }, [projectAddress, ProjectContract, callGetProjectDetails, chainId, currentPrice]);
+  }, [
+    projectAddress,
+    ProjectContract,
+    callGetProjectDetails,
+    chainId,
+    currentPrice,
+  ]);
 
-  const fetchCurrentPrice = async() => {
+  const fetchCurrentPrice = async () => {
     setLoading(true);
     const price = await ProjectContract.getPrice();
-    
+
     setCurrentPrice(price);
     setLoading(false);
     setShowBuyModal(true);
   };
 
-  const retriggerAuction = useCallback(async() => {
+  const retriggerAuction = useCallback(async () => {
     try {
       setLoading(true);
       const Tx = await ProjectContract.retriggerAuction();
       const { hash } = Tx;
       toast.info(
-        <ToastLink
-          hash={hash}
-          chainId={chainId}
-          message={'Retriggering...'}
-        />
+        <ToastLink hash={hash} chainId={chainId} message={'Retriggering...'} />
       );
       ProjectContract.provider.once(hash, (transaction) => {
         // @ts-ignore
         callGetProjectDetails(projectAddress);
         setLoading(false);
       });
-    } catch(e: unknown) {
+    } catch (e: unknown) {
       // @ts-ignore
       toast.error(e.reason ?? 'Something went wrong.');
       setLoading(false);
     }
   }, [ProjectContract, callGetProjectDetails, chainId, projectAddress]);
 
-  const handleClickRead = useCallback((e) => {
-    e.preventDefault();
-    router.push(`/projects/${projectAddress}/read`)
-  }, [projectAddress, router]);
+  const handleClickRead = useCallback(
+    (e) => {
+      e.preventDefault();
+      router.push(`/projects/${projectAddress}/read`);
+    },
+    [projectAddress, router]
+  );
 
   return (
     <Root>
@@ -468,7 +509,9 @@ const ProjectDetailView = () => {
                 {daoData.subtitle && <Subtitle>{daoData.subtitle}</Subtitle>}
               </Title>
               <ImageWrapper>
-                {isNFTOwner && <ReadIndicator onClick={handleClickRead}>READ</ReadIndicator>}
+                {isNFTOwner && (
+                  <ReadIndicator onClick={handleClickRead}>READ</ReadIndicator>
+                )}
                 <Image
                   priority
                   src={coverImgLink ?? '/ImgPlaceholder.png'}
@@ -517,7 +560,7 @@ const ProjectDetailView = () => {
             </Description>
           </DescriptionSection>
           <ShareSection>
-            <Title style={{ maxWidth: '200px' }}>Contributors</Title>
+            <Title>Contributors</Title>
             <Shares>
               <Share>
                 <ShareTitle>Author</ShareTitle>
@@ -549,11 +592,17 @@ const ProjectDetailView = () => {
               ProjectContract={ProjectContract}
               daoData={daoData}
               onConfigure={(genre, subtitle, imgHash, blurbHash) => {
-                setDaoData({ ...daoData, genre, subtitle,imgIpfsHash: imgHash, blurbIpfsHash: blurbHash  })
+                setDaoData({
+                  ...daoData,
+                  genre,
+                  subtitle,
+                  imgIpfsHash: imgHash,
+                  blurbIpfsHash: blurbHash,
+                });
               }}
               onAddContributors={(ContributorList) => {
                 // @ts-ignore
-                setDaoData({ ...daoData, contributions: ContributorList  })
+                setDaoData({ ...daoData, contributions: ContributorList });
               }}
               refetch={() => {
                 // @ts-ignore
@@ -581,6 +630,6 @@ const ProjectDetailView = () => {
       )}
     </Root>
   );
-}
+};
 
-export default ProjectDetailView
+export default ProjectDetailView;

@@ -12,6 +12,7 @@ import {
   BASE_BORDER_RADIUS,
   BASE_BOX_SHADOW,
   PINK,
+  INTER_BOLD,
 } from '../themes';
 import Loading from '../components/Loading';
 import {
@@ -53,9 +54,8 @@ const Section = styled.section`
 
 const SubHeader = styled.h3`
   display: inline-block;
-  font-family: 'Roboto Mono Bold';
+  font-family: ${INTER_BOLD};
   text-align: center;
-  text-transform: uppercase;
   border-radius: ${BASE_BORDER_RADIUS};
   box-shadow: ${BASE_BOX_SHADOW};
   margin-block-end: 3rem;

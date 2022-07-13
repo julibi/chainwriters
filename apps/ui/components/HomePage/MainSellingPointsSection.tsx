@@ -1,7 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
 import { SectionTitle, SectionTitleWrapper } from './ProjectSection';
-import { BG_DARK, FadeInBaseAnimation, PINK, PLAIN_WHITE } from '../../themes';
+import {
+  BG_DARK,
+  FadeInBaseAnimation,
+  PINK,
+  PLAIN_WHITE,
+  INTER_BOLD,
+  INTER_LIGHT,
+} from '../../themes';
 
 const Root = styled.div`
   display: flex;
@@ -61,6 +68,7 @@ const ReaderBlock = styled.div`
 `;
 
 const Text = styled.p`
+  font-family: ${INTER_LIGHT};
   max-width: 1000px;
   display: inline-block;
   font-size: 24px;
@@ -75,10 +83,9 @@ const Text = styled.p`
 `;
 
 const SubHeader = styled.h3`
-  font-family: 'Roboto Mono Bold', serif;
+  font-family: ${INTER_BOLD};
   font-size: 24px;
   text-align: center;
-  text-transform: uppercase;
   margin-block-start: 0;
 `;
 
@@ -90,13 +97,13 @@ const MainSellingPointsSection = () => {
       </SectionTitleWrapper>
       <BlocksWrapper>
         <AuthorBlock>
-          <SubHeader style={{ color: PINK }}>Authors</SubHeader>
+          <SubHeader>Authors</SubHeader>
           <Text>{'Publish and sell your text as NFT collection'}</Text>
           <Text>{'Receive creator royalties'}</Text>
           <Text>{'Create a community of readers and connect with it'}</Text>
         </AuthorBlock>
         <ReaderBlock>
-          <SubHeader style={{ color: PLAIN_WHITE }}>Collectors</SubHeader>
+          <SubHeader>Collectors</SubHeader>
           <Text>{'Collect literature NFT gems and unlock the text'}</Text>
           <Text>{'Be part of an exclusive community'}</Text>
           <Text>{'(Beta) Vote with the NFTs'}</Text>

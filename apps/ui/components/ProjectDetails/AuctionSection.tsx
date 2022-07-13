@@ -1,21 +1,26 @@
-import React, { useCallback } from 'react'
-import styled from 'styled-components'
-import { formatEther } from '@ethersproject/units'
+import React, { useCallback } from 'react';
+import styled from 'styled-components';
+import { formatEther } from '@ethersproject/units';
 import {
   BASE_BORDER_RADIUS,
   BASE_BOX_SHADOW,
   PINK,
-} from '../../themes'
-import Countdown from '../Countdown'
-import Loading from '../Loading'
-import PieChart from '../PieChart'
-import { Key, Val, StyledPrimaryButton } from '../../pages/projects/[projectAddress]'
-import { ProjectData } from '../../state/projects/hooks'
+  INTER_BOLD,
+} from '../../themes';
+import Countdown from '../Countdown';
+import Loading from '../Loading';
+import PieChart from '../PieChart';
+import {
+  Key,
+  Val,
+  StyledPrimaryButton,
+} from '../../pages/projects/[projectAddress]';
+import { ProjectData } from '../../state/projects/hooks';
 
 const AuctionTitle = styled.h2`
   text-align: center;
   text-transform: uppercase;
-  font-family: 'Roboto Mono Bold';
+  font-family: ${INTER_BOLD};
   margin-block-start: -1rem;
   margin-block-end: 3rem;
   padding: 0;
@@ -83,7 +88,7 @@ const AuctionSection = ({
               style={{
                 fontSize: '22px',
                 color: `${PINK}`,
-                fontFamily: 'Nunito Sans Bold',
+                fontFamily: 'Inter Bold',
               }}
             >
               <Countdown end={expiresAt} />
@@ -129,7 +134,7 @@ const AuctionSection = ({
           <Val
             style={{
               fontSize: '22px',
-              fontFamily: 'Nunito Sans Bold',
+              fontFamily: 'Inter Bold',
             }}
           >
             {daoData.totalSupplyGenEd}
@@ -170,4 +175,4 @@ const AuctionSection = ({
   );
 };
 
-export default AuctionSection
+export default AuctionSection;

@@ -2,7 +2,7 @@ import { ToastContainer } from 'react-toastify';
 import styled from 'styled-components';
 
 export default styled(ToastContainer)`
-  z-index: 9999; 
+  z-index: 9999;
   -webkit-transform: translate3d(0, 0, 9999px);
   position: fixed;
   padding: 4px;
@@ -40,33 +40,33 @@ export default styled(ToastContainer)`
     justify-content: space-between;
     max-height: 800px;
     overflow: hidden;
-    font-family: 'Nunito Sans', sans-serif;
+
     cursor: pointer;
     direction: ltr;
   }
   .Toastify__toast--dark {
     background-color: white;
-    color: #1B1E28;
+    color: #1b1e28;
   }
   .Toastify__toast--default {
     background-color: white;
-    color: #1B1E28;
+    color: #1b1e28;
   }
   .Toastify__toast--info {
     background-color: white;
-    color: #1B1E28;
+    color: #1b1e28;
   }
   .Toastify__toast--success {
     background-color: white;
-    color: #1B1E28;
+    color: #1b1e28;
   }
   .Toastify__toast--warning {
     background-color: white;
-    color: #1B1E28;
+    color: #1b1e28;
   }
   .Toastify__toast--error {
     background-color: white;
-    color: #1B1E28;
+    color: #1b1e28;
   }
   .Toastify__toast-body {
     margin: auto 0;
@@ -93,7 +93,7 @@ export default styled(ToastContainer)`
     }
   }
   .Toastify__close-button {
-    color: #1B1E28;
+    color: #1b1e28;
     background: transparent;
     outline: none;
     border: none;
@@ -105,7 +105,7 @@ export default styled(ToastContainer)`
     align-self: flex-start;
   }
   .Toastify__close-button--default {
-    color: #1B1E28;
+    color: #1b1e28;
     opacity: 0.3;
   }
   .Toastify__close-button > svg {
@@ -158,10 +158,10 @@ export default styled(ToastContainer)`
     background: #e74c3c;
   }
   .Toastify__progress-bar--error {
-    background: #FA9896;
+    background: #fa9896;
   }
   .Toastify__progress-bar--info {
-    background: #BEE7ED;
+    background: #bee7ed;
   }
   .Toastify__progress-bar--success {
     background: #85f9e2;

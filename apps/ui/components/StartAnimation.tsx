@@ -20,7 +20,6 @@ const Root = styled.div`
 const TypeWriterWrapper = styled.div`
   height: 100%;
   min-height: 500px;
-  text-align: center;
 `;
 
 const BubbleWrapper = styled.div`

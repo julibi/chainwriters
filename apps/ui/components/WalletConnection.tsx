@@ -1,12 +1,18 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import { useWeb3React } from '@web3-react/core'
-import Image from 'next/image'
-import styled from 'styled-components'
-import { injected, RPC_URLS, supportedChainIds, supportedChainMapping, walletconnect } from '../connectors'
-import BaseModal from './BaseModal'
-import WalletIndicator from './WalletIndicator'
-import { BaseButton } from '../themes'
+import { useWeb3React } from '@web3-react/core';
+import Image from 'next/image';
+import styled from 'styled-components';
+import {
+  injected,
+  RPC_URLS,
+  supportedChainIds,
+  supportedChainMapping,
+  walletconnect,
+} from '../connectors';
+import BaseModal from './BaseModal';
+import WalletIndicator from './WalletIndicator';
+import { BaseButton, INTER_BOLD } from '../themes';
 import Dropdown from './Dropdown';
 
 const ContentWrapper = styled.div`
@@ -14,7 +20,7 @@ const ContentWrapper = styled.div`
 `;
 
 const Header = styled.h2`
-  font-family: 'Roboto Mono Bold';
+  font-family: ${INTER_BOLD};
 `;
 
 const SubHeader = styled.h3`
@@ -83,14 +89,17 @@ const WalletConnection = () => {
   const [showConnectModal, setShowConnectModal] = useState(false);
   const [selectedNetwork, setSelectedNetwork] = useState(80001);
   const { activate, account, chainId } = useWeb3React();
-  const handleMetaMaskClick = async() => {
+  const handleMetaMaskClick = async () => {
     try {
       await activate(injected, undefined, true);
       setShowConnectModal(false);
-    } catch(e) {
+    } catch (e) {
       console.log({ e });
       console.log(e.name);
-      if (e.name === 'UnsupportedChainIdError' || e.message.includes('Unsupported chain id:')) {
+      if (
+        e.name === 'UnsupportedChainIdError' ||
+        e.message.includes('Unsupported chain id:')
+      ) {
         // TODO: close modal on success etc
         setupNetwork(selectedNetwork, async () => {
           // onSuccess reattempt connect and close modal
@@ -103,11 +112,11 @@ const WalletConnection = () => {
     }
   };
 
-  const handleWalletConnectClick = async() => {
+  const handleWalletConnectClick = async () => {
     try {
       await activate(walletconnect, undefined, true);
       setShowConnectModal(false);
-    } catch(e) {
+    } catch (e) {
       console.log({ e });
       toast.error(e.message);
     }
@@ -129,8 +138,8 @@ const WalletConnection = () => {
         value: chain.name,
         img: chain.icon,
         onSelect: (network: number) => {
-          console.log({network})
-          setSelectedNetwork(network)
+          console.log({ network });
+          setSelectedNetwork(network);
         },
       };
     }
@@ -185,6 +194,6 @@ const WalletConnection = () => {
       )}
     </div>
   );
-}
+};
 
-export default WalletConnection
+export default WalletConnection;

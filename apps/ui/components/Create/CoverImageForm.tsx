@@ -1,12 +1,12 @@
-import React, { ChangeEvent, FormEvent } from 'react'
-import Image from 'next/image'
-import styled from 'styled-components'
+import React, { ChangeEvent, FormEvent } from 'react';
+import Image from 'next/image';
+import styled from 'styled-components';
 import {
   ButtonsWrapper,
   FadeIn,
   InputDescription,
   InputName,
-  Wrapper
+  Wrapper,
 } from '../../pages/create';
 import {
   BaseButton,
@@ -19,7 +19,6 @@ import {
 } from '../../themes';
 
 export const SubmitButton = styled(BaseButton)`
-  font-family: 'Roboto Mono';
   text-transform: uppercase;
   text-align: center;
   color: ${PLAIN_WHITE};
@@ -46,7 +45,7 @@ export const DragNDrop = styled.div`
   margin: 0 0 2rem 0;
 
   > span {
-    height:100% !important; 
+    height: 100% !important;
   }
   img {
     object-fit: contain;
@@ -62,25 +61,24 @@ export const UploadCTAWrapper = styled.div`
 export const StyledFileInput = styled.input`
   color: transparent;
   margin-block: 1rem;
-  
+
   ::-webkit-file-upload-button {
     width: 100%;
     border-width: 0;
-    font-family: 'Roboto Mono';
     text-transform: uppercase;
     text-align: center;
     color: ${BG_NORMAL};
     background-color: ${PLAIN_WHITE};
     border-radius: ${BASE_BORDER_RADIUS} !important;
     padding: 1rem;
-  
+
     :hover {
       cursor: pointer;
     }
-  
+
     :disabled {
       color: grey;
-  
+
       :hover {
         cursor: default;
       }
@@ -102,7 +100,7 @@ export const shortenImageName = (filename: string) => {
   const filenameLength = filename.length;
   const cut = filenameLength - 6;
   const filenameEnd = filename.substring(filenameLength, cut);
-  return `${filenameStart}...${filenameEnd}`; 
+  return `${filenameStart}...${filenameEnd}`;
 };
 
 interface CoverImageFormProps {
@@ -161,10 +159,7 @@ const CoverImageForm = ({
             />
             <ButtonsWrapper>
               <SubmitButton onClick={onNextStep}>Skip</SubmitButton>
-              <StyledSubmitButton
-                disabled={!imgBuffer}
-                onClick={onSubmit}
-              >
+              <StyledSubmitButton disabled={!imgBuffer} onClick={onSubmit}>
                 Set Image
               </StyledSubmitButton>
             </ButtonsWrapper>
@@ -175,4 +170,4 @@ const CoverImageForm = ({
   );
 };
 
-export default CoverImageForm
+export default CoverImageForm;

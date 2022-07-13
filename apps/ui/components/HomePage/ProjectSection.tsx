@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useFetchTopProjects } from '../../state/projects/hooks';
-import { BASE_BORDER_RADIUS, BASE_BOX_SHADOW } from '../../themes';
+import { INTER_BLACK } from '../../themes';
 import Loading from '../Loading';
 import { ProjectItem } from '../ProjectItem';
 
@@ -12,9 +12,8 @@ export const SectionTitleWrapper = styled.div`
 
 export const SectionTitle = styled.h1`
   text-align: center;
-  text-transform: uppercase;
-  font-family: 'Roboto Mono Bold';
-  font-size: 36px;
+  font-family: ${INTER_BLACK};
+  font-size: 54px;
   padding: 1rem;
 
   @media (max-width: 900px) {
@@ -35,7 +34,7 @@ const ProjectSection = () => {
   return (
     <>
       <SectionTitleWrapper>
-        <SectionTitle>TOP PROJECTS</SectionTitle>
+        <SectionTitle>Top Projects</SectionTitle>
       </SectionTitleWrapper>
       {loading && !data && <Loading height={530} />}
       <ProjectList>

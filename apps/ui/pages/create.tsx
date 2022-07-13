@@ -20,6 +20,7 @@ import {
   INSET_BASE_BOX_SHADOW,
   PINK,
   PLAIN_WHITE,
+  INTER_BOLD,
 } from '../themes';
 import useDaoContract from '../state/useDaoContract';
 import {
@@ -116,7 +117,7 @@ export const ReviewItem = styled.p`
 export const TextInput = styled.textarea`
   height: 600px;
   width: 100%;
-  font-family: 'Nunito Sans', sans-serif;
+
   font-size: 14px;
   line-height: 170%;
   border-radius: ${BASE_BORDER_RADIUS};
@@ -129,7 +130,6 @@ export const TextInput = styled.textarea`
 `;
 
 export const SubmitButton = styled(BaseButton)`
-  font-family: 'Roboto Mono';
   text-transform: uppercase;
   text-align: center;
   color: ${PLAIN_WHITE};
@@ -161,7 +161,6 @@ export const ReviewItemWrapper = styled.div`
   display: flex;
   flex-direction: column;
   text-transform: uppercase;
-  font-family: 'Roboto Mono';
   margin-block-end: 2rem;
 `;
 
@@ -175,8 +174,7 @@ export const Wrapper = styled.div`
 
 export const InputName = styled.h2`
   text-align: center;
-  text-transform: uppercase;
-  font-family: 'Roboto Mono Bold';
+  font-family: ${INTER_BOLD};
   border-radius: ${BASE_BORDER_RADIUS};
 
   padding: 1rem;

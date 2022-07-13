@@ -1,15 +1,29 @@
 import React, { useState } from 'react';
 import { useWeb3React } from '@web3-react/core';
+import Image from 'next/image';
 import Link from 'next/link';
 import styled from 'styled-components';
 import WalletConnection from '../components/WalletConnection';
 import { useDeviceDetect } from '../hooks/useDeviceDetect';
 import { useEagerConnect } from '../hooks/useEagerConnect';
-import { BG_NORMAL, StyledLink } from '../themes';
+import { BG_NORMAL, StyledLink, INTER_BOLD, INTER_BLACK } from '../themes';
 
 const Root = styled.div`
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+`;
+
+const LogoWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 2rem;
+`;
+
+const LogoText = styled.p`
+  font-family: ${INTER_BLACK};
+  font-size: 24px;
+  margin-left: 1rem;
 `;
 
 const RootMobile = styled(Root)`
@@ -21,7 +35,7 @@ const NavList = styled.ul`
   display: flex;
   margin: 2rem;
   align-items: center;
-  font-family: 'Roboto Mono Bold';
+  font-family: ${INTER_BOLD};
 `;
 
 const NavListItem = styled.li`
@@ -68,7 +82,7 @@ const MobileNavMenu = styled.div`
 
 const MobileNavList = styled.ul`
   margin-block-start: 4rem;
-  font-family: 'Roboto Mono Bold';
+  font-family: ${INTER_BOLD};
 `;
 
 const MobileNavListItem = styled.li`
@@ -93,8 +107,15 @@ const Navbar = () => {
 
   // TODO WALLET CONNECTION ON MOBILE!
   if (isMobile) {
+    console.log('ismobile');
     return (
       <RootMobile>
+        <Image
+          height={'40px'}
+          width={'40px'}
+          src={`/logo/Logo.png`}
+          alt="moonpage"
+        />
         {isMobile && !isBurgerMenuOpen && <WalletConnection />}
         <BurgerButton onClick={() => setIsBurgerMenuOpen(!isBurgerMenuOpen)}>
           <BurgerLine
@@ -147,6 +168,15 @@ const Navbar = () => {
   }
   return (
     <Root>
+      <LogoWrapper>
+        <Image
+          height={'80px'}
+          width={'80px'}
+          src={`/logo/Logo.png`}
+          alt="moonpage"
+        />
+        <LogoText>moonpage</LogoText>
+      </LogoWrapper>
       <NavList>
         {routes.map((route, idx) => (
           <NavListItem key={idx}>

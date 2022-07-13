@@ -6,6 +6,7 @@ import {
   BG_NORMAL,
   INSET_BASE_BOX_SHADOW,
   PLAIN_WHITE,
+  INTER_BOLD,
 } from '../themes';
 import CSS from 'csstype';
 
@@ -31,8 +32,7 @@ const Header = styled.div`
 
 const Title = styled.h3`
   display: inline-block;
-  font-family: 'Roboto Mono Bold', Serif;
-  font-size: 13px;
+  font-size: 16px;
   color: ${PLAIN_WHITE};
 `;
 

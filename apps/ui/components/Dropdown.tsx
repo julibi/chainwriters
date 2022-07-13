@@ -1,7 +1,15 @@
-import React, { useEffect, useRef, useState } from 'react'
-import Image from 'next/image'
-import styled from 'styled-components'
-import { BASE_BORDER_RADIUS, BG_NORMAL, INSET_BASE_BOX_SHADOW, BaseButton, BASE_BOX_SHADOW, PLAIN_WHITE } from '../themes'
+import React, { useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
+import styled from 'styled-components';
+import {
+  BASE_BORDER_RADIUS,
+  BG_NORMAL,
+  INSET_BASE_BOX_SHADOW,
+  BaseButton,
+  BASE_BOX_SHADOW,
+  PLAIN_WHITE,
+  INTER_BOLD,
+} from '../themes';
 import { FlexContainer } from '../pages/create';
 
 interface RootProps {
@@ -9,19 +17,18 @@ interface RootProps {
 }
 
 const Root = styled(BaseButton)<RootProps>`
-  font-family: 'Nunito Sans Bold', sans-serif;
+  font-family: ${INTER_BOLD};
   padding: 1rem;
   display: flex;
   justify-content: space-between;
-  width: ${({width}) => width ? width : '150px'};
+  width: ${({ width }) => (width ? width : '150px')};
   height: 50px;
   position: relative;
   display: flex;
   align-items: center;
 `;
 
-const ArrowDown = styled.div`
-`;
+const ArrowDown = styled.div``;
 
 const ImageWrapper = styled.div`
   margin-inline-end: 1rem;
@@ -44,7 +51,7 @@ const Options = styled.div`
 
 const Option = styled(BaseButton)`
   color: ${PLAIN_WHITE};
-  font-family: 'Nunito Sans Bold', sans-serif;
+  font-family: ${INTER_BOLD};
   margin-block-end: 1rem;
   padding: 1rem;
 
@@ -75,12 +82,14 @@ interface DropdownProps {
 }
 
 const Dropdown = ({ options, preselected, width }: DropdownProps) => {
-  const [ showDropdown, setShowDropdown ] = useState(false);
-  const [selected, setSelected] = useState<OptionType | null>(preselected ?? null);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [selected, setSelected] = useState<OptionType | null>(
+    preselected ?? null
+  );
   const ref = useRef(null);
 
   const toggleDropdown = () => {
-    setShowDropdown(!showDropdown)
+    setShowDropdown(!showDropdown);
   };
 
   useEffect(() => {
@@ -149,6 +158,6 @@ const Dropdown = ({ options, preselected, width }: DropdownProps) => {
       )}
     </Root>
   );
-}
+};
 
-export default Dropdown
+export default Dropdown;

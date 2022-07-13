@@ -65,7 +65,7 @@ const Arrow = styled.i`
 const TitleWrapper = styled.div`
   padding: 2rem;
   font-size: 42px;
-  font-family: 'Roboto Mono Bold', Serif;
+  font-family: ${INTER_BOLD};
 `;
 
 const FlexWrapper = styled.div`
@@ -87,11 +87,11 @@ const Wrapper = styled.div`
 `;
 
 const SubTitle = styled.h3`
-  font-family: 'Roboto Mono Bold', Serif;
+  font-family: ${INTER_BOLD};
 `;
 
 const Author = styled.h3`
-  font-family: 'Roboto Mono Bold', Serif;
+  font-family: ${INTER_BOLD};
 `;
 
 const TextWrapper = styled.div`

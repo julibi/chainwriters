@@ -22,6 +22,8 @@ const MoreDetailsWrapper = styled.div`
   align-items: center;
 `;
 
+// add matic to your wallet
+
 const FAQSection = () => {
   return (
     <Root>
@@ -30,11 +32,7 @@ const FAQSection = () => {
       </SectionTitleWrapper>
       <br></br>
       <MoreDetailsWrapper>
-        <MoreDetails
-          title={
-            'I am new to Crypto. What do I need to interact with the platform?'
-          }
-        >
+        <MoreDetails title={'What do I need to interact with the platform?'}>
           <>
             <p>
               First off, you need a crypto wallet. We recommend{' '}

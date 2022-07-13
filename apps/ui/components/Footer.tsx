@@ -1,7 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import styled from 'styled-components';
-import { BG_DARK, PLAIN_WHITE } from '../themes';
+import { BG_DARK, PLAIN_WHITE, INTER_BOLD } from '../themes';
 const Root = styled.div`
   display: flex;
   justify-content: center;
@@ -23,7 +23,7 @@ const SocialMediaLinkWrapper = styled.a`
 `;
 
 const SocialMediaName = styled.span`
-  font-family: 'Roboto Mono Bold';
+  font-family: ${INTER_BOLD};
   display: inline-block;
   margin-block-start: 1rem;
 `;

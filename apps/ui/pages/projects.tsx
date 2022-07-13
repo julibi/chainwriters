@@ -18,7 +18,13 @@ import {
   useFetchAllProjectsOldAsc,
 } from '../state/projects/hooks';
 import Dropdown from '../components/Dropdown';
-import { BaseButton, BaseInput, Cross, INSET_BASE_BOX_SHADOW } from '../themes';
+import {
+  BaseButton,
+  BaseInput,
+  Cross,
+  INSET_BASE_BOX_SHADOW,
+  INTER_BOLD,
+} from '../themes';
 import Loading from '../components/Loading';
 
 const Root = styled.div`
@@ -112,7 +118,7 @@ const NoResultsWrapper = styled.div`
 
 const NoResults = styled.h3`
   display: inline-block;
-  font-family: 'Roboto Mono Bold', Serif;
+  font-family: ${INTER_BOLD};
 `;
 
 const ProjectItems = styled.div`
@@ -188,7 +194,7 @@ const Projects = () => {
     <Root>
       <Padding />
       <SectionTitleWrapper>
-        <SectionTitle>PROJECTS</SectionTitle>
+        <SectionTitle>Projects</SectionTitle>
       </SectionTitleWrapper>
       <Content>
         <Filtering>
