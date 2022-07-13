@@ -64,6 +64,7 @@ const RichText = ({ onKeyDown }: RichTextProps) => {
         spellCheck
         autoFocus
         onKeyDown={(event) => {
+          //@ts-expect-error innerText not inside target
           console.log(event.target.innerText);
           //@ts-expect-error innerText not inside target
           onKeyDown(event.target.innerText);
