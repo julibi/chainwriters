@@ -80,13 +80,15 @@ const FAQSection = () => {
               for the Ethereum blockchain that keeps transaction fees low
               without sacrificing on security. Learn more about it{' '}
               <LinkWrapper url="https://polygon.technology/">here</LinkWrapper>.
-              Peppermint Poets will be brought to more networks in the future.
+              Moonpage will be brought to more networks in the future.
             </p>
           </>
         </MoreDetails>
         <br></br>
         <MoreDetails
-          title={'Is it safe to publish and collect on Peppermint Poets?'}
+          title={
+            'When I publish a text with Moonpage, can I still be published by a publishing house?'
+          }
         >
           <>
             <p>Mention IPFS! Transparent Code.</p>
@@ -99,7 +101,7 @@ const FAQSection = () => {
           </>
         </MoreDetails>
         <br></br>
-        <MoreDetails title={'Who is building Peppermint Poets?'}>
+        <MoreDetails title={'Who is building Moonpage'}>
           <>
             <p>
               <LinkWrapper url="/about#founders">Us</LinkWrapper> :)

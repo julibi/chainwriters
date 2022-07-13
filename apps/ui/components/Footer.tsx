@@ -37,7 +37,7 @@ const Footer = () => {
         <SocialMediaLinkWrapper
           target="_blank"
           rel="noopener noreferrer"
-          href="https://mobile.twitter.com/peppermintpoets"
+          href="https://mobile.twitter.com/moonpage"
         >
           <Image
             height={'30px'}
@@ -63,7 +63,7 @@ const Footer = () => {
         <SocialMediaLinkWrapper
           target="_blank"
           rel="noopener noreferrer"
-          href="https://medium.com/peppermintpoets"
+          href="https://medium.com/moonpage"
         >
           <Image
             height={'30px'}

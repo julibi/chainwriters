@@ -86,19 +86,18 @@ const MainSellingPointsSection = () => {
   return (
     <Root>
       <SectionTitleWrapper>
-        <SectionTitle>What is Peppermint Poets?</SectionTitle>
+        <SectionTitle>What is Moonpage?</SectionTitle>
       </SectionTitleWrapper>
       <BlocksWrapper>
         <AuthorBlock>
           <SubHeader style={{ color: PINK }}>Authors</SubHeader>
-          <Text>{'Publish and sell your text as an NFT collection'}</Text>
+          <Text>{'Publish and sell your text as NFT collection'}</Text>
           <Text>{'Receive creator royalties'}</Text>
           <Text>{'Create a community of readers and connect with it'}</Text>
         </AuthorBlock>
         <ReaderBlock>
           <SubHeader style={{ color: PLAIN_WHITE }}>Collectors</SubHeader>
-          <Text>{'Find works that you like'}</Text>
-          <Text>{'Collect superrare NFTs and unlock the text'}</Text>
+          <Text>{'Collect literature NFT gems and unlock the text'}</Text>
           <Text>{'Be part of an exclusive community'}</Text>
           <Text>{'(Beta) Vote with the NFTs'}</Text>
         </ReaderBlock>

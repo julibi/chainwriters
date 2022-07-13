@@ -77,7 +77,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
-        <title>Peppermint Poets</title>
+        <title>Moonpage</title>
 
         <meta charSet="utf-8" />
         <meta property="og:locale" content="en_US" />
@@ -86,7 +86,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
           content="width=device-width, initial-scale=1, shrink-to-fit=no"
         />
         <meta name="theme-color" content="#1B1E28" />
-        <meta property="og:site_name" content="Peppermint Poets" />
+        <meta property="og:site_name" content="Moonpage" />
         <meta property="og:title" content="Literature NFTs" />
         <meta
           property="og:description"
@@ -95,9 +95,9 @@ function CustomApp({ Component, pageProps }: AppProps) {
         <meta
           property="og:image"
           itemProp="image"
-          content="https://www.peppermintpoets.com/website.png"
+          content="https://www.moonpage.io/website.png"
         />
-        <meta property="og:url" content="http://www.peppermintpoets.com" />
+        <meta property="og:url" content="http://www.moonpage.io" />
         <meta property="og:type" content="website" />
         <meta property="og:locale" content="en_US" />
         <link

@@ -219,8 +219,8 @@ const AuthorSection = ({
       name: daoData.title,
       description:
         blurb && blurb !== BLURB_FETCH_ERROR
-          ? `${blurb} (Created with Peppermint Poets)`
-          : 'Created with Peppermint Poets',
+          ? `${blurb} (Created with Moonpage)`
+          : 'Created with Moonpage',
       image: daoData?.imgIpfsHash ? `ipfs://${daoData.imgIpfsHash}` : '',
     };
     const metadata = JSON.stringify(metadataObject, null, 2);

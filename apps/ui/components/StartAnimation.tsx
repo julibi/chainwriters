@@ -7,6 +7,8 @@ const Root = styled.div`
   position: relative;
   height: 400px;
   width: 50%;
+  display: flex;
+  justify-content: center;
 
   @media (max-width: 900px) {
     align-items: flex-start;
@@ -18,6 +20,7 @@ const Root = styled.div`
 const TypeWriterWrapper = styled.div`
   height: 100%;
   min-height: 500px;
+  text-align: center;
 `;
 
 const BubbleWrapper = styled.div`

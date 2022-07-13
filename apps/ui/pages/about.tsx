@@ -161,7 +161,7 @@ const About = () => {
           <Text>{MockText + 'Literature NFTs are just the beginning.'}</Text>
         </QAWrapper>
         <QAWrapper>
-          <SubHeader>Why Peppermint Poets?</SubHeader>
+          <SubHeader>Why Moonpage?</SubHeader>
           <Text>{MockText}</Text>
         </QAWrapper>
         <QAWrapper>
@@ -215,7 +215,7 @@ const About = () => {
             merged into something that would address many of the pain points in
             the publishing industry that we had encountered, we knew
             immediately, what we had to do. Something that has never been done
-            in this form: Peppermint Poets.
+            in this form: Moonpage.
           </Text>
           <Text></Text>
           <Text></Text>

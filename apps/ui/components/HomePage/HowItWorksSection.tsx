@@ -217,7 +217,7 @@ const HowItWorksSection = () => {
                 `Set the title, input the text and set the amount of nfts
               you want to sell for the first edition, called Genesis Edition.
               Remember that you might want to claim some NFTs for yourself
-              and that 2 NFTs always go to Peppermint Poets automatically.`,
+              and that 2 NFTs always go to Moonpage automatically.`,
               ]}
             />
             <InstructionComp
@@ -244,11 +244,11 @@ const HowItWorksSection = () => {
               title="Claim your own NFTs"
               description={[
                 `Almost there. Before you can trigger the auction, you have to claim an amount of the NFTs for yourself.
-                This transaction will also transfer 2 NFTs to the Peppermint Poets project.`,
+                This transaction will also transfer 2 NFTs to the Moonpage project.`,
                 `Next, you can add up to 3 contributors. This is optional.`,
                 `An example: You are sharing income with an editor and a cover artist. Enter their addresses, roles and shares.
                  After an edition sells out, the revenue will be split and transferred like this:`,
-                `editor - 15%, cover-artist - 5%, Peppermint Poets project - 15%, YOU – 65%.`,
+                `editor - 15%, cover-artist - 5%, Moonpage project - 15%, YOU – 65%.`,
               ]}
             />
             <InstructionComp
