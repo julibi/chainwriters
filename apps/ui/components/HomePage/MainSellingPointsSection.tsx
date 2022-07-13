@@ -1,13 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { SectionTitle, SectionTitleWrapper } from './ProjectSection';
-import {
-  BG_DARK,
-  FadeInBaseAnimation,
-  PINK,
-  INTER_BOLD,
-  INTER_LIGHT,
-} from '../../themes';
+import { BG_DARK, PINK, INTER_BOLD, INTER_LIGHT } from '../../themes';
 
 const Root = styled.div`
   display: flex;
@@ -98,7 +92,7 @@ const MainSellingPointsSection = () => {
           <SubHeader>Creators</SubHeader>
           <Text>{'Publish and sell your text as NFT collection'}</Text>
           <Text>{'Receive creator royalties'}</Text>
-          <Text>{'Create a community of readers and connect with it'}</Text>
+          <Text>{'Create a community of readers'}</Text>
         </AuthorBlock>
         <ReaderBlock>
           <SubHeader>Collectors</SubHeader>

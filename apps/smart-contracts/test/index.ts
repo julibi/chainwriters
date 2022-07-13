@@ -1,21 +1,264 @@
+import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
-import { ethers } from "hardhat";
+import { ethers, waffle } from "hardhat";
+import { ProjectDao, ProjectCollection, ProjectFactory } from "../typechain";
 
-describe("ProjectFactory", function () {
-  it("Should return the new greeting once it's changed", async function () {
-    // const test = await ethers.getSigners();
-    // console.log({ test });
-    // const Greeter = await ethers.getContractFactory("Greeter");
-    // const greeter = await Greeter.deploy("Hello, world!");
-    // await greeter.deployed();
-
-    // expect(await greeter.greet()).to.equal("Hello, world!");
-
-    // const setGreetingTx = await greeter.setGreeting("Hola, mundo!");
-
-    // // wait until the transaction is mined
-    // await setGreetingTx.wait();
-
-    // expect(await greeter.greet()).to.equal("Hola, mundo!");
+const wait = (seconds: number) =>
+  new Promise((resolve, _) => {
+    setTimeout(resolve, seconds * 1000);
   });
+
+describe("ProjectDao", function () {
+  let factory: SignerWithAddress;
+  let author: SignerWithAddress;
+  let contribA: SignerWithAddress;
+  let contribB: SignerWithAddress;
+  let userA: SignerWithAddress;
+  let userB: SignerWithAddress;
+  let ProjectDaoAsAuthor: ProjectDao;
+  let ProjectDao: ProjectDao;
+  let ProjectFactoryAsAuthor: ProjectFactory;
+  let ProjectFactory: ProjectFactory;
+  let CollectionAddress: string;
+  let title: string;
+  let textIpfsHash: string;
+
+  beforeEach(async function () {
+    [factory, author, contribA, contribB, userA, userB] =
+      await ethers.getSigners();
+
+    // deploy args
+    const title = "My little Phony";
+    const textIpfsHash = "QmTw3pWBQinwuHS57FcWyUGBpvGqLHQZkn1eKjp89XXyFg";
+    const initialMintPrice = ethers.utils.parseUnits("0.05", 18);
+    const firstEditionMax = 4;
+
+    // deploy dao
+    const projectDaoFactory = await ethers.getContractFactory("ProjectDao");
+    ProjectDao = await projectDaoFactory.deploy();
+
+    // deploy factory
+    const projectFactoryFactory = await ethers.getContractFactory(
+      "ProjectFactory"
+    );
+    ProjectFactory = await projectFactoryFactory.deploy(ProjectDao.address);
+
+    // connect to factory as author
+    ProjectFactoryAsAuthor = ProjectFactory.connect(author);
+
+    // connect to Dao as author
+    ProjectDaoAsAuthor = ProjectDao.connect(author);
+
+    // set factory inside dao
+    await ProjectDao.setFactory(ProjectFactory.address);
+
+    // author deploys own collection
+    await ProjectFactoryAsAuthor.createDao(
+      title,
+      textIpfsHash,
+      initialMintPrice,
+      firstEditionMax
+    );
+
+    CollectionAddress = await ProjectFactory.collections(0);
+  });
+
+  describe("first test", async () => {
+    // triggerMint
+    // buy
+    it("should configure project data correctly", async () => {
+      // configure
+
+      const baseDataBefore = await ProjectDao.baseDatas(CollectionAddress);
+      const genreBefore = baseDataBefore.genre;
+      const subtitleBefore = baseDataBefore.subtitle;
+
+      const configureTx = await ProjectDaoAsAuthor.configureProjectDetails(
+        CollectionAddress,
+        "",
+        "",
+        "Fiction",
+        "My fancy subtitle"
+      );
+      await configureTx.wait();
+      const baseDataAfter = await ProjectDaoAsAuthor.baseDatas(
+        CollectionAddress
+      );
+      const genreAfter = baseDataAfter.genre;
+      const subtitleAfter = baseDataAfter.subtitle;
+      expect(genreBefore).to.equal("");
+      expect(subtitleBefore).to.equal("");
+      expect(genreAfter).to.equal("Fiction");
+      expect(subtitleAfter).to.equal("My fancy subtitle");
+
+      // add contributors
+      const firstContributorBefore = await ProjectDao.contributions(
+        CollectionAddress,
+        0
+      );
+      const addContribsTx = await ProjectDaoAsAuthor.addContributors(
+        CollectionAddress,
+        [contribA.address, contribB.address],
+        [25, 15],
+        ["co-writer", "marketer"]
+      );
+      await addContribsTx.wait();
+      const firstContributor = await ProjectDao.contributions(
+        CollectionAddress,
+        0
+      );
+      const secondContributor = await ProjectDao.contributions(
+        CollectionAddress,
+        1
+      );
+      // console.log({ test });
+      // shareRecipient: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC',
+      // role: 'co-writer',
+      // share: BigNumber { value: "25" },
+      // shareInMatic: BigNumber { value: "0" }
+    });
+  });
+
+  // it("author should be able to claim nfts", async () => {
+  //   const authorMintTx = await ProjectDaoAsAuthor.authorMint(2);
+  //   await authorMintTx.wait();
+  //   const author = await ProjectDao.author();
+
+  //   expect(author.hasClaimedGenesis).to.equal(true);
+  //   expect(author.claimedAmount).to.equal(2);
+  // });
+
+  // it("author cannot claim max amount", async () => {
+  //   const max = await ProjectDao.currentEditionMax();
+  //   console.log({ max });
+  //   await expect(ProjectDaoAsAuthor.authorMint(max)).to.be.revertedWith(
+  //     "Invalid amount"
+  //   );
+  // });
+
+  // it("can only trigger auction, when author has claimed her share", async () => {
+  //   // state before authorMint
+  //   await expect(
+  //     ProjectDaoAsAuthor.triggerFirstAuction(1000)
+  //   ).to.be.revertedWith("Mint tokens before triggering auctions");
+  //   const auctionStarted = await ProjectDaoAsAuthor.auctionStarted();
+  //   expect(auctionStarted).to.equal(false);
+
+  //   // authorMint + trigger
+  //   const authorMintTx = await ProjectDaoAsAuthor.authorMint(1);
+  //   await authorMintTx.wait();
+  //   const triggerFirstAuctionTx = await ProjectDaoAsAuthor.triggerFirstAuction(
+  //     1000
+  //   );
+  //   await triggerFirstAuctionTx.wait();
+
+  //   // auction running
+  //   const auctionShouldHaveStarted = await ProjectDaoAsAuthor.auctionStarted();
+  //   expect(auctionShouldHaveStarted).to.equal(true);
+  // });
+
+  // it("allows users to mint, once auction was triggered", async () => {
+  //   // authorMint + trigger
+  //   const authorMintTx = await ProjectDaoAsAuthor.authorMint(2);
+  //   await authorMintTx.wait();
+  //   const triggerFirstAuctionTx = await ProjectDaoAsAuthor.triggerFirstAuction(
+  //     1000
+  //   );
+  //   await triggerFirstAuctionTx.wait();
+
+  //   const Buy1Tx = await ProjectDaoAsUserA.buy({ value: "50000000000000000" });
+  //   await Buy1Tx.wait();
+  //   const balanceOfUserA = await ProjectDao.balanceOf(userA.address, 1);
+  //   expect(balanceOfUserA).to.equal(1);
+  // });
+
+  // it("only allows buying until Gen Ed is sold out", async () => {
+  //   // authorMint + trigger
+  //   const max = await ProjectDao.currentEditionMax();
+  //   const authorMintTx = await ProjectDaoAsAuthor.authorMint(2);
+  //   await authorMintTx.wait();
+  //   const triggerFirstAuctionTx = await ProjectDaoAsAuthor.triggerFirstAuction(
+  //     1000
+  //   );
+  //   await triggerFirstAuctionTx.wait();
+
+  //   const Buy1Tx = await ProjectDaoAsUserA.buy({ value: "50000000000000000" });
+  //   await Buy1Tx.wait();
+  //   const Buy2Tx = await ProjectDaoAsUserB.buy({ value: "50000000000000000" });
+  //   await Buy2Tx.wait();
+
+  //   await expect(
+  //     ProjectDaoAsAuthor.buy({ value: "50000000000000000" })
+  //   ).to.be.revertedWith("Auctions finished");
+  // });
+
+  // it("requires users to at least pay the current price", async () => {
+  //   // authorMint + trigger
+  //   const max = await ProjectDao.currentEditionMax();
+  //   const authorMintTx = await ProjectDaoAsAuthor.authorMint(2);
+  //   await authorMintTx.wait();
+  //   const triggerFirstAuctionTx = await ProjectDaoAsAuthor.triggerFirstAuction(
+  //     1000
+  //   );
+  //   await triggerFirstAuctionTx.wait();
+
+  //   const Buy1Tx = await ProjectDaoAsUserA.buy({ value: "50000000000000000" });
+  //   await Buy1Tx.wait();
+  //   await expect(
+  //     ProjectDaoAsUserB.buy({ value: "20000000000000000" })
+  //   ).to.be.revertedWith("Value sent not sufficient.");
+  // });
+
+  // it("lets author add contributors", async () => {
+  //   const authorAddsContribTx = await ProjectDaoAsAuthor.addContributor(
+  //     contribA.address,
+  //     50,
+  //     "editor"
+  //   );
+  //   await authorAddsContribTx.wait();
+  //   const contributor = await ProjectDao.contributors(0);
+  //   expect(contributor.share).to.equal(50);
+  //   expect(contributor.shareRecipient).to.equal(contribA.address);
+  // });
+
+  // it("distributes shares after sellout of Gen Ed", async () => {
+  //   const authorAddsContribTx = await ProjectDaoAsAuthor.addContributor(
+  //     contribA.address,
+  //     50,
+  //     "editor"
+  //   );
+  //   await authorAddsContribTx.wait();
+  //   const authorMintTx = await ProjectDaoAsAuthor.authorMint(1);
+  //   await authorMintTx.wait();
+  //   const triggerFirstAuctionTx = await ProjectDaoAsAuthor.triggerFirstAuction(
+  //     1000000
+  //   );
+  //   await triggerFirstAuctionTx.wait();
+
+  //   const provider = waffle.provider;
+  //   const authorBalanceBefore = await provider.getBalance(author.address);
+  //   const contribBalanceBefore = await provider.getBalance(contribA.address);
+
+  //   const Buy1Tx = await ProjectDaoAsUserA.buy({ value: "50000000000000000" });
+  //   await Buy1Tx.wait();
+  //   const Buy2Tx = await ProjectDaoAsUserB.buy({ value: "50000000000000000" });
+  //   await Buy2Tx.wait();
+  //   const Buy3Tx = await ProjectDaoAsContribB.buy({
+  //     value: "50000000000000000",
+  //   });
+  //   await Buy3Tx.wait();
+
+  //   const authorBalanceAfter = await provider.getBalance(author.address);
+  //   const contribBalanceAfter = await provider.getBalance(contribA.address);
+
+  //   const gainsAuthor =
+  //     parseInt(authorBalanceAfter._hex, 16) -
+  //     parseInt(authorBalanceBefore._hex, 16);
+  //   const gainsContributor =
+  //     parseInt(contribBalanceAfter._hex, 16) -
+  //     parseInt(contribBalanceBefore._hex, 16);
+  //   expect(gainsAuthor + gainsContributor).to.be.greaterThan(
+  //     149999999999000000
+  //   );
+  // });
 });
