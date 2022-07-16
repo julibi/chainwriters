@@ -242,7 +242,7 @@ const About = () => {
                 <Introduction>
                   Hyun-Kyung is an experienced developer specialising in Web3.
                   As a software engineer she has contributed to multiple
-                  prestigious NFT businesses and projects such as{' '}
+                  prestigious NFT projects such as{' '}
                   <LinkWrapper url="https://www.polychainmonsters.com">
                     Polychain Monsters
                   </LinkWrapper>
@@ -281,8 +281,7 @@ const About = () => {
                   {`Olivia Kuderewski is a novelist and editor. Her novel
                   "Lux" was awarded the Klaus Michael Kühne Prize for the best
                   German-language debut in 2021. In 2022, her second novel "Haha
-                  Heartbreak" will be published by Voland & Quist. She lives and
-                  works in Berlin.`}
+                  Heartbreak" will be published by Voland & Quist.`}
                 </Introduction>
               </FounderDescription>
             </CoFounder>

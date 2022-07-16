@@ -30,6 +30,10 @@ const SocialMediaName = styled.span`
   font-family: ${INTER_BOLD};
   display: inline-block;
   margin-block-start: 1rem;
+
+  @media (max-width: 900px) {
+    font-size: 12px;
+  }
 `;
 
 const StyledLink = styled.a``;
@@ -93,6 +97,19 @@ const Footer = () => {
             alt={'Twitter'}
           />
           <SocialMediaName>Medium</SocialMediaName>
+        </SocialMediaLinkWrapper>
+        <SocialMediaLinkWrapper
+          target="_self"
+          rel="noopener noreferrer"
+          href="/about#founders"
+        >
+          <Image
+            height={'30px'}
+            width={'28px'}
+            src={'/Team.svg'}
+            alt={'Team'}
+          />
+          <SocialMediaName>Team</SocialMediaName>
         </SocialMediaLinkWrapper>
       </Content>
       <Copyright>
