@@ -126,7 +126,7 @@ const Navbar = () => {
   return (
     <>
       <RootMobile>
-        <LinkWrapper url="/" target="_self">
+        <LinkWrapper url="/" target="_self" flex underline={false}>
           <Image
             height={'40px'}
             width={'40px'}
@@ -185,7 +185,7 @@ const Navbar = () => {
         )}
       </RootMobile>
       <Root>
-        <LinkWrapper url="/" target="_self">
+        <LinkWrapper url="/" target="_self" flex underline={false}>
           <LogoWrapper>
             <Image
               height={'80px'}

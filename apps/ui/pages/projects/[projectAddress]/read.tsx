@@ -9,6 +9,7 @@ import {
   BASE_BORDER_RADIUS,
   BASE_BOX_SHADOW,
   PLAIN_WHITE,
+  INTER_BOLD,
 } from '../../../themes';
 
 const animation = (animationseconds: number) => `

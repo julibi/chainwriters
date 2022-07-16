@@ -2,24 +2,37 @@ import React, { ReactNode } from 'react';
 import styled from 'styled-components';
 
 interface LinkWrapperProps {
+  underline?: boolean;
+  flex?: boolean;
   children: ReactNode;
   url: string;
   target?: '_blank' | '_self';
 }
-
-const Root = styled.a`
+type RootProps = {
+  underline: LinkWrapperProps['underline'];
+  flex: LinkWrapperProps['flex'];
+};
+const Root = styled.a<RootProps>`
   color: inherit;
-  text-decoration: none;
-  display: flex;
+  display: ${({ flex }) => (flex ? 'flex' : 'inline-block')};
+  text-decoration: ${({ underline }) => (underline ? 'underline' : 'none')};
 `;
 
 const LinkWrapper = ({
   children,
   url,
   target = '_blank',
+  underline = true,
+  flex = false,
 }: LinkWrapperProps) => {
   return (
-    <Root target={target} rel="noopener noreferrer" href={url}>
+    <Root
+      underline={underline}
+      flex={flex}
+      target={target}
+      rel="noopener noreferrer"
+      href={url}
+    >
       {children}
     </Root>
   );

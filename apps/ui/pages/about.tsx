@@ -158,17 +158,17 @@ const About = () => {
       <Content>
         <QAWrapper>
           <SubHeader>Why Literature NFTs?</SubHeader>
-          <Text>{`What if you, as a writer, could publish your writings, earn the lion share, receive royalties and create communities around your work – all of this settled in a DAO, where the rules are coded in an immutable ledger? Doesn't it sound awesome?!`}</Text>
+          <Text>{`What if you, as a writer, could publish your writings, earn the lion share, receive royalties and create communities around your work – all of this settled in a DAO, where the rules are coded in an immutable ledger?`}</Text>
           <Text>{`There is an insane amount of visual digital collectibles but literature NFTs aren’t as common yet – the flashy avantgarde among writers has just started to use the blockchain to publish their art. `}</Text>
           <Text>{`Instead of struggling with the traditional bookmarket and its gatekeepers you can experiment with new digital forms and keep total control over the whole process. Choose your own collaborators, price, number of copies and form of your texts and be part of a web 3 literary movement.`}</Text>
-          <Text>{`And NFT collectors beware: you never know if there’s a hidden J.K. Rowling or Stephen King among these web 3 poets … Browse projects, read brand new stuff, get your literature NFTs of hidden future stars and see them moon!`}</Text>
+          <Text>{`And NFT collectors beware: you never know if there’s a hidden J.K. Rowling or Stephen King among these web 3 poets … Browse projects, read brand new stuff, get your literature NFTs of hidden future stars and see them moon! Who knows? You could be owning a next gen blue chip NFT.`}</Text>
         </QAWrapper>
         <QAWrapper>
           <SubHeader>Why Moonpage?</SubHeader>
           <Text>{`Using Moonpage is easy – there’s a simple creation flow and we also guide you through the steps. If you’re a literal bookworm and don’t know the web3 space so well, no worries, we got ya!`}</Text>
           <Text>{`Since it‘s the only all-text NFT platform that combines minting and selling you don’t have to switch to other spaces. You create and sell all in one place.`}</Text>
           <Text>{`And you’ll be among kindred spirits – we want to build a strong community since writing can be a very lonely business. So don’t be shy, visit our Dischord and Twitter Channel and get connected to other poets, literature lovers and collectors. `}</Text>
-          <Text>{`And this just the beginning of this community … in the future we want to explore more innovative ways how we can connect writers, and cutting edge tech. Stay tuned :) – and please... don't sleep on it!`}</Text>
+          <Text>{`And this just the beginning of this community … in the future we want to explore more innovative ways how we can connect writers and cutting edge tech. Stay tuned :) – and please... don't sleep on it!`}</Text>
         </QAWrapper>
         <QAWrapper>
           <SubHeader>Our Vision</SubHeader>
@@ -199,7 +199,7 @@ const About = () => {
         <QAWrapper>
           <SubHeader>Our History</SubHeader>
           <Text>{`We met in Hildesheim, Germany, in 2014, where we both studied
-            Creative Writing. Works of Jack Kerouac, Breat Easton Ellis, Lucia
+            Creative Writing. Works of Jack Kerouac, Bret Easton Ellis, Lucia
             Berlin, Leo Tolstoi and many more make our hearts beat faster! A few
             years after graduation Olivia had become a published and awarded
             writer and Hyun-Kyung had professionally immersed herself in web3
