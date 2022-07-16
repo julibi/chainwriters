@@ -4,11 +4,16 @@ import Image from 'next/image';
 import Link from 'next/link';
 import styled from 'styled-components';
 import WalletConnection from '../components/WalletConnection';
-import { useDeviceDetect } from '../hooks/useDeviceDetect';
 import { useEagerConnect } from '../hooks/useEagerConnect';
 import { BG_NORMAL, StyledLink, INTER_BOLD, INTER_BLACK } from '../themes';
+import LinkWrapper from '../components/LinkWrapper';
 
 const Root = styled.div`
+  display: block;
+
+  @media (max-width: 900px) {
+    display: none;
+  }
   display: flex;
   justify-content: space-between;
 `;
@@ -27,8 +32,19 @@ const LogoText = styled.p`
 `;
 
 const RootMobile = styled(Root)`
+  display: none;
+
+  @media (max-width: 900px) {
+    display: flex;
+  }
   align-items: center;
   margin: 1rem;
+`;
+
+const ActionsWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 `;
 
 const NavList = styled.ul`
@@ -73,7 +89,8 @@ const BurgerLine = styled.button`
 // TODO fade in out with styled components - find out how to use props with styled components
 const MobileNavMenu = styled.div`
   position: absolute;
-  top: 50px;
+  top: 60px;
+  left: 0;
   z-index: 20;
   width: 100%;
   height: 100%;
@@ -82,6 +99,7 @@ const MobileNavMenu = styled.div`
 
 const MobileNavList = styled.ul`
   margin-block-start: 4rem;
+  padding-inline-start: 0;
   font-family: ${INTER_BOLD};
 `;
 
@@ -102,51 +120,53 @@ const routes = [
 const Navbar = () => {
   const { chainId } = useWeb3React();
   const hasTried = useEagerConnect();
-  const isMobile = useDeviceDetect();
   const [isBurgerMenuOpen, setIsBurgerMenuOpen] = useState(false);
 
   // TODO WALLET CONNECTION ON MOBILE!
-  if (isMobile) {
-    console.log('ismobile');
-    return (
+  return (
+    <>
       <RootMobile>
-        <Image
-          height={'40px'}
-          width={'40px'}
-          src={`/logo/Logo.png`}
-          alt="moonpage"
-        />
-        {isMobile && !isBurgerMenuOpen && <WalletConnection />}
-        <BurgerButton onClick={() => setIsBurgerMenuOpen(!isBurgerMenuOpen)}>
-          <BurgerLine
-            style={
-              isBurgerMenuOpen
-                ? {
-                    transform: 'rotate(45deg) translate(8px, 8px)',
-                  }
-                : {}
-            }
+        <LinkWrapper url="/" target="_self">
+          <Image
+            height={'40px'}
+            width={'40px'}
+            src={`/logo/Logo.png`}
+            alt="moonpage"
           />
-          <BurgerLine
-            style={
-              isBurgerMenuOpen
-                ? {
-                    transform: 'translateX(-50px)',
-                    background: 'transparent',
-                  }
-                : {}
-            }
-          />
-          <BurgerLine
-            style={
-              isBurgerMenuOpen
-                ? {
-                    transform: 'rotate(-45deg) translate(8px, -8px)',
-                  }
-                : {}
-            }
-          />
-        </BurgerButton>
+        </LinkWrapper>
+        <ActionsWrapper>
+          {!isBurgerMenuOpen && <WalletConnection />}
+          <BurgerButton onClick={() => setIsBurgerMenuOpen(!isBurgerMenuOpen)}>
+            <BurgerLine
+              style={
+                isBurgerMenuOpen
+                  ? {
+                      transform: 'rotate(45deg) translate(8px, 8px)',
+                    }
+                  : {}
+              }
+            />
+            <BurgerLine
+              style={
+                isBurgerMenuOpen
+                  ? {
+                      transform: 'translateX(-50px)',
+                      background: 'transparent',
+                    }
+                  : {}
+              }
+            />
+            <BurgerLine
+              style={
+                isBurgerMenuOpen
+                  ? {
+                      transform: 'rotate(-45deg) translate(8px, -8px)',
+                    }
+                  : {}
+              }
+            />
+          </BurgerButton>
+        </ActionsWrapper>
         {isBurgerMenuOpen && (
           <MobileNavMenu>
             <MobileNavList>
@@ -164,30 +184,30 @@ const Navbar = () => {
           </MobileNavMenu>
         )}
       </RootMobile>
-    );
-  }
-  return (
-    <Root>
-      <LogoWrapper>
-        <Image
-          height={'80px'}
-          width={'80px'}
-          src={`/logo/Logo.png`}
-          alt="moonpage"
-        />
-        <LogoText>moonpage</LogoText>
-      </LogoWrapper>
-      <NavList>
-        {routes.map((route, idx) => (
-          <NavListItem key={idx}>
-            <Link href={route.path} passHref>
-              <StyledLink>{route.name}</StyledLink>
-            </Link>
-          </NavListItem>
-        ))}
-        <WalletConnection />
-      </NavList>
-    </Root>
+      <Root>
+        <LinkWrapper url="/" target="_self">
+          <LogoWrapper>
+            <Image
+              height={'80px'}
+              width={'80px'}
+              src={`/logo/Logo.png`}
+              alt="moonpage"
+            />
+            <LogoText>moonpage</LogoText>
+          </LogoWrapper>
+        </LinkWrapper>
+        <NavList>
+          {routes.map((route, idx) => (
+            <NavListItem key={idx}>
+              <Link href={route.path} passHref>
+                <StyledLink>{route.name}</StyledLink>
+              </Link>
+            </NavListItem>
+          ))}
+          <WalletConnection />
+        </NavList>
+      </Root>
+    </>
   );
 };
 

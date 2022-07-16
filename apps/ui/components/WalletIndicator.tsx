@@ -15,7 +15,7 @@ const ConnectionModalOpener = styled(PrimaryButton)`
   font-family: ${INTER_BOLD};
   padding: 1rem;
 
-  @media (max-width: 768px) {
+  @media (max-width: 900px) {
     padding: 0.5rem;
     margin-inline-end: 1rem;
   }

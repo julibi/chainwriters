@@ -158,7 +158,7 @@ const ContributorsForm = ({
           You can input their addresses, roles and shares of the funds raised from the Genesis Edition.
           Each share should be a number between 0 and 85. 
           You can specify up to 3. Keep in mind that the total of shares will be deducted from you own share.
-          15% are always going to the foundation.`}
+          15% are always going to the Moonpage project.`}
         </InputDescription>
         <CTAContainer>
           {contributorList.length ? (

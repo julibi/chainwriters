@@ -20,6 +20,10 @@ const Root = styled.div`
 const TypeWriterWrapper = styled.div`
   height: 100%;
   min-height: 500px;
+
+  @media (max-width: 900px) {
+    min-height: 400px;
+  }
 `;
 
 const BubbleWrapper = styled.div`

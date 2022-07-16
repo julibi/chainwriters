@@ -12,11 +12,6 @@ const Layout = ({ children }: LayoutProps) => {
     <div>
       <Navbar />
       {children}
-      <StickyBottom
-        text={
-          'Welcome! This page is WIP. Launch to Polygon Mainnet is planned for 1st August 2022!'
-        }
-      />
       <Footer />
     </div>
   );

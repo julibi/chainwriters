@@ -7,7 +7,6 @@ import MainSellingPointsSection from '../components/HomePage/MainSellingPointsSe
 import FAQSection from '../components/HomePage/FAQSection';
 import StartAnimation from '../components/StartAnimation';
 import HowItWorksSection from '../components/HomePage/HowItWorksSection';
-import RichText from '../components/Create/RichText';
 
 const Root = styled.section``;
 
@@ -22,6 +21,10 @@ const HeaderSection = styled.section`
   }
 `;
 
+const Padding = styled.div`
+  height: 3rem;
+`;
+
 export function Index() {
   const { account, chainId } = useWeb3React();
   const isMobile = useDeviceDetect();
@@ -31,6 +34,7 @@ export function Index() {
 
   return (
     <Root>
+      <Padding />
       <HeaderSection>
         <StartAnimation />
       </HeaderSection>

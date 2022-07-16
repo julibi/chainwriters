@@ -5,7 +5,6 @@ import {
   BG_DARK,
   FadeInBaseAnimation,
   PINK,
-  PLAIN_WHITE,
   INTER_BOLD,
   INTER_LIGHT,
 } from '../../themes';
@@ -30,6 +29,7 @@ const BlocksWrapper = styled.div`
 
   @media (max-width: 900px) {
     flex-direction: column;
+    align-items: center;
   }
 `;
 

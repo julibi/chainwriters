@@ -4,15 +4,22 @@ import styled from 'styled-components';
 interface LinkWrapperProps {
   children: ReactNode;
   url: string;
+  target?: '_blank' | '_self';
 }
 
 const Root = styled.a`
   color: inherit;
+  text-decoration: none;
+  display: flex;
 `;
 
-const LinkWrapper = ({ children, url }: LinkWrapperProps) => {
+const LinkWrapper = ({
+  children,
+  url,
+  target = '_blank',
+}: LinkWrapperProps) => {
   return (
-    <Root target="_blank" rel="noopener noreferrer" href={url}>
+    <Root target={target} rel="noopener noreferrer" href={url}>
       {children}
     </Root>
   );

@@ -1,10 +1,13 @@
 import React from 'react';
 import Image from 'next/image';
 import styled from 'styled-components';
-import { BG_DARK, PLAIN_WHITE, INTER_BOLD } from '../themes';
+import { BG_DARK, PLAIN_WHITE, INTER_BOLD, DISABLED_WHITE } from '../themes';
+
 const Root = styled.div`
   display: flex;
+  flex-direction: column;
   justify-content: center;
+  align-items: center;
   background-color: ${BG_DARK};
   padding: 3rem;
 `;
@@ -12,6 +15,7 @@ const Root = styled.div`
 const Content = styled.div`
   width: 80%;
   display: flex;
+
   justify-content: space-evenly;
 `;
 
@@ -29,6 +33,23 @@ const SocialMediaName = styled.span`
 `;
 
 const StyledLink = styled.a``;
+
+const Copyright = styled.div`
+  width: 80%;
+  margin-block-start: 2rem;
+  padding-block-start: 2rem;
+  text-align: center;
+  border-block-start: 1px ${DISABLED_WHITE} solid;
+  color: ${DISABLED_WHITE};
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;
+
+const Blockspan = styled.span`
+  display: inline-block;
+`;
 
 const Footer = () => {
   return (
@@ -74,6 +95,16 @@ const Footer = () => {
           <SocialMediaName>Medium</SocialMediaName>
         </SocialMediaLinkWrapper>
       </Content>
+      <Copyright>
+        {' '}
+        <Image
+          height={'100px'}
+          width={'100px'}
+          src={`/logo/Logo.svg`}
+          alt="moonpage"
+        />
+        <Blockspan>Copyright 2022 By Moonpage</Blockspan>
+      </Copyright>
     </Root>
   );
 };

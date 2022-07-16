@@ -39,19 +39,33 @@ const FAQSection = () => {
               <LinkWrapper url="https://metamask.io/download/">
                 MetaMask
               </LinkWrapper>
-              . It is a browser wallet that is easy and fast to create and use.
-              You can also find a step by step guide{' '}
+              . It is a browser wallet that is easy to create and use. You can
+              find a step by step guide on how to setup a wallet{' '}
               <LinkWrapper url="https://medium.com/robotos/how-to-setup-a-crypto-wallet-to-buy-nfts-4a5ce37b8159">
                 here
+              </LinkWrapper>
+              .
+              <br />
+              Also, it would be good to have some MATIC tokens in your wallet.
+              MATIC is the coin used on the Polygon Network. You can purchase
+              MATIC on a dex like{' '}
+              <LinkWrapper url="https://app.uniswap.org/#/swap?chain=mainnet">
+                UniSwap
+              </LinkWrapper>{' '}
+              or a centralized exchange like{' '}
+              <LinkWrapper url="https://www.coinbase.com/">
+                Coinbase
               </LinkWrapper>
               .
             </p>
           </>
         </MoreDetails>
         <br></br>
-        <MoreDetails title={'NF... tea.. wut?!'}>
+        <MoreDetails title={'What are NFTs'}>
           <>
             <p>
+              If you haven't heard of NFTs yet, you have been living under a
+              rock! Juli, continue here.
               <LinkWrapper url="https://blog.opensea.io/guides/non-fungible-tokens/">
                 This
               </LinkWrapper>{' '}
@@ -72,12 +86,11 @@ const FAQSection = () => {
         <MoreDetails title={'Why Polygon?'}>
           <>
             <p>
-              Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
-              nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam
-              erat, sed diam voluptua. Polygon is an amazing scaling solution
-              for the Ethereum blockchain that keeps transaction fees low
-              without sacrificing on security. Learn more about it{' '}
+              Polygon is a popular Ethereum Layer 2 scaling solution, that
+              allows users to interact with dApps at low transaction fees
+              without compromising on security. Read more about Polygon{' '}
               <LinkWrapper url="https://polygon.technology/">here</LinkWrapper>.
+              <br />
               Moonpage will be brought to more networks in the future.
             </p>
           </>

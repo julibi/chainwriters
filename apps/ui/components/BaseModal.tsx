@@ -1,6 +1,12 @@
 import { ReactChild } from 'react';
 import styled from 'styled-components';
-import { BASE_BOX_SHADOW, BASE_BORDER_RADIUS, BaseButton, BG_NORMAL, Cross } from '../themes';
+import {
+  BASE_BOX_SHADOW,
+  BASE_BORDER_RADIUS,
+  BaseButton,
+  BG_NORMAL,
+  Cross,
+} from '../themes';
 
 const Root = styled.div`
   position: fixed;
@@ -27,16 +33,6 @@ const Root = styled.div`
       filter: blur(0);
     }
   }
-  
-  /* global */
-  @media only screen and (max-width: 768px) {
-    .content {
-      border-radius: 0;
-      height: 100%;
-      width: 100%;
-      justify-content: center;
-    }
-  }
 `;
 
 const Content = styled.div`
@@ -50,7 +46,14 @@ const Content = styled.div`
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  box-shadow: ${BASE_BOX_SHADOW}
+  box-shadow: ${BASE_BOX_SHADOW};
+
+  @media (max-width: 900px) {
+    border-radius: 0;
+    height: 100%;
+    width: 100%;
+    justify-content: center;
+  }
 `;
 
 const CloseButton = styled(BaseButton)`
@@ -68,31 +71,30 @@ const CloseCross = styled(Cross)`
   opacity: 1;
   margin-left: 0;
 
-  :before, :after {
+  :before,
+  :after {
     left: 10px;
   }
 `;
 
 export interface BaseModalProps {
-  onClose?:() => void;
+  onClose?: () => void;
   children: ReactChild;
 }
 
-const BaseModal = ({children, onClose}: BaseModalProps) => {
+const BaseModal = ({ children, onClose }: BaseModalProps) => {
   return (
     <Root>
       <Content>
-        {onClose &&
-          <CloseButton
-            onClick={onClose}
-          >
+        {onClose && (
+          <CloseButton onClick={onClose}>
             <CloseCross />
           </CloseButton>
-        }
+        )}
         {children}
       </Content>
     </Root>
   );
-}
+};
 
 export default BaseModal;

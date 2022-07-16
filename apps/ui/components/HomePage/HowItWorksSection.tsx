@@ -212,12 +212,7 @@ const HowItWorksSection = () => {
               // don't have MATIC yet?
               // why polygon? coz cheap, fast and secure - might launch on more networks in the future
               description={[
-                `After connecting your wallet, go to the Create tab in the navigation.
-              You will be guided through the process step by step.`,
-                `Set the title, input the text and set the amount of nfts
-              you want to sell for the first edition, called Genesis Edition.
-              Remember that you might want to claim some NFTs for yourself
-              and that 2 NFTs always go to Moonpage automatically.`,
+                `After connecting your wallet, go to the Create tab. Set the title, the text and the amount of NFTs in your first edition (Genesis Edition) – we guide you through the process step by step.`,
               ]}
             />
             <InstructionComp
@@ -226,15 +221,9 @@ const HowItWorksSection = () => {
               onClick={() => setAuthorInstructionsStep(2)}
               title="Configure"
               description={[
-                `Next, set the price. Each NFT of the Genesis Edition will be sold in dutch auction that can take up to 24 hours.
-              The price you set is the starting price and during the course of the day it goes down.`,
-                `Once an edition sells out, you will be able to unlock the next edition and sell more.
-                But only the Genesis Edition is sold in a dutch auction.
-              Following editions will be sold with fixed minting price that you determine.`,
-                `Confirm and voila, your project is created!
-                The next steps are optional but recommended.
-                Set a cover image, this is what will be shown on marketplaces such as Opensea. Specify a genre and write a blurb,
-                to give potential collectors insight to your text before minting.`,
+                `Set the price for your NFTs. Only your Genesis Edition will be sold in a dutch auction that can take up to 24 hours, means: you set the starting price and then it goes down continually, until the auction is over.`,
+                `Once it sells out, you can unlock the next edition. In all following editions you can set a fixed minting price. Confirm and voilà, your project is created! `,
+                `Then, set a cover image, this is what will be shown on marketplaces such as Opensea. Specify a genre and write a blurb, to give potential collectors insight to your art before minting.`,
               ]}
             />
             <InstructionComp
@@ -243,12 +232,9 @@ const HowItWorksSection = () => {
               onClick={() => setAuthorInstructionsStep(3)}
               title="Claim your own NFTs"
               description={[
-                `Almost there. Before you can trigger the auction, you have to claim an amount of the NFTs for yourself.
-                This transaction will also transfer 2 NFTs to the Moonpage project.`,
-                `Next, you can add up to 3 contributors. This is optional.`,
-                `An example: You are sharing income with an editor and a cover artist. Enter their addresses, roles and shares.
-                 After an edition sells out, the revenue will be split and transferred like this:`,
-                `editor - 15%, cover-artist - 5%, Moonpage project - 15%, YOU – 65%.`,
+                `Before the auction starts you have to claim some NFTs for yourself. This transaction will also transfer 1 NFT to the Moonpage project.`,
+                `Additionally, 15% of the collection revenue will go to the Moonpage project.`,
+                `Optional: You can add up to 3 contributors. Maybe you want to share your income with an editor, a cover artist or a translator. Enter their wallet addresses, roles and shares. After an edition sells out, the revenue will be split, for example like this: editor - 15%, cover-artist - 5%, Moonpage project - 15%, YOU – 65%.`,
               ]}
             />
             <InstructionComp
@@ -257,8 +243,7 @@ const HowItWorksSection = () => {
               onClick={() => setAuthorInstructionsStep(4)}
               title="Start Selling!"
               description={[
-                `After finishing the creation flow, you are forwarded to your project's page. Scroll down and click on "Trigger Auctions".`,
-                `You can also find your project under "My bookshelf" in the navigation.`,
+                `After finishing the creation flow, you are forwarded to your project's page. Scroll down and click on "Trigger Auction". You can also find your project under the tab "My bookshelf“, and contributors will also see their projects here.`,
                 `Congratulations! You have published your text to the Blockchain. Seriously... THIS IS BIG. Go tell everyone to mint your writing!`,
               ]}
             />
@@ -283,7 +268,7 @@ const HowItWorksSection = () => {
               onClick={() => setCollectorInstructionsStep(1)}
               title="Browse Projects"
               description={[
-                `After connecting your wallet, click on "Projects" in the navigation.`,
+                `After connecting your wallet, click on the tab "Projects". You can search or filter for all kinds of texts here. Top projects are listed on the homepage right below this section.`,
                 `You can search or filter for all kinds of projects here. You can also find top projects on the homepage right below this section.`,
               ]}
             />
@@ -293,12 +278,8 @@ const HowItWorksSection = () => {
               onClick={() => setCollectorInstructionsStep(2)}
               title="Mint"
               description={[
-                `Every project is an ERC-1155 collection and each edition has a different ID,
-                meaning that all Genesis Edition NFTs have the token ID 1, the second edition NFTs have the ID 2 etc.`,
-                `Only the Genesis Edition NFTs are sold over a dutch auction. On a project's page click on the big "Get Current Price"-button.
-                This will open a modal with the current price and the option to mint.
-                If it is not a Genesis Edition, you will see the mint button right away. Click and confirm the transaction.`,
-                `After a while the transaction will go through and tataaa, you are the owner of a literature NFT!`,
+                `Only the Genesis Edition NFTs are sold in a dutch auction. On a project's page click on the "Get Current Price" Button and mint, if it’s not a Genesis Edition, you can mint directly.`,
+                `Confirm the transaction, wait for a moment and tadaaa! You‘re the owner of a literature NFT!`,
               ]}
             />
             <InstructionComp
@@ -307,8 +288,7 @@ const HowItWorksSection = () => {
               onClick={() => setCollectorInstructionsStep(3)}
               title="My Bookshelf"
               description={[
-                `As an NFT owner, you see a little "READ" button on the cover of the matching project's page. Click on it to read.`,
-                `Alternatively, you can go to "My Bookshelf", where you find a list of the NFTs you own, the ones you contributed to and the ones you created.`,
+                `As NFT owner, you see a little "READ" button on the cover of the matching project's page. Click on it to read. Or you can go to "My Bookshelf", where you find a list of the NFTs you own.`,
                 `Further features for NFT + Genesis Edition NFT owners will be unlocked in the future, so hold on tight!`,
               ]}
             />

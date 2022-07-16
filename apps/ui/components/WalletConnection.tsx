@@ -21,6 +21,7 @@ const ContentWrapper = styled.div`
 
 const Header = styled.h2`
   font-family: ${INTER_BOLD};
+  text-align: center;
 `;
 
 const SubHeader = styled.h3`
