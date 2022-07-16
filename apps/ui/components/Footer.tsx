@@ -82,6 +82,7 @@ const Footer = () => {
             width={'30px'}
             src={'/Discord.svg'}
             alt={'Twitter'}
+            priority
           />
           <SocialMediaName>Discord</SocialMediaName>
         </SocialMediaLinkWrapper>
@@ -95,6 +96,7 @@ const Footer = () => {
             width={'28px'}
             src={'/Medium.svg'}
             alt={'Twitter'}
+            priority
           />
           <SocialMediaName>Medium</SocialMediaName>
         </SocialMediaLinkWrapper>
@@ -108,6 +110,7 @@ const Footer = () => {
             width={'28px'}
             src={'/Team.svg'}
             alt={'Team'}
+            priority
           />
           <SocialMediaName>Team</SocialMediaName>
         </SocialMediaLinkWrapper>
@@ -119,6 +122,7 @@ const Footer = () => {
           width={'100px'}
           src={`/logo/Logo.svg`}
           alt="moonpage"
+          priority
         />
         <Blockspan>Copyright 2022 By Moonpage</Blockspan>
       </Copyright>

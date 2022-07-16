@@ -132,6 +132,7 @@ const Navbar = () => {
             width={'40px'}
             src={`/logo/Logo.png`}
             alt="moonpage"
+            priority
           />
         </LinkWrapper>
         <ActionsWrapper>
@@ -192,6 +193,7 @@ const Navbar = () => {
               width={'80px'}
               src={`/logo/Logo.png`}
               alt="moonpage"
+              priority
             />
             <LogoText>moonpage</LogoText>
           </LogoWrapper>

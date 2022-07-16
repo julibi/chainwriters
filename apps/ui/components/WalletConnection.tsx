@@ -187,6 +187,7 @@ const WalletConnection = () => {
                   width={50}
                   height={35}
                   alt="Walletconnect icon"
+                  priority
                 />
               </div>
             </ConnectionButton>
