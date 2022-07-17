@@ -79,10 +79,10 @@ function CustomApp({ Component, pageProps }: AppProps) {
         />
         <meta name="theme-color" content="#1B1E28" />
         <meta property="og:site_name" content="Moonpage" />
-        <meta property="og:title" content="Literature NFTs" />
+        <meta property="og:title" content="Text NFTs" />
         <meta
           property="og:description"
-          content="Start a literature movement on the blockchain. Create and collect text NFTs."
+          content="Create and collect text NFTs. Start a literature movement on the blockchain. "
         />
         <meta
           property="og:image"
