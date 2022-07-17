@@ -32,6 +32,11 @@ const FAQSection = () => {
       </SectionTitleWrapper>
       <br></br>
       <MoreDetailsWrapper>
+        <MoreDetails title={'When will Moonpage launch?'}>
+          <>
+            <p>The Mainnet launch is planned for the beginning of August.</p>
+          </>
+        </MoreDetails>
         <MoreDetails title={'What do I need to interact with the platform?'}>
           <>
             <p>
@@ -61,24 +66,48 @@ const FAQSection = () => {
           </>
         </MoreDetails>
         <br></br>
-        <MoreDetails title={'What are NFTs'}>
+        <MoreDetails title={'What are NFTs?'}>
           <>
             <p>
-              If you haven't heard of NFTs yet, you have been living under a
-              rock! Juli, continue here.
-              <LinkWrapper url="https://blog.opensea.io/guides/non-fungible-tokens/">
-                This
+              If you haven't heard of NFTs yet,{' '}
+              <LinkWrapper url="https://www.theverge.com/22310188/nft-explainer-what-is-blockchain-crypto-art-faq">
+                this
               </LinkWrapper>{' '}
               is a great introduction, if you want to understand what NFTs are.
+              <br />
+              If you like a slightly more in depth technical introduction, read{' '}
+              <LinkWrapper url="https://blog.opensea.io/guides/non-fungible-tokens/">
+                this
+              </LinkWrapper>
+              .
             </p>
           </>
         </MoreDetails>
         <br></br>
-        <MoreDetails title={'Why collect literature NFTs?'}>
+        <MoreDetails title={'Why text NFTs?'}>
           <>
             <p>
-              Fun, Support Writers, Access, show off ur bookshelf (show off who
-              u are!)
+              PFP NFTs have already taken over the world in summer 2021. But
+              NFTs are still a relatively new phenomenon. More areas can be
+              explored with the power of NFTs.
+              <br />
+              Let's take the example of a <i>literature NFT</i>.
+              <br />
+              For creators:
+              <br />
+              Text NFTs can support writers financially and help them gather a
+              community around them.
+              <br />
+              For collectors:
+              <br />
+              Of course they can be used to unlock exclusive content. But they
+              can also be collected and shown off in a digital bookshelf. NFT
+              owners can join communities with them. They can even give access
+              to exclusive events, or a right to a DAO vote considering the
+              project. As an early supporter you could get a share of the
+              royalties of the project. Possibilities are endless! You are one
+              of the pioneers exploring these possibilities and Moonpage is the
+              tool you can use for it.
             </p>
           </>
         </MoreDetails>
@@ -91,28 +120,59 @@ const FAQSection = () => {
               without compromising on security. Read more about Polygon{' '}
               <LinkWrapper url="https://polygon.technology/">here</LinkWrapper>.
               <br />
-              Moonpage will be brought to more networks in the future.
+              The barrier to create and collect NFTs should be low. Hence
+              Moonpage is aiming to keep the transaction at a minimum. At the
+              same time, we want to ensure maximum security for text NFTs. This
+              is why we chose Polygon as the first network on which projects can
+              launch. It meets all the criteria mentioned and furthermore is a
+              broadly adopted network.
+              <br />
+              Moonpage will be brought to more networks in the future. Voice
+              your opinion about the next favorable network in our Discord
+              Channel! There might even be a DAO vote about this in the near
+              future...
+              <br />
             </p>
           </>
         </MoreDetails>
         <br></br>
         <MoreDetails
           title={
-            'When I publish a text with Moonpage, can I still be published by a publishing house?'
+            'When launching a text NFT on Moonpage as an author, can my text still be published by a publishing house?'
           }
         >
           <>
-            <p>Mention IPFS! Transparent Code.</p>
+            <p>
+              This depends on the deal you have with your publishing house or
+              agency. If the publishing house gets the rights for your text in
+              all forms (print AND digital), don't publish the text on Moonpage
+              directly. Instead, reach out to us first!
+              <br />
+              Generally speaking: even if you have a contract with a publisher
+              already, it is possible from our side.
+              <br />
+              We are open to collaborate with publishers. Authors can launch
+              their text as NFT collection and add the publishers as
+              contributors. In this way, everyone profits.
+            </p>
           </>
         </MoreDetails>
         <br></br>
-        <MoreDetails title={'Rights and Ownership'}>
+        <MoreDetails title={'Copyright and Ownership'}>
           <>
-            <p>If anything we pause the according ERC-1155 contract.</p>
+            <p>
+              Neither Moonpage nor NFT holders own text. The ownership remains
+              with the creators. Moonpage accepts no liability for copyright
+              infringements. Please inform us via mail when you notice an
+              infringement. Moonpage will investigate and in case of
+              confirmation, we will immediately pause the NFT contract. Pausing
+              disables any interaction with the contract and freezes the funds
+              in it.
+            </p>
           </>
         </MoreDetails>
         <br></br>
-        <MoreDetails title={'Who is building Moonpage'}>
+        <MoreDetails title={'Who is building Moonpage?'}>
           <>
             <p>
               <LinkWrapper url="/about#founders">Us</LinkWrapper> :)
@@ -123,16 +183,10 @@ const FAQSection = () => {
         <MoreDetails title={'What is next?'}>
           <>
             <p>
-              Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
-              nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam
-              erat, sed diam voluptua. At vero eos et accusam et justo duo
-              dolores et ea rebum. Stet clita kasd gubergren, no sea takimata
-              sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit
-              amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
-              invidunt ut labore et dolore magna aliquyam erat, sed diam
-              voluptua. At vero eos et accusam et justo duo dolores et ea rebum.
-              Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum
-              dolor sit amet.
+              The launch to Polygon Mainnet of course! We will soon publish a
+              Roadmap on this landing page. But you will be able to connect with
+              the team on Discord and Twitter. We are eager to hear what you
+              like to see as the next feature.
             </p>
           </>
         </MoreDetails>

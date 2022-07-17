@@ -83,7 +83,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
         <meta property="og:title" content="Literature NFTs" />
         <meta
           property="og:description"
-          content="Start a literature movement on the blockchain. Create and collect NFTs."
+          content="Start a literature movement on the blockchain. Create and collect text NFTs."
         />
         <meta
           property="og:image"

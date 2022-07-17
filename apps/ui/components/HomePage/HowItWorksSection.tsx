@@ -200,7 +200,7 @@ const HowItWorksSection = () => {
         <SectionTitle>How does it work?</SectionTitle>
       </SectionTitleWrapper>
       <Content>
-        <NavButton disabled>Authors</NavButton>
+        <NavButton disabled>Creators</NavButton>
         <Wrapper>
           <Authors>
             <InstructionComp
@@ -221,7 +221,7 @@ const HowItWorksSection = () => {
               onClick={() => setAuthorInstructionsStep(2)}
               title="Configure"
               description={[
-                `Set the price for your NFTs. Only your Genesis Edition will be sold in a dutch auction that can take up to 24 hours, means: you set the starting price and then it goes down continually, until the auction is over.`,
+                `Set the price for your NFTs. The first edition of all collections are called Genesis Edition. Only your Genesis Edition will be sold in a dutch auction that can take up to 24 hours, means: you set the starting price and then it goes down continually, until the auction is over.`,
                 `Once it sells out, you can unlock the next edition. In all following editions you can set a fixed minting price. Confirm and voilà, your project is created! `,
                 `Then, set a cover image, this is what will be shown on marketplaces such as Opensea. Specify a genre and write a blurb, to give potential collectors insight to your art before minting.`,
               ]}
@@ -248,7 +248,7 @@ const HowItWorksSection = () => {
               ]}
             />
           </Authors>
-          <VideoWrapper>
+          {/* <VideoWrapper>
             <Video
               url={'author_step_2.mov'}
               controls={false}
@@ -257,7 +257,7 @@ const HowItWorksSection = () => {
               playing
               playsinline
             />
-          </VideoWrapper>
+          </VideoWrapper> */}
         </Wrapper>
         <NavButton disabled>Collectors</NavButton>
         <CollectorsWrapper>
@@ -269,7 +269,6 @@ const HowItWorksSection = () => {
               title="Browse Projects"
               description={[
                 `After connecting your wallet, click on the tab "Projects". You can search or filter for all kinds of texts here. Top projects are listed on the homepage right below this section.`,
-                `You can search or filter for all kinds of projects here. You can also find top projects on the homepage right below this section.`,
               ]}
             />
             <InstructionComp
@@ -278,8 +277,8 @@ const HowItWorksSection = () => {
               onClick={() => setCollectorInstructionsStep(2)}
               title="Mint"
               description={[
-                `Only the Genesis Edition NFTs are sold in a dutch auction. On a project's page click on the "Get Current Price" Button and mint, if it’s not a Genesis Edition, you can mint directly.`,
-                `Confirm the transaction, wait for a moment and tadaaa! You‘re the owner of a literature NFT!`,
+                `The first edition of all collections are called Genesis Edition. Only the Genesis Edition NFTs are sold in a dutch auction. On a project's page click on the "Get Current Price" Button and mint, if it’s not a Genesis Edition, you can mint directly.`,
+                `Confirm the transaction, wait for a moment and tadaaa! You own your first text NFT!`,
               ]}
             />
             <InstructionComp
@@ -293,7 +292,7 @@ const HowItWorksSection = () => {
               ]}
             />
           </Collectors>
-          <VideoWrapper>
+          {/* <VideoWrapper>
             <Video
               url={'author_step_2.mov'}
               controls={false}
@@ -302,7 +301,7 @@ const HowItWorksSection = () => {
               playing
               playsinline
             />
-          </VideoWrapper>
+          </VideoWrapper> */}
         </CollectorsWrapper>
       </Content>
     </Root>

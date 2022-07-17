@@ -195,7 +195,7 @@ const MyBookShelf = () => {
         <Section>
           <SubHeader>My NFTs</SubHeader>
           {allNftsOfUser.length < 1 && (
-            <BlockSpan>You do not own any Literature NFTs.</BlockSpan>
+            <BlockSpan>You do not own any Text NFTs.</BlockSpan>
           )}
           {allNftsOfUser.length > 0 &&
             allNftsOfUser.map((nft, idx) => (

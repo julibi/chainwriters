@@ -21,11 +21,11 @@ const Root = styled.div`
   padding: 1rem;
 
   border-radius: ${BASE_BORDER_RADIUS};
-  box-shadow: ${BASE_BOX_SHADOW}
+  box-shadow: ${BASE_BOX_SHADOW};
 
-  :hover {
-    cursor: pointer;
-  }  
+  // :hover {
+  //   cursor: pointer;
+  // }
 `;
 
 const ImageWrapper = styled.div`
@@ -85,8 +85,8 @@ const ProjectItem = ({
 }: ProjectItemTypes) => {
   const router = useRouter();
   const handleClick = (e) => {
-    e.preventDefault();
-    router.push(`projects/${address}`);
+    // e.preventDefault();
+    // router.push(`projects/${address}`);
   };
 
   return (

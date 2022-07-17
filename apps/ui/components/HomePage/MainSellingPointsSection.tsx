@@ -97,14 +97,14 @@ const MainSellingPointsSection = () => {
       </SectionTitleWrapper>
       <BlocksWrapper>
         <AuthorBlock>
-          <SubHeader>Authors</SubHeader>
+          <SubHeader>Creators</SubHeader>
           <Text>{'Publish and sell your text as NFT collection'}</Text>
           <Text>{'Receive creator royalties'}</Text>
           <Text>{'Create a community of readers and connect with it'}</Text>
         </AuthorBlock>
         <ReaderBlock>
           <SubHeader>Collectors</SubHeader>
-          <Text>{'Collect literature NFT gems and unlock the text'}</Text>
+          <Text>{'Collect text NFT gems and unlock the content'}</Text>
           <Text>{'Be part of an exclusive community'}</Text>
           <Text>{'(Beta) Vote with the NFTs'}</Text>
         </ReaderBlock>

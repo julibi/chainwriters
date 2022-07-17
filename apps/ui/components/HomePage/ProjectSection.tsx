@@ -8,6 +8,8 @@ import { ProjectItem } from '../ProjectItem';
 export const SectionTitleWrapper = styled.div`
   display: flex;
   justify-content: center;
+  flex-direction: column;
+  align-items: center;
 `;
 
 export const SectionTitle = styled.h1`
@@ -35,6 +37,7 @@ const ProjectSection = () => {
     <>
       <SectionTitleWrapper>
         <SectionTitle>Top Projects</SectionTitle>
+        <span>(These projects are mockups)</span>
       </SectionTitleWrapper>
       {loading && !data && <Loading height={530} />}
       <ProjectList>
