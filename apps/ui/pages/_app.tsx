@@ -71,7 +71,6 @@ function CustomApp({ Component, pageProps }: AppProps) {
     <>
       <Head>
         <title>Moonpage</title>
-
         <meta charSet="utf-8" />
         <meta property="og:locale" content="en_US" />
         <meta
@@ -93,11 +92,6 @@ function CustomApp({ Component, pageProps }: AppProps) {
         <meta property="og:url" content="http://www.moonpage.io" />
         <meta property="og:type" content="website" />
         <meta property="og:locale" content="en_US" />
-        <link
-          href="https://fonts.googleapis.com/icon?family=Material+Icons"
-          rel="stylesheet"
-        />
-        <link rel="shortcut icon" href="/logo/favicon.ico" />
       </Head>
       <GlobalStyle />
       <Web3ReactProvider getLibrary={getLibrary}>

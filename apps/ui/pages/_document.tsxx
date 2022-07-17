@@ -1,3 +1,5 @@
+// original document. kept for reference
+
 import Document from 'next/document';
 import { ServerStyleSheet } from 'styled-components';
 
