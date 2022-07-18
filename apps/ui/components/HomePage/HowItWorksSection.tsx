@@ -212,7 +212,7 @@ const HowItWorksSection = () => {
               // don't have MATIC yet?
               // why polygon? coz cheap, fast and secure - might launch on more networks in the future
               description={[
-                `After connecting your wallet, go to the Create tab. Set the title, the text and the amount of NFTs in your first edition (Genesis Edition) – we guide you through the process step by step.`,
+                `After connecting your wallet, go to the Create tab. Set the title, the text and the amount of NFTs in your first edition (Genesis Edition) – we guide you through the process step by step. You will find your project under the "My bookshelf“ tab later.`,
               ]}
             />
             <InstructionComp
@@ -222,8 +222,8 @@ const HowItWorksSection = () => {
               title="Configure"
               description={[
                 `Set the price for your NFTs. The first edition of all collections are called Genesis Edition. Only your Genesis Edition will be sold in a dutch auction that can take up to 24 hours, means: you set the starting price and then it goes down continually, until the auction is over.`,
-                `Once it sells out, you can unlock the next edition. In all following editions you can set a fixed minting price. Confirm and voilà, your project is created! `,
-                `Then, set a cover image, this is what will be shown on marketplaces such as Opensea. Specify a genre and write a blurb, to give potential collectors insight to your art before minting.`,
+                `Once it sells out, you can unlock the next edition. In all following editions you can set a fixed minting price.`,
+                `Next, set a cover image. This is what will be shown on marketplaces such as OpenSea. Specify a genre and write a blurb, to give potential collectors insight to your art before minting. Confirm and voilà, your project is created!`,
               ]}
             />
             <InstructionComp
@@ -232,8 +232,7 @@ const HowItWorksSection = () => {
               onClick={() => setAuthorInstructionsStep(3)}
               title="Claim your own NFTs"
               description={[
-                `Before the auction starts you have to claim some NFTs for yourself. This transaction will also transfer 1 NFT to the Moonpage project.`,
-                `Additionally, 15% of the collection revenue will go to the Moonpage project.`,
+                `Before the auction starts you have to claim some NFTs for yourself. This transaction will transfer 1 NFT to the Moonpage project and also 15% of the collection revenue.`,
                 `Optional: You can add up to 3 contributors. Maybe you want to share your income with an editor, a cover artist or a translator. Enter their wallet addresses, roles and shares. After an edition sells out, the revenue will be split, for example like this: editor - 15%, cover-artist - 5%, Moonpage project - 15%, YOU – 65%.`,
               ]}
             />
@@ -243,8 +242,8 @@ const HowItWorksSection = () => {
               onClick={() => setAuthorInstructionsStep(4)}
               title="Start Selling!"
               description={[
-                `After finishing the creation flow, you are forwarded to your project's page. Scroll down and click on "Trigger Auction". You can also find your project under the tab "My bookshelf“, and contributors will also see their projects here.`,
-                `Congratulations! You have published your text to the Blockchain. Seriously... THIS IS BIG. Go tell everyone to mint your writing!`,
+                `After finishing the creation flow, you are forwarded to your project's page. Scroll down and click on "Trigger Auction".`,
+                `Congratulations! You have published your text to the Blockchain. Seriously... THIS IS BIG. Go tell everyone!`,
               ]}
             />
           </Authors>
@@ -268,7 +267,7 @@ const HowItWorksSection = () => {
               onClick={() => setCollectorInstructionsStep(1)}
               title="Browse Projects"
               description={[
-                `After connecting your wallet, click on the tab "Projects". You can search or filter for all kinds of texts here. Top projects are listed on the homepage right below this section.`,
+                `After connecting your wallet, click on the "Projects" tab. You can search or filter for all kinds of texts here. Top projects are listed on the homepage right above this section.`,
               ]}
             />
             <InstructionComp
@@ -277,7 +276,7 @@ const HowItWorksSection = () => {
               onClick={() => setCollectorInstructionsStep(2)}
               title="Mint"
               description={[
-                `The first edition of all collections are called Genesis Edition. Only the Genesis Edition NFTs are sold in a dutch auction. On a project's page click on the "Get Current Price" Button and mint, if it’s not a Genesis Edition, you can mint directly.`,
+                `The first edition of all collections are called Genesis Edition. Only the Genesis Edition NFTs are sold in a dutch auction. On a project's page click on the "Get Current Price" Button and mint, if it’s not a Genesis Edition, you can click on "mint" right away.`,
                 `Confirm the transaction, wait for a moment and tadaaa! You own your first text NFT!`,
               ]}
             />
@@ -288,7 +287,7 @@ const HowItWorksSection = () => {
               title="My Bookshelf"
               description={[
                 `As NFT owner, you see a little "READ" button on the cover of the matching project's page. Click on it to read. Or you can go to "My Bookshelf", where you find a list of the NFTs you own.`,
-                `Further features for NFT + Genesis Edition NFT owners will be unlocked in the future, so hold on tight!`,
+                `Further features for NFT owners will be unlocked in the future, so hold on tight!`,
               ]}
             />
           </Collectors>

@@ -158,31 +158,28 @@ const About = () => {
       <Content>
         <QAWrapper>
           <SubHeader>Why Text NFTs?</SubHeader>
-          <Text>{`What if you, as a writer, could publish your writings, earn the lion share, receive royalties and create communities around your work – all of this settled in a DAO, where the rules are coded in an immutable ledger?`}</Text>
+          <Text>{`What if you, as a writer, could publish your writings, earn the lion share, receive royalties and create communities around your work – all of this settled in a smart contract, where the rules are coded in an immutable ledger?`}</Text>
           <Text>{`There is an insane amount of visual digital collectibles but text NFTs aren’t as common yet – the flashy avantgarde among writers has just started to use the blockchain to publish their art. `}</Text>
-          <Text>{`Instead of struggling with the traditional bookmarket and its gatekeepers you can experiment with new digital forms and keep total control over the whole process. Choose your own collaborators, price, number of copies and form of your texts and be part of a web 3 literary movement.`}</Text>
-          <Text>{`And NFT collectors beware: you never know if there’s a hidden J.K. Rowling or Stephen King among these web 3 poets … Browse projects, read brand new stuff, get your literature NFTs of hidden future stars and see them moon! Who knows? You could be owning a next gen blue chip NFT.`}</Text>
+          <Text>{`Instead of struggling with the traditional bookmarket and its gatekeepers you can experiment with new digital forms and keep total control over the whole process. Choose your own collaborators, price, number of copies and form of your texts and be part of a web3 literary movement.`}</Text>
+          <Text>{`And NFT collectors beware: you never know if there’s a hidden J.K. Rowling or Stephen King among these web3 poets … Browse projects, read brand new stuff, get your text NFTs of hidden future stars and see them moon! Who knows? You could be owning a next gen blue chip NFT.`}</Text>
         </QAWrapper>
         <QAWrapper>
           <SubHeader>Why Moonpage?</SubHeader>
-          <Text>{`Using Moonpage is easy – there’s a simple creation flow and we also guide you through the steps. If you’re a literal bookworm and don’t know the web3 space so well, no worries, we got ya!`}</Text>
-          <Text>{`Since it‘s the only all-text NFT platform that combines minting and selling you don’t have to switch to other spaces. You create and sell all in one place.`}</Text>
-          <Text>{`And you’ll be among kindred spirits – we want to build a strong community since writing can be a very lonely business. So don’t be shy, visit our Dischord and Twitter Channel and get connected to other poets, literature lovers and collectors. `}</Text>
-          <Text>{`And this is just the beginning of this community… in the future we want to explore more innovative ways how we can connect writers, readers and blockchain technology. Stay tuned :) – and please... don't sleep on it!`}</Text>
+          <Text>{`Using Moonpage is easy – there’s a simple creation flow and we also guide you through the steps. If you’re a literal bookworm and don’t know the web3 space so well, no worries, we got ya! It‘s the only all-text NFT launchpad that empowers you to create and sell, all in one place.`}</Text>
+          <Text>{`And you’ll be among kindred spirits – we want to build a strong community since writing can be a very lonely business. So don’t be shy, visit our Discord and Twitter Channel and get connected to other poets, literature lovers and collectors. `}</Text>
+          <Text>{`This is just the beginning of this community. In the future we want to find more innovative ways to connect writers, readers and blockchain technology. Stay tuned and please don't sleep on it!`}</Text>
         </QAWrapper>
         <QAWrapper>
           <SubHeader>Our Vision</SubHeader>
           <Text>
             {/* sehr beschränkt auf die Autoren */}
-            <PunchLine>
-              A breaking ground for the literature of the future
-            </PunchLine>
+            <PunchLine>The tokenization of literature</PunchLine>
             <br />
           </Text>
           <Text>{`As much as we love traditional books, we believe there are many
             forms in which literature can be explored. Publishing houses are
             doing a great job finding and forming talent and maintaining a high
-            level of quality, but they are also strong gatekeepers.`}</Text>
+            level of quality, but they can be gatekeepers.`}</Text>
           <Text>{`A lot of
             writers – especially young ones – struggle to find a platform for
             their writing. „Gifted, bohemian, penniless writer“ might sound cool
@@ -205,10 +202,8 @@ const About = () => {
             writer and Hyun-Kyung had professionally immersed herself in web3
             code.`}</Text>
           <Text>
-            {`After exchanging experiences of struggling as a
-            writer and discussing how web3 technology and publishing could be
-            merged into something that would address many of the pain points in
-            the publishing industry that we had encountered, we knew
+            {`After exchanging experiences of struggling as a writer and discussing
+            how web3 technology could open new spaces for literature, we knew
             immediately, what we had to do: Moonpage.`}
           </Text>
         </QAWrapper>
@@ -240,9 +235,9 @@ const About = () => {
                 <Title>Co-Founder</Title>
                 <Field>Software Engineer</Field>
                 <Introduction>
-                  Hyun-Kyung is an experienced developer specialising in Web3.
-                  As a software engineer she has contributed to multiple
-                  prestigious NFT projects such as{' '}
+                  Experienced developer specialising in Web3. As a software
+                  engineer she has contributed to multiple prestigious NFT
+                  projects such as{' '}
                   <LinkWrapper url="https://www.polychainmonsters.com">
                     Polychain Monsters
                   </LinkWrapper>
@@ -278,8 +273,11 @@ const About = () => {
                 <Title>Co-Founder</Title>
                 <Field>Marketing & Community Manager</Field>
                 <Introduction>
-                  {`Olivia Kuderewski is a novelist and editor. Her novel
-                  "Lux" was awarded the Klaus Michael Kühne Prize for the best
+                  {`Novelist and editor. Her novel `}
+                  <LinkWrapper url="https://www.amazon.com/-/de/dp/B08S1SKVTB/ref=sr_1_1?__mk_de_DE=%C3%85M%C3%85%C5%BD%C3%95%C3%91&crid=DYX2ZZ93KK68&keywords=lux+olivia+kuderewski&qid=1658173221&sprefix=lux+olivia+kuderewski%2Caps%2C140&sr=8-1">
+                    {'Lux'}
+                  </LinkWrapper>
+                  {` was awarded the Klaus Michael Kühne Prize for the best
                   German-language debut in 2021. In 2022, her second novel "Haha
                   Heartbreak" will be published by Voland & Quist.`}
                 </Introduction>

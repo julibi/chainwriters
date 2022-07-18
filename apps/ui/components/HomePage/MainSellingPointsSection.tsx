@@ -90,15 +90,12 @@ const SubHeader = styled.h3`
 const MainSellingPointsSection = () => {
   return (
     <Root>
-      <SectionTitleWrapper>
-        <SectionTitle>What is Moonpage?</SectionTitle>
-      </SectionTitleWrapper>
       <BlocksWrapper>
         <AuthorBlock>
           <SubHeader>Creators</SubHeader>
           <Text>{'Publish and sell your text as NFT collection'}</Text>
           <Text>{'Receive creator royalties'}</Text>
-          <Text>{'Create a community of readers and connect with it'}</Text>
+          <Text>{'Create a community of readers'}</Text>
         </AuthorBlock>
         <ReaderBlock>
           <SubHeader>Collectors</SubHeader>
