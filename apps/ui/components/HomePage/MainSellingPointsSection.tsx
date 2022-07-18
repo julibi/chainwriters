@@ -39,7 +39,6 @@ const AuthorBlock = styled.div`
   justify-content: space-between;
   width: 45%;
   max-width: 600px;
-  ${FadeInBaseAnimation}
   animation-delay: 3s;
   background-color: ${BG_DARK};
   border-radius: 20px;
@@ -54,7 +53,6 @@ const AuthorBlock = styled.div`
 const ReaderBlock = styled.div`
   width: 45%;
   max-width: 600px;
-  ${FadeInBaseAnimation}
   background-color: ${BG_DARK};
   color: ${PINK};
 

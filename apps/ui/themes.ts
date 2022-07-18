@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 export const BG_LIGHT = '#222632';
 export const BG_NORMAL = '#1B1E28';
-export const BG_DARK = '#151A25';
+export const BG_DARK = '#161820';
 export const PLAIN_WHITE = '#FFF';
 export const PINK = '#F50A48';
 export const DISABLED_WHITE = '#808080';

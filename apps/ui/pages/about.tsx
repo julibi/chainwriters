@@ -205,7 +205,7 @@ const About = () => {
             writer and Hyun-Kyung had professionally immersed herself in web3
             code.`}</Text>
           <Text>
-            {`After exchanging experiences of being a young, struggling
+            {`After exchanging experiences of struggling as a
             writer and discussing how web3 technology and publishing could be
             merged into something that would address many of the pain points in
             the publishing industry that we had encountered, we knew

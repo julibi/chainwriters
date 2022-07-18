@@ -20,9 +20,10 @@ const Root = styled.div`
 const TypeWriterWrapper = styled.div`
   height: 100%;
   min-height: 500px;
+  max-width: 600px;
 
   @media (max-width: 900px) {
-    min-height: 400px;
+    min-height: 440px;
   }
 `;
 

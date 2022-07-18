@@ -23,6 +23,10 @@ const HeaderSection = styled.section`
 
 const Padding = styled.div`
   height: 3rem;
+
+  @media (max-width: 768px) {
+    height: 1.5rem;
+  }
 `;
 
 export function Index() {
