@@ -4,16 +4,16 @@ import { expect } from "chai";
 import { ethers, waffle } from "hardhat";
 import { ProjectDao, ProjectCollection, ProjectFactory } from "../typechain";
 
-const wait = (seconds: number) =>
-  new Promise((resolve, _) => {
-    setTimeout(resolve, seconds * 1000);
-  });
-const advanceDays = async (hours: any) => {
-  await ethers.provider.send("evm_increaseTime", [60 * 60 * hours]);
-  await ethers.provider.send("evm_mine", []);
-};
+// const wait = (seconds: number) =>
+//   new Promise((resolve, _) => {
+//     setTimeout(resolve, seconds * 1000);
+//   });
+// const advanceDays = async (hours: any) => {
+//   await ethers.provider.send("evm_increaseTime", [60 * 60 * hours]);
+//   await ethers.provider.send("evm_mine", []);
+// };
 
-describe("ProjectDao", function () {
+describe("Project", function () {
   let factory: SignerWithAddress;
   let author: SignerWithAddress;
   let contribA: SignerWithAddress;
@@ -68,299 +68,192 @@ describe("ProjectDao", function () {
 
     await createDaoTx.wait();
 
-    // CollectionAddress = await ProjectFactory.collections(0);
-    // const ProjectCollectionFactory = await ethers.getContractFactory(
-    //   "ProjectCollection"
-    // );
-    // ProjectCollection = ProjectCollectionFactory.attach(CollectionAddress);
+    CollectionAddress = await ProjectFactory.collections(0);
+    const ProjectCollectionFactory = await ethers.getContractFactory(
+      "ProjectCollection"
+    );
+    ProjectCollection = ProjectCollectionFactory.attach(CollectionAddress);
 
-    // connect to Collection as author
-    // ProjectCollectionAsAuthor = ProjectCollection.connect(author);
+    //connect to Collection as author
+    ProjectCollectionAsAuthor = ProjectCollection.connect(author);
   });
 
-  describe("first test", async () => {
-    it("should configure project data correctly", async () => {
-      console.log("getting here????????????ß");
+  describe("happy path", async () => {
+    it("from configuration to sellout of genEd and gen2", async () => {
       // configure
-      // const baseDataBefore = await ProjectDao.baseDatas(CollectionAddress);
-      // const genreBefore = baseDataBefore.genre;
-      // const subtitleBefore = baseDataBefore.subtitle;
+      const baseDataBefore = await ProjectDao.baseDatas(CollectionAddress);
+      const genreBefore = baseDataBefore.genre;
+      const subtitleBefore = baseDataBefore.subtitle;
 
-      // const configureTx = await ProjectDaoAsAuthor.configureProjectDetails(
-      //   CollectionAddress,
-      //   "",
-      //   "",
-      //   "Fiction",
-      //   "My fancy subtitle"
-      // );
-      // await configureTx.wait();
-      // const baseDataAfter = await ProjectDaoAsAuthor.baseDatas(
-      //   CollectionAddress
-      // );
-      // const genreAfter = baseDataAfter.genre;
-      // const subtitleAfter = baseDataAfter.subtitle;
+      const configureTx = await ProjectDaoAsAuthor.configureProjectDetails(
+        CollectionAddress,
+        "",
+        "",
+        "Fiction",
+        "My fancy subtitle"
+      );
+      await configureTx.wait();
+      const baseDataAfter = await ProjectDaoAsAuthor.baseDatas(
+        CollectionAddress
+      );
+      const genreAfter = baseDataAfter.genre;
+      const subtitleAfter = baseDataAfter.subtitle;
 
-      // // data is set correctly inside Dao
-      // expect(genreBefore).to.equal("");
-      // expect(subtitleBefore).to.equal("");
-      // expect(genreAfter).to.equal("Fiction");
-      // expect(subtitleAfter).to.equal("My fancy subtitle");
+      // data is set correctly inside Dao
+      expect(genreBefore).to.equal("");
+      expect(subtitleBefore).to.equal("");
+      expect(genreAfter).to.equal("Fiction");
+      expect(subtitleAfter).to.equal("My fancy subtitle");
 
-      // and data is reflected in Collection, too
-      // expect(await ProjectCollection.name()).to.equal(baseDataAfter[0]);
-      // expect(await ProjectCollection.daoManager()).to.equal(ProjectDao.address);
+      //and data is reflected in Collection, too
+      expect(await ProjectCollection.name()).to.equal(baseDataAfter[0]);
+      expect(await ProjectCollection.daoManager()).to.equal(ProjectDao.address);
 
-      // // add contributors
-      // const addContribsTx = await ProjectDaoAsAuthor.addContributors(
-      //   CollectionAddress,
-      //   [contribA.address, contribB.address],
-      //   [25, 15],
-      //   ["co-writer", "marketer"]
-      // );
-      // await addContribsTx.wait();
-      // const firstContributor = await ProjectDao.contributions(
-      //   CollectionAddress,
-      //   0
-      // );
-      // const secondContributor = await ProjectDao.contributions(
-      //   CollectionAddress,
-      //   1
-      // );
+      // add contributors
+      const addContribsTx = await ProjectDaoAsAuthor.addContributors(
+        CollectionAddress,
+        [contribA.address, contribB.address],
+        [25, 15],
+        ["co-writer", "marketer"]
+      );
+      await addContribsTx.wait();
+      const firstContributor = await ProjectDao.contributions(
+        CollectionAddress,
+        0
+      );
+      const secondContributor = await ProjectDao.contributions(
+        CollectionAddress,
+        1
+      );
 
-      // expect(firstContributor[0]).to.equal(contribA.address);
-      // expect(secondContributor[0]).to.equal(contribB.address);
-      // const discountRate = 10000000000;
-      // const authorOwnsAmount = 2;
+      expect(firstContributor[0]).to.equal(contribA.address);
+      expect(secondContributor[0]).to.equal(contribB.address);
+      const discountRate = 10000000000;
+      const authorOwnsAmount = 2;
 
-      // // author triggers collection
-      // await ProjectCollectionAsAuthor.triggerFirstAuction(
-      //   authorOwnsAmount,
-      //   "newUriTest",
-      //   discountRate
-      // );
-      // // const openingTime = Math.floor(new Date().getTime() / 1000);
+      // author triggers collection
+      await ProjectCollectionAsAuthor.triggerFirstAuction(
+        authorOwnsAmount,
+        "newUriTest",
+        discountRate
+      );
 
-      // // author owns correct amount now
+      // author owns correct amount now
+      expect(await ProjectCollection.balanceOf(author.address, 1)).to.equal(
+        authorOwnsAmount
+      );
+      // preminted is two
+      expect(await ProjectCollection.premintedByAuthor()).to.equal(
+        authorOwnsAmount
+      );
+      // discountRate is correct
+      expect(await ProjectCollection.discountRate()).to.equal(discountRate);
+      // auctionStarted is true
+      expect(await ProjectCollection.auctionsStarted()).to.equal(true);
 
-      // expect(await ProjectCollection.balanceOf(author.address, 1)).to.equal(
-      //   authorOwnsAmount
-      // );
-      // // preminted is two
-      // expect(await ProjectCollection.premintedByAuthor()).to.equal(
-      //   authorOwnsAmount
-      // );
-      // // discountRate is correct
-      // expect(await ProjectCollection.discountRate()).to.equal(discountRate);
-      // // auctionStarted is true
-      // expect(await ProjectCollection.auctionsStarted()).to.equal(true);
+      // start At is correct
+      // expiresAt is set
 
-      // // start At is correct
-      // // expiresAt is set
+      // userA sucessfully buys
+      const ProjectCollectionAsUserA = ProjectCollection.connect(userA);
+      await ProjectCollectionAsUserA.buy({
+        value: initialMintPrice,
+      });
+      expect(await ProjectCollection.balanceOf(userA.address, 1)).to.equal(1);
 
-      // // userA sucessfully buys
-      // const ProjectCollectionAsUserA = ProjectCollection.connect(userA);
-      // await ProjectCollectionAsUserA.buy({
-      //   value: initialMintPrice,
-      // });
-      // expect(await ProjectCollection.balanceOf(userA.address, 1)).to.equal(1);
+      // get user balance before distribution of shares
+      const authorBalanceBefore = await provider.getBalance(author.address);
+      const contribABalanceBefore = await provider.getBalance(contribA.address);
+      const contribBBalanceBefore = await provider.getBalance(contribB.address);
 
-      // // get user balance before distribution of shares
-      // const authorBalanceBefore = await provider.getBalance(author.address);
-      // const contribABalanceBefore = await provider.getBalance(contribA.address);
-      // const contribBBalanceBefore = await provider.getBalance(contribB.address);
+      // userA sucessfully buys
+      const ProjectCollectionAsUserB = ProjectCollection.connect(userB);
+      const selloutTx = await ProjectCollectionAsUserB.buy({
+        value: initialMintPrice,
+      });
+      await selloutTx.wait();
+      expect(await ProjectCollection.balanceOf(userB.address, 1)).to.equal(1);
 
-      // // userA sucessfully buys
-      // const ProjectCollectionAsUserB = ProjectCollection.connect(userB);
-      // const selloutTx = await ProjectCollectionAsUserB.buy({
-      //   value: initialMintPrice,
-      // });
-      // await selloutTx.wait();
-      // expect(await ProjectCollection.balanceOf(userB.address, 1)).to.equal(1);
+      // check if total balance is split correctly
+      // factory gets 15%, co-writer gets 25%, marketer 15% and author the rest
 
-      // // check if total balance is split correctly
-      // // factory gets 15%, co-writer gets 25%, marketer 15% and author the rest
+      const collectionBalance = await provider.getBalance(
+        ProjectCollection.address
+      );
 
-      // const collectionBalance = await provider.getBalance(
-      //   ProjectCollection.address
-      // );
+      const factoryBalance = await provider.getBalance(ProjectFactory.address);
+      const authorBalanceAfter = await provider.getBalance(author.address);
+      const contribABalanceAfter = await provider.getBalance(contribA.address);
+      const contribBBalanceAfter = await provider.getBalance(contribB.address);
+      const gainsAuthor = formatEther(
+        authorBalanceAfter.sub(authorBalanceBefore)
+      );
+      const gainsContribA = formatEther(
+        contribABalanceAfter.sub(contribABalanceBefore)
+      );
+      const gainsContribB = formatEther(
+        contribBBalanceAfter.sub(contribBBalanceBefore)
+      );
 
-      // const factoryBalance = await provider.getBalance(ProjectFactory.address);
-
-      // const authorBalanceAfter = await provider.getBalance(author.address);
-      // const contribABalanceAfter = await provider.getBalance(contribA.address);
-      // const contribBBalanceAfter = await provider.getBalance(contribB.address);
-
-      // const gainsAuthor = formatEther(
-      //   authorBalanceAfter.sub(authorBalanceBefore)
-      // );
-      // const gainsContribA = formatEther(
-      //   contribABalanceAfter.sub(contribABalanceBefore)
-      // );
-      // const gainsContribB = formatEther(
-      //   contribBBalanceAfter.sub(contribBBalanceBefore)
-      // );
-
-      // expect(gainsAuthor).to.equal("0.045");
-      // expect(gainsContribA).to.equal("0.025");
-      // expect(gainsContribB).to.equal("0.015");
-      // expect(formatEther(factoryBalance)).to.equal("0.015");
-      // expect(formatEther(collectionBalance)).to.equal("0");
+      expect(gainsAuthor).to.equal("0.045");
+      expect(gainsContribA).to.equal("0.025");
+      expect(gainsContribB).to.equal("0.015");
+      expect(formatEther(factoryBalance)).to.equal("0.015");
+      expect(formatEther(collectionBalance)).to.equal("0.0");
 
       // author can enable next edition
-      // const enableNextEdTX = await ProjectDaoAsAuthor.enableNextEdition(
-      //   ProjectCollection.address,
-      //   3,
-      //   ed2MintPrice
-      // );
-      // await enableNextEdTX.wait();
+      const enableNextEdTX = await ProjectDaoAsAuthor.enableNextEdition(
+        ProjectCollection.address,
+        3,
+        ed2MintPrice
+      );
+      await enableNextEdTX.wait();
 
-      // const newEdition = await ProjectDao.editions(ProjectCollection.address);
-      // console.log({ newEdition });
+      const newEdition = await ProjectDao.editions(ProjectCollection.address);
+      expect(parseInt(newEdition.currentEdition._hex, 16)).to.equal(2);
+      expect(parseInt(newEdition.currentEditionMax._hex, 16)).to.equal(3);
+      expect(formatEther(newEdition.currentEditionMintPrice)).to.equal("0.1");
+
+      // after second edition sells out, funds are correctly distributed again
+      const userAMintTx = await ProjectCollectionAsUserA.mint(2, {
+        value: ed2MintPrice.mul(2),
+      });
+      await userAMintTx.wait();
+      const ed2BalanceUserA = await ProjectCollection.balanceOf(
+        userA.address,
+        2
+      );
+      expect(ed2BalanceUserA).to.equal(2);
+      const userBMintTx = await ProjectCollectionAsUserB.mint(1, {
+        value: ed2MintPrice,
+      });
+      await userBMintTx.wait();
+      const ed2BalanceUserB = await ProjectCollection.balanceOf(
+        userB.address,
+        2
+      );
+      expect(ed2BalanceUserB).to.equal(1);
+
+      const factoryBalance2 = await provider.getBalance(ProjectFactory.address);
+      expect(formatEther(factoryBalance2)).to.equal("0.06");
+      const authorBalanceAfter2 = await provider.getBalance(author.address);
+      const contribABalanceAfter2 = await provider.getBalance(contribA.address);
+      const contribBBalanceAfter2 = await provider.getBalance(contribB.address);
+      const gainsAuthor2 = formatEther(
+        authorBalanceAfter2.sub(authorBalanceAfter)
+      );
+      const gainsContribA2 = formatEther(
+        contribABalanceAfter2.sub(contribABalanceAfter)
+      );
+      const gainsContribB2 = formatEther(
+        contribBBalanceAfter2.sub(contribBBalanceAfter)
+      );
+      expect(formatEther(gainsAuthor2)).to.equal("0.13493661446035821");
+      expect(formatEther(gainsContribA2)).to.equal("0.075");
+      expect(formatEther(gainsContribB2)).to.equal("0.045");
     });
   });
-
-  // TODO - test all around the auction e.g. correct discount rate!
-
-  // it("author should be able to claim nfts", async () => {
-  //   const authorMintTx = await ProjectDaoAsAuthor.authorMint(2);
-  //   await authorMintTx.wait();
-  //   const author = await ProjectDao.author();
-
-  //   expect(author.hasClaimedGenesis).to.equal(true);
-  //   expect(author.claimedAmount).to.equal(2);
-  // });
-
-  // it("author cannot claim max amount", async () => {
-  //   const max = await ProjectDao.currentEditionMax();
-  //   console.log({ max });
-  //   await expect(ProjectDaoAsAuthor.authorMint(max)).to.be.revertedWith(
-  //     "Invalid amount"
-  //   );
-  // });
-
-  // it("can only trigger auction, when author has claimed her share", async () => {
-  //   // state before authorMint
-  //   await expect(
-  //     ProjectDaoAsAuthor.triggerFirstAuction(1000)
-  //   ).to.be.revertedWith("Mint tokens before triggering auctions");
-  //   const auctionStarted = await ProjectDaoAsAuthor.auctionStarted();
-  //   expect(auctionStarted).to.equal(false);
-
-  //   // authorMint + trigger
-  //   const authorMintTx = await ProjectDaoAsAuthor.authorMint(1);
-  //   await authorMintTx.wait();
-  //   const triggerFirstAuctionTx = await ProjectDaoAsAuthor.triggerFirstAuction(
-  //     1000
-  //   );
-  //   await triggerFirstAuctionTx.wait();
-
-  //   // auction running
-  //   const auctionShouldHaveStarted = await ProjectDaoAsAuthor.auctionStarted();
-  //   expect(auctionShouldHaveStarted).to.equal(true);
-  // });
-
-  // it("allows users to mint, once auction was triggered", async () => {
-  //   // authorMint + trigger
-  //   const authorMintTx = await ProjectDaoAsAuthor.authorMint(2);
-  //   await authorMintTx.wait();
-  //   const triggerFirstAuctionTx = await ProjectDaoAsAuthor.triggerFirstAuction(
-  //     1000
-  //   );
-  //   await triggerFirstAuctionTx.wait();
-
-  //   const Buy1Tx = await ProjectDaoAsUserA.buy({ value: "50000000000000000" });
-  //   await Buy1Tx.wait();
-  //   const balanceOfUserA = await ProjectDao.balanceOf(userA.address, 1);
-  //   expect(balanceOfUserA).to.equal(1);
-  // });
-
-  // it("only allows buying until Gen Ed is sold out", async () => {
-  //   // authorMint + trigger
-  //   const max = await ProjectDao.currentEditionMax();
-  //   const authorMintTx = await ProjectDaoAsAuthor.authorMint(2);
-  //   await authorMintTx.wait();
-  //   const triggerFirstAuctionTx = await ProjectDaoAsAuthor.triggerFirstAuction(
-  //     1000
-  //   );
-  //   await triggerFirstAuctionTx.wait();
-
-  //   const Buy1Tx = await ProjectDaoAsUserA.buy({ value: "50000000000000000" });
-  //   await Buy1Tx.wait();
-  //   const Buy2Tx = await ProjectDaoAsUserB.buy({ value: "50000000000000000" });
-  //   await Buy2Tx.wait();
-
-  //   await expect(
-  //     ProjectDaoAsAuthor.buy({ value: "50000000000000000" })
-  //   ).to.be.revertedWith("Auctions finished");
-  // });
-
-  // it("requires users to at least pay the current price", async () => {
-  //   // authorMint + trigger
-  //   const max = await ProjectDao.currentEditionMax();
-  //   const authorMintTx = await ProjectDaoAsAuthor.authorMint(2);
-  //   await authorMintTx.wait();
-  //   const triggerFirstAuctionTx = await ProjectDaoAsAuthor.triggerFirstAuction(
-  //     1000
-  //   );
-  //   await triggerFirstAuctionTx.wait();
-
-  //   const Buy1Tx = await ProjectDaoAsUserA.buy({ value: "50000000000000000" });
-  //   await Buy1Tx.wait();
-  //   await expect(
-  //     ProjectDaoAsUserB.buy({ value: "20000000000000000" })
-  //   ).to.be.revertedWith("Value sent not sufficient.");
-  // });
-
-  // it("lets author add contributors", async () => {
-  //   const authorAddsContribTx = await ProjectDaoAsAuthor.addContributor(
-  //     contribA.address,
-  //     50,
-  //     "editor"
-  //   );
-  //   await authorAddsContribTx.wait();
-  //   const contributor = await ProjectDao.contributors(0);
-  //   expect(contributor.share).to.equal(50);
-  //   expect(contributor.shareRecipient).to.equal(contribA.address);
-  // });
-
-  // it("distributes shares after sellout of Gen Ed", async () => {
-  //   const authorAddsContribTx = await ProjectDaoAsAuthor.addContributor(
-  //     contribA.address,
-  //     50,
-  //     "editor"
-  //   );
-  //   await authorAddsContribTx.wait();
-  //   const authorMintTx = await ProjectDaoAsAuthor.authorMint(1);
-  //   await authorMintTx.wait();
-  //   const triggerFirstAuctionTx = await ProjectDaoAsAuthor.triggerFirstAuction(
-  //     1000000
-  //   );
-  //   await triggerFirstAuctionTx.wait();
-
-  //   const provider = waffle.provider;
-  //   const authorBalanceBefore = await provider.getBalance(author.address);
-  //   const contribBalanceBefore = await provider.getBalance(contribA.address);
-
-  //   const Buy1Tx = await ProjectDaoAsUserA.buy({ value: "50000000000000000" });
-  //   await Buy1Tx.wait();
-  //   const Buy2Tx = await ProjectDaoAsUserB.buy({ value: "50000000000000000" });
-  //   await Buy2Tx.wait();
-  //   const Buy3Tx = await ProjectDaoAsContribB.buy({
-  //     value: "50000000000000000",
-  //   });
-  //   await Buy3Tx.wait();
-
-  //   const authorBalanceAfter = await provider.getBalance(author.address);
-  //   const contribBalanceAfter = await provider.getBalance(contribA.address);
-
-  //   const gainsAuthor =
-  //     parseInt(authorBalanceAfter._hex, 16) -
-  //     parseInt(authorBalanceBefore._hex, 16);
-  //   const gainsContributor =
-  //     parseInt(contribBalanceAfter._hex, 16) -
-  //     parseInt(contribBalanceBefore._hex, 16);
-  //   expect(gainsAuthor + gainsContributor).to.be.greaterThan(
-  //     149999999999000000
-  //   );
-  // });
 });
+
+// TODO - test all around the auction e.g. correct discount rate!
+// TODO all unhappy cases and requires!
