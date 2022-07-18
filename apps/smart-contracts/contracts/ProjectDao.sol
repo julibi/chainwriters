@@ -300,9 +300,6 @@ contract ProjectDao is AccessControlEnumerable, Pausable {
     // Can only be called by a Collection
     // ------------------
 
-    // TODO - second pay is not being distributed
-    // TODO - author is not receiving share
-
     function distributeShares() external {
         address collectionAddr = address(msg.sender);
         BaseData storage baseData = baseDatas[collectionAddr];
@@ -334,10 +331,6 @@ contract ProjectDao is AccessControlEnumerable, Pausable {
         collection.withdraw(author_address, authorShare.shareInMatic);
         collection.withdraw(factory, foundationShareInMatic);
     }
-
-    // ------------------
-    // Explicit overrides
-    // ------------------
 
     // ------------------
     // Can only be called by Foundation

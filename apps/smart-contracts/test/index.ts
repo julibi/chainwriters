@@ -22,14 +22,15 @@ describe("ProjectDao", function () {
   let userB: SignerWithAddress;
   let ProjectDaoAsAuthor: ProjectDao;
   let ProjectDao: ProjectDao;
-  let ProjectFactoryAsAuthor: ProjectFactory;
   let ProjectFactory: ProjectFactory;
+  let ProjectFactoryAsAuthor: ProjectFactory;
   let ProjectCollection: ProjectCollection;
   let ProjectCollectionAsAuthor: ProjectCollection;
   let CollectionAddress: string;
   const title = "My little Phony";
   const textIpfsHash = "QmTw3pWBQinwuHS57FcWyUGBpvGqLHQZkn1eKjp89XXyFg";
   const initialMintPrice = ethers.utils.parseUnits("0.05", 18);
+  const ed2MintPrice = ethers.utils.parseUnits("0.1", 18);
   const firstEditionMax = 4;
   const provider = waffle.provider;
 
@@ -54,157 +55,171 @@ describe("ProjectDao", function () {
     ProjectDaoAsAuthor = ProjectDao.connect(author);
 
     // set factory inside dao
-    await ProjectDao.setFactory(ProjectFactory.address);
+    const setFactoryTx = await ProjectDao.setFactory(ProjectFactory.address);
+    await setFactoryTx.wait();
 
     // author deploys own collection
-    await ProjectFactoryAsAuthor.createDao(
+    const createDaoTx = await ProjectFactoryAsAuthor.createDao(
       title,
       textIpfsHash,
       initialMintPrice,
       firstEditionMax
     );
 
-    CollectionAddress = await ProjectFactory.collections(0);
-    const ProjectCollectionFactory = await ethers.getContractFactory(
-      "ProjectCollection"
-    );
-    ProjectCollection = ProjectCollectionFactory.attach(CollectionAddress);
+    await createDaoTx.wait();
+
+    // CollectionAddress = await ProjectFactory.collections(0);
+    // const ProjectCollectionFactory = await ethers.getContractFactory(
+    //   "ProjectCollection"
+    // );
+    // ProjectCollection = ProjectCollectionFactory.attach(CollectionAddress);
 
     // connect to Collection as author
-    ProjectCollectionAsAuthor = ProjectCollection.connect(author);
+    // ProjectCollectionAsAuthor = ProjectCollection.connect(author);
   });
 
   describe("first test", async () => {
-    // triggerMint
-    // buy
     it("should configure project data correctly", async () => {
+      console.log("getting here????????????ß");
       // configure
+      // const baseDataBefore = await ProjectDao.baseDatas(CollectionAddress);
+      // const genreBefore = baseDataBefore.genre;
+      // const subtitleBefore = baseDataBefore.subtitle;
 
-      const baseDataBefore = await ProjectDao.baseDatas(CollectionAddress);
-      const genreBefore = baseDataBefore.genre;
-      const subtitleBefore = baseDataBefore.subtitle;
+      // const configureTx = await ProjectDaoAsAuthor.configureProjectDetails(
+      //   CollectionAddress,
+      //   "",
+      //   "",
+      //   "Fiction",
+      //   "My fancy subtitle"
+      // );
+      // await configureTx.wait();
+      // const baseDataAfter = await ProjectDaoAsAuthor.baseDatas(
+      //   CollectionAddress
+      // );
+      // const genreAfter = baseDataAfter.genre;
+      // const subtitleAfter = baseDataAfter.subtitle;
 
-      const configureTx = await ProjectDaoAsAuthor.configureProjectDetails(
-        CollectionAddress,
-        "",
-        "",
-        "Fiction",
-        "My fancy subtitle"
-      );
-      await configureTx.wait();
-      const baseDataAfter = await ProjectDaoAsAuthor.baseDatas(
-        CollectionAddress
-      );
-      const genreAfter = baseDataAfter.genre;
-      const subtitleAfter = baseDataAfter.subtitle;
-
-      // data is set correctly inside Dao
-      expect(genreBefore).to.equal("");
-      expect(subtitleBefore).to.equal("");
-      expect(genreAfter).to.equal("Fiction");
-      expect(subtitleAfter).to.equal("My fancy subtitle");
+      // // data is set correctly inside Dao
+      // expect(genreBefore).to.equal("");
+      // expect(subtitleBefore).to.equal("");
+      // expect(genreAfter).to.equal("Fiction");
+      // expect(subtitleAfter).to.equal("My fancy subtitle");
 
       // and data is reflected in Collection, too
-      expect(await ProjectCollection.name()).to.equal(baseDataAfter[0]);
-      expect(await ProjectCollection.daoManager()).to.equal(ProjectDao.address);
+      // expect(await ProjectCollection.name()).to.equal(baseDataAfter[0]);
+      // expect(await ProjectCollection.daoManager()).to.equal(ProjectDao.address);
 
-      // add contributors
-      const addContribsTx = await ProjectDaoAsAuthor.addContributors(
-        CollectionAddress,
-        [contribA.address, contribB.address],
-        [25, 15],
-        ["co-writer", "marketer"]
-      );
-      await addContribsTx.wait();
-      const firstContributor = await ProjectDao.contributions(
-        CollectionAddress,
-        0
-      );
-      const secondContributor = await ProjectDao.contributions(
-        CollectionAddress,
-        1
-      );
+      // // add contributors
+      // const addContribsTx = await ProjectDaoAsAuthor.addContributors(
+      //   CollectionAddress,
+      //   [contribA.address, contribB.address],
+      //   [25, 15],
+      //   ["co-writer", "marketer"]
+      // );
+      // await addContribsTx.wait();
+      // const firstContributor = await ProjectDao.contributions(
+      //   CollectionAddress,
+      //   0
+      // );
+      // const secondContributor = await ProjectDao.contributions(
+      //   CollectionAddress,
+      //   1
+      // );
 
-      expect(firstContributor[0]).to.equal(contribA.address);
-      expect(secondContributor[0]).to.equal(contribB.address);
-      const discountRate = 10000000000;
-      const authorOwnsAmount = 2;
+      // expect(firstContributor[0]).to.equal(contribA.address);
+      // expect(secondContributor[0]).to.equal(contribB.address);
+      // const discountRate = 10000000000;
+      // const authorOwnsAmount = 2;
 
-      // author triggers collection
-      await ProjectCollectionAsAuthor.triggerFirstAuction(
-        authorOwnsAmount,
-        "newUriTest",
-        discountRate
-      );
-      // const openingTime = Math.floor(new Date().getTime() / 1000);
+      // // author triggers collection
+      // await ProjectCollectionAsAuthor.triggerFirstAuction(
+      //   authorOwnsAmount,
+      //   "newUriTest",
+      //   discountRate
+      // );
+      // // const openingTime = Math.floor(new Date().getTime() / 1000);
 
-      // author owns correct amount now
+      // // author owns correct amount now
 
-      expect(await ProjectCollection.balanceOf(author.address, 1)).to.equal(
-        authorOwnsAmount
-      );
-      // preminted is two
-      expect(await ProjectCollection.premintedByAuthor()).to.equal(
-        authorOwnsAmount
-      );
-      // discountRate is correct
-      expect(await ProjectCollection.discountRate()).to.equal(discountRate);
-      // auctionStarted is true
-      expect(await ProjectCollection.auctionsStarted()).to.equal(true);
+      // expect(await ProjectCollection.balanceOf(author.address, 1)).to.equal(
+      //   authorOwnsAmount
+      // );
+      // // preminted is two
+      // expect(await ProjectCollection.premintedByAuthor()).to.equal(
+      //   authorOwnsAmount
+      // );
+      // // discountRate is correct
+      // expect(await ProjectCollection.discountRate()).to.equal(discountRate);
+      // // auctionStarted is true
+      // expect(await ProjectCollection.auctionsStarted()).to.equal(true);
 
-      // start At is correct
-      // expiresAt is set
+      // // start At is correct
+      // // expiresAt is set
 
-      // TODO - test with correct discount rate!
-      // userA sucessfully buys
-      const ProjectCollectionAsUserA = ProjectCollection.connect(userA);
-      await ProjectCollectionAsUserA.buy({
-        value: initialMintPrice,
-      });
-      expect(await ProjectCollection.balanceOf(userA.address, 1)).to.equal(1);
+      // // userA sucessfully buys
+      // const ProjectCollectionAsUserA = ProjectCollection.connect(userA);
+      // await ProjectCollectionAsUserA.buy({
+      //   value: initialMintPrice,
+      // });
+      // expect(await ProjectCollection.balanceOf(userA.address, 1)).to.equal(1);
 
-      // get user balance before distribution of shares
-      const authorBalanceBefore = await provider.getBalance(author.address);
-      const contribABalanceBefore = await provider.getBalance(contribA.address);
-      const contribBBalanceBefore = await provider.getBalance(contribB.address);
+      // // get user balance before distribution of shares
+      // const authorBalanceBefore = await provider.getBalance(author.address);
+      // const contribABalanceBefore = await provider.getBalance(contribA.address);
+      // const contribBBalanceBefore = await provider.getBalance(contribB.address);
 
-      // userA sucessfully buys
-      const ProjectCollectionAsUserB = ProjectCollection.connect(userB);
-      const selloutTx = await ProjectCollectionAsUserB.buy({
-        value: initialMintPrice,
-      });
-      await selloutTx.wait();
-      expect(await ProjectCollection.balanceOf(userB.address, 1)).to.equal(1);
+      // // userA sucessfully buys
+      // const ProjectCollectionAsUserB = ProjectCollection.connect(userB);
+      // const selloutTx = await ProjectCollectionAsUserB.buy({
+      //   value: initialMintPrice,
+      // });
+      // await selloutTx.wait();
+      // expect(await ProjectCollection.balanceOf(userB.address, 1)).to.equal(1);
 
-      // check if total balance is split correctly
-      // factory gets 15%, co-writer gets 25%, marketer 15% and author the rest
+      // // check if total balance is split correctly
+      // // factory gets 15%, co-writer gets 25%, marketer 15% and author the rest
 
-      const collectionBalance = await provider.getBalance(
-        ProjectCollection.address
-      );
+      // const collectionBalance = await provider.getBalance(
+      //   ProjectCollection.address
+      // );
 
-      const factoryBalance = await provider.getBalance(ProjectFactory.address);
+      // const factoryBalance = await provider.getBalance(ProjectFactory.address);
 
-      const authorBalanceAfter = await provider.getBalance(author.address);
-      const contribABalanceAfter = await provider.getBalance(contribA.address);
-      const contribBBalanceAfter = await provider.getBalance(contribB.address);
+      // const authorBalanceAfter = await provider.getBalance(author.address);
+      // const contribABalanceAfter = await provider.getBalance(contribA.address);
+      // const contribBBalanceAfter = await provider.getBalance(contribB.address);
 
-      const gainsAuthor = formatEther(
-        authorBalanceAfter.sub(authorBalanceBefore)
-      );
-      const gainsContribA = formatEther(
-        contribABalanceAfter.sub(contribABalanceBefore)
-      );
-      const gainsContribB = formatEther(
-        contribBBalanceAfter.sub(contribBBalanceBefore)
-      );
+      // const gainsAuthor = formatEther(
+      //   authorBalanceAfter.sub(authorBalanceBefore)
+      // );
+      // const gainsContribA = formatEther(
+      //   contribABalanceAfter.sub(contribABalanceBefore)
+      // );
+      // const gainsContribB = formatEther(
+      //   contribBBalanceAfter.sub(contribBBalanceBefore)
+      // );
 
-      expect(gainsAuthor).to.equal("0.045");
-      expect(gainsContribA).to.equal("0.025");
-      expect(gainsContribB).to.equal("0.015");
-      expect(formatEther(factoryBalance)).to.equal("0.015");
+      // expect(gainsAuthor).to.equal("0.045");
+      // expect(gainsContribA).to.equal("0.025");
+      // expect(gainsContribB).to.equal("0.015");
+      // expect(formatEther(factoryBalance)).to.equal("0.015");
+      // expect(formatEther(collectionBalance)).to.equal("0");
+
+      // author can enable next edition
+      // const enableNextEdTX = await ProjectDaoAsAuthor.enableNextEdition(
+      //   ProjectCollection.address,
+      //   3,
+      //   ed2MintPrice
+      // );
+      // await enableNextEdTX.wait();
+
+      // const newEdition = await ProjectDao.editions(ProjectCollection.address);
+      // console.log({ newEdition });
     });
   });
+
+  // TODO - test all around the auction e.g. correct discount rate!
 
   // it("author should be able to claim nfts", async () => {
   //   const authorMintTx = await ProjectDaoAsAuthor.authorMint(2);

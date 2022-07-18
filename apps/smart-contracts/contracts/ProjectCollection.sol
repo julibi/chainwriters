@@ -115,7 +115,6 @@ contract ProjectCollection is
         emit Minted(currentEdition, 1);
         if (shouldFinalize) {
             auctionPhaseFinished = true;
-            // something seems to go wrong here
             daoManager.distributeShares();
             emit AuctionsEnded();
         } else {
@@ -142,8 +141,13 @@ contract ProjectCollection is
             msg.value >= currentEditionMintPrice * _amount,
             "Value sent not sufficient."
         );
+        bool shouldFinalize = (totalSupply(currentEdition) + 1) ==
+            currentEditionMax;
         _mint(msg.sender, currentEdition, _amount, "");
         emit Minted(currentEdition, _amount);
+        if (shouldFinalize) {
+            daoManager.distributeShares();
+        }
     }
 
     // ------------------
