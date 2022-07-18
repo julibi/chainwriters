@@ -28,7 +28,11 @@ const ProjectList = styled.section`
   flex-direction: row;
   justify-content: center;
   flex-wrap: wrap;
-  padding: 3rem;
+  padding: 3rem 3rem 6rem 3rem;
+
+  @media (max-width: 900px) {
+    padding: 3rem;
+  }
 `;
 
 const ProjectSection = () => {
