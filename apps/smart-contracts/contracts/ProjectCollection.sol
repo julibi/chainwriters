@@ -55,8 +55,8 @@ contract ProjectCollection is
         _setupRole(AUTHOR_ROLE, _caller);
     }
 
-    modifier onlyFactory() {
-        require(msg.sender == address(factory), "Not authorized");
+    modifier onlyDaoManager() {
+        require(msg.sender == address(daoManager), "Not authorized");
         _;
     }
 
@@ -157,8 +157,7 @@ contract ProjectCollection is
     }
 
     // test from private to internal
-    function withdraw(address _to, uint256 _amount) external {
-        require(msg.sender == address(factory), "Not authorized");
+    function withdraw(address _to, uint256 _amount) external onlyDaoManager {
         require(_to != address(0), "Cannot withdraw to the 0 address");
         payable(_to).transfer(_amount);
     }

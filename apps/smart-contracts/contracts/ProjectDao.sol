@@ -300,6 +300,9 @@ contract ProjectDao is AccessControlEnumerable, Pausable {
     // Can only be called by a Collection
     // ------------------
 
+    // TODO - second pay is not being distributed
+    // TODO - author is not receiving share
+
     function distributeShares() external {
         address collectionAddr = address(msg.sender);
         BaseData storage baseData = baseDatas[collectionAddr];

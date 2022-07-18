@@ -1,12 +1,16 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
-import { ethers, waffle } from "hardhat";
+import { ethers } from "hardhat";
 import { ProjectDao, ProjectCollection, ProjectFactory } from "../typechain";
 
 const wait = (seconds: number) =>
   new Promise((resolve, _) => {
     setTimeout(resolve, seconds * 1000);
   });
+const advanceDays = async (hours: any) => {
+  await ethers.provider.send("evm_increaseTime", [60 * 60 * hours]);
+  await ethers.provider.send("evm_mine", []);
+};
 
 describe("ProjectDao", function () {
   let factory: SignerWithAddress;
@@ -19,19 +23,17 @@ describe("ProjectDao", function () {
   let ProjectDao: ProjectDao;
   let ProjectFactoryAsAuthor: ProjectFactory;
   let ProjectFactory: ProjectFactory;
+  let ProjectCollection: ProjectCollection;
+  let ProjectCollectionAsAuthor: ProjectCollection;
   let CollectionAddress: string;
-  let title: string;
-  let textIpfsHash: string;
+  const title = "My little Phony";
+  const textIpfsHash = "QmTw3pWBQinwuHS57FcWyUGBpvGqLHQZkn1eKjp89XXyFg";
+  const initialMintPrice = ethers.utils.parseUnits("0.05", 18);
+  const firstEditionMax = 4;
 
   beforeEach(async function () {
     [factory, author, contribA, contribB, userA, userB] =
       await ethers.getSigners();
-
-    // deploy args
-    const title = "My little Phony";
-    const textIpfsHash = "QmTw3pWBQinwuHS57FcWyUGBpvGqLHQZkn1eKjp89XXyFg";
-    const initialMintPrice = ethers.utils.parseUnits("0.05", 18);
-    const firstEditionMax = 4;
 
     // deploy dao
     const projectDaoFactory = await ethers.getContractFactory("ProjectDao");
@@ -61,6 +63,13 @@ describe("ProjectDao", function () {
     );
 
     CollectionAddress = await ProjectFactory.collections(0);
+    const ProjectCollectionFactory = await ethers.getContractFactory(
+      "ProjectCollection"
+    );
+    ProjectCollection = ProjectCollectionFactory.attach(CollectionAddress);
+
+    // connect to Collection as author
+    ProjectCollectionAsAuthor = ProjectCollection.connect(author);
   });
 
   describe("first test", async () => {
@@ -86,16 +95,18 @@ describe("ProjectDao", function () {
       );
       const genreAfter = baseDataAfter.genre;
       const subtitleAfter = baseDataAfter.subtitle;
+
+      // data is set correctly inside Dao
       expect(genreBefore).to.equal("");
       expect(subtitleBefore).to.equal("");
       expect(genreAfter).to.equal("Fiction");
       expect(subtitleAfter).to.equal("My fancy subtitle");
 
+      // and data is reflected in Collection, too
+      expect(await ProjectCollection.name()).to.equal(baseDataAfter[0]);
+      expect(await ProjectCollection.daoManager()).to.equal(ProjectDao.address);
+
       // add contributors
-      const firstContributorBefore = await ProjectDao.contributions(
-        CollectionAddress,
-        0
-      );
       const addContribsTx = await ProjectDaoAsAuthor.addContributors(
         CollectionAddress,
         [contribA.address, contribB.address],
@@ -111,11 +122,50 @@ describe("ProjectDao", function () {
         CollectionAddress,
         1
       );
-      // console.log({ test });
-      // shareRecipient: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC',
-      // role: 'co-writer',
-      // share: BigNumber { value: "25" },
-      // shareInMatic: BigNumber { value: "0" }
+
+      expect(firstContributor[0]).to.equal(contribA.address);
+      expect(secondContributor[0]).to.equal(contribB.address);
+      const discountRate = 10000000000;
+      const authorOwnsAmount = 2;
+
+      // author triggers collection
+      await ProjectCollectionAsAuthor.triggerFirstAuction(
+        authorOwnsAmount,
+        "newUriTest",
+        discountRate
+      );
+      // const openingTime = Math.floor(new Date().getTime() / 1000);
+
+      // author owns correct amount now
+
+      expect(await ProjectCollection.balanceOf(author.address, 1)).to.equal(
+        authorOwnsAmount
+      );
+      // preminted is two
+      expect(await ProjectCollection.premintedByAuthor()).to.equal(
+        authorOwnsAmount
+      );
+      // discountRate is correct
+      expect(await ProjectCollection.discountRate()).to.equal(discountRate);
+      // auctionStarted is true
+      expect(await ProjectCollection.auctionsStarted()).to.equal(true);
+
+      // start At is correct
+      // expiresAt is set
+
+      // TODO - test with correct discount rate!
+      // userA sucessfully buys
+      const ProjectCollectionAsUserA = ProjectCollection.connect(userA);
+      await ProjectCollectionAsUserA.buy({
+        value: initialMintPrice,
+      });
+      expect(await ProjectCollection.balanceOf(userA.address, 1)).to.equal(1);
+
+      const ProjectCollectionAsUserB = ProjectCollection.connect(userB);
+      await ProjectCollectionAsUserB.buy({
+        value: initialMintPrice,
+      });
+      expect(await ProjectCollection.balanceOf(userB.address, 1)).to.equal(1);
     });
   });
 
