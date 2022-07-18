@@ -39,6 +39,7 @@ const FAQSection = () => {
             </p>
           </>
         </MoreDetails>
+        <br></br>
         <MoreDetails title={'What do I need to interact with the platform?'}>
           <>
             <p>
@@ -144,14 +145,14 @@ const FAQSection = () => {
           </>
         </MoreDetails>
         <br></br>
-        <MoreDetails title={'Who is building Moonpage?'}>
+        {/* <MoreDetails title={'Who is building Moonpage?'}>
           <>
             <p>
               <LinkWrapper url="/about#founders">Us</LinkWrapper> :)
             </p>
           </>
         </MoreDetails>
-        <br></br>
+        <br></br> */}
         <MoreDetails title={'What is next?'}>
           <>
             <p>
