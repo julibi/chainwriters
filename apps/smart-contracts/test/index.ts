@@ -1,6 +1,7 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
+import { formatEther } from "@ethersproject/units";
 import { expect } from "chai";
-import { ethers } from "hardhat";
+import { ethers, waffle } from "hardhat";
 import { ProjectDao, ProjectCollection, ProjectFactory } from "../typechain";
 
 const wait = (seconds: number) =>
@@ -30,6 +31,7 @@ describe("ProjectDao", function () {
   const textIpfsHash = "QmTw3pWBQinwuHS57FcWyUGBpvGqLHQZkn1eKjp89XXyFg";
   const initialMintPrice = ethers.utils.parseUnits("0.05", 18);
   const firstEditionMax = 4;
+  const provider = waffle.provider;
 
   beforeEach(async function () {
     [factory, author, contribA, contribB, userA, userB] =
@@ -161,11 +163,46 @@ describe("ProjectDao", function () {
       });
       expect(await ProjectCollection.balanceOf(userA.address, 1)).to.equal(1);
 
+      // get user balance before distribution of shares
+      const authorBalanceBefore = await provider.getBalance(author.address);
+      const contribABalanceBefore = await provider.getBalance(contribA.address);
+      const contribBBalanceBefore = await provider.getBalance(contribB.address);
+
+      // userA sucessfully buys
       const ProjectCollectionAsUserB = ProjectCollection.connect(userB);
-      await ProjectCollectionAsUserB.buy({
+      const selloutTx = await ProjectCollectionAsUserB.buy({
         value: initialMintPrice,
       });
+      await selloutTx.wait();
       expect(await ProjectCollection.balanceOf(userB.address, 1)).to.equal(1);
+
+      // check if total balance is split correctly
+      // factory gets 15%, co-writer gets 25%, marketer 15% and author the rest
+
+      const collectionBalance = await provider.getBalance(
+        ProjectCollection.address
+      );
+
+      const factoryBalance = await provider.getBalance(ProjectFactory.address);
+
+      const authorBalanceAfter = await provider.getBalance(author.address);
+      const contribABalanceAfter = await provider.getBalance(contribA.address);
+      const contribBBalanceAfter = await provider.getBalance(contribB.address);
+
+      const gainsAuthor = formatEther(
+        authorBalanceAfter.sub(authorBalanceBefore)
+      );
+      const gainsContribA = formatEther(
+        contribABalanceAfter.sub(contribABalanceBefore)
+      );
+      const gainsContribB = formatEther(
+        contribBBalanceAfter.sub(contribBBalanceBefore)
+      );
+
+      expect(gainsAuthor).to.equal("0.045");
+      expect(gainsContribA).to.equal("0.025");
+      expect(gainsContribB).to.equal("0.015");
+      expect(formatEther(factoryBalance)).to.equal("0.015");
     });
   });
 

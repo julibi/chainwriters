@@ -316,6 +316,10 @@ contract ProjectDao is AccessControlEnumerable, Pausable {
         uint256 contribIndex = contributionsIndeces[collectionAddr];
         AuthorShare storage authorShare = authorShares[collectionAddr];
         IProjectCollection collection = IProjectCollection(collectionAddr);
+        if (contribIndex == 0) {
+            authorShare.share = leftShares;
+            authorShare.shareInMatic = (balanceTotal * leftShares) / 100;
+        }
         for (uint256 i = 0; i < contribIndex; i++) {
             Contribution storage contrib = contributions[collectionAddr][i];
             leftShares = leftShares - contrib.share;
@@ -326,9 +330,14 @@ contract ProjectDao is AccessControlEnumerable, Pausable {
             }
             collection.withdraw(contrib.shareRecipient, contrib.shareInMatic);
         }
+
         collection.withdraw(author_address, authorShare.shareInMatic);
         collection.withdraw(factory, foundationShareInMatic);
     }
+
+    // ------------------
+    // Explicit overrides
+    // ------------------
 
     // ------------------
     // Can only be called by Foundation
