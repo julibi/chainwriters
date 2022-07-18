@@ -257,3 +257,7 @@ describe("Project", function () {
 
 // TODO - test all around the auction e.g. correct discount rate!
 // TODO all unhappy cases and requires!
+// TODO - the roles are not correct. Make sure the deployer can access all funds and set Factory etc.
+// royalties
+// votes
+// proxy
