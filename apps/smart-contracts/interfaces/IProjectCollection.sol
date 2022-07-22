@@ -11,4 +11,9 @@ interface IProjectCollection {
     function withdraw(address _to, uint256 _amount) external;
 
     function totalSupply(uint256) external view returns (uint256);
+
+    function balanceOf(address _owner, uint256 _token)
+        external
+        view
+        returns (uint256);
 }
