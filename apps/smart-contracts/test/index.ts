@@ -258,6 +258,15 @@ describe("Project", function () {
 // TODO - test all around the auction e.g. correct discount rate!
 // TODO all unhappy cases and requires!
 // TODO - the roles are not correct. Make sure the deployer can access all funds and set Factory etc.
-// royalties
+// royalties - only to
 // votes
+// Gen Ed can vote erc1155
+// weight is the same for everyone
+// timelock of 1 week or 1 month
+// (yes or no or Enthaltung) OR options up to three with enthaltung
+// when more than 50% of the total votes cast
 // proxy
+
+// events everywhere
+// emergencywithdraw everywhere
+// everything upgradable
