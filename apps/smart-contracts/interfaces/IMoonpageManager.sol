@@ -1,14 +1,12 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.9;
 
-interface IProjectDao {
+interface IMoonpageManager {
     function setupDao(
         address _caller,
         address _collection,
         string calldata _title,
-        string calldata _textCID,
-        uint256 _startPrice,
-        uint256 _maxAmount
+        string calldata _textCID
     ) external;
 
     function distributeShares() external;
@@ -25,15 +23,6 @@ interface IProjectDao {
             string memory,
             string memory,
             bool
-        );
-
-    function readEdition(address _collection)
-        external
-        view
-        returns (
-            uint256,
-            uint256,
-            uint256
         );
 
     function readAuthorShare(address _collection)

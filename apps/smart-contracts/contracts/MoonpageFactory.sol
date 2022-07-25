@@ -3,19 +3,18 @@ pragma solidity ^0.8.9;
 
 // Make it pausable!
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "../interfaces/IProjectDao.sol";
+import "../interfaces/IMoonpageManager.sol";
 import "./MoonpageCollection.sol";
 
-contract ProjectFactory is Ownable {
-    uint256 public firstEditionMin = 1;
-    uint256 public firstEditionMax = 1700;
+contract MoonpageFactory is Ownable {
+    uint256 public firstEditionMin = 3;
+    uint256 public firstEditionMax = 1000;
     address[] public collections;
     uint256 public collectionsLength = 0;
-    // naming sucks
-    IProjectDao public projectDao;
+    IMoonpageManager public moonpageManager;
 
-    constructor(address _dao) {
-        projectDao = IProjectDao(_dao);
+    constructor(address _mpManager) {
+        moonpageManager = IMoonpageManager(_mpManager);
     }
 
     function createDao(
@@ -24,19 +23,23 @@ contract ProjectFactory is Ownable {
         uint256 _initialMintPrice,
         uint256 _firstEditionAmount
     ) external {
+        require(
+            _firstEditionAmount > firstEditionMin &&
+                _firstEditionAmount < firstEditionMax,
+            "Incorrect amount"
+        );
         MoonpageCollection collection = new MoonpageCollection(
             _title,
             msg.sender,
-            address(this),
-            address(projectDao)
+            address(moonpageManager),
+            _initialMintPrice,
+            _firstEditionAmount
         );
-        projectDao.setupDao(
+        moonpageManager.setupDao(
             msg.sender,
             address(collection),
             _title,
-            _textIpfsHash,
-            _initialMintPrice,
-            _firstEditionAmount
+            _textIpfsHash
         );
         collections.push(address(collection));
         collectionsLength++;

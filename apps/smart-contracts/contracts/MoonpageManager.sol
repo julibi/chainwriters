@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
 import "../interfaces/IMoonpageCollection.sol";
 
-contract ProjectDao is AccessControlEnumerable, Pausable {
+contract MoonpageManager is AccessControlEnumerable, Pausable {
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
     uint256 public constant MAX_AMOUNT_EDITION = 10000;
     uint256 public projectsLength = 0;
@@ -22,11 +22,6 @@ contract ProjectDao is AccessControlEnumerable, Pausable {
         string blurbIpfsHash;
         bool paused;
     }
-    struct Edition {
-        uint256 currentEdition;
-        uint256 currentEditionMax;
-        uint256 currentEditionMintPrice;
-    }
     struct AuthorShare {
         uint256 share;
         uint256 shareInMatic;
@@ -39,7 +34,6 @@ contract ProjectDao is AccessControlEnumerable, Pausable {
     }
 
     mapping(address => BaseData) public baseDatas;
-    mapping(address => Edition) public editions;
     mapping(address => AuthorShare) public authorShares;
     mapping(address => mapping(uint256 => Contribution)) public contributions;
     mapping(address => uint8) public contributionsIndeces;
@@ -53,11 +47,6 @@ contract ProjectDao is AccessControlEnumerable, Pausable {
     event TextSet(string textHash);
     event ContributorAdded(address contributor, uint256 share, string role);
     event Paused(bool paused);
-    event NextEditionEnabled(
-        uint256 nextEdId,
-        uint256 maxSupply,
-        uint256 mintPrice
-    );
 
     constructor() {
         _setupRole(PAUSER_ROLE, msg.sender);
@@ -86,11 +75,8 @@ contract ProjectDao is AccessControlEnumerable, Pausable {
         address _caller,
         address _collection,
         string calldata _title,
-        string calldata _textCID,
-        uint256 _startPrice,
-        uint256 _maxAmount
+        string calldata _textCID
     ) external onlyFactory {
-        Edition memory newEdition = Edition(1, _maxAmount, _startPrice);
         BaseData memory newBaseData = BaseData(
             _title,
             "",
@@ -102,11 +88,10 @@ contract ProjectDao is AccessControlEnumerable, Pausable {
             false
         );
         AuthorShare memory newAuthorShare = AuthorShare(100 - fee, 0);
-        projectsLength++;
-        editions[_collection] = newEdition;
         baseDatas[_collection] = newBaseData;
         authorShares[_collection] = newAuthorShare;
         contributionsIndeces[_collection] = 0;
+        projectsLength++;
     }
 
     function configureProjectDetails(
@@ -178,40 +163,6 @@ contract ProjectDao is AccessControlEnumerable, Pausable {
         }
     }
 
-    function enableNextEdition(
-        address _collection,
-        uint256 _maxNftAmountOfNewEdition,
-        uint256 _newEditionMintPrice
-    ) external onlyAuthor(_collection) whenNotPaused {
-        Edition storage edition = editions[_collection];
-        IMoonpageCollection collection = IMoonpageCollection(_collection);
-        if (edition.currentEdition == 1) {
-            require(
-                collection.auctionPhaseFinished(),
-                "Auctions not finished yet"
-            );
-        } else {
-            // what if some nfts are sent to zero address? Is there a case that prevents this check from being true?
-            require(
-                collection.totalSupply(edition.currentEdition) ==
-                    edition.currentEditionMax,
-                "Current edition has not sold out"
-            );
-        }
-        require(
-            _maxNftAmountOfNewEdition < MAX_AMOUNT_EDITION,
-            "Max Amount too big"
-        );
-        edition.currentEdition++;
-        edition.currentEditionMax = _maxNftAmountOfNewEdition;
-        edition.currentEditionMintPrice = _newEditionMintPrice;
-        emit NextEditionEnabled(
-            edition.currentEdition,
-            _maxNftAmountOfNewEdition,
-            _newEditionMintPrice
-        );
-    }
-
     // ------------------
     // Read functions
     // ------------------
@@ -240,23 +191,6 @@ contract ProjectDao is AccessControlEnumerable, Pausable {
             data.imgIpfsHash,
             data.blurbIpfsHash,
             data.paused
-        );
-    }
-
-    function readEdition(address _collection)
-        external
-        view
-        returns (
-            uint256,
-            uint256,
-            uint256
-        )
-    {
-        Edition storage ed = editions[_collection];
-        return (
-            ed.currentEdition,
-            ed.currentEditionMax,
-            ed.currentEditionMintPrice
         );
     }
 

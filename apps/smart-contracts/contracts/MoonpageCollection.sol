@@ -8,7 +8,8 @@ import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/utils/cryptography/draft-EIP712.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/draft-ERC721Votes.sol";
-import "../interfaces/IProjectDao.sol";
+import "@openzeppelin/contracts/utils/Counters.sol";
+import "../interfaces/IMoonpageManager.sol";
 
 contract MoonpageCollection is
     ERC721,
@@ -19,16 +20,26 @@ contract MoonpageCollection is
     EIP712,
     ERC721Votes
 {
+    using Counters for Counters.Counter;
     bytes32 public constant AUTHOR_ROLE = keccak256("AUTHOR_ROLE");
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
+    Counters.Counter private _tokenIdCounter;
     uint256 public constant MAX_PER_WALLET = 5;
 
     uint256 public totalSharePercentage = 15;
-    address public factory;
-    IProjectDao public daoManager;
+    IMoonpageManager public moonpageManager;
     string public baseUri;
     uint256 public premintedByAuthor = 0;
 
+    struct Edition {
+        uint256 current;
+        uint256 maxAmount;
+        uint256 mintPrice;
+    }
+    Edition public edition;
+    uint256 public lastGenEd;
+
+    // move this into own contract?
     uint256 public AUCTION_DURATION = 1 days;
     uint256 public discountRate;
     uint256 public startAt;
@@ -44,58 +55,32 @@ contract MoonpageCollection is
     event ExpirationSet(uint256 edition, uint256 expirationTime);
     event URISet(string uri);
     event Paused(bool paused);
+    event NextEditionEnabled(
+        uint256 nextEdId,
+        uint256 maxSupply,
+        uint256 mintPrice
+    );
 
     constructor(
         string memory _title,
         address _caller,
-        address _factory,
-        address _daoManager
-    ) ERC721(_title, "MP") EIP712("Moonpage", "1") {
-        factory = _factory;
-        daoManager = IProjectDao(_daoManager);
-        _grantRole(PAUSER_ROLE, _factory);
+        address _mpAddress,
+        uint256 _initialMintPrice,
+        uint256 _firstEditionAmount
+    ) ERC721(_title, "MP") EIP712(_title, "1") {
+        moonpageManager = IMoonpageManager(_mpAddress);
         _grantRole(PAUSER_ROLE, _caller);
         _grantRole(AUTHOR_ROLE, _caller);
         _grantRole(DEFAULT_ADMIN_ROLE, _caller);
         // grand Minter role and only let minter role mint
+
+        edition = Edition(1, _firstEditionAmount, _initialMintPrice);
+        lastGenEd = _firstEditionAmount;
     }
 
     modifier onlyDaoManager() {
-        require(msg.sender == address(daoManager), "Not authorized");
+        require(msg.sender == address(moonpageManager), "Not authorized");
         _;
-    }
-
-    function setBaseUri(string memory _baseUri)
-        public
-        onlyRole(AUTHOR_ROLE)
-        whenNotPaused
-    {
-        baseUri = _baseUri;
-        emit BaseUriSet(baseUri);
-    }
-
-    function triggerFirstAuction(
-        uint256 _amount,
-        string memory _newUri,
-        uint256 _discountRate
-    ) external onlyRole(AUTHOR_ROLE) whenNotPaused {
-        require(!auctionsStarted, "Auctions already started");
-        require(premintedByAuthor == 0, "Already claimed");
-        (
-            uint256 currentEd,
-            uint256 currentEdMax,
-            uint256 currentEdMintPrice
-        ) = daoManager.readEdition(address(this));
-        require(_amount > 0 && _amount < currentEdMax, "Invalid amount");
-        setBaseUri(_newUri);
-        _safeMint(msg.sender, _amount, "");
-        premintedByAuthor = _amount;
-        discountRate = _discountRate;
-        startAt = block.timestamp;
-        expiresAt = block.timestamp + AUCTION_DURATION;
-        auctionsStarted = true;
-        emit AuctionsStarted();
-        emit ExpirationSet(1, expiresAt);
     }
 
     function retriggerAuction() external {
@@ -112,59 +97,112 @@ contract MoonpageCollection is
         require(auctionsStarted, "Auctions have not started");
         require(!auctionPhaseFinished, "Auctions finished");
         require(expiresAt > block.timestamp, "Auction ended, trigger again");
-        (
-            uint256 currentEdition,
-            uint256 currentEditionMax,
-            uint256 currentEditionMintPrice
-        ) = daoManager.readEddtion(address(this));
-        uint256 price = getPrice(currentEditionMintPrice);
-        bool shouldFinalize = (totalSupply() + 1) == currentEditionMax;
+        uint256 price = getPrice(edition.mintPrice);
+        bool shouldFinalize = (totalSupply() + 1) == edition.maxAmount;
         require(msg.value >= price, "Value sent not sufficient");
 
-        _safeMint(msg.sender, 1, "");
+        mint(msg.sender, 1);
         // uint refund = msg.value - price;
         // if (refund > 0) {
         //     payable(msg.sender).transfer(refund);
         // }
-        emit Minted(currentEdition, 1);
+        emit Minted(edition.current, 1);
         if (shouldFinalize) {
             auctionPhaseFinished = true;
-            daoManager.distributeShares();
+            moonpageManager.distributeShares();
             emit AuctionsEnded();
         } else {
             triggerNextAuction();
         }
     }
 
-    function mint(uint256 _amount) external payable whenNotPaused {
-        (
-            uint256 currentEdition,
-            uint256 currentEditionMax,
-            uint256 currentEditionMintPrice
-        ) = daoManager.readEdition(address(this));
-        require(currentEdition > 1, "Public minting possible from edition 2");
+    function publicMint(uint256 _amount) external payable whenNotPaused {
+        require(edition.current > 1, "Public minting possible from edition 2");
         require(
             (balanceOf(msg.sender) + _amount) <= MAX_PER_WALLET,
             "Exceeds max per wallet."
         );
         require(
-            (totalSupply() + _amount) <= currentEditionMax,
+            (totalSupply() + _amount) <= edition.maxAmount,
             "Amount exceeds cap."
         );
         require(
-            msg.value >= currentEditionMintPrice * _amount,
+            msg.value >= edition.mintPrice * _amount,
             "Value sent not sufficient."
         );
-        bool shouldFinalize = (totalSupply() + 1) == currentEditionMax;
-        _safeMint(msg.sender, _amount, "");
-        emit Minted(currentEdition, _amount);
+        bool shouldFinalize = (totalSupply() + _amount) == edition.maxAmount;
+        mint(msg.sender, _amount);
+        emit Minted(edition.current, _amount);
         if (shouldFinalize) {
-            daoManager.distributeShares();
+            moonpageManager.distributeShares();
         }
     }
 
     // ------------------
-    // Private functions
+    // Authors functions
+    // ------------------
+
+    function setBaseUri(string memory _baseUri)
+        public
+        onlyRole(AUTHOR_ROLE)
+        whenNotPaused
+    {
+        baseUri = _baseUri;
+        emit BaseUriSet(baseUri);
+    }
+
+    function triggerFirstAuction(
+        uint256 _amount,
+        string memory _newUri,
+        uint256 _discountRate
+    ) external onlyRole(AUTHOR_ROLE) whenNotPaused {
+        uint256 tokenId = _tokenIdCounter.current();
+        _tokenIdCounter.increment();
+        require(!auctionsStarted, "Auctions already started");
+        require(premintedByAuthor == 0, "Already claimed");
+        // require(_amount > 0 && _amount < edition.current, "Invalid amount");
+
+        premintedByAuthor = _amount;
+        discountRate = _discountRate;
+        startAt = block.timestamp;
+        expiresAt = block.timestamp + AUCTION_DURATION;
+        auctionsStarted = true;
+        setBaseUri(_newUri);
+        mint(msg.sender, _amount);
+        emit AuctionsStarted();
+        emit ExpirationSet(1, expiresAt);
+    }
+
+    function enableNextEdition(uint256 _newEdAmount, uint256 _newEdMintPrice)
+        external
+        onlyRole(AUTHOR_ROLE)
+        whenNotPaused
+    {
+        if (edition.current == 1) {
+            require(auctionPhaseFinished, "Auctions not finished yet");
+        } else {
+            // what if some nfts are sent to zero address/burnt? Is there a case that prevents this check from being true?
+            require(
+                totalSupply() == edition.maxAmount,
+                "Current edition has not sold out"
+            );
+        }
+        // require(
+        //     _maxNftAmountOfNewEdition < MAX_AMOUNT_EDITION,
+        //     "Max Amount too big"
+        // );
+        edition.current++;
+        edition.mintPrice = _newEdMintPrice;
+        edition.maxAmount = edition.maxAmount + _newEdAmount;
+        emit NextEditionEnabled(
+            edition.current,
+            edition.maxAmount,
+            edition.mintPrice
+        );
+    }
+
+    // ------------------
+    // Internal & Private functions
     // ------------------
 
     function triggerNextAuction() private {
@@ -173,7 +211,22 @@ contract MoonpageCollection is
         emit ExpirationSet(1, expiresAt);
     }
 
-    // test from private to internal
+    function mint(address _receiver, uint256 _amount) internal {
+        require(_receiver != address(0), "No null address");
+
+        for (uint256 i = 0; i < _amount; i++) {
+            uint256 tokenId = _tokenIdCounter.current();
+            _tokenIdCounter.increment();
+            if (tokenId <= edition.maxAmount) {
+                _safeMint(_receiver, tokenId);
+            }
+        }
+    }
+
+    // ------------------
+    // Dao Manager functions
+    // ------------------
+
     function withdraw(address _to, uint256 _amount) external onlyDaoManager {
         require(_to != address(0), "Cannot withdraw to the 0 address");
         payable(_to).transfer(_amount);
@@ -198,6 +251,8 @@ contract MoonpageCollection is
         override(ERC721, ERC721URIStorage)
         returns (string memory)
     {
+        // TODO
+        // tokenId <= lastGenEd ? genEdMetadata : rest;
         return baseUri;
     }
 
