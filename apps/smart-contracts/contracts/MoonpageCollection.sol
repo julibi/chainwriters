@@ -1,20 +1,23 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.9;
 
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
-import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
-import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
-import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts/utils/cryptography/draft-EIP712.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/draft-ERC721Votes.sol";
 import "../interfaces/IProjectDao.sol";
 
-// TODO: make the collection read from the dao
-// make collection verified, always
-
-contract ProjectCollection is
-    ERC1155,
-    AccessControlEnumerable,
-    ERC1155Supply,
-    Pausable
+contract MoonpageCollection is
+    ERC721,
+    ERC721Enumerable,
+    ERC721URIStorage,
+    Pausable,
+    AccessControl,
+    EIP712,
+    ERC721Votes
 {
     bytes32 public constant AUTHOR_ROLE = keccak256("AUTHOR_ROLE");
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
@@ -23,7 +26,7 @@ contract ProjectCollection is
     uint256 public totalSharePercentage = 15;
     address public factory;
     IProjectDao public daoManager;
-    string public name;
+    string public baseUri;
     uint256 public premintedByAuthor = 0;
 
     uint256 public AUCTION_DURATION = 1 days;
@@ -33,6 +36,7 @@ contract ProjectCollection is
     bool public auctionsStarted = false;
     bool public auctionPhaseFinished = false;
 
+    event BaseUriSet(string indexed baseUri);
     event AuctionsStarted();
     event AuctionsEnded();
     event AuthorMinted(uint256 amount);
@@ -46,18 +50,28 @@ contract ProjectCollection is
         address _caller,
         address _factory,
         address _daoManager
-    ) ERC1155("") {
-        name = _title;
+    ) ERC721(_title, "MP") EIP712("Moonpage", "1") {
         factory = _factory;
         daoManager = IProjectDao(_daoManager);
-        _setupRole(PAUSER_ROLE, _factory);
-        _setupRole(PAUSER_ROLE, _caller);
-        _setupRole(AUTHOR_ROLE, _caller);
+        _grantRole(PAUSER_ROLE, _factory);
+        _grantRole(PAUSER_ROLE, _caller);
+        _grantRole(AUTHOR_ROLE, _caller);
+        _grantRole(DEFAULT_ADMIN_ROLE, _caller);
+        // grand Minter role and only let minter role mint
     }
 
     modifier onlyDaoManager() {
         require(msg.sender == address(daoManager), "Not authorized");
         _;
+    }
+
+    function setBaseUri(string memory _baseUri)
+        public
+        onlyRole(AUTHOR_ROLE)
+        whenNotPaused
+    {
+        baseUri = _baseUri;
+        emit BaseUriSet(baseUri);
     }
 
     function triggerFirstAuction(
@@ -73,8 +87,8 @@ contract ProjectCollection is
             uint256 currentEdMintPrice
         ) = daoManager.readEdition(address(this));
         require(_amount > 0 && _amount < currentEdMax, "Invalid amount");
-        _setURI(_newUri);
-        _mint(msg.sender, 1, _amount, "");
+        setBaseUri(_newUri);
+        _safeMint(msg.sender, _amount, "");
         premintedByAuthor = _amount;
         discountRate = _discountRate;
         startAt = block.timestamp;
@@ -102,12 +116,12 @@ contract ProjectCollection is
             uint256 currentEdition,
             uint256 currentEditionMax,
             uint256 currentEditionMintPrice
-        ) = daoManager.readEdition(address(this));
+        ) = daoManager.readEddtion(address(this));
         uint256 price = getPrice(currentEditionMintPrice);
-        bool shouldFinalize = (totalSupply(1) + 1) == currentEditionMax;
+        bool shouldFinalize = (totalSupply() + 1) == currentEditionMax;
         require(msg.value >= price, "Value sent not sufficient");
 
-        _mint(msg.sender, 1, 1, "");
+        _safeMint(msg.sender, 1, "");
         // uint refund = msg.value - price;
         // if (refund > 0) {
         //     payable(msg.sender).transfer(refund);
@@ -130,20 +144,19 @@ contract ProjectCollection is
         ) = daoManager.readEdition(address(this));
         require(currentEdition > 1, "Public minting possible from edition 2");
         require(
-            (balanceOf(msg.sender, currentEdition) + _amount) <= MAX_PER_WALLET,
+            (balanceOf(msg.sender) + _amount) <= MAX_PER_WALLET,
             "Exceeds max per wallet."
         );
         require(
-            (totalSupply(currentEdition) + _amount) <= currentEditionMax,
+            (totalSupply() + _amount) <= currentEditionMax,
             "Amount exceeds cap."
         );
         require(
             msg.value >= currentEditionMintPrice * _amount,
             "Value sent not sufficient."
         );
-        bool shouldFinalize = (totalSupply(currentEdition) + 1) ==
-            currentEditionMax;
-        _mint(msg.sender, currentEdition, _amount, "");
+        bool shouldFinalize = (totalSupply() + 1) == currentEditionMax;
+        _safeMint(msg.sender, _amount, "");
         emit Minted(currentEdition, _amount);
         if (shouldFinalize) {
             daoManager.distributeShares();
@@ -179,6 +192,15 @@ contract ProjectCollection is
         return 0;
     }
 
+    function tokenURI(uint256 tokenId)
+        public
+        view
+        override(ERC721, ERC721URIStorage)
+        returns (string memory)
+    {
+        return baseUri;
+    }
+
     // ------------------
     // Explicit overrides
     // ------------------
@@ -191,23 +213,39 @@ contract ProjectCollection is
         _unpause();
     }
 
-    // The following functions are overrides required by Solidity.
+    function _burn(uint256 tokenId)
+        internal
+        override(ERC721, ERC721URIStorage)
+    {
+        super._burn(tokenId);
+    }
+
+    function _baseURI() internal view override returns (string memory) {
+        return baseUri;
+    }
 
     function _beforeTokenTransfer(
-        address operator,
         address from,
         address to,
-        uint256[] memory ids,
-        uint256[] memory amounts,
-        bytes memory data
-    ) internal override(ERC1155, ERC1155Supply) {
-        super._beforeTokenTransfer(operator, from, to, ids, amounts, data);
+        uint256 tokenId
+    ) internal override(ERC721, ERC721Enumerable) whenNotPaused {
+        super._beforeTokenTransfer(from, to, tokenId);
+    }
+
+    // The following functions are overrides required by Solidity.
+
+    function _afterTokenTransfer(
+        address from,
+        address to,
+        uint256 tokenId
+    ) internal override(ERC721, ERC721Votes) {
+        super._afterTokenTransfer(from, to, tokenId);
     }
 
     function supportsInterface(bytes4 interfaceId)
         public
         view
-        override(ERC1155, AccessControlEnumerable)
+        override(ERC721, ERC721Enumerable, AccessControl)
         returns (bool)
     {
         return super.supportsInterface(interfaceId);

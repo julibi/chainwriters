@@ -3,7 +3,7 @@ pragma solidity ^0.8.9;
 
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
-import "../interfaces/IProjectCollection.sol";
+import "../interfaces/IMoonpageCollection.sol";
 
 contract ProjectDao is AccessControlEnumerable, Pausable {
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
@@ -116,7 +116,7 @@ contract ProjectDao is AccessControlEnumerable, Pausable {
         string calldata _genre,
         string calldata _subtitle
     ) external onlyAuthor(_collection) whenNotPaused {
-        IProjectCollection collection = IProjectCollection(_collection);
+        IMoonpageCollection collection = IMoonpageCollection(_collection);
         require(!collection.auctionsStarted(), "Auctions started already");
         baseDatas[_collection].imgIpfsHash = _imgHash;
         baseDatas[_collection].blurbIpfsHash = _blurbHash;
@@ -131,7 +131,7 @@ contract ProjectDao is AccessControlEnumerable, Pausable {
         onlyAuthor(_collection)
         whenNotPaused
     {
-        IProjectCollection collection = IProjectCollection(_collection);
+        IMoonpageCollection collection = IMoonpageCollection(_collection);
         require(!collection.auctionsStarted(), "Auctions started already");
         baseDatas[_collection].textIpfsHash = _ipfsHash;
 
@@ -145,7 +145,7 @@ contract ProjectDao is AccessControlEnumerable, Pausable {
         string[] calldata _roles
     ) external onlyAuthor(_collection) whenNotPaused {
         // in theory user can put the same contributor 3 times - we don't care
-        IProjectCollection collection = IProjectCollection(_collection);
+        IMoonpageCollection collection = IMoonpageCollection(_collection);
         AuthorShare storage share = authorShares[_collection];
         require(!collection.auctionsStarted(), "Auctions started already");
         require(
@@ -184,7 +184,7 @@ contract ProjectDao is AccessControlEnumerable, Pausable {
         uint256 _newEditionMintPrice
     ) external onlyAuthor(_collection) whenNotPaused {
         Edition storage edition = editions[_collection];
-        IProjectCollection collection = IProjectCollection(_collection);
+        IMoonpageCollection collection = IMoonpageCollection(_collection);
         if (edition.currentEdition == 1) {
             require(
                 collection.auctionPhaseFinished(),
@@ -312,7 +312,7 @@ contract ProjectDao is AccessControlEnumerable, Pausable {
         uint256 foundationShareInMatic = (balanceTotal * 15) / 100;
         uint256 contribIndex = contributionsIndeces[collectionAddr];
         AuthorShare storage authorShare = authorShares[collectionAddr];
-        IProjectCollection collection = IProjectCollection(collectionAddr);
+        IMoonpageCollection collection = IMoonpageCollection(collectionAddr);
         if (contribIndex == 0) {
             authorShare.share = leftShares;
             authorShare.shareInMatic = (balanceTotal * leftShares) / 100;

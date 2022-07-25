@@ -4,7 +4,7 @@ pragma solidity ^0.8.9;
 // Make it pausable!
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "../interfaces/IProjectDao.sol";
-import "./ProjectCollection.sol";
+import "./MoonpageCollection.sol";
 
 contract ProjectFactory is Ownable {
     uint256 public firstEditionMin = 1;
@@ -24,7 +24,7 @@ contract ProjectFactory is Ownable {
         uint256 _initialMintPrice,
         uint256 _firstEditionAmount
     ) external {
-        ProjectCollection collection = new ProjectCollection(
+        MoonpageCollection collection = new MoonpageCollection(
             _title,
             msg.sender,
             address(this),
