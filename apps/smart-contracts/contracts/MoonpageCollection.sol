@@ -6,10 +6,10 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
-import "@openzeppelin/contracts/utils/cryptography/draft-EIP712.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/draft-ERC721Votes.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "../interfaces/IMoonpageManager.sol";
+
+// TODO: first id is 0 - either increment in the beginning or transfer the first one to Library
 
 contract MoonpageCollection is
     ERC721,
@@ -67,7 +67,7 @@ contract MoonpageCollection is
         address _mpAddress,
         uint256 _initialMintPrice,
         uint256 _firstEditionAmount
-    ) ERC721(_title, "MP") EIP712(_title, "1") {
+    ) ERC721("Moonpage", "MP") {
         moonpageManager = IMoonpageManager(_mpAddress);
         _grantRole(PAUSER_ROLE, _caller);
         _grantRole(AUTHOR_ROLE, _caller);
@@ -156,19 +156,17 @@ contract MoonpageCollection is
         string memory _newUri,
         uint256 _discountRate
     ) external onlyRole(AUTHOR_ROLE) whenNotPaused {
-        uint256 tokenId = _tokenIdCounter.current();
-        _tokenIdCounter.increment();
         require(!auctionsStarted, "Auctions already started");
         require(premintedByAuthor == 0, "Already claimed");
         // require(_amount > 0 && _amount < edition.current, "Invalid amount");
 
+        setBaseUri(_newUri);
+        mint(msg.sender, _amount);
         premintedByAuthor = _amount;
         discountRate = _discountRate;
         startAt = block.timestamp;
         expiresAt = block.timestamp + AUCTION_DURATION;
         auctionsStarted = true;
-        setBaseUri(_newUri);
-        mint(msg.sender, _amount);
         emit AuctionsStarted();
         emit ExpirationSet(1, expiresAt);
     }
