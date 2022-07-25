@@ -29,7 +29,6 @@ contract MoonpageFactory is Ownable {
             "Incorrect amount"
         );
         MoonpageCollection collection = new MoonpageCollection(
-            _title,
             msg.sender,
             address(moonpageManager),
             _initialMintPrice,

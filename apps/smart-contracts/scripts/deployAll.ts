@@ -26,6 +26,14 @@ async function deployAll() {
   await Factory.deployed();
   console.log(`Factory contract deployed to: ${Factory.address}`);
 
+  // deploy BallotFactory
+  const BallotsFactoryFactory = await hre.ethers.getContractFactory(
+    "BallotsFactory"
+  );
+  const BallotsFactory = await BallotsFactoryFactory.deploy(Manager.address);
+  await BallotsFactory.deployed();
+  console.log(`BallotFactory contract deployed to: ${BallotsFactory.address}`);
+
   // // Collection arguments
   const title = "My little Phony";
   const textIpfsHash = "QmTw3pWBQinwuHS57FcWyUGBpvGqLHQZkn1eKjp89XXyFg";
@@ -34,15 +42,22 @@ async function deployAll() {
 
   // setFactory
   await Manager.setFactory(Factory.address);
-  const FirstCollection = await Factory.collections(0);
+
   // deploy dao
-  const tx = await Factory.createDao(
+  const createDaoTX = await Factory.createDao(
     title,
     textIpfsHash,
     initialMintPrice,
     firstEditionMax
   );
-  const receipt = await tx.wait();
+  await createDaoTX.wait();
+
+  const firstCollection = await Factory.collections(0);
+
+  // create Ballot/Deploy Ballot
+  const createBallotTX = await BallotsFactory.createBallot(firstCollection);
+  await createBallotTX.wait();
+  const firstBallot = await BallotsFactory.ballots(firstCollection);
   // const daoCreationEvent = receipt.events?.find(
   //   (event: any) => event.event === "DaoCreated"
   // );
@@ -65,14 +80,21 @@ async function deployAll() {
       constructorArguments: [Manager.address],
     }),
     hre.run("verify:verify", {
-      address: FirstCollection,
+      address: firstCollection,
       constructorArguments: [
-        title,
         deployer.address,
         Manager.address,
         initialMintPrice,
         firstEditionMax,
       ],
+    }),
+    hre.run("verify:verify", {
+      address: BallotsFactory.address,
+      constructorArguments: [Manager.address],
+    }),
+    hre.run("verify:verify", {
+      address: firstBallot,
+      constructorArguments: [firstCollection, deployer.address],
     }),
   ]);
 }

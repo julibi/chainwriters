@@ -18,7 +18,7 @@ contract Ballot is AccessControlEnumerable, Pausable {
     State public state;
     struct SingleVote {
         bool voted;
-        uint8 vote;
+        uint vote;
     }
     struct Setting {
         string proposal;
@@ -43,6 +43,7 @@ contract Ballot is AccessControlEnumerable, Pausable {
         _setupRole(PAUSER_ROLE, _creator);
         _setupRole(AUTHOR_ROLE, _creator);
         collection = IMoonpageCollection(_collection);
+        maxId = collection.lastGenEd();
     }
 
     modifier authorized() {
@@ -97,7 +98,7 @@ contract Ballot is AccessControlEnumerable, Pausable {
         require(!votings[votingsIndex][_tokenId].voted, "Already voted");
         Setting storage currentSetting = voteSettings[votingsIndex];
         require(currentSetting.votesCount + 1 <= maxId, "Max votes reached");
-        votings[votingsIndex][_tokenId] = _option;
+        votings[votingsIndex][_tokenId].vote = _option;
         votings[votingsIndex][_tokenId].voted = true;
         currentSetting.votesCount++;
 

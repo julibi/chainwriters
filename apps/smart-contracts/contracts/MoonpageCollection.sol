@@ -60,7 +60,6 @@ contract MoonpageCollection is
     );
 
     constructor(
-        string memory _title,
         address _caller,
         address _mpAddress,
         uint256 _initialMintPrice,

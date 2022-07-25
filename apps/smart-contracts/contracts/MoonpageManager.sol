@@ -16,7 +16,7 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         string title;
         string subtitle;
         string genre;
-        address author_address;
+        address authorAddress;
         string textIpfsHash;
         string imgIpfsHash;
         string blurbIpfsHash;
@@ -55,7 +55,7 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
 
     modifier onlyAuthor(address _collection) {
         require(
-            msg.sender == baseDatas[_collection].author_address,
+            msg.sender == baseDatas[_collection].authorAddress,
             "Not author"
         );
         _;
@@ -186,7 +186,7 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
             data.title,
             data.subtitle,
             data.genre,
-            data.author_address,
+            data.authorAddress,
             data.textIpfsHash,
             data.imgIpfsHash,
             data.blurbIpfsHash,
@@ -237,9 +237,9 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
     function distributeShares() external {
         address collectionAddr = address(msg.sender);
         BaseData storage baseData = baseDatas[collectionAddr];
-        address author_address = baseData.author_address;
+        address authorAddress = baseData.authorAddress;
         // IS THIS SAFE?
-        require(address(author_address) != address(0), "Not authorized");
+        require(address(authorAddress) != address(0), "Not authorized");
 
         uint256 leftShares = 85;
         uint256 balanceTotal = address(collectionAddr).balance;
@@ -262,7 +262,7 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
             collection.withdraw(contrib.shareRecipient, contrib.shareInMatic);
         }
 
-        collection.withdraw(author_address, authorShare.shareInMatic);
+        collection.withdraw(authorAddress, authorShare.shareInMatic);
         collection.withdraw(factory, foundationShareInMatic);
     }
 
