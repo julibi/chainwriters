@@ -13,4 +13,6 @@ interface IMoonpageCollection {
     function totalSupply() external view returns (uint256);
 
     function balanceOf(address _owner) external view returns (uint256);
+
+    function ownerOf(uint256 _tokenId) external view returns (address);
 }

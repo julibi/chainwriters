@@ -3,14 +3,14 @@ pragma solidity ^0.8.9;
 
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
-import "../interfaces/IProjecCollection.sol";
+import "../interfaces/IMoonpageCollection.sol";
+import "../interfaces/IMoonpageManager.sol";
 
 contract Ballot is AccessControlEnumerable, Pausable {
     bytes32 public constant AUTHOR_ROLE = keccak256("AUTHOR_ROLE");
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
-    IProjecCollection public collection;
-
-    address public factory;
+    IMoonpageCollection public collection;
+    uint256 public maxId;
     enum State {
         Voting,
         NotVoting
@@ -31,50 +31,42 @@ contract Ballot is AccessControlEnumerable, Pausable {
         uint256 option1Votes;
         uint256 option2Votes;
         uint256 option3Votes;
-        uint256 maxVotes;
-        uint256 totalVotesCount;
+        uint256 votesCount;
     }
 
-    mapping(uint256 => mapping(address => SingleVote)) private votings;
+    mapping(uint256 => mapping(uint256 => SingleVote)) internal votings;
     mapping(uint256 => Setting) public voteSettings;
     uint256 public maxVotes;
     uint256 public votingsIndex = 0;
 
-    constructor(
-        address _factory,
-        address _collection,
-        address _creator
-    ) {
-        name = _title;
-        factory = _factory;
-        daoManager = IProjectDao(_daoManager);
-        // moonpage should always be able to pause
-        // _setupRole(PAUSER_ROLE, _factory);
+    constructor(address _collection, address _creator) {
         _setupRole(PAUSER_ROLE, _creator);
         _setupRole(AUTHOR_ROLE, _creator);
-        collection = IProjecCollection(_collection);
+        collection = IMoonpageCollection(_collection);
     }
 
     modifier authorized() {
-        require(collection.balanceOf(msg.sender, 1) > 0, "Not authorized");
+        require(collection.balanceOf(msg.sender) > 0, "Not authorized");
+        _;
+    }
+
+    modifier inState(State _state) {
+        require(state == _state, "Impossible at this state");
         _;
     }
 
     function startVote(
-        string _proposal,
-        uint8[] _optionKeys,
-        string[] _optionValues,
-        bool _longVote
-    ) external onlyRole(AUTHOR_ROLE) {
-        require(_optionsKey.length == 3, "Must be three options");
+        string memory _proposal,
+        uint8[] memory _optionKeys,
+        string[] memory _optionValues
+    ) external onlyRole(AUTHOR_ROLE) inState(State.NotVoting) {
+        require(_optionKeys.length == 3, "Must be three options");
         require(
-            _optionsKey.length == _optionsValue.length,
+            _optionKeys.length == _optionValues.length,
             "Key and vale must be same length"
         );
-        require(state == State.NotVoting, "Vote already running");
-        require(votingsIndex);
 
-        Setting newSetting = voteSettings[voteIndex];
+        Setting storage newSetting = voteSettings[votingsIndex];
         newSetting.proposal = _proposal;
         newSetting.option1Key = _optionKeys[0];
         newSetting.option2Key = _optionKeys[1];
@@ -85,26 +77,28 @@ contract Ballot is AccessControlEnumerable, Pausable {
         newSetting.option1Votes = 0;
         newSetting.option2Votes = 0;
         newSetting.option3Votes = 0;
-        newSettings.maxVotes = collection.totalSupply(1);
-        voteSettings[voteIndex] = newSetting;
+        voteSettings[votingsIndex] = newSetting;
         votingsIndex++;
     }
 
-    function endVote() external onlyRole(AUTHOR_ROLE) {
-        require(state.Voting, "No active vote");
+    function endVote() external onlyRole(AUTHOR_ROLE) inState(State.Voting) {
         state = State.NotVoting;
     }
 
-    function vote(uint256 _option) external authorized {
-        Setting currentSetting = voteSettings[voteIndex];
-        require(State.Voting, "No active vote");
+    function vote(uint256 _tokenId, uint256 _option)
+        external
+        authorized
+        inState(State.Voting)
+    {
         require(
-            currentSetting.totalVotesCount <= maxVotes,
-            "Max votes reached."
+            collection.ownerOf(_tokenId) == msg.sender,
+            "Not owner of this NFT"
         );
-        require(!votings[voteIndex][msg.sender].voted, "Already voted");
-        votings[voteIndex][msg.sender] = _option;
-        votings[voteIndex][msg.sender].voted = true;
+        require(!votings[votingsIndex][_tokenId].voted, "Already voted");
+        Setting storage currentSetting = voteSettings[votingsIndex];
+        require(currentSetting.votesCount + 1 <= maxId, "Max votes reached");
+        votings[votingsIndex][_tokenId] = _option;
+        votings[votingsIndex][_tokenId].voted = true;
         currentSetting.votesCount++;
 
         if (_option == 1) {

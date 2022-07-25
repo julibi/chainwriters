@@ -16,9 +16,7 @@ contract MoonpageCollection is
     ERC721Enumerable,
     ERC721URIStorage,
     Pausable,
-    AccessControl,
-    EIP712,
-    ERC721Votes
+    AccessControl
 {
     using Counters for Counters.Counter;
     bytes32 public constant AUTHOR_ROLE = keccak256("AUTHOR_ROLE");
@@ -243,17 +241,6 @@ contract MoonpageCollection is
         return 0;
     }
 
-    function tokenURI(uint256 tokenId)
-        public
-        view
-        override(ERC721, ERC721URIStorage)
-        returns (string memory)
-    {
-        // TODO
-        // tokenId <= lastGenEd ? genEdMetadata : rest;
-        return baseUri;
-    }
-
     // ------------------
     // Explicit overrides
     // ------------------
@@ -266,14 +253,18 @@ contract MoonpageCollection is
         _unpause();
     }
 
-    function _burn(uint256 tokenId)
-        internal
-        override(ERC721, ERC721URIStorage)
-    {
-        super._burn(tokenId);
+    function _baseURI() internal view override returns (string memory) {
+        return baseUri;
     }
 
-    function _baseURI() internal view override returns (string memory) {
+    function tokenURI(uint256 tokenId)
+        public
+        view
+        override(ERC721, ERC721URIStorage)
+        returns (string memory)
+    {
+        // TODO
+        // tokenId <= lastGenEd ? genEdMetadata : rest;
         return baseUri;
     }
 
@@ -287,12 +278,12 @@ contract MoonpageCollection is
 
     // The following functions are overrides required by Solidity.
 
-    function _afterTokenTransfer(
-        address from,
-        address to,
-        uint256 tokenId
-    ) internal override(ERC721, ERC721Votes) {
-        super._afterTokenTransfer(from, to, tokenId);
+    // necessary? I don't want burning feature
+    function _burn(uint256 tokenId)
+        internal
+        override(ERC721, ERC721URIStorage)
+    {
+        super._burn(tokenId);
     }
 
     function supportsInterface(bytes4 interfaceId)
