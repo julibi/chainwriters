@@ -6,6 +6,8 @@ import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
 import "../interfaces/IMoonpageCollection.sol";
 import "../interfaces/IMoonpageManager.sol";
 
+// add a time lock
+
 contract Ballot is AccessControlEnumerable, Pausable {
     bytes32 public constant AUTHOR_ROLE = keccak256("AUTHOR_ROLE");
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
@@ -18,13 +20,13 @@ contract Ballot is AccessControlEnumerable, Pausable {
     State public state;
     struct SingleVote {
         bool voted;
-        uint vote;
+        uint256 vote;
     }
     struct Setting {
         string proposal;
-        uint8 option1Key;
-        uint8 option2Key;
-        uint8 option3Key;
+        uint256 option1Key;
+        uint256 option2Key;
+        uint256 option3Key;
         string option1Value;
         string option2Value;
         string option3Value;
@@ -32,6 +34,7 @@ contract Ballot is AccessControlEnumerable, Pausable {
         uint256 option2Votes;
         uint256 option3Votes;
         uint256 votesCount;
+        uint256 endTime;
     }
 
     mapping(uint256 => mapping(uint256 => SingleVote)) internal votings;
@@ -44,6 +47,7 @@ contract Ballot is AccessControlEnumerable, Pausable {
         _setupRole(AUTHOR_ROLE, _creator);
         collection = IMoonpageCollection(_collection);
         maxId = collection.lastGenEd();
+        state = State.NotVoting;
     }
 
     modifier authorized() {
@@ -58,32 +62,35 @@ contract Ballot is AccessControlEnumerable, Pausable {
 
     function startVote(
         string memory _proposal,
-        uint8[] memory _optionKeys,
-        string[] memory _optionValues
+        string[] memory _optionValues,
+        bool _isLongVote
     ) external onlyRole(AUTHOR_ROLE) inState(State.NotVoting) {
-        require(_optionKeys.length == 3, "Must be three options");
-        require(
-            _optionKeys.length == _optionValues.length,
-            "Key and vale must be same length"
-        );
+        require(_optionValues.length == 3, "Must be three options");
 
-        Setting storage newSetting = voteSettings[votingsIndex];
-        newSetting.proposal = _proposal;
-        newSetting.option1Key = _optionKeys[0];
-        newSetting.option2Key = _optionKeys[1];
-        newSetting.option3Key = _optionKeys[2];
-        newSetting.option1Value = _optionValues[0];
-        newSetting.option2Value = _optionValues[1];
-        newSetting.option3Value = _optionValues[2];
-        newSetting.option1Votes = 0;
-        newSetting.option2Votes = 0;
-        newSetting.option3Votes = 0;
-        voteSettings[votingsIndex] = newSetting;
-        votingsIndex++;
+        voteSettings[votingsIndex].proposal = _proposal;
+        voteSettings[votingsIndex].option1Key = 0;
+        voteSettings[votingsIndex].option2Key = 1;
+        voteSettings[votingsIndex].option3Key = 2;
+        voteSettings[votingsIndex].option1Value = _optionValues[0];
+        voteSettings[votingsIndex].option2Value = _optionValues[1];
+        voteSettings[votingsIndex].option3Value = _optionValues[2];
+        voteSettings[votingsIndex].option1Votes = 0;
+        voteSettings[votingsIndex].option2Votes = 0;
+        voteSettings[votingsIndex].option3Votes = 0;
+        if (_isLongVote) {
+            voteSettings[votingsIndex].endTime = block.timestamp + 30 days;
+        }
+        voteSettings[votingsIndex].endTime = block.timestamp + 7 days;
+        state = State.Voting;
     }
 
     function endVote() external onlyRole(AUTHOR_ROLE) inState(State.Voting) {
+        require(
+            block.timestamp > voteSettings[votingsIndex].endTime,
+            "Vote not yet expired"
+        );
         state = State.NotVoting;
+        votingsIndex++;
     }
 
     function vote(uint256 _tokenId, uint256 _option)
@@ -96,18 +103,24 @@ contract Ballot is AccessControlEnumerable, Pausable {
             "Not owner of this NFT"
         );
         require(!votings[votingsIndex][_tokenId].voted, "Already voted");
-        Setting storage currentSetting = voteSettings[votingsIndex];
-        require(currentSetting.votesCount + 1 <= maxId, "Max votes reached");
+        require(_option == 0 || _option == 1 || _option == 2, "Invalid option");
+        require(
+            voteSettings[votingsIndex].votesCount + 1 <= maxId,
+            "Max votes reached"
+        );
+        require(
+            block.timestamp < voteSettings[votingsIndex].endTime,
+            "Vote expired"
+        );
+        if (_option == 0) {
+            voteSettings[votingsIndex].option1Votes++;
+        } else if (_option == 1) {
+            voteSettings[votingsIndex].option2Votes++;
+        } else {
+            voteSettings[votingsIndex].option3Votes++;
+        }
         votings[votingsIndex][_tokenId].vote = _option;
         votings[votingsIndex][_tokenId].voted = true;
-        currentSetting.votesCount++;
-
-        if (_option == 1) {
-            currentSetting.option1Votes++;
-        } else if (_option == 2) {
-            currentSetting.option2Votes++;
-        } else {
-            currentSetting.option3Votes++;
-        }
+        voteSettings[votingsIndex].votesCount++;
     }
 }

@@ -17,14 +17,14 @@ contract BallotsFactory is Ownable {
         manager = IMoonpageManager(_mpManager);
     }
 
-    function createBallot(address _collection)
-        external
-    {
-      ( , , , address authorAddress, , , , ) = manager.readBaseData(_collection);
+    function createBallot(address _collection) external {
+        (, , , address authorAddress, , , , ) = manager.readBaseData(
+            _collection
+        );
 
         require(authorAddress != address(0), "No collection");
         require(authorAddress == msg.sender, "Not authorized");
-        require(ballots[_collection] != address(0), "Ballot already exists");
+        require(ballots[_collection] == address(0), "Ballot already exists");
 
         Ballot ballot = new Ballot(_collection, msg.sender);
         ballots[_collection] = address(ballot);

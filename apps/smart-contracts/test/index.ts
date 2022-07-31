@@ -6,16 +6,19 @@ import {
   MoonpageManager,
   MoonpageCollection,
   MoonpageFactory,
+  BallotsFactory,
+  Ballot,
 } from "../typechain";
 
 // const wait = (seconds: number) =>
 //   new Promise((resolve, _) => {
 //     setTimeout(resolve, seconds * 1000);
 //   });
-// const advanceDays = async (hours: any) => {
-//   await ethers.provider.send("evm_increaseTime", [60 * 60 * hours]);
-//   await ethers.provider.send("evm_mine", []);
-// };
+
+const advanceDays = async (days: any) => {
+  await ethers.provider.send("evm_increaseTime", [60 * 60 * 24 * days]);
+  await ethers.provider.send("evm_mine", []);
+};
 
 describe("Project", function () {
   let factory: SignerWithAddress;
@@ -30,6 +33,10 @@ describe("Project", function () {
   let FactoryAsAuthor: MoonpageFactory;
   let Collection: MoonpageCollection;
   let CollectionAsAuthor: MoonpageCollection;
+  let BallotsFactory: BallotsFactory;
+  let BallotsFactoryAsAuthor: BallotsFactory;
+  let Ballot: Ballot;
+  let BallotAsAuthor: Ballot;
   let CollectionAddress: string;
   const title = "My little Phony";
   const textIpfsHash = "QmTw3pWBQinwuHS57FcWyUGBpvGqLHQZkn1eKjp89XXyFg";
@@ -79,6 +86,13 @@ describe("Project", function () {
 
     //connect to Collection as author
     CollectionAsAuthor = Collection.connect(author);
+
+    // deploy BallotsFactory
+    const BallotsFactoryFactory = await ethers.getContractFactory(
+      "BallotsFactory"
+    );
+    BallotsFactory = await BallotsFactoryFactory.deploy(Manager.address);
+    BallotsFactoryAsAuthor = BallotsFactory.connect(author);
   });
 
   describe("happy path", async () => {
@@ -219,6 +233,44 @@ describe("Project", function () {
       // expect(formatEther(authorTotalGains)).to.equal("0.089944618316026652");
       expect(formatEther(contribATotalGains)).to.equal("0.05");
       expect(formatEther(contribBTotalGains)).to.equal("0.03");
+
+      // afterwards author creates (deploys) a ballot and starts a vote
+      await BallotsFactoryAsAuthor.createBallot(CollectionAddress);
+      const ballotAddress = await BallotsFactoryAsAuthor.ballots(
+        CollectionAddress
+      );
+      const BallotFactory = await ethers.getContractFactory("Ballot");
+      Ballot = BallotFactory.attach(ballotAddress);
+      BallotAsAuthor = Ballot.connect(author);
+
+      await BallotAsAuthor.startVote(
+        "Publish it as a real book?",
+        ["Yes", "No", "abstention"],
+        false
+      );
+
+      // userA votes with tokenId 2 - she votes 0->"yes"
+      const BallotAsUserA = Ballot.connect(userA);
+      await BallotAsUserA.vote(2, 0);
+
+      // userB votes with tokenId 3 - he votes 1->"no"
+      const BallotAsUserB = Ballot.connect(userB);
+      await BallotAsUserB.vote(3, 1);
+
+      // userA votes some more for yes, coz she got another 2
+      await BallotAsUserA.vote(4, 0);
+      await BallotAsUserA.vote(5, 0);
+
+      // vote ends and results can be read
+      await expect(BallotAsAuthor.endVote()).to.revertedWith(
+        "Vote not yet expired"
+      );
+      await advanceDays(9);
+      await expect(BallotAsAuthor.endVote()).to.not.reverted;
+      const voteResults = await Ballot.voteSettings(0);
+      expect(voteResults.votesCount).to.equal("4");
+      expect(voteResults.option1Votes).to.equal("3");
+      expect(voteResults.option2Votes).to.equal("1");
     });
   });
 });
