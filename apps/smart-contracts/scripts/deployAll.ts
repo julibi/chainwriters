@@ -107,23 +107,10 @@ async function deployAll() {
       address: MoonpageFactory.address,
       constructorArguments: [MoonpageManager.address, AuctionsManager.address],
     }),
-    // hre.run("verify:verify", {
-    //   address: firstCollection,
-    //   constructorArguments: [
-    //     deployer.address,
-    //     Manager.address,
-    //     initialMintPrice,
-    //     firstEditionMax,
-    //   ],
-    // }),
     hre.run("verify:verify", {
       address: BallotsFactory.address,
       constructorArguments: [MoonpageManager.address],
     }),
-    // hre.run("verify:verify", {
-    //   address: firstBallot,
-    //   constructorArguments: [firstCollection, deployer.address],
-    // }),
   ]);
 }
 

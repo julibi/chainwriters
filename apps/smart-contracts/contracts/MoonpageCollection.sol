@@ -11,7 +11,7 @@ import "../interfaces/IMoonpageManager.sol";
 import "../interfaces/IAuctionsManager.sol";
 
 // TODO: first id is 0 - either increment in the beginning or transfer the first one to Library
-
+// needs to be ownable? But how make it is deployed by factory ownable when 
 contract MoonpageCollection is
     ERC721,
     ERC721Enumerable,
@@ -41,7 +41,7 @@ contract MoonpageCollection is
 
     event BaseUriSet(string indexed baseUri);
     event Minted(uint256 edition, address account, uint256 tokenId);
-    event Paused(bool paused);
+    event Paused(address collection, bool paused);
     event NextEditionEnabled(
         uint256 nextEdId,
         uint256 maxSupply,
@@ -225,10 +225,12 @@ contract MoonpageCollection is
 
     function pause() external onlyRole(PAUSER_ROLE) {
         _pause();
+        emit Paused(address(this), true);
     }
 
     function unpause() external onlyRole(PAUSER_ROLE) {
         _unpause();
+        emit Paused(address(this), true);
     }
 
     function _baseURI() internal view override returns (string memory) {

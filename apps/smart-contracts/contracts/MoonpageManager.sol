@@ -47,7 +47,6 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
     );
     event TextSet(string textHash);
     event ContributorAdded(address contributor, uint256 share, string role);
-    event Paused(bool paused);
 
     constructor() {
         _setupRole(PAUSER_ROLE, msg.sender);
@@ -77,7 +76,7 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         address _collection,
         string calldata _title,
         string calldata _textCID
-    ) external onlyFactory {
+    ) external onlyFactory whenNotPaused {
         BaseData memory newBaseData = BaseData(
             _title,
             "",
@@ -105,7 +104,7 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         IMoonpageCollection collection = IMoonpageCollection(_collection);
         require(
             !collection.isBaseDataFrozen(),
-            "Base data cannot be changed anymore"
+            "Base data frozen"
         );
         baseDatas[_collection].imgIpfsHash = _imgHash;
         baseDatas[_collection].blurbIpfsHash = _blurbHash;
@@ -123,7 +122,7 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         IMoonpageCollection collection = IMoonpageCollection(_collection);
         require(
             !collection.isBaseDataFrozen(),
-            "Base data cannot be changed anymore"
+            "Base data frozen"
         );
         baseDatas[_collection].textIpfsHash = _ipfsHash;
 
@@ -141,7 +140,7 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         AuthorShare storage share = authorShares[_collection];
         require(
             !collection.isBaseDataFrozen(),
-            "Base data cannot be changed anymore"
+            "Base data frozen"
         );
         require(
             contributionsIndeces[_collection] == 0,
@@ -289,11 +288,9 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
 
     function pause() external onlyRole(PAUSER_ROLE) {
         _pause();
-        emit Paused(true);
     }
 
     function unpause() external onlyRole(PAUSER_ROLE) {
-        emit Paused(false);
         _unpause();
     }
 
