@@ -8,6 +8,7 @@ import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "../interfaces/IMoonpageManager.sol";
+import "../interfaces/IAuctionsManager.sol";
 
 // TODO: first id is 0 - either increment in the beginning or transfer the first one to Library
 
@@ -21,14 +22,16 @@ contract MoonpageCollection is
     using Counters for Counters.Counter;
     bytes32 public constant CREATOR_ROLE = keccak256("CREATOR_ROLE");
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
+    uint256 public constant MAX_PER_WALLET = 5;
     Counters.Counter private _tokenIdCounter;
     string public projectName;
     string public projectSymbol;
-    uint256 public constant MAX_PER_WALLET = 5;
     IMoonpageManager public moonpageManager;
+    IAuctionsManager public auctionsManager;
     string public baseUri;
     uint256 public premintedByCreator = 0;
-
+    // auctionsStarted overlaps but used to not make MoonpageManager import AuctionsManager
+    bool public auctionsStarted = false;
     struct Edition {
         uint256 current;
         uint256 maxAmount;
@@ -37,36 +40,27 @@ contract MoonpageCollection is
     Edition public edition;
     uint256 public lastGenEd;
 
-    // move this into own contract?
-    uint256 constant AUCTION_DURATION = 1 days;
-    uint256 public discountRate;
-    uint256 public startAt;
-    uint256 public expiresAt;
-    bool public auctionsStarted = false;
-    bool public auctionsEnded = false;
-
     event BaseUriSet(string indexed baseUri);
-    event AuctionsStarted(uint256 premintedAmount, uint256 time);
-    event AuctionsEnded(uint256 time);
     event Minted(uint256 edition, address account, uint256 tokenId);
-    event ExpirationSet(uint256 edition, uint256 expirationTime);
-    event URISet(string uri);
     event Paused(bool paused);
     event NextEditionEnabled(
         uint256 nextEdId,
         uint256 maxSupply,
         uint256 mintPrice
     );
+    event URISet(string uri);
 
     constructor(
         address _caller,
         address _mpAddress,
+        address _amAddress,
         uint256 _initialMintPrice,
         uint256 _firstEditionAmount,
         string memory _title,
         string memory _symbol
     ) ERC721("", "") {
         moonpageManager = IMoonpageManager(_mpAddress);
+        auctionsManager = IAuctionsManager(_amAddress);
         _grantRole(PAUSER_ROLE, _caller);
         _grantRole(CREATOR_ROLE, _caller);
         _grantRole(DEFAULT_ADMIN_ROLE, _caller);
@@ -83,36 +77,37 @@ contract MoonpageCollection is
         _;
     }
 
-    function retriggerAuction() external {
-        require(
-            expiresAt < block.timestamp,
-            "Triggering unnecessary. Auction running."
-        );
-        startAt = block.timestamp;
-        expiresAt = block.timestamp + AUCTION_DURATION;
-        emit ExpirationSet(1, expiresAt);
-    }
-
     // the first edition is being sold in a reverse auction
     function buy() external payable whenNotPaused {
+        (
+            ,
+            ,
+            ,
+            ,
+            uint256 expiresAt,
+            bool auctionsStarted,
+            bool auctionsEnded
+        ) = auctionsManager.readAuctionSettings(address(this));
         require(auctionsStarted, "Auctions have not started");
-        require(!auctionsEnded, "Auctions finished");
+        require(!auctionsEnded, "Auctions ended");
         require(expiresAt > block.timestamp, "Auction ended, trigger again");
-        uint256 price = getPrice(edition.mintPrice);
+        uint256 price = auctionsManager.getPrice(
+            address(this),
+            edition.mintPrice
+        );
         bool shouldFinalize = (totalSupply() + 1) == edition.maxAmount;
         require(msg.value >= price, "Value sent not sufficient");
 
         mint(msg.sender, 1);
-        // uint256 refund = msg.value - price;
-        // if (refund > 0) {
-        //     payable(msg.sender).transfer(refund);
-        // }
+        uint256 refund = msg.value - price;
+        if (refund > 0) {
+            payable(msg.sender).transfer(refund);
+        }
         if (shouldFinalize) {
-            auctionsEnded = true;
+            auctionsManager.endAuctions(address(this));
             moonpageManager.distributeShares();
-            emit AuctionsEnded(block.timestamp);
         } else {
-            triggerNextAuction();
+            auctionsManager.triggerNextAuction(address(this));
         }
     }
 
@@ -155,19 +150,16 @@ contract MoonpageCollection is
         string memory _newUri,
         uint256 _discountRate
     ) external onlyRole(CREATOR_ROLE) whenNotPaused {
-        require(!auctionsStarted, "Auctions already started");
-        require(premintedByCreator == 0, "Already claimed");
+        auctionsManager.startAuctions(
+            address(this),
+            _amountForCreator,
+            _discountRate
+        );
         // require(_amount > 0 && _amount < edition.current, "Invalid amount");
-
-        setBaseUri(_newUri);
-        mint(msg.sender, _amountForCreator);
-        premintedByCreator = _amountForCreator;
-        discountRate = _discountRate;
-        startAt = block.timestamp;
-        expiresAt = block.timestamp + AUCTION_DURATION;
         auctionsStarted = true;
-        emit AuctionsStarted(_amountForCreator, block.timestamp);
-        emit ExpirationSet(1, expiresAt);
+        premintedByCreator = _amountForCreator;
+        mint(msg.sender, _amountForCreator);
+        setBaseUri(_newUri);
     }
 
     function enableNextEdition(uint256 _newEdAmount, uint256 _newEdMintPrice)
@@ -176,6 +168,8 @@ contract MoonpageCollection is
         whenNotPaused
     {
         if (edition.current == 1) {
+            (, , , , , , bool auctionsEnded) = auctionsManager
+                .readAuctionSettings(address(this));
             require(auctionsEnded, "Auctions not finished yet");
         } else {
             // what if some nfts are sent to zero address/burnt? Is there a case that prevents this check from being true?
@@ -202,12 +196,6 @@ contract MoonpageCollection is
     // Internal & Private functions
     // ------------------
 
-    function triggerNextAuction() private {
-        startAt = block.timestamp;
-        expiresAt = block.timestamp + AUCTION_DURATION;
-        emit ExpirationSet(1, expiresAt);
-    }
-
     function mint(address _receiver, uint256 _amount) internal {
         require(_receiver != address(0), "No null address");
 
@@ -228,19 +216,6 @@ contract MoonpageCollection is
     function withdraw(address _to, uint256 _amount) external onlyDaoManager {
         require(_to != address(0), "Cannot withdraw to the 0 address");
         payable(_to).transfer(_amount);
-    }
-
-    // ------------------
-    // View functions
-    // -----------------
-
-    function getPrice(uint256 _startPrice) public view returns (uint256) {
-        if (auctionsStarted && !auctionsEnded) {
-            uint256 timeElapsed = block.timestamp - startAt;
-            uint256 discount = discountRate * timeElapsed;
-            return _startPrice - discount;
-        }
-        return 0;
     }
 
     // ------------------
@@ -280,7 +255,7 @@ contract MoonpageCollection is
 
     // The following functions are overrides required by Solidity.
 
-    // necessary? I don't want burning feature
+    // necessary? I don't want a burning feature
     function _burn(uint256 tokenId)
         internal
         override(ERC721, ERC721URIStorage)

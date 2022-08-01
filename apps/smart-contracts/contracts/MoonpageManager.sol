@@ -4,6 +4,7 @@ pragma solidity ^0.8.9;
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
 import "../interfaces/IMoonpageCollection.sol";
+import "../interfaces/IAuctionsManager.sol";
 
 contract MoonpageManager is AccessControlEnumerable, Pausable {
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
@@ -54,7 +55,7 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
     }
 
-    modifier onlyAuthor(address _collection) {
+    modifier onlyCreator(address _collection) {
         require(
             msg.sender == baseDatas[_collection].authorAddress,
             "Not author"
@@ -101,7 +102,7 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         string calldata _blurbHash,
         string calldata _genre,
         string calldata _subtitle
-    ) external onlyAuthor(_collection) whenNotPaused {
+    ) external onlyCreator(_collection) whenNotPaused {
         IMoonpageCollection collection = IMoonpageCollection(_collection);
         require(!collection.auctionsStarted(), "Auctions started already");
         baseDatas[_collection].imgIpfsHash = _imgHash;
@@ -114,7 +115,7 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
 
     function setTextIpfsHash(address _collection, string calldata _ipfsHash)
         external
-        onlyAuthor(_collection)
+        onlyCreator(_collection)
         whenNotPaused
     {
         IMoonpageCollection collection = IMoonpageCollection(_collection);
@@ -129,7 +130,7 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         address[] calldata _contributors,
         uint256[] calldata _shares,
         string[] calldata _roles
-    ) external onlyAuthor(_collection) whenNotPaused {
+    ) external onlyCreator(_collection) whenNotPaused {
         // in theory user can put the same contributor 3 times - we don't care
         IMoonpageCollection collection = IMoonpageCollection(_collection);
         AuthorShare storage share = authorShares[_collection];

@@ -4,6 +4,7 @@ pragma solidity ^0.8.9;
 // Make it pausable!
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "../interfaces/IMoonpageManager.sol";
+import "../interfaces/IAuctionsManager.sol";
 import "./MoonpageCollection.sol";
 
 contract MoonpageFactory is Ownable {
@@ -12,9 +13,11 @@ contract MoonpageFactory is Ownable {
     address[] public collections;
     uint256 public collectionsLength = 0;
     IMoonpageManager public moonpageManager;
+    IAuctionsManager public auctionsManager;
 
-    constructor(address _mpManager) {
+    constructor(address _mpManager, address _auctionsManager) {
         moonpageManager = IMoonpageManager(_mpManager);
+        auctionsManager = IAuctionsManager(_auctionsManager);
     }
 
     function createDao(
@@ -32,6 +35,7 @@ contract MoonpageFactory is Ownable {
         MoonpageCollection collection = new MoonpageCollection(
             msg.sender,
             address(moonpageManager),
+            address(auctionsManager),
             _initialMintPrice,
             _firstEditionAmount,
             _title,
@@ -43,6 +47,7 @@ contract MoonpageFactory is Ownable {
             _title,
             _textIpfsHash
         );
+        auctionsManager.setupAuctionSettings(address(collection));
         collections.push(address(collection));
         collectionsLength++;
 
