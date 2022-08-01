@@ -44,20 +44,20 @@ async function deployAll() {
   await Manager.setFactory(Factory.address);
 
   // deploy dao
-  const createDaoTX = await Factory.createDao(
-    title,
-    textIpfsHash,
-    initialMintPrice,
-    firstEditionMax
-  );
-  await createDaoTX.wait();
+  // const createDaoTX = await Factory.createDao(
+  //   title,
+  //   textIpfsHash,
+  //   initialMintPrice,
+  //   firstEditionMax
+  // );
+  // await createDaoTX.wait();
 
   const firstCollection = await Factory.collections(0);
 
   // create Ballot/Deploy Ballot
-  const createBallotTX = await BallotsFactory.createBallot(firstCollection);
-  await createBallotTX.wait();
-  const firstBallot = await BallotsFactory.ballots(firstCollection);
+  // const createBallotTX = await BallotsFactory.createBallot(firstCollection);
+  // await createBallotTX.wait();
+  // const firstBallot = await BallotsFactory.ballots(firstCollection);
   // const daoCreationEvent = receipt.events?.find(
   //   (event: any) => event.event === "DaoCreated"
   // );
@@ -79,23 +79,23 @@ async function deployAll() {
       address: Factory.address,
       constructorArguments: [Manager.address],
     }),
-    hre.run("verify:verify", {
-      address: firstCollection,
-      constructorArguments: [
-        deployer.address,
-        Manager.address,
-        initialMintPrice,
-        firstEditionMax,
-      ],
-    }),
+    // hre.run("verify:verify", {
+    //   address: firstCollection,
+    //   constructorArguments: [
+    //     deployer.address,
+    //     Manager.address,
+    //     initialMintPrice,
+    //     firstEditionMax,
+    //   ],
+    // }),
     hre.run("verify:verify", {
       address: BallotsFactory.address,
       constructorArguments: [Manager.address],
     }),
-    hre.run("verify:verify", {
-      address: firstBallot,
-      constructorArguments: [firstCollection, deployer.address],
-    }),
+    // hre.run("verify:verify", {
+    //   address: firstBallot,
+    //   constructorArguments: [firstCollection, deployer.address],
+    // }),
   ]);
 }
 

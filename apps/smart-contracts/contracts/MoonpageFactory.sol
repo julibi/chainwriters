@@ -22,7 +22,7 @@ contract MoonpageFactory is Ownable {
         string calldata _textIpfsHash,
         uint256 _initialMintPrice,
         uint256 _firstEditionAmount
-    ) external {
+    ) external returns (address) {
         require(
             _firstEditionAmount > firstEditionMin &&
                 _firstEditionAmount < firstEditionMax,
@@ -42,6 +42,8 @@ contract MoonpageFactory is Ownable {
         );
         collections.push(address(collection));
         collectionsLength++;
+
+        return address(collection);
     }
 
     function setGenesisAmountRange(uint256 _min, uint256 _max)

@@ -85,10 +85,9 @@ contract Ballot is AccessControlEnumerable, Pausable {
     }
 
     function endVote() external onlyRole(AUTHOR_ROLE) inState(State.Voting) {
-        require(
-            block.timestamp > voteSettings[votingsIndex].endTime,
-            "Vote not yet expired"
-        );
+        bool allVoted = voteSettings[votingsIndex].votesCount == maxId;
+        bool voteExpired = block.timestamp > voteSettings[votingsIndex].endTime;
+        require(allVoted || voteExpired, "Vote not yet expired");
         state = State.NotVoting;
         votingsIndex++;
     }

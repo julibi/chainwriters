@@ -17,7 +17,7 @@ contract BallotsFactory is Ownable {
         manager = IMoonpageManager(_mpManager);
     }
 
-    function createBallot(address _collection) external {
+    function createBallot(address _collection) external returns (address) {
         (, , , address authorAddress, , , , ) = manager.readBaseData(
             _collection
         );
@@ -29,6 +29,7 @@ contract BallotsFactory is Ownable {
         Ballot ballot = new Ballot(_collection, msg.sender);
         ballots[_collection] = address(ballot);
         ballotsLength++;
+        return address(ballot);
     }
 
     function withdraw(address _to) external payable onlyOwner {
