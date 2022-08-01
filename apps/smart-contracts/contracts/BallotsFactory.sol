@@ -4,21 +4,19 @@ pragma solidity ^0.8.9;
 // Make it pausable!
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./Ballot.sol";
-import "../interfaces/IMoonpageCollection.sol";
 import "../interfaces/IMoonpageManager.sol";
 
 contract BallotsFactory is Ownable {
     uint256 public ballotsLength = 0;
-    IMoonpageManager public manager;
-    IMoonpageCollection public collection;
+    IMoonpageManager public moonpageManager;
     mapping(address => address) public ballots;
 
     constructor(address _mpManager) {
-        manager = IMoonpageManager(_mpManager);
+        moonpageManager = IMoonpageManager(_mpManager);
     }
 
     function createBallot(address _collection) external returns (address) {
-        (, , , address authorAddress, , , , ) = manager.readBaseData(
+        (, , , address authorAddress, , , , ) = moonpageManager.readBaseData(
             _collection
         );
 
@@ -30,6 +28,14 @@ contract BallotsFactory is Ownable {
         ballots[_collection] = address(ballot);
         ballotsLength++;
         return address(ballot);
+    }
+
+    // ------------------
+    // Admin functions
+    // -----------------
+
+    function setMoonpageManager(address _mpManager) external onlyOwner {
+        moonpageManager = IMoonpageManager(_mpManager);
     }
 
     function withdraw(address _to) external payable onlyOwner {

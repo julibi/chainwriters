@@ -54,6 +54,18 @@ contract MoonpageFactory is Ownable {
         return address(collection);
     }
 
+    // ------------------
+    // Admin functions
+    // -----------------
+
+    function setContracts(address _mpManager, address _aManager)
+        external
+        onlyOwner
+    {
+        moonpageManager = IMoonpageManager(_mpManager);
+        auctionsManager = IAuctionsManager(_aManager);
+    }
+
     function setGenesisAmountRange(uint256 _min, uint256 _max)
         external
         onlyOwner

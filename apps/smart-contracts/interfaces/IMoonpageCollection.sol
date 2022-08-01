@@ -2,9 +2,7 @@
 pragma solidity ^0.8.9;
 
 interface IMoonpageCollection {
-    function auctionsEnded() external view returns (bool);
-
-    function auctionsStarted() external view returns (bool);
+    function isBaseDataFrozen() external view returns (bool);
 
     function lastGenEd() external view returns (uint256);
 

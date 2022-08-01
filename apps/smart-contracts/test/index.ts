@@ -304,7 +304,6 @@ describe("Project", function () {
 // TODO - the roles are not correct. Make sure the deployer can access all funds and set Factory etc.
 // royalties - only to
 
-// when more than 50% of the total votes cast
 // proxy
 
 // events everywhere

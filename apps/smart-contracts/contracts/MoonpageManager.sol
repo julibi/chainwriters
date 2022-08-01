@@ -4,7 +4,6 @@ pragma solidity ^0.8.9;
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
 import "../interfaces/IMoonpageCollection.sol";
-import "../interfaces/IAuctionsManager.sol";
 
 contract MoonpageManager is AccessControlEnumerable, Pausable {
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
@@ -104,7 +103,10 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         string calldata _subtitle
     ) external onlyCreator(_collection) whenNotPaused {
         IMoonpageCollection collection = IMoonpageCollection(_collection);
-        require(!collection.auctionsStarted(), "Auctions started already");
+        require(
+            !collection.isBaseDataFrozen(),
+            "Base data cannot be changed anymore"
+        );
         baseDatas[_collection].imgIpfsHash = _imgHash;
         baseDatas[_collection].blurbIpfsHash = _blurbHash;
         baseDatas[_collection].genre = _genre;
@@ -119,7 +121,10 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         whenNotPaused
     {
         IMoonpageCollection collection = IMoonpageCollection(_collection);
-        require(!collection.auctionsStarted(), "Auctions started already");
+        require(
+            !collection.isBaseDataFrozen(),
+            "Base data cannot be changed anymore"
+        );
         baseDatas[_collection].textIpfsHash = _ipfsHash;
 
         emit TextSet(_ipfsHash);
@@ -134,7 +139,10 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         // in theory user can put the same contributor 3 times - we don't care
         IMoonpageCollection collection = IMoonpageCollection(_collection);
         AuthorShare storage share = authorShares[_collection];
-        require(!collection.auctionsStarted(), "Auctions started already");
+        require(
+            !collection.isBaseDataFrozen(),
+            "Base data cannot be changed anymore"
+        );
         require(
             contributionsIndeces[_collection] == 0,
             "Contributors set already"
@@ -269,7 +277,7 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
     }
 
     // ------------------
-    // Can only be called by Foundation
+    // Admin Functions
     // ------------------
 
     function setFactory(address _factory)

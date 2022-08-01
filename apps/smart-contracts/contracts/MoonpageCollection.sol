@@ -30,8 +30,7 @@ contract MoonpageCollection is
     IAuctionsManager public auctionsManager;
     string public baseUri;
     uint256 public premintedByCreator = 0;
-    // auctionsStarted overlaps but used to not make MoonpageManager import AuctionsManager
-    bool public auctionsStarted = false;
+    bool public isBaseDataFrozen = false;
     struct Edition {
         uint256 current;
         uint256 maxAmount;
@@ -63,7 +62,6 @@ contract MoonpageCollection is
         auctionsManager = IAuctionsManager(_amAddress);
         _grantRole(PAUSER_ROLE, _caller);
         _grantRole(CREATOR_ROLE, _caller);
-        _grantRole(DEFAULT_ADMIN_ROLE, _caller);
         // grand Minter role and only let minter role mint
 
         edition = Edition(1, _firstEditionAmount, _initialMintPrice);
@@ -79,18 +77,10 @@ contract MoonpageCollection is
 
     // the first edition is being sold in a reverse auction
     function buy() external payable whenNotPaused {
-        (
-            ,
-            ,
-            ,
-            ,
-            uint256 expiresAt,
-            bool auctionsStarted,
-            bool auctionsEnded
-        ) = auctionsManager.readAuctionSettings(address(this));
+        (, , , , , bool auctionsStarted, bool auctionsEnded) = auctionsManager
+            .readAuctionSettings(address(this));
         require(auctionsStarted, "Auctions have not started");
         require(!auctionsEnded, "Auctions ended");
-        require(expiresAt > block.timestamp, "Auction ended, trigger again");
         uint256 price = auctionsManager.getPrice(
             address(this),
             edition.mintPrice
@@ -150,13 +140,16 @@ contract MoonpageCollection is
         string memory _newUri,
         uint256 _discountRate
     ) external onlyRole(CREATOR_ROLE) whenNotPaused {
+        require(
+            _amountForCreator > 0 && _amountForCreator < 4,
+            "Invalid amount"
+        );
         auctionsManager.startAuctions(
             address(this),
             _amountForCreator,
             _discountRate
         );
-        // require(_amount > 0 && _amount < edition.current, "Invalid amount");
-        auctionsStarted = true;
+        isBaseDataFrozen = true;
         premintedByCreator = _amountForCreator;
         mint(msg.sender, _amountForCreator);
         setBaseUri(_newUri);
@@ -178,10 +171,6 @@ contract MoonpageCollection is
                 "Current edition has not sold out"
             );
         }
-        // require(
-        //     _maxNftAmountOfNewEdition < MAX_AMOUNT_EDITION,
-        //     "Max Amount too big"
-        // );
         edition.current++;
         edition.mintPrice = _newEdMintPrice;
         edition.maxAmount = edition.maxAmount + _newEdAmount;
@@ -207,6 +196,18 @@ contract MoonpageCollection is
                 emit Minted(edition.current, _receiver, tokenId);
             }
         }
+    }
+
+    // ------------------
+    // Admin functions
+    // -----------------
+
+    function setContracts(address _mpManager, address _aManager)
+        external
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
+        moonpageManager = IMoonpageManager(_mpManager);
+        auctionsManager = IAuctionsManager(_aManager);
     }
 
     // ------------------

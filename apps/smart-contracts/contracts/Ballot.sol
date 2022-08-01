@@ -6,10 +6,8 @@ import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
 import "../interfaces/IMoonpageCollection.sol";
 import "../interfaces/IMoonpageManager.sol";
 
-// add a time lock
-
 contract Ballot is AccessControlEnumerable, Pausable {
-    bytes32 public constant AUTHOR_ROLE = keccak256("AUTHOR_ROLE");
+    bytes32 public constant CREATOR_ROLE = keccak256("CREATOR_ROLE");
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
     IMoonpageCollection public collection;
     uint256 public maxId;
@@ -44,7 +42,7 @@ contract Ballot is AccessControlEnumerable, Pausable {
 
     constructor(address _collection, address _creator) {
         _setupRole(PAUSER_ROLE, _creator);
-        _setupRole(AUTHOR_ROLE, _creator);
+        _setupRole(CREATOR_ROLE, _creator);
         collection = IMoonpageCollection(_collection);
         maxId = collection.lastGenEd();
         state = State.NotVoting;
@@ -64,7 +62,7 @@ contract Ballot is AccessControlEnumerable, Pausable {
         string memory _proposal,
         string[] memory _optionValues,
         bool _isLongVote
-    ) external onlyRole(AUTHOR_ROLE) inState(State.NotVoting) {
+    ) external onlyRole(CREATOR_ROLE) inState(State.NotVoting) {
         require(_optionValues.length == 3, "Must be three options");
 
         voteSettings[votingsIndex].proposal = _proposal;
@@ -84,7 +82,7 @@ contract Ballot is AccessControlEnumerable, Pausable {
         state = State.Voting;
     }
 
-    function endVote() external onlyRole(AUTHOR_ROLE) inState(State.Voting) {
+    function endVote() external onlyRole(CREATOR_ROLE) inState(State.Voting) {
         bool allVoted = voteSettings[votingsIndex].votesCount == maxId;
         bool voteExpired = block.timestamp > voteSettings[votingsIndex].endTime;
         require(allVoted || voteExpired, "Vote not yet expired");

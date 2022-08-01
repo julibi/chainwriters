@@ -38,6 +38,7 @@ contract AuctionsManager is Pausable, AccessControl {
     }
 
     constructor() {
+        _setupRole(PAUSER_ROLE, msg.sender);
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
     }
 
@@ -79,6 +80,7 @@ contract AuctionsManager is Pausable, AccessControl {
             !auctions[_collection].auctionsStarted,
             "Auctions already started"
         );
+        require(!auctions[_collection].auctionsEnded, "Auctions already ended");
 
         auctions[_collection].discountRate = _discountRate;
         auctions[_collection].startAt = block.timestamp;

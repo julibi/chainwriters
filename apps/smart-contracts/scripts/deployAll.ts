@@ -14,25 +14,44 @@ async function deployAll() {
   console.log("Account balance:", (await deployer.getBalance()).toString());
   console.log(`Network: ${hre.ethers.network}`);
 
-  // deploy DaoManager
-  const ManagerFactory = await hre.ethers.getContractFactory("MoonpageManager");
-  const Manager = await ManagerFactory.deploy();
-  await Manager.deployed();
-  console.log(`Manager contract deployed to: ${Manager.address}`);
+  // deploy MoonpageManager
+  const MoonpageManagerFactory = await hre.ethers.getContractFactory(
+    "MoonpageManager"
+  );
+  const MoonpageManager = await MoonpageManagerFactory.deploy();
+  await MoonpageManager.deployed();
+  console.log(`Manager contract deployed to: ${MoonpageManager.address}`);
 
-  // deploy ProjectFactory
-  const FactoryFactory = await hre.ethers.getContractFactory("MoonpageFactory");
-  const Factory = await FactoryFactory.deploy(Manager.address);
-  await Factory.deployed();
-  console.log(`Factory contract deployed to: ${Factory.address}`);
+  // deploy AuctionsManager
+  const AuctionsManagerFactory = await hre.ethers.getContractFactory(
+    "AuctionsManager"
+  );
+  const AuctionsManager = await AuctionsManagerFactory.deploy();
+  await AuctionsManager.deployed();
+  console.log(
+    `AuctionsManager contract deployed to: ${AuctionsManager.address}`
+  );
+
+  // deploy MoonpageFactory
+  const MoonpageFactoryFactory = await hre.ethers.getContractFactory(
+    "MoonpageFactory"
+  );
+  const MoonpageFactory = await MoonpageFactoryFactory.deploy(
+    MoonpageManager.address,
+    AuctionsManager.address
+  );
+  await MoonpageFactory.deployed();
+  console.log(`Factory contract deployed to: ${MoonpageFactory.address}`);
 
   // deploy BallotFactory
-  // const BallotsFactoryFactory = await hre.ethers.getContractFactory(
-  //   "BallotsFactory"
-  // );
-  // const BallotsFactory = await BallotsFactoryFactory.deploy(Manager.address);
-  // await BallotsFactory.deployed();
-  // console.log(`BallotFactory contract deployed to: ${BallotsFactory.address}`);
+  const BallotsFactoryFactory = await hre.ethers.getContractFactory(
+    "BallotsFactory"
+  );
+  const BallotsFactory = await BallotsFactoryFactory.deploy(
+    MoonpageManager.address
+  );
+  await BallotsFactory.deployed();
+  console.log(`BallotFactory contract deployed to: ${BallotsFactory.address}`);
 
   // // Collection arguments
   const title = "My little Phony";
@@ -40,8 +59,13 @@ async function deployAll() {
   const initialMintPrice = hre.ethers.utils.parseUnits("0.05", 18);
   const firstEditionMax = 4;
 
-  // setFactory
-  await Manager.setFactory(Factory.address);
+  // setFactory on Moonpage Manager
+  await MoonpageManager.setFactory(MoonpageFactory.address);
+  // set Contracts on Auctions Manager
+  await AuctionsManager.setContracts(
+    MoonpageManager.address,
+    MoonpageFactory.address
+  );
 
   // deploy dao
   // const createDaoTX = await Factory.createDao(
@@ -72,12 +96,16 @@ async function deployAll() {
   console.log("Verifying...");
   await Promise.all([
     hre.run("verify:verify", {
-      address: Manager.address,
+      address: MoonpageManager.address,
       constructorArguments: [],
     }),
     hre.run("verify:verify", {
-      address: Factory.address,
-      constructorArguments: [Manager.address],
+      address: AuctionsManager.address,
+      constructorArguments: [],
+    }),
+    hre.run("verify:verify", {
+      address: MoonpageFactory.address,
+      constructorArguments: [MoonpageManager.address, AuctionsManager.address],
     }),
     // hre.run("verify:verify", {
     //   address: firstCollection,
@@ -88,10 +116,10 @@ async function deployAll() {
     //     firstEditionMax,
     //   ],
     // }),
-    // hre.run("verify:verify", {
-    //   address: BallotsFactory.address,
-    //   constructorArguments: [Manager.address],
-    // }),
+    hre.run("verify:verify", {
+      address: BallotsFactory.address,
+      constructorArguments: [MoonpageManager.address],
+    }),
     // hre.run("verify:verify", {
     //   address: firstBallot,
     //   constructorArguments: [firstCollection, deployer.address],
