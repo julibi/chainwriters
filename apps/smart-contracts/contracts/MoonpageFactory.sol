@@ -3,19 +3,18 @@ pragma solidity ^0.8.9;
 
 // Make it pausable!
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "../interfaces/IProjectDao.sol";
-import "./ProjectCollection.sol";
+import "../interfaces/IMoonpageManager.sol";
+import "./MoonpageCollection.sol";
 
-contract ProjectFactory is Ownable {
-    uint256 public firstEditionMin = 1;
-    uint256 public firstEditionMax = 1700;
+contract MoonpageFactory is Ownable {
+    uint256 public firstEditionMin = 3;
+    uint256 public firstEditionMax = 1000;
     address[] public collections;
     uint256 public collectionsLength = 0;
-    // naming sucks
-    IProjectDao public projectDao;
+    IMoonpageManager public moonpageManager;
 
-    constructor(address _dao) {
-        projectDao = IProjectDao(_dao);
+    constructor(address _mpManager) {
+        moonpageManager = IMoonpageManager(_mpManager);
     }
 
     function createDao(
@@ -23,23 +22,28 @@ contract ProjectFactory is Ownable {
         string calldata _textIpfsHash,
         uint256 _initialMintPrice,
         uint256 _firstEditionAmount
-    ) external {
-        ProjectCollection collection = new ProjectCollection(
-            _title,
-            msg.sender,
-            address(this),
-            address(projectDao)
+    ) external returns (address) {
+        require(
+            _firstEditionAmount > firstEditionMin &&
+                _firstEditionAmount < firstEditionMax,
+            "Incorrect amount"
         );
-        projectDao.setupDao(
+        MoonpageCollection collection = new MoonpageCollection(
             msg.sender,
-            address(collection),
-            _title,
-            _textIpfsHash,
+            address(moonpageManager),
             _initialMintPrice,
             _firstEditionAmount
         );
+        moonpageManager.setupDao(
+            msg.sender,
+            address(collection),
+            _title,
+            _textIpfsHash
+        );
         collections.push(address(collection));
         collectionsLength++;
+
+        return address(collection);
     }
 
     function setGenesisAmountRange(uint256 _min, uint256 _max)

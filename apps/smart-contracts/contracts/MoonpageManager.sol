@@ -3,9 +3,9 @@ pragma solidity ^0.8.9;
 
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
-import "../interfaces/IProjectCollection.sol";
+import "../interfaces/IMoonpageCollection.sol";
 
-contract ProjectDao is AccessControlEnumerable, Pausable {
+contract MoonpageManager is AccessControlEnumerable, Pausable {
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
     uint256 public constant MAX_AMOUNT_EDITION = 10000;
     uint256 public projectsLength = 0;
@@ -16,16 +16,11 @@ contract ProjectDao is AccessControlEnumerable, Pausable {
         string title;
         string subtitle;
         string genre;
-        address author_address;
+        address authorAddress;
         string textIpfsHash;
         string imgIpfsHash;
         string blurbIpfsHash;
         bool paused;
-    }
-    struct Edition {
-        uint256 currentEdition;
-        uint256 currentEditionMax;
-        uint256 currentEditionMintPrice;
     }
     struct AuthorShare {
         uint256 share;
@@ -39,7 +34,6 @@ contract ProjectDao is AccessControlEnumerable, Pausable {
     }
 
     mapping(address => BaseData) public baseDatas;
-    mapping(address => Edition) public editions;
     mapping(address => AuthorShare) public authorShares;
     mapping(address => mapping(uint256 => Contribution)) public contributions;
     mapping(address => uint8) public contributionsIndeces;
@@ -53,11 +47,6 @@ contract ProjectDao is AccessControlEnumerable, Pausable {
     event TextSet(string textHash);
     event ContributorAdded(address contributor, uint256 share, string role);
     event Paused(bool paused);
-    event NextEditionEnabled(
-        uint256 nextEdId,
-        uint256 maxSupply,
-        uint256 mintPrice
-    );
 
     constructor() {
         _setupRole(PAUSER_ROLE, msg.sender);
@@ -66,7 +55,7 @@ contract ProjectDao is AccessControlEnumerable, Pausable {
 
     modifier onlyAuthor(address _collection) {
         require(
-            msg.sender == baseDatas[_collection].author_address,
+            msg.sender == baseDatas[_collection].authorAddress,
             "Not author"
         );
         _;
@@ -86,11 +75,8 @@ contract ProjectDao is AccessControlEnumerable, Pausable {
         address _caller,
         address _collection,
         string calldata _title,
-        string calldata _textCID,
-        uint256 _startPrice,
-        uint256 _maxAmount
+        string calldata _textCID
     ) external onlyFactory {
-        Edition memory newEdition = Edition(1, _maxAmount, _startPrice);
         BaseData memory newBaseData = BaseData(
             _title,
             "",
@@ -102,11 +88,10 @@ contract ProjectDao is AccessControlEnumerable, Pausable {
             false
         );
         AuthorShare memory newAuthorShare = AuthorShare(100 - fee, 0);
-        projectsLength++;
-        editions[_collection] = newEdition;
         baseDatas[_collection] = newBaseData;
         authorShares[_collection] = newAuthorShare;
         contributionsIndeces[_collection] = 0;
+        projectsLength++;
     }
 
     function configureProjectDetails(
@@ -116,7 +101,7 @@ contract ProjectDao is AccessControlEnumerable, Pausable {
         string calldata _genre,
         string calldata _subtitle
     ) external onlyAuthor(_collection) whenNotPaused {
-        IProjectCollection collection = IProjectCollection(_collection);
+        IMoonpageCollection collection = IMoonpageCollection(_collection);
         require(!collection.auctionsStarted(), "Auctions started already");
         baseDatas[_collection].imgIpfsHash = _imgHash;
         baseDatas[_collection].blurbIpfsHash = _blurbHash;
@@ -131,7 +116,7 @@ contract ProjectDao is AccessControlEnumerable, Pausable {
         onlyAuthor(_collection)
         whenNotPaused
     {
-        IProjectCollection collection = IProjectCollection(_collection);
+        IMoonpageCollection collection = IMoonpageCollection(_collection);
         require(!collection.auctionsStarted(), "Auctions started already");
         baseDatas[_collection].textIpfsHash = _ipfsHash;
 
@@ -145,7 +130,7 @@ contract ProjectDao is AccessControlEnumerable, Pausable {
         string[] calldata _roles
     ) external onlyAuthor(_collection) whenNotPaused {
         // in theory user can put the same contributor 3 times - we don't care
-        IProjectCollection collection = IProjectCollection(_collection);
+        IMoonpageCollection collection = IMoonpageCollection(_collection);
         AuthorShare storage share = authorShares[_collection];
         require(!collection.auctionsStarted(), "Auctions started already");
         require(
@@ -178,40 +163,6 @@ contract ProjectDao is AccessControlEnumerable, Pausable {
         }
     }
 
-    function enableNextEdition(
-        address _collection,
-        uint256 _maxNftAmountOfNewEdition,
-        uint256 _newEditionMintPrice
-    ) external onlyAuthor(_collection) whenNotPaused {
-        Edition storage edition = editions[_collection];
-        IProjectCollection collection = IProjectCollection(_collection);
-        if (edition.currentEdition == 1) {
-            require(
-                collection.auctionPhaseFinished(),
-                "Auctions not finished yet"
-            );
-        } else {
-            // what if some nfts are sent to zero address? Is there a case that prevents this check from being true?
-            require(
-                collection.totalSupply(edition.currentEdition) ==
-                    edition.currentEditionMax,
-                "Current edition has not sold out"
-            );
-        }
-        require(
-            _maxNftAmountOfNewEdition < MAX_AMOUNT_EDITION,
-            "Max Amount too big"
-        );
-        edition.currentEdition++;
-        edition.currentEditionMax = _maxNftAmountOfNewEdition;
-        edition.currentEditionMintPrice = _newEditionMintPrice;
-        emit NextEditionEnabled(
-            edition.currentEdition,
-            _maxNftAmountOfNewEdition,
-            _newEditionMintPrice
-        );
-    }
-
     // ------------------
     // Read functions
     // ------------------
@@ -235,28 +186,11 @@ contract ProjectDao is AccessControlEnumerable, Pausable {
             data.title,
             data.subtitle,
             data.genre,
-            data.author_address,
+            data.authorAddress,
             data.textIpfsHash,
             data.imgIpfsHash,
             data.blurbIpfsHash,
             data.paused
-        );
-    }
-
-    function readEdition(address _collection)
-        external
-        view
-        returns (
-            uint256,
-            uint256,
-            uint256
-        )
-    {
-        Edition storage ed = editions[_collection];
-        return (
-            ed.currentEdition,
-            ed.currentEditionMax,
-            ed.currentEditionMintPrice
         );
     }
 
@@ -303,16 +237,16 @@ contract ProjectDao is AccessControlEnumerable, Pausable {
     function distributeShares() external {
         address collectionAddr = address(msg.sender);
         BaseData storage baseData = baseDatas[collectionAddr];
-        address author_address = baseData.author_address;
+        address authorAddress = baseData.authorAddress;
         // IS THIS SAFE?
-        require(address(author_address) != address(0), "Not authorized");
+        require(address(authorAddress) != address(0), "Not authorized");
 
         uint256 leftShares = 85;
         uint256 balanceTotal = address(collectionAddr).balance;
         uint256 foundationShareInMatic = (balanceTotal * 15) / 100;
         uint256 contribIndex = contributionsIndeces[collectionAddr];
         AuthorShare storage authorShare = authorShares[collectionAddr];
-        IProjectCollection collection = IProjectCollection(collectionAddr);
+        IMoonpageCollection collection = IMoonpageCollection(collectionAddr);
         if (contribIndex == 0) {
             authorShare.share = leftShares;
             authorShare.shareInMatic = (balanceTotal * leftShares) / 100;
@@ -328,7 +262,7 @@ contract ProjectDao is AccessControlEnumerable, Pausable {
             collection.withdraw(contrib.shareRecipient, contrib.shareInMatic);
         }
 
-        collection.withdraw(author_address, authorShare.shareInMatic);
+        collection.withdraw(authorAddress, authorShare.shareInMatic);
         collection.withdraw(factory, foundationShareInMatic);
     }
 

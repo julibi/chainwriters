@@ -15,36 +15,49 @@ async function deployAll() {
   console.log(`Network: ${hre.ethers.network}`);
 
   // deploy DaoManager
-  const ProjectDaoFactory = await hre.ethers.getContractFactory("ProjectDao");
-  const ProjectDao = await ProjectDaoFactory.deploy();
-  await ProjectDao.deployed();
-  console.log(`ProjectDao contract deployed to: ${ProjectDao.address}`);
+  const ManagerFactory = await hre.ethers.getContractFactory("MoonpageManager");
+  const Manager = await ManagerFactory.deploy();
+  await Manager.deployed();
+  console.log(`Manager contract deployed to: ${Manager.address}`);
 
   // deploy ProjectFactory
-  const ProjectFactoryFactory = await hre.ethers.getContractFactory(
-    "ProjectFactory"
-  );
-  const ProjectFactory = await ProjectFactoryFactory.deploy(ProjectDao.address);
-  await ProjectFactory.deployed();
-  console.log(`ProjectFactory contract deployed to: ${ProjectFactory.address}`);
+  const FactoryFactory = await hre.ethers.getContractFactory("MoonpageFactory");
+  const Factory = await FactoryFactory.deploy(Manager.address);
+  await Factory.deployed();
+  console.log(`Factory contract deployed to: ${Factory.address}`);
 
-  // // Dao arguments
+  // deploy BallotFactory
+  const BallotsFactoryFactory = await hre.ethers.getContractFactory(
+    "BallotsFactory"
+  );
+  const BallotsFactory = await BallotsFactoryFactory.deploy(Manager.address);
+  await BallotsFactory.deployed();
+  console.log(`BallotFactory contract deployed to: ${BallotsFactory.address}`);
+
+  // // Collection arguments
   const title = "My little Phony";
   const textIpfsHash = "QmTw3pWBQinwuHS57FcWyUGBpvGqLHQZkn1eKjp89XXyFg";
   const initialMintPrice = hre.ethers.utils.parseUnits("0.05", 18);
   const firstEditionMax = 4;
 
   // setFactory
-  await ProjectDao.setFactory(ProjectFactory.address);
-  const FirstCollection = await ProjectFactory.collections(0);
+  await Manager.setFactory(Factory.address);
+
   // deploy dao
-  const tx = await ProjectFactory.createDao(
-    title,
-    textIpfsHash,
-    initialMintPrice,
-    firstEditionMax
-  );
-  const receipt = await tx.wait();
+  // const createDaoTX = await Factory.createDao(
+  //   title,
+  //   textIpfsHash,
+  //   initialMintPrice,
+  //   firstEditionMax
+  // );
+  // await createDaoTX.wait();
+
+  const firstCollection = await Factory.collections(0);
+
+  // create Ballot/Deploy Ballot
+  // const createBallotTX = await BallotsFactory.createBallot(firstCollection);
+  // await createBallotTX.wait();
+  // const firstBallot = await BallotsFactory.ballots(firstCollection);
   // const daoCreationEvent = receipt.events?.find(
   //   (event: any) => event.event === "DaoCreated"
   // );
@@ -59,22 +72,30 @@ async function deployAll() {
   console.log("Verifying...");
   await Promise.all([
     hre.run("verify:verify", {
-      address: ProjectDao.address,
+      address: Manager.address,
       constructorArguments: [],
     }),
     hre.run("verify:verify", {
-      address: ProjectFactory.address,
-      constructorArguments: [ProjectDao.address],
+      address: Factory.address,
+      constructorArguments: [Manager.address],
     }),
+    // hre.run("verify:verify", {
+    //   address: firstCollection,
+    //   constructorArguments: [
+    //     deployer.address,
+    //     Manager.address,
+    //     initialMintPrice,
+    //     firstEditionMax,
+    //   ],
+    // }),
     hre.run("verify:verify", {
-      address: FirstCollection,
-      constructorArguments: [
-        title,
-        deployer.address,
-        ProjectFactory.address,
-        ProjectDao.address,
-      ],
+      address: BallotsFactory.address,
+      constructorArguments: [Manager.address],
     }),
+    // hre.run("verify:verify", {
+    //   address: firstBallot,
+    //   constructorArguments: [firstCollection, deployer.address],
+    // }),
   ]);
 }
 
