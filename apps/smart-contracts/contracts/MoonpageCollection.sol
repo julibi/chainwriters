@@ -19,15 +19,15 @@ contract MoonpageCollection is
     AccessControl
 {
     using Counters for Counters.Counter;
-    bytes32 public constant AUTHOR_ROLE = keccak256("AUTHOR_ROLE");
+    bytes32 public constant CREATOR_ROLE = keccak256("CREATOR_ROLE");
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
     Counters.Counter private _tokenIdCounter;
+    string public projectName;
+    string public projectSymbol;
     uint256 public constant MAX_PER_WALLET = 5;
-
-    uint256 public totalSharePercentage = 15;
     IMoonpageManager public moonpageManager;
     string public baseUri;
-    uint256 public premintedByAuthor = 0;
+    uint256 public premintedByCreator = 0;
 
     struct Edition {
         uint256 current;
@@ -38,18 +38,17 @@ contract MoonpageCollection is
     uint256 public lastGenEd;
 
     // move this into own contract?
-    uint256 public AUCTION_DURATION = 1 days;
+    uint256 constant AUCTION_DURATION = 1 days;
     uint256 public discountRate;
     uint256 public startAt;
     uint256 public expiresAt;
     bool public auctionsStarted = false;
-    bool public auctionPhaseFinished = false;
+    bool public auctionsEnded = false;
 
     event BaseUriSet(string indexed baseUri);
-    event AuctionsStarted();
-    event AuctionsEnded();
-    event AuthorMinted(uint256 amount);
-    event Minted(uint256 edition, uint256 amount);
+    event AuctionsStarted(uint256 premintedAmount, uint256 time);
+    event AuctionsEnded(uint256 time);
+    event Minted(uint256 edition, address account, uint256 tokenId);
     event ExpirationSet(uint256 edition, uint256 expirationTime);
     event URISet(string uri);
     event Paused(bool paused);
@@ -63,16 +62,20 @@ contract MoonpageCollection is
         address _caller,
         address _mpAddress,
         uint256 _initialMintPrice,
-        uint256 _firstEditionAmount
-    ) ERC721("Moonpage", "MP") {
+        uint256 _firstEditionAmount,
+        string memory _title,
+        string memory _symbol
+    ) ERC721("", "") {
         moonpageManager = IMoonpageManager(_mpAddress);
         _grantRole(PAUSER_ROLE, _caller);
-        _grantRole(AUTHOR_ROLE, _caller);
+        _grantRole(CREATOR_ROLE, _caller);
         _grantRole(DEFAULT_ADMIN_ROLE, _caller);
         // grand Minter role and only let minter role mint
 
         edition = Edition(1, _firstEditionAmount, _initialMintPrice);
         lastGenEd = _firstEditionAmount;
+        projectName = _title;
+        projectSymbol = _symbol;
     }
 
     modifier onlyDaoManager() {
@@ -90,24 +93,24 @@ contract MoonpageCollection is
         emit ExpirationSet(1, expiresAt);
     }
 
+    // the first edition is being sold in a reverse auction
     function buy() external payable whenNotPaused {
         require(auctionsStarted, "Auctions have not started");
-        require(!auctionPhaseFinished, "Auctions finished");
+        require(!auctionsEnded, "Auctions finished");
         require(expiresAt > block.timestamp, "Auction ended, trigger again");
         uint256 price = getPrice(edition.mintPrice);
         bool shouldFinalize = (totalSupply() + 1) == edition.maxAmount;
         require(msg.value >= price, "Value sent not sufficient");
 
         mint(msg.sender, 1);
-        // uint refund = msg.value - price;
+        // uint256 refund = msg.value - price;
         // if (refund > 0) {
         //     payable(msg.sender).transfer(refund);
         // }
-        emit Minted(edition.current, 1);
         if (shouldFinalize) {
-            auctionPhaseFinished = true;
+            auctionsEnded = true;
             moonpageManager.distributeShares();
-            emit AuctionsEnded();
+            emit AuctionsEnded(block.timestamp);
         } else {
             triggerNextAuction();
         }
@@ -129,52 +132,51 @@ contract MoonpageCollection is
         );
         bool shouldFinalize = (totalSupply() + _amount) == edition.maxAmount;
         mint(msg.sender, _amount);
-        emit Minted(edition.current, _amount);
         if (shouldFinalize) {
             moonpageManager.distributeShares();
         }
     }
 
     // ------------------
-    // Authors functions
+    // Functions for Creator
     // ------------------
 
     function setBaseUri(string memory _baseUri)
         public
-        onlyRole(AUTHOR_ROLE)
+        onlyRole(CREATOR_ROLE)
         whenNotPaused
     {
         baseUri = _baseUri;
         emit BaseUriSet(baseUri);
     }
 
-    function triggerFirstAuction(
-        uint256 _amount,
+    function startAuctions(
+        uint256 _amountForCreator,
         string memory _newUri,
         uint256 _discountRate
-    ) external onlyRole(AUTHOR_ROLE) whenNotPaused {
+    ) external onlyRole(CREATOR_ROLE) whenNotPaused {
         require(!auctionsStarted, "Auctions already started");
-        require(premintedByAuthor == 0, "Already claimed");
+        require(premintedByCreator == 0, "Already claimed");
         // require(_amount > 0 && _amount < edition.current, "Invalid amount");
 
         setBaseUri(_newUri);
-        mint(msg.sender, _amount);
-        premintedByAuthor = _amount;
+        mint(msg.sender, _amountForCreator);
+        premintedByCreator = _amountForCreator;
         discountRate = _discountRate;
         startAt = block.timestamp;
         expiresAt = block.timestamp + AUCTION_DURATION;
         auctionsStarted = true;
-        emit AuctionsStarted();
+        emit AuctionsStarted(_amountForCreator, block.timestamp);
         emit ExpirationSet(1, expiresAt);
     }
 
     function enableNextEdition(uint256 _newEdAmount, uint256 _newEdMintPrice)
         external
-        onlyRole(AUTHOR_ROLE)
+        onlyRole(CREATOR_ROLE)
         whenNotPaused
     {
         if (edition.current == 1) {
-            require(auctionPhaseFinished, "Auctions not finished yet");
+            require(auctionsEnded, "Auctions not finished yet");
         } else {
             // what if some nfts are sent to zero address/burnt? Is there a case that prevents this check from being true?
             require(
@@ -214,6 +216,7 @@ contract MoonpageCollection is
             _tokenIdCounter.increment();
             if (tokenId <= edition.maxAmount) {
                 _safeMint(_receiver, tokenId);
+                emit Minted(edition.current, _receiver, tokenId);
             }
         }
     }
@@ -232,7 +235,7 @@ contract MoonpageCollection is
     // -----------------
 
     function getPrice(uint256 _startPrice) public view returns (uint256) {
-        if (auctionsStarted && !auctionPhaseFinished) {
+        if (auctionsStarted && !auctionsEnded) {
             uint256 timeElapsed = block.timestamp - startAt;
             uint256 discount = discountRate * timeElapsed;
             return _startPrice - discount;

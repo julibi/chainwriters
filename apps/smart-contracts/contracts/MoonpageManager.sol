@@ -39,6 +39,7 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
     mapping(address => uint8) public contributionsIndeces;
 
     event Configured(
+        address collection,
         string imgHash,
         string blurbHash,
         string newGenre,
@@ -108,7 +109,7 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         baseDatas[_collection].genre = _genre;
         baseDatas[_collection].subtitle = _subtitle;
 
-        emit Configured(_imgHash, _blurbHash, _genre, _subtitle);
+        emit Configured(_collection, _imgHash, _blurbHash, _genre, _subtitle);
     }
 
     function setTextIpfsHash(address _collection, string calldata _ipfsHash)
@@ -241,9 +242,9 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         // IS THIS SAFE?
         require(address(authorAddress) != address(0), "Not authorized");
 
-        uint256 leftShares = 85;
+        uint256 leftShares = 100 - fee;
         uint256 balanceTotal = address(collectionAddr).balance;
-        uint256 foundationShareInMatic = (balanceTotal * 15) / 100;
+        uint256 foundationShareInMatic = (balanceTotal * fee) / 100;
         uint256 contribIndex = contributionsIndeces[collectionAddr];
         AuthorShare storage authorShare = authorShares[collectionAddr];
         IMoonpageCollection collection = IMoonpageCollection(collectionAddr);

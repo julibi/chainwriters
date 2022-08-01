@@ -39,6 +39,7 @@ describe("Project", function () {
   let BallotAsAuthor: Ballot;
   let CollectionAddress: string;
   const title = "My little Phony";
+  const symbol = "MLP";
   const textIpfsHash = "QmTw3pWBQinwuHS57FcWyUGBpvGqLHQZkn1eKjp89XXyFg";
   const mintPrice = ethers.utils.parseUnits("0.1", 18);
   const firstEditionMax = 4;
@@ -71,6 +72,7 @@ describe("Project", function () {
     // author deploys own collection
     const createDaoTx = await FactoryAsAuthor.createDao(
       title,
+      symbol,
       textIpfsHash,
       mintPrice,
       firstEditionMax
@@ -142,7 +144,7 @@ describe("Project", function () {
       const discountRate = 10000000000;
       const authorOwnsAmount = 2;
       // author triggers collection
-      await CollectionAsAuthor.triggerFirstAuction(
+      await CollectionAsAuthor.startAuctions(
         authorOwnsAmount,
         "ipfs://testuri",
         discountRate
@@ -152,7 +154,7 @@ describe("Project", function () {
         authorOwnsAmount
       );
       // preminted is two
-      expect(await Collection.premintedByAuthor()).to.equal(authorOwnsAmount);
+      expect(await Collection.premintedByCreator()).to.equal(authorOwnsAmount);
       // discountRate is correct
       expect(await Collection.discountRate()).to.equal(discountRate);
       // auctionStarted is true
@@ -257,14 +259,16 @@ describe("Project", function () {
       const BallotAsUserB = Ballot.connect(userB);
       await BallotAsUserB.vote(3, 1);
 
+      // vote cannot be ended before expiry or before everyone has voted
+      await expect(BallotAsAuthor.endVote()).to.revertedWith(
+        "Vote not yet expired"
+      );
+
       // userA votes some more for yes, coz she got another 2
       await BallotAsUserA.vote(4, 0);
       await BallotAsUserA.vote(5, 0);
 
       // vote ends and results can be read
-      await expect(BallotAsAuthor.endVote()).to.revertedWith(
-        "Vote not yet expired"
-      );
       await advanceDays(9);
       await expect(BallotAsAuthor.endVote()).to.not.reverted;
       const voteResults = await Ballot.voteSettings(0);

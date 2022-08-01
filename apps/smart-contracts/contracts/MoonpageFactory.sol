@@ -19,6 +19,7 @@ contract MoonpageFactory is Ownable {
 
     function createDao(
         string calldata _title,
+        string calldata _symbol,
         string calldata _textIpfsHash,
         uint256 _initialMintPrice,
         uint256 _firstEditionAmount
@@ -32,7 +33,9 @@ contract MoonpageFactory is Ownable {
             msg.sender,
             address(moonpageManager),
             _initialMintPrice,
-            _firstEditionAmount
+            _firstEditionAmount,
+            _title,
+            _symbol
         );
         moonpageManager.setupDao(
             msg.sender,

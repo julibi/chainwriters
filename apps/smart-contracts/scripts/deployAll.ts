@@ -27,12 +27,12 @@ async function deployAll() {
   console.log(`Factory contract deployed to: ${Factory.address}`);
 
   // deploy BallotFactory
-  const BallotsFactoryFactory = await hre.ethers.getContractFactory(
-    "BallotsFactory"
-  );
-  const BallotsFactory = await BallotsFactoryFactory.deploy(Manager.address);
-  await BallotsFactory.deployed();
-  console.log(`BallotFactory contract deployed to: ${BallotsFactory.address}`);
+  // const BallotsFactoryFactory = await hre.ethers.getContractFactory(
+  //   "BallotsFactory"
+  // );
+  // const BallotsFactory = await BallotsFactoryFactory.deploy(Manager.address);
+  // await BallotsFactory.deployed();
+  // console.log(`BallotFactory contract deployed to: ${BallotsFactory.address}`);
 
   // // Collection arguments
   const title = "My little Phony";
@@ -52,7 +52,7 @@ async function deployAll() {
   // );
   // await createDaoTX.wait();
 
-  const firstCollection = await Factory.collections(0);
+  // const firstCollection = await Factory.collections(0);
 
   // create Ballot/Deploy Ballot
   // const createBallotTX = await BallotsFactory.createBallot(firstCollection);
@@ -88,10 +88,10 @@ async function deployAll() {
     //     firstEditionMax,
     //   ],
     // }),
-    hre.run("verify:verify", {
-      address: BallotsFactory.address,
-      constructorArguments: [Manager.address],
-    }),
+    // hre.run("verify:verify", {
+    //   address: BallotsFactory.address,
+    //   constructorArguments: [Manager.address],
+    // }),
     // hre.run("verify:verify", {
     //   address: firstBallot,
     //   constructorArguments: [firstCollection, deployer.address],

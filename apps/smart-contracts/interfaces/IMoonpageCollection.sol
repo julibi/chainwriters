@@ -2,7 +2,7 @@
 pragma solidity ^0.8.9;
 
 interface IMoonpageCollection {
-    function auctionPhaseFinished() external view returns (bool);
+    function auctionsEnded() external view returns (bool);
 
     function auctionsStarted() external view returns (bool);
 
