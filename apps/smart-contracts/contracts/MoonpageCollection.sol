@@ -11,7 +11,7 @@ import "../interfaces/IMoonpageManager.sol";
 import "../interfaces/IAuctionsManager.sol";
 
 // TODO: first id is 0 - either increment in the beginning or transfer the first one to Library
-// needs to be ownable? But how make it is deployed by factory ownable when 
+// needs to be ownable? But how make it is deployed by factory ownable when
 contract MoonpageCollection is
     ERC721,
     ERC721Enumerable,
@@ -230,7 +230,7 @@ contract MoonpageCollection is
 
     function unpause() external onlyRole(PAUSER_ROLE) {
         _unpause();
-        emit Paused(address(this), true);
+        emit Paused(address(this), false);
     }
 
     function _baseURI() internal view override returns (string memory) {
