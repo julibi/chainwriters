@@ -9,7 +9,7 @@ import "../interfaces/IMoonpageFactory.sol";
 
 contract AuctionsManager is Pausable, AccessControl {
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
-    uint256 constant AUCTION_DURATION = 1 days;
+    uint256 public constant AUCTION_DURATION = 1 days;
     IMoonpageManager public moonpageManager;
     IMoonpageFactory public moonpageFactory;
 
@@ -22,7 +22,7 @@ contract AuctionsManager is Pausable, AccessControl {
         bool auctionsStarted;
         bool auctionsEnded;
     }
-    mapping(address => AuctionSettings) public auctions;
+    mapping(uint256 => AuctionSettings) public auctions;
 
     event AuctionsStarted(
         address collection,
@@ -55,19 +55,19 @@ contract AuctionsManager is Pausable, AccessControl {
     }
 
     // only called by factory
-    function setupAuctionSettings(address _collection) external {
+    function setupAuctionSettings(uint256 _projectId) external {
         require(msg.sender == address(moonpageFactory), "Not authorized");
-        require(!auctions[_collection].exists, "Already added");
+        require(!auctions[_projectId].exists, "Already added");
         (, , , address authorAddress, , , , ) = moonpageManager.readBaseData(
-            _collection
+            _projectId
         );
-        auctions[_collection].exists = true;
-        auctions[_collection].creator = authorAddress;
-        auctions[_collection].discountRate = 0;
-        auctions[_collection].startAt = 0;
-        auctions[_collection].expiresAt = 0;
-        auctions[_collection].auctionsStarted = false;
-        auctions[_collection].auctionsEnded = false;
+        auctions[_projectId].exists = true;
+        auctions[_projectId].creator = authorAddress;
+        auctions[_projectId].discountRate = 0;
+        auctions[_projectId].startAt = 0;
+        auctions[_projectId].expiresAt = 0;
+        auctions[_projectId].auctionsStarted = false;
+        auctions[_projectId].auctionsEnded = false;
     }
 
     // only called by a collection

@@ -12,15 +12,24 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
     address public factory;
     uint256 public fee = 15;
 
+    // should deploy a little seperate contract per project, where the payment is being sent and
+    // where everything is being split
+    // TODO: determine first id of this collection, and last id of gen ed and in general last id
     struct BaseData {
         string title;
         string subtitle;
         string genre;
-        address authorAddress;
+        address creatorAddress;
         string textIpfsHash;
         string imgIpfsHash;
         string blurbIpfsHash;
+        uint256 currentEdition;
+        uint256 premintedByCreator;
+        bool exists;
+        bool isCurated;
+        bool isBaseDataFrozen;
         bool paused;
+
     }
     struct AuthorShare {
         uint256 share;
@@ -32,30 +41,37 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         uint256 share;
         uint256 shareInMatic;
     }
+    struct Edition {
+        uint256 current;
+        uint256 maxAmount;
+        uint256 mintPrice;
+    }
 
-    mapping(address => BaseData) public baseDatas;
-    mapping(address => AuthorShare) public authorShares;
-    mapping(address => mapping(uint256 => Contribution)) public contributions;
-    mapping(address => uint8) public contributionsIndeces;
+    mapping(uint256 => BaseData) public baseDatas;
+    mapping(uint256 => Edition) public editions;
+    mapping(uint256 => AuthorShare) public authorShares;
+    mapping(uint256 => mapping(uint256 => Contribution)) public contributions;
+    mapping(uint256 => uint8) public contributionsIndeces;
 
     event Configured(
-        address collection,
+        uint256 projectId,
         string imgHash,
         string blurbHash,
         string newGenre,
         string newSubtitle
     );
-    event TextSet(string textHash);
+    event TextSet(uint256 projectId, string textHash);
     event ContributorAdded(address contributor, uint256 share, string role);
+    event Curated(uint256 project, bool isCurated);
 
     constructor() {
         _setupRole(PAUSER_ROLE, msg.sender);
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
     }
 
-    modifier onlyCreator(address _collection) {
+    modifier onlyCreator(uint256 _projectId) {
         require(
-            msg.sender == baseDatas[_collection].authorAddress,
+            msg.sender == baseDatas[_projectId].creatorAddress,
             "Not author"
         );
         _;
@@ -73,7 +89,7 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
     // TODO: test if dao has already been created (if textcidhash is the same)
     function setupDao(
         address _caller,
-        address _collection,
+        uint256 _projectId,
         string calldata _title,
         string calldata _textCID
     ) external onlyFactory whenNotPaused {
@@ -85,65 +101,70 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
             _textCID,
             "",
             "",
+            1,
+            0,
+            true,
+            false,
+            false,
             false
         );
+
         AuthorShare memory newAuthorShare = AuthorShare(100 - fee, 0);
-        baseDatas[_collection] = newBaseData;
-        authorShares[_collection] = newAuthorShare;
-        contributionsIndeces[_collection] = 0;
+        baseDatas[_projectId] = newBaseData;
+        authorShares[_projectId] = newAuthorShare;
+        contributionsIndeces[_projectId] = 0;
         projectsLength++;
     }
 
     function configureProjectDetails(
-        address _collection,
+        uint256 _projectId,
         string calldata _imgHash,
         string calldata _blurbHash,
         string calldata _genre,
         string calldata _subtitle
-    ) external onlyCreator(_collection) whenNotPaused {
-        IMoonpageCollection collection = IMoonpageCollection(_collection);
+    ) external onlyCreator(_projectId) whenNotPaused {
+        
         require(
-            !collection.isBaseDataFrozen(),
+            !baseDatas[_projectId].isBaseDataFrozen,
             "Base data frozen"
         );
-        baseDatas[_collection].imgIpfsHash = _imgHash;
-        baseDatas[_collection].blurbIpfsHash = _blurbHash;
-        baseDatas[_collection].genre = _genre;
-        baseDatas[_collection].subtitle = _subtitle;
+        baseDatas[_projectId].imgIpfsHash = _imgHash;
+        baseDatas[_projectId].blurbIpfsHash = _blurbHash;
+        baseDatas[_projectId].genre = _genre;
+        baseDatas[_projectId].subtitle = _subtitle;
 
-        emit Configured(_collection, _imgHash, _blurbHash, _genre, _subtitle);
+        emit Configured(_projectId, _imgHash, _blurbHash, _genre, _subtitle);
     }
 
-    function setTextIpfsHash(address _collection, string calldata _ipfsHash)
+    function setTextIpfsHash(uint256 _projectId, string calldata _ipfsHash)
         external
-        onlyCreator(_collection)
+        onlyCreator(_projectId)
         whenNotPaused
     {
-        IMoonpageCollection collection = IMoonpageCollection(_collection);
         require(
-            !collection.isBaseDataFrozen(),
+            !baseDatas[_projectId].isBaseDataFrozen,
             "Base data frozen"
         );
-        baseDatas[_collection].textIpfsHash = _ipfsHash;
+        baseDatas[_projectId].textIpfsHash = _ipfsHash;
 
-        emit TextSet(_ipfsHash);
+        emit TextSet(_projectId, _ipfsHash);
     }
 
     function addContributors(
-        address _collection,
+        uint256 _projectId,
         address[] calldata _contributors,
         uint256[] calldata _shares,
         string[] calldata _roles
-    ) external onlyCreator(_collection) whenNotPaused {
+    ) external onlyCreator(_projectId) whenNotPaused {
         // in theory user can put the same contributor 3 times - we don't care
-        IMoonpageCollection collection = IMoonpageCollection(_collection);
-        AuthorShare storage share = authorShares[_collection];
+    
+        AuthorShare storage share = authorShares[_projectId];
         require(
-            !collection.isBaseDataFrozen(),
+            !baseDatas[_projectId].isBaseDataFrozen,
             "Base data frozen"
         );
         require(
-            contributionsIndeces[_collection] == 0,
+            contributionsIndeces[_projectId] == 0,
             "Contributors set already"
         );
         require(_contributors.length <= 3, "Max 3 contributors");
@@ -163,20 +184,46 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
                 _contributors[i] != address(0),
                 "Contributor cannot be 0 address"
             );
-            contributions[_collection][i].shareRecipient = _contributors[i];
-            contributions[_collection][i].share = _shares[i];
-            contributions[_collection][i].role = _roles[i];
-            contributionsIndeces[_collection]++;
+            contributions[_projectId][i].shareRecipient = _contributors[i];
+            contributions[_projectId][i].share = _shares[i];
+            contributions[_projectId][i].role = _roles[i];
+            contributionsIndeces[_projectId]++;
             share.share = share.share - _shares[i];
             emit ContributorAdded(_contributors[i], _shares[i], _roles[i]);
         }
+    }
+
+    function enableNextEdition(uint256 _projectId, uint256 _newEdAmount, uint256 _newEdMintPrice)
+        external
+        onlyCreator(_projectId)
+        whenNotPaused
+    {
+        // TODO
+        // if (editions[_projectId].current == 1) {
+        //     (, , , , , , bool auctionsEnded) = auctionsManager
+        //         .readAuctionSettings(_projectId);
+        //     require(auctionsEnded, "Auctions not finished yet");
+        // } else {
+        //     require(
+        //         totalSupply() == edition.maxAmount,
+        //         "Current edition has not sold out"
+        //     );
+        // }
+        // edition.current++;
+        // edition.mintPrice = _newEdMintPrice;
+        // edition.maxAmount = edition.maxAmount + _newEdAmount;
+        // emit NextEditionEnabled(
+        //     edition.current,
+        //     edition.maxAmount,
+        //     edition.mintPrice
+        // );
     }
 
     // ------------------
     // Read functions
     // ------------------
 
-    function readBaseData(address _collection)
+    function readBaseData(uint _projectId)
         external
         view
         returns (
@@ -190,12 +237,12 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
             bool
         )
     {
-        BaseData storage data = baseDatas[_collection];
+        BaseData storage data = baseDatas[_projectId];
         return (
             data.title,
             data.subtitle,
             data.genre,
-            data.authorAddress,
+            data.creatorAddress,
             data.textIpfsHash,
             data.imgIpfsHash,
             data.blurbIpfsHash,
@@ -203,16 +250,16 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         );
     }
 
-    function readAuthorShare(address _collection)
+    function readAuthorShare(uint256 _projectId)
         external
         view
         returns (uint256, uint256)
     {
-        AuthorShare storage aShare = authorShares[_collection];
+        AuthorShare storage aShare = authorShares[_projectId];
         return (aShare.share, aShare.shareInMatic);
     }
 
-    function readContribution(address _collection, uint256 _index)
+    function readContribution(uint256 _projectId, uint256 _index)
         external
         view
         returns (
@@ -222,7 +269,7 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
             uint256
         )
     {
-        Contribution storage contrib = contributions[_collection][_index];
+        Contribution storage contrib = contributions[_projectId][_index];
         return (
             contrib.shareRecipient,
             contrib.role,
@@ -231,53 +278,59 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         );
     }
 
-    function readContributionIndex(address _collection)
+    function readContributionIndex(uint256 _projectId)
         external
         view
         returns (uint256)
     {
-        return contributionsIndeces[_collection];
+        return contributionsIndeces[_projectId];
     }
 
     // ------------------
     // Can only be called by a Collection
     // ------------------
 
-    function distributeShares() external {
-        address collectionAddr = address(msg.sender);
-        BaseData storage baseData = baseDatas[collectionAddr];
-        address authorAddress = baseData.authorAddress;
+    function distributeShares(uint256 _projectId) external {
+        BaseData storage baseData = baseDatas[_projectId];
+        address authorAddress = baseData.creatorAddress;
         // IS THIS SAFE?
         require(address(authorAddress) != address(0), "Not authorized");
 
-        uint256 leftShares = 100 - fee;
-        uint256 balanceTotal = address(collectionAddr).balance;
-        uint256 foundationShareInMatic = (balanceTotal * fee) / 100;
-        uint256 contribIndex = contributionsIndeces[collectionAddr];
-        AuthorShare storage authorShare = authorShares[collectionAddr];
-        IMoonpageCollection collection = IMoonpageCollection(collectionAddr);
-        if (contribIndex == 0) {
-            authorShare.share = leftShares;
-            authorShare.shareInMatic = (balanceTotal * leftShares) / 100;
-        }
-        for (uint256 i = 0; i < contribIndex; i++) {
-            Contribution storage contrib = contributions[collectionAddr][i];
-            leftShares = leftShares - contrib.share;
-            contrib.shareInMatic = (balanceTotal * contrib.share) / 100;
-            if (i == (contribIndex - 1)) {
-                authorShare.share = leftShares;
-                authorShare.shareInMatic = (balanceTotal * leftShares) / 100;
-            }
-            collection.withdraw(contrib.shareRecipient, contrib.shareInMatic);
-        }
+        // TODO make it work!
+        // uint256 leftShares = 100 - fee;
+        // uint256 balanceTotal = address(collectionAddr).balance;
+        // uint256 foundationShareInMatic = (balanceTotal * fee) / 100;
+        // uint256 contribIndex = contributionsIndeces[collectionAddr];
+        // AuthorShare storage authorShare = authorShares[collectionAddr];
+        // IMoonpageCollection collection = IMoonpageCollection(collectionAddr);
+        // if (contribIndex == 0) {
+        //     authorShare.share = leftShares;
+        //     authorShare.shareInMatic = (balanceTotal * leftShares) / 100;
+        // }
+        // for (uint256 i = 0; i < contribIndex; i++) {
+        //     Contribution storage contrib = contributions[_projectId][i];
+        //     leftShares = leftShares - contrib.share;
+        //     contrib.shareInMatic = (balanceTotal * contrib.share) / 100;
+        //     if (i == (contribIndex - 1)) {
+        //         authorShare.share = leftShares;
+        //         authorShare.shareInMatic = (balanceTotal * leftShares) / 100;
+        //     }
+        //     collection.withdraw(contrib.shareRecipient, contrib.shareInMatic);
+        // }
 
-        collection.withdraw(authorAddress, authorShare.shareInMatic);
-        collection.withdraw(factory, foundationShareInMatic);
+        // collection.withdraw(authorAddress, authorShare.shareInMatic);
+        // collection.withdraw(factory, foundationShareInMatic);
     }
 
     // ------------------
     // Admin Functions
     // ------------------
+    
+    function setIsCurated(uint256 _projectId) external onlyRole(DEFAULT_ADMIN_ROLE) {
+      require(baseDatas[_projectId].exists, "Does not exist");
+      baseDatas[_projectId].isCurated = true;
+      emit Curated(_projectId, true);
+    }
 
     function setFactory(address _factory)
         external

@@ -11,13 +11,12 @@ import "./MoonpageCollection.sol";
 contract MoonpageFactory is Ownable, Pausable {
     uint256 public firstEditionMin = 3;
     uint256 public firstEditionMax = 1000;
-    address[] public collections;
-    uint256 public collectionsLength = 0;
     IMoonpageManager public moonpageManager;
     IAuctionsManager public auctionsManager;
+    uint256 public projectsIndex = 0;
     event CollectionCreated(
       address indexed caller,
-      address indexed collection,
+      uint256 projectId,
       string title,
       string textIpfsHash,
       uint256 initialMintPrice,
@@ -31,7 +30,6 @@ contract MoonpageFactory is Ownable, Pausable {
 
     function createDao(
         string calldata _title,
-        string calldata _symbol,
         string calldata _textIpfsHash,
         uint256 _initialMintPrice,
         uint256 _firstEditionAmount
@@ -40,34 +38,22 @@ contract MoonpageFactory is Ownable, Pausable {
             _firstEditionAmount > firstEditionMin &&
                 _firstEditionAmount < firstEditionMax,
             "Incorrect amount"
-        );
-        MoonpageCollection collection = new MoonpageCollection(
-            msg.sender,
-            address(moonpageManager),
-            address(auctionsManager),
-            _initialMintPrice,
-            _firstEditionAmount,
-            _title,
-            _symbol
-        );
+        );          
         moonpageManager.setupDao(
             msg.sender,
-            address(collection),
+            projectsIndex,
             _title,
             _textIpfsHash
         );
-        auctionsManager.setupAuctionSettings(address(collection));
-        collections.push(address(collection));
-        collectionsLength++;
+        auctionsManager.setupAuctionSettings(projectsIndex);
         emit CollectionCreated(
           msg.sender,
-          address(collection),
           _title,
           _textIpfsHash,
           _initialMintPrice,
           _firstEditionAmount
         ) ;
-        return address(collection);
+        projectsIndex++;
     }
 
     // ------------------

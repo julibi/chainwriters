@@ -24,19 +24,10 @@ contract MoonpageCollection is
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
     uint256 public constant MAX_PER_WALLET = 5;
     Counters.Counter private _tokenIdCounter;
-    string public projectName;
-    string public projectSymbol;
     IMoonpageManager public moonpageManager;
     IAuctionsManager public auctionsManager;
     string public baseUri;
-    uint256 public premintedByCreator = 0;
-    bool public isBaseDataFrozen = false;
-    struct Edition {
-        uint256 current;
-        uint256 maxAmount;
-        uint256 mintPrice;
-    }
-    Edition public edition;
+
     uint256 public lastGenEd;
 
     event BaseUriSet(string indexed baseUri);
@@ -54,20 +45,15 @@ contract MoonpageCollection is
         address _mpAddress,
         address _amAddress,
         uint256 _initialMintPrice,
-        uint256 _firstEditionAmount,
-        string memory _title,
-        string memory _symbol
-    ) ERC721("", "") {
+        uint256 _firstEditionAmount
+    ) ERC721("Moonpage", "MP") {
         moonpageManager = IMoonpageManager(_mpAddress);
         auctionsManager = IAuctionsManager(_amAddress);
         _grantRole(PAUSER_ROLE, _caller);
         _grantRole(CREATOR_ROLE, _caller);
         // grand Minter role and only let minter role mint
 
-        edition = Edition(1, _firstEditionAmount, _initialMintPrice);
         lastGenEd = _firstEditionAmount;
-        projectName = _title;
-        projectSymbol = _symbol;
     }
 
     modifier onlyDaoManager() {
@@ -155,37 +141,11 @@ contract MoonpageCollection is
         setBaseUri(_newUri);
     }
 
-    function enableNextEdition(uint256 _newEdAmount, uint256 _newEdMintPrice)
-        external
-        onlyRole(CREATOR_ROLE)
-        whenNotPaused
-    {
-        if (edition.current == 1) {
-            (, , , , , , bool auctionsEnded) = auctionsManager
-                .readAuctionSettings(address(this));
-            require(auctionsEnded, "Auctions not finished yet");
-        } else {
-            // what if some nfts are sent to zero address/burnt? Is there a case that prevents this check from being true?
-            require(
-                totalSupply() == edition.maxAmount,
-                "Current edition has not sold out"
-            );
-        }
-        edition.current++;
-        edition.mintPrice = _newEdMintPrice;
-        edition.maxAmount = edition.maxAmount + _newEdAmount;
-        emit NextEditionEnabled(
-            edition.current,
-            edition.maxAmount,
-            edition.mintPrice
-        );
-    }
-
     // ------------------
     // Internal & Private functions
     // ------------------
 
-    function mint(address _receiver, uint256 _amount) internal {
+    function mint(uint256 _projectId, address _receiver, uint256 _amount) internal {
         require(_receiver != address(0), "No null address");
 
         for (uint256 i = 0; i < _amount; i++) {
@@ -257,14 +217,6 @@ contract MoonpageCollection is
     }
 
     // The following functions are overrides required by Solidity.
-    // can be kicked out
-    // necessary? I don't want a burning feature
-    function _burn(uint256 tokenId)
-        internal
-        override(ERC721, ERC721URIStorage)
-    {
-        super._burn(tokenId);
-    }
 
     function supportsInterface(bytes4 interfaceId)
         public
