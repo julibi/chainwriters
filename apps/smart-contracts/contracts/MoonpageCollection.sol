@@ -257,7 +257,7 @@ contract MoonpageCollection is
     }
 
     // The following functions are overrides required by Solidity.
-
+    // can be kicked out
     // necessary? I don't want a burning feature
     function _burn(uint256 tokenId)
         internal
