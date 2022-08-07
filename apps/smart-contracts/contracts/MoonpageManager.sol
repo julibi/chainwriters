@@ -3,14 +3,17 @@ pragma solidity ^0.8.9;
 
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "../interfaces/IMoonpageCollection.sol";
 
 contract MoonpageManager is AccessControlEnumerable, Pausable {
+    using SafeMath for uint256;
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
-    uint256 public constant MAX_AMOUNT_EDITION = 10000;
+    uint256 public constant MAX_AMOUNT_EDITION = 1000;
     uint256 public projectsLength = 0;
     address public factory;
     uint256 public fee = 15;
+    IMoonpageCollection public collection;
 
     // should deploy a little seperate contract per project, where the payment is being sent and
     // where everything is being split
@@ -23,13 +26,18 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         string textIpfsHash;
         string imgIpfsHash;
         string blurbIpfsHash;
+        string originalLanguage;
         uint256 currentEdition;
         uint256 premintedByCreator;
         bool exists;
         bool isCurated;
         bool isBaseDataFrozen;
         bool paused;
-
+        // should this be here or in Edition?
+        uint256 startTokenId;
+        uint256 currentTokenId;
+        uint256 endTokenId;
+        uint256 lastGenEdTokenId;
     }
     struct AuthorShare {
         uint256 share;
@@ -48,9 +56,10 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
     }
 
     mapping(uint256 => BaseData) public baseDatas;
-    mapping(uint256 => Edition) public editions;
     mapping(uint256 => AuthorShare) public authorShares;
+    mapping(uint256 => mapping(uint256 => Edition)) public editions;
     mapping(uint256 => mapping(uint256 => Contribution)) public contributions;
+    mapping(uint256 => uint256) public editionsIndeces;
     mapping(uint256 => uint8) public contributionsIndeces;
 
     event Configured(
@@ -64,9 +73,10 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
     event ContributorAdded(address contributor, uint256 share, string role);
     event Curated(uint256 project, bool isCurated);
 
-    constructor() {
+    constructor(address _collection) {
         _setupRole(PAUSER_ROLE, msg.sender);
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        collection = IMoonpageCollection(_collection);
     }
 
     modifier onlyCreator(uint256 _projectId) {
@@ -82,6 +92,10 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         _;
     }
 
+    modifier onlyCollection() {
+        require(msg.sender == address(collection), "Not authorized");
+    }
+
     // ------------------
     // Write functions for authors
     // ------------------
@@ -91,28 +105,44 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         address _caller,
         uint256 _projectId,
         string calldata _title,
-        string calldata _textCID
+        string calldata _textCID,
+        string calldata _originalLanguage,
+        uint256 _initialMintPrice,
+        uint256 _firstEditionAmount
     ) external onlyFactory whenNotPaused {
+        uint256 startId = _projectId * MAX_AMOUNT_EDITION;
         BaseData memory newBaseData = BaseData(
-            _title,
-            "",
-            "",
-            address(_caller),
-            _textCID,
-            "",
-            "",
-            1,
-            0,
-            true,
-            false,
-            false,
-            false
+            _title, // title
+            "", // subtitle
+            "", // genre
+            address(_caller), // creatorAddress
+            _textCID, // textIpfsHash
+            "", // imgIpfsHash
+            "", // blurbIpfsHash
+            _originalLanguage, // originalLanguage
+            1, // currentEdition
+            0, // premintedByCreator
+            true, // exists
+            false, // isCurated
+            false, // isBaseDataFrozen
+            false, // paused
+            startId, // startTokenId
+            startId, // currentTokenId
+            startId + MAX_AMOUNT_EDITION, // endTokenId - 10k reserved for each project
+            startId + _firstEditionAmount
         );
 
         AuthorShare memory newAuthorShare = AuthorShare(100 - fee, 0);
+        Edition memory newEdition = Edition(
+            1,
+            _firstEditionAmount,
+            _initialMintPrice
+        );
         baseDatas[_projectId] = newBaseData;
         authorShares[_projectId] = newAuthorShare;
+        editions[_projectId][0] = newEdition;
         contributionsIndeces[_projectId] = 0;
+        editionsIndeces[_projectId] = 0;
         projectsLength++;
     }
 
@@ -123,11 +153,7 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         string calldata _genre,
         string calldata _subtitle
     ) external onlyCreator(_projectId) whenNotPaused {
-        
-        require(
-            !baseDatas[_projectId].isBaseDataFrozen,
-            "Base data frozen"
-        );
+        require(!baseDatas[_projectId].isBaseDataFrozen, "Base data frozen");
         baseDatas[_projectId].imgIpfsHash = _imgHash;
         baseDatas[_projectId].blurbIpfsHash = _blurbHash;
         baseDatas[_projectId].genre = _genre;
@@ -141,10 +167,7 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         onlyCreator(_projectId)
         whenNotPaused
     {
-        require(
-            !baseDatas[_projectId].isBaseDataFrozen,
-            "Base data frozen"
-        );
+        require(!baseDatas[_projectId].isBaseDataFrozen, "Base data frozen");
         baseDatas[_projectId].textIpfsHash = _ipfsHash;
 
         emit TextSet(_projectId, _ipfsHash);
@@ -157,12 +180,9 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         string[] calldata _roles
     ) external onlyCreator(_projectId) whenNotPaused {
         // in theory user can put the same contributor 3 times - we don't care
-    
+
         AuthorShare storage share = authorShares[_projectId];
-        require(
-            !baseDatas[_projectId].isBaseDataFrozen,
-            "Base data frozen"
-        );
+        require(!baseDatas[_projectId].isBaseDataFrozen, "Base data frozen");
         require(
             contributionsIndeces[_projectId] == 0,
             "Contributors set already"
@@ -193,11 +213,11 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         }
     }
 
-    function enableNextEdition(uint256 _projectId, uint256 _newEdAmount, uint256 _newEdMintPrice)
-        external
-        onlyCreator(_projectId)
-        whenNotPaused
-    {
+    function enableNextEdition(
+        uint256 _projectId,
+        uint256 _newEdAmount,
+        uint256 _newEdMintPrice
+    ) external onlyCreator(_projectId) whenNotPaused {
         // TODO
         // if (editions[_projectId].current == 1) {
         //     (, , , , , , bool auctionsEnded) = auctionsManager
@@ -223,7 +243,7 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
     // Read functions
     // ------------------
 
-    function readBaseData(uint _projectId)
+    function readBaseData(uint256 _projectId)
         external
         view
         returns (
@@ -234,7 +254,17 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
             string memory,
             string memory,
             string memory,
-            bool
+            string memory,
+            uint256,
+            uint256,
+            bool,
+            bool,
+            bool,
+            bool,
+            uint256,
+            uint256,
+            uint256,
+            uint256
         )
     {
         BaseData storage data = baseDatas[_projectId];
@@ -246,7 +276,17 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
             data.textIpfsHash,
             data.imgIpfsHash,
             data.blurbIpfsHash,
-            data.paused
+            data.originalLanguage,
+            data.currentEdition,
+            data.premintedByCreator,
+            data.exists,
+            data.isCurated,
+            data.isBaseDataFrozen,
+            data.paused,
+            data.startTokenId,
+            data.currentTokenId,
+            data.endTokenId,
+            data.lastGenEdTokenId
         );
     }
 
@@ -290,6 +330,30 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
     // Can only be called by a Collection
     // ------------------
 
+    function increaseCurrentTokenId(uint256 _projectId, uint256 _amountMinted)
+        external
+        onlyCollection
+    {
+        baseDatas[_projectId].currentTokenId = baseDatas[_projectId]
+            .currentTokenId
+            .add(_amountMinted);
+    }
+
+    function setIsBaseDataFrozen(uint256 _projectId, bool _shouldBeFrozen)
+        external
+        onlyCollection
+    {
+        baseDatas[_projectId].isBaseDataFrozen = _shouldBeFrozen;
+    }
+
+    function setPremintedByCreator(
+        uint256 _projectId,
+        uint8 _premintedByCreator
+    ) external onlyCollection {
+        baseDatas[_projectId].premintedByCreator = _premintedByCreator;
+    }
+
+    // who can call this?
     function distributeShares(uint256 _projectId) external {
         BaseData storage baseData = baseDatas[_projectId];
         address authorAddress = baseData.creatorAddress;
@@ -325,11 +389,14 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
     // ------------------
     // Admin Functions
     // ------------------
-    
-    function setIsCurated(uint256 _projectId) external onlyRole(DEFAULT_ADMIN_ROLE) {
-      require(baseDatas[_projectId].exists, "Does not exist");
-      baseDatas[_projectId].isCurated = true;
-      emit Curated(_projectId, true);
+
+    function setIsCurated(uint256 _projectId)
+        external
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
+        require(baseDatas[_projectId].exists, "Does not exist");
+        baseDatas[_projectId].isCurated = true;
+        emit Curated(_projectId, true);
     }
 
     function setFactory(address _factory)
@@ -337,6 +404,13 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
         factory = address(_factory);
+    }
+
+    function setCollection(address _collection)
+        external
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
+        collection = IMoonpageCollection(_collection);
     }
 
     function pause() external onlyRole(PAUSER_ROLE) {

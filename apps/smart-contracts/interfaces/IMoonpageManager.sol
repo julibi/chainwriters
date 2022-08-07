@@ -11,6 +11,17 @@ interface IMoonpageManager {
 
     function distributeShares() external;
 
+    function increaseCurrentTokenId(uint256 _projectId, uint256 _amountMinted)
+        external;
+
+    function setIsBaseDataFrozen(uint256 _projectId, bool _shouldBeFrozen)
+        external;
+
+    function setPremintedByCreator(
+        uint256 _projectId,
+        uint8 _premintedByCreator
+    ) external;
+
     function readBaseData(address _collection)
         external
         view
@@ -22,7 +33,17 @@ interface IMoonpageManager {
             string memory,
             string memory,
             string memory,
-            bool
+            string memory,
+            uint256,
+            uint256,
+            bool,
+            bool,
+            bool,
+            bool,
+            uint256,
+            uint256,
+            uint256,
+            uint256
         );
 
     function readAuthorShare(address _collection)

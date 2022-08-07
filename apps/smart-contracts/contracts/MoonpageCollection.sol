@@ -22,7 +22,6 @@ contract MoonpageCollection is
     using Counters for Counters.Counter;
     bytes32 public constant CREATOR_ROLE = keccak256("CREATOR_ROLE");
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
-    uint256 public constant MAX_PER_WALLET = 5;
     Counters.Counter private _tokenIdCounter;
     IMoonpageManager public moonpageManager;
     IAuctionsManager public auctionsManager;
@@ -51,7 +50,7 @@ contract MoonpageCollection is
         auctionsManager = IAuctionsManager(_amAddress);
         _grantRole(PAUSER_ROLE, _caller);
         _grantRole(CREATOR_ROLE, _caller);
-        // grand Minter role and only let minter role mint
+        // grant Minter role and only let minter role mint
 
         lastGenEd = _firstEditionAmount;
     }
@@ -62,43 +61,64 @@ contract MoonpageCollection is
     }
 
     // the first edition is being sold in a reverse auction
-    function buy() external payable whenNotPaused {
+    function buy(uint256 _projectId) external payable whenNotPaused {
+        (
+            ,
+            ,
+            ,
+            ,
+            ,
+            ,
+            ,
+            ,
+            ,
+            ,
+            ,
+            ,
+            ,
+            ,
+            ,
+            uint256 currentTokenId,
+            uint256 endTokenId,
+
+        ) = moonpageManager.readBaseData(_projectId);
         (, , , , , bool auctionsStarted, bool auctionsEnded) = auctionsManager
-            .readAuctionSettings(address(this));
+            .readAuctionSettings(_projectId);
         require(auctionsStarted, "Auctions have not started");
         require(!auctionsEnded, "Auctions ended");
-        uint256 price = auctionsManager.getPrice(
-            address(this),
-            edition.mintPrice
-        );
-        bool shouldFinalize = (totalSupply() + 1) == edition.maxAmount;
+        uint256 price = auctionsManager.getPrice(_projectId, edition.mintPrice);
+        bool shouldFinalize = (currentTokenId + 1) == endTokenId;
         require(msg.value >= price, "Value sent not sufficient");
 
         mint(msg.sender, 1);
+        moonpageManager.increaseCurrentTokenId(_pojectId, 1);
         uint256 refund = msg.value - price;
         if (refund > 0) {
             payable(msg.sender).transfer(refund);
         }
         if (shouldFinalize) {
-            auctionsManager.endAuctions(address(this));
-            moonpageManager.distributeShares();
+            auctionsManager.endAuctions(_projectId);
+            moonpageManager.distributeShares(_projectId);
         } else {
-            auctionsManager.triggerNextAuction(address(this));
+            auctionsManager.triggerNextAuction(_projectId);
         }
     }
 
-    function publicMint(uint256 _amount) external payable whenNotPaused {
-        require(edition.current > 1, "Public minting possible from edition 2");
-        require(
-            (balanceOf(msg.sender) + _amount) <= MAX_PER_WALLET,
-            "Exceeds max per wallet."
-        );
+    function publicMint(uint256 _projectId, uint256 _amount)
+        external
+        payable
+        whenNotPaused
+    {
+        uint256 projectEdition = moonpageManager.editionsIndeces[_projectId];
+        require(projectEdition > 0, "Public minting possible from edition 2");
+        // continue here
         require(
             (totalSupply() + _amount) <= edition.maxAmount,
             "Amount exceeds cap."
         );
         require(
-            msg.value >= edition.mintPrice * _amount,
+            msg.value >=
+                editions[_projectId][projectEdition].mintPrice * _amount,
             "Value sent not sufficient."
         );
         bool shouldFinalize = (totalSupply() + _amount) == edition.maxAmount;
@@ -122,21 +142,26 @@ contract MoonpageCollection is
     }
 
     function startAuctions(
+        uint256 _projectId,
         uint256 _amountForCreator,
         string memory _newUri,
         uint256 _discountRate
     ) external onlyRole(CREATOR_ROLE) whenNotPaused {
         require(
+            moonpageManager.readBaseData(_projectId).exists,
+            "Invalid projectId"
+        );
+        require(
             _amountForCreator > 0 && _amountForCreator < 4,
             "Invalid amount"
         );
         auctionsManager.startAuctions(
-            address(this),
+            _projectId,
             _amountForCreator,
             _discountRate
         );
-        isBaseDataFrozen = true;
-        premintedByCreator = _amountForCreator;
+        moonpageManager.setIsBaseDataFrozen(_projectId, _amountForCreator);
+        moonpageManager.setPremintedByCreator(_projectId, true);
         mint(msg.sender, _amountForCreator);
         setBaseUri(_newUri);
     }
@@ -145,7 +170,11 @@ contract MoonpageCollection is
     // Internal & Private functions
     // ------------------
 
-    function mint(uint256 _projectId, address _receiver, uint256 _amount) internal {
+    function mint(
+        uint256 _projectId,
+        address _receiver,
+        uint256 _amount
+    ) internal {
         require(_receiver != address(0), "No null address");
 
         for (uint256 i = 0; i < _amount; i++) {

@@ -29,8 +29,8 @@ contract AuctionsManager is Pausable, AccessControl {
         uint256 premintedAmount,
         uint256 time
     );
-    event AuctionsEnded(address collection, uint256 time);
-    event ExpirationSet(address collection, uint256 expirationTime);
+    event AuctionsEnded(uint256 projectId, uint256 time);
+    event ExpirationSet(uint256 projectId, uint256 expirationTime);
 
     modifier onlyCollection() {
         require(auctions[msg.sender].exists, "Not authorized");
@@ -72,35 +72,35 @@ contract AuctionsManager is Pausable, AccessControl {
 
     // only called by a collection
     function startAuctions(
-        address _collection,
+        uint256 _projectId,
         uint256 _amountForCreator,
         uint256 _discountRate
     ) external whenNotPaused onlyCollection {
         require(
-            !auctions[_collection].auctionsStarted,
+            !auctions[_projectId].auctionsStarted,
             "Auctions already started"
         );
-        require(!auctions[_collection].auctionsEnded, "Auctions already ended");
+        require(!auctions[_projectId].auctionsEnded, "Auctions already ended");
 
-        auctions[_collection].discountRate = _discountRate;
-        auctions[_collection].startAt = block.timestamp;
-        auctions[_collection].expiresAt = block.timestamp + AUCTION_DURATION;
-        auctions[_collection].auctionsStarted = true;
-        emit ExpirationSet(_collection, block.timestamp + AUCTION_DURATION);
-        emit AuctionsStarted(_collection, _amountForCreator, block.timestamp);
+        auctions[_projectId].discountRate = _discountRate;
+        auctions[_projectId].startAt = block.timestamp;
+        auctions[_projectId].expiresAt = block.timestamp + AUCTION_DURATION;
+        auctions[_projectId].auctionsStarted = true;
+        emit ExpirationSet(_projectId, block.timestamp + AUCTION_DURATION);
+        emit AuctionsStarted(_projectId, _amountForCreator, block.timestamp);
     }
 
     // only called by a collection
-    function triggerNextAuction(address _collection) external onlyCollection {
-        auctions[_collection].startAt = block.timestamp;
-        auctions[_collection].expiresAt = block.timestamp + AUCTION_DURATION;
-        emit ExpirationSet(_collection, block.timestamp + AUCTION_DURATION);
+    function triggerNextAuction(uint256 _projectId) external onlyCollection {
+        auctions[_projectId].startAt = block.timestamp;
+        auctions[_projectId].expiresAt = block.timestamp + AUCTION_DURATION;
+        emit ExpirationSet(_projectId, block.timestamp + AUCTION_DURATION);
     }
 
-    function endAuctions(address _collection) external onlyCollection {
-        require(!auctions[msg.sender].auctionsEnded, "Already ended");
-        auctions[_collection].auctionsEnded = true;
-        emit AuctionsEnded(_collection, block.timestamp);
+    function endAuctions(uint256 _projectId) external onlyCollection {
+        require(!auctions[_projectId].auctionsEnded, "Already ended");
+        auctions[_projectId].auctionsEnded = true;
+        emit AuctionsEnded(_projectId, block.timestamp);
     }
 
     // ------------------

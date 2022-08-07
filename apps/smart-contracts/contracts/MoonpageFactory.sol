@@ -13,14 +13,14 @@ contract MoonpageFactory is Ownable, Pausable {
     uint256 public firstEditionMax = 1000;
     IMoonpageManager public moonpageManager;
     IAuctionsManager public auctionsManager;
-    uint256 public projectsIndex = 0;
+    uint256 public projectsIndex = 1;
     event CollectionCreated(
-      address indexed caller,
-      uint256 projectId,
-      string title,
-      string textIpfsHash,
-      uint256 initialMintPrice,
-      uint256 firstEditionAmount
+        address indexed caller,
+        uint256 projectId,
+        string title,
+        string textIpfsHash,
+        uint256 initialMintPrice,
+        uint256 firstEditionAmount
     );
 
     constructor(address _mpManager, address _auctionsManager) {
@@ -31,6 +31,7 @@ contract MoonpageFactory is Ownable, Pausable {
     function createDao(
         string calldata _title,
         string calldata _textIpfsHash,
+        string calldata _originalLanguage,
         uint256 _initialMintPrice,
         uint256 _firstEditionAmount
     ) external whenNotPaused returns (address) {
@@ -38,21 +39,24 @@ contract MoonpageFactory is Ownable, Pausable {
             _firstEditionAmount > firstEditionMin &&
                 _firstEditionAmount < firstEditionMax,
             "Incorrect amount"
-        );          
+        );
         moonpageManager.setupDao(
             msg.sender,
             projectsIndex,
             _title,
-            _textIpfsHash
+            _textIpfsHash,
+            _originalLanguage,
+            _initialMintPrice,
+            _firstEditionAmount
         );
         auctionsManager.setupAuctionSettings(projectsIndex);
         emit CollectionCreated(
-          msg.sender,
-          _title,
-          _textIpfsHash,
-          _initialMintPrice,
-          _firstEditionAmount
-        ) ;
+            msg.sender,
+            _title,
+            _textIpfsHash,
+            _initialMintPrice,
+            _firstEditionAmount
+        );
         projectsIndex++;
     }
 
@@ -85,7 +89,7 @@ contract MoonpageFactory is Ownable, Pausable {
 
     receive() external payable {}
 
-        // ------------------
+    // ------------------
     // Admin Functions
     // ------------------
 
