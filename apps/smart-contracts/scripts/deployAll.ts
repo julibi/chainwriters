@@ -14,11 +14,23 @@ async function deployAll() {
   console.log("Account balance:", (await deployer.getBalance()).toString());
   console.log(`Network: ${hre.ethers.network}`);
 
+  // deploy MoonpageCollection
+  const MoonpageCollectionFactory = await hre.ethers.getContractFactory(
+    "MoonpageCollection"
+  );
+  const MoonpageCollection = await MoonpageCollectionFactory.deploy();
+  await MoonpageCollection.deployed();
+  console.log(
+    `MoonpageCollection contract deployed to: ${MoonpageCollection.address}`
+  );
+
   // deploy MoonpageManager
   const MoonpageManagerFactory = await hre.ethers.getContractFactory(
     "MoonpageManager"
   );
-  const MoonpageManager = await MoonpageManagerFactory.deploy();
+  const MoonpageManager = await MoonpageManagerFactory.deploy(
+    MoonpageCollection.address
+  );
   await MoonpageManager.deployed();
   console.log(`Manager contract deployed to: ${MoonpageManager.address}`);
 
@@ -48,12 +60,13 @@ async function deployAll() {
     "BallotsFactory"
   );
   const BallotsFactory = await BallotsFactoryFactory.deploy(
-    MoonpageManager.address
+    MoonpageManager.address,
+    MoonpageCollection.address
   );
   await BallotsFactory.deployed();
   console.log(`BallotFactory contract deployed to: ${BallotsFactory.address}`);
 
-  // // Collection arguments
+  // Collection arguments
   const title = "My little Phony";
   const textIpfsHash = "QmTw3pWBQinwuHS57FcWyUGBpvGqLHQZkn1eKjp89XXyFg";
   const initialMintPrice = hre.ethers.utils.parseUnits("0.05", 18);
@@ -61,32 +74,23 @@ async function deployAll() {
 
   // setFactory on Moonpage Manager
   await MoonpageManager.setFactory(MoonpageFactory.address);
+  await MoonpageManager.setCollection(MoonpageCollection.address);
+  // set Contract on Moonpage Collection
+  await MoonpageCollection.setContracts(
+    MoonpageManager.address,
+    AuctionsManager.address
+  );
   // set Contracts on Auctions Manager
   await AuctionsManager.setContracts(
     MoonpageManager.address,
-    MoonpageFactory.address
+    MoonpageFactory.address,
+    MoonpageCollection.address
   );
-
-  // deploy dao
-  // const createDaoTX = await Factory.createDao(
-  //   title,
-  //   textIpfsHash,
-  //   initialMintPrice,
-  //   firstEditionMax
-  // );
-  // await createDaoTX.wait();
-
-  // const firstCollection = await Factory.collections(0);
-
-  // create Ballot/Deploy Ballot
-  // const createBallotTX = await BallotsFactory.createBallot(firstCollection);
-  // await createBallotTX.wait();
-  // const firstBallot = await BallotsFactory.ballots(firstCollection);
-  // const daoCreationEvent = receipt.events?.find(
-  //   (event: any) => event.event === "DaoCreated"
-  // );
-  // const daoAddress = daoCreationEvent.args[1];
-  // console.log(`Dao contract deployed to: ${daoAddress}`);
+  // set Contracts on Ballots Factory
+  await BallotsFactory.setContract(
+    MoonpageManager.address,
+    MoonpageCollection.address
+  );
 
   // wait around for a bit
   console.log("Waiting for etherscan/polygonscan once more...");
@@ -97,7 +101,7 @@ async function deployAll() {
   await Promise.all([
     hre.run("verify:verify", {
       address: MoonpageManager.address,
-      constructorArguments: [],
+      constructorArguments: [MoonpageCollection.address],
     }),
     hre.run("verify:verify", {
       address: AuctionsManager.address,
@@ -109,7 +113,10 @@ async function deployAll() {
     }),
     hre.run("verify:verify", {
       address: BallotsFactory.address,
-      constructorArguments: [MoonpageManager.address],
+      constructorArguments: [
+        MoonpageManager.address,
+        MoonpageCollection.address,
+      ],
     }),
   ]);
 }

@@ -1,16 +1,19 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.9;
 
-import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
 import "../interfaces/IMoonpageCollection.sol";
 import "../interfaces/IMoonpageManager.sol";
 
-contract Ballot is AccessControlEnumerable, Pausable {
+contract Ballot is AccessControlEnumerable {
     bytes32 public constant CREATOR_ROLE = keccak256("CREATOR_ROLE");
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
-    IMoonpageCollection public collection;
-    uint256 public maxId;
+    IMoonpageCollection public moonpageCollection;
+    IMoonpageManager public moonpageManager;
+    uint256 public startId;
+    uint256 public endId;
+    uint256 public maxVotes;
+    uint256 public votingsIndex = 0;
     enum State {
         Voting,
         NotVoting
@@ -37,19 +40,39 @@ contract Ballot is AccessControlEnumerable, Pausable {
 
     mapping(uint256 => mapping(uint256 => SingleVote)) internal votings;
     mapping(uint256 => Setting) public voteSettings;
-    uint256 public maxVotes;
-    uint256 public votingsIndex = 0;
 
-    constructor(address _collection, address _creator) {
-        _setupRole(PAUSER_ROLE, _creator);
+    constructor(
+        address _collection,
+        address _mpManager,
+        uint256 _projectId,
+        address _creator
+    ) {
         _setupRole(CREATOR_ROLE, _creator);
-        collection = IMoonpageCollection(_collection);
-        maxId = collection.lastGenEd();
+        moonpageCollection = IMoonpageCollection(_collection);
+        moonpageManager = IMoonpageManager(_mpManager);
+        (
+            ,
+            ,
+            ,
+            uint256 startTokenId,
+            ,
+            uint256 lastGenEdTokenId,
+            ,
+
+        ) = moonpageManager.readEditionData(_projectId);
+        startId = startTokenId;
+        endId = lastGenEdTokenId;
+        maxVotes = lastGenEdTokenId - startTokenId;
         state = State.NotVoting;
     }
 
-    modifier authorized() {
-        require(collection.balanceOf(msg.sender) > 0, "Not authorized");
+    modifier authorized(uint256 _tokenId) {
+        require(
+            (_tokenId >= startId) &&
+                (_tokenId <= endId) &&
+                moonpageCollection.ownerOf(_tokenId) == msg.sender,
+            "Not authorized"
+        );
         _;
     }
 
@@ -83,7 +106,7 @@ contract Ballot is AccessControlEnumerable, Pausable {
     }
 
     function endVote() external onlyRole(CREATOR_ROLE) inState(State.Voting) {
-        bool allVoted = voteSettings[votingsIndex].votesCount == maxId;
+        bool allVoted = voteSettings[votingsIndex].votesCount == maxVotes;
         bool voteExpired = block.timestamp > voteSettings[votingsIndex].endTime;
         require(allVoted || voteExpired, "Vote not yet expired");
         state = State.NotVoting;
@@ -92,17 +115,13 @@ contract Ballot is AccessControlEnumerable, Pausable {
 
     function vote(uint256 _tokenId, uint256 _option)
         external
-        authorized
+        authorized(_tokenId)
         inState(State.Voting)
     {
-        require(
-            collection.ownerOf(_tokenId) == msg.sender,
-            "Not owner of this NFT"
-        );
         require(!votings[votingsIndex][_tokenId].voted, "Already voted");
         require(_option == 0 || _option == 1 || _option == 2, "Invalid option");
         require(
-            voteSettings[votingsIndex].votesCount + 1 <= maxId,
+            voteSettings[votingsIndex].votesCount + 1 <= maxVotes,
             "Max votes reached"
         );
         require(

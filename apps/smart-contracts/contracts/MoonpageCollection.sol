@@ -32,12 +32,7 @@ contract MoonpageCollection is
     event Paused(address collection, bool paused);
     event URISet(string uri);
 
-    constructor(address _mpAddress, address _amAddress)
-        ERC721("Moonpage", "MP")
-    {
-        moonpageManager = IMoonpageManager(_mpAddress);
-        auctionsManager = IAuctionsManager(_amAddress);
-    }
+    constructor() ERC721("Moonpage", "MP") {}
 
     modifier onlyDaoManager() {
         require(msg.sender == address(moonpageManager), "Not authorized");
