@@ -7,6 +7,8 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
+import "@openzeppelin/contracts/utils/Base64.sol";
 import "../interfaces/IMoonpageManager.sol";
 import "../interfaces/IAuctionsManager.sol";
 
@@ -79,10 +81,8 @@ contract MoonpageCollection is
         require(msg.value >= price, "Value sent not sufficient");
 
         mint(_projectId, msg.sender, 1);
-        uint256 refund = msg.value - price;
-        if (refund > 0) {
-            payable(msg.sender).transfer(refund);
-        }
+        moonpageManager.increaseBalance(_projectId, price);
+
         bool shouldFinalize = (currentTokenId + 1) == lastGenEdTokenId;
         if (shouldFinalize) {
             auctionsManager.endAuctions(_projectId);
@@ -116,9 +116,10 @@ contract MoonpageCollection is
             msg.value >= (mintPrice * _amount),
             "Value sent not sufficient."
         );
+        mint(_projectId, msg.sender, _amount);
+        moonpageManager.increaseBalance(_projectId, _amount);
         bool shouldFinalize = (currentTokenId + _amount) ==
             currentEdLastTokenId;
-        mint(_projectId, msg.sender, _amount);
         if (shouldFinalize) {
             moonpageManager.distributeShares(_projectId);
         }
@@ -230,15 +231,43 @@ contract MoonpageCollection is
         return baseUri;
     }
 
-    function tokenURI(uint256 tokenId)
+    // todo: make it fully work - what should be inside this data?
+    function tokenURI(uint256 _tokenId)
         public
         view
         override(ERC721, ERC721URIStorage)
         returns (string memory)
     {
-        // TODO
-        // tokenId <= lastGenEd ? genEdMetadata : rest;
-        return baseUri;
+        uint256 projectId = moonpageManager.projectIdOfToken(_tokenId);
+        (
+            string memory title,
+            string memory subtitle,
+            string memory genre,
+            address creatorAddress,
+            string memory textIpfsHash,
+            string memory imgIpfsHash,
+            string memory blurbIpfsHash,
+            string memory originalLanguage,
+
+        ) = moonpageManager.readBaseData(projectId);
+        string memory json = Base64.encode(
+            bytes(
+                string(
+                    abi.encodePacked(
+                        '{"name":',
+                        title,
+                        "#",
+                        Strings.toString(_tokenId),
+                        '", "description": "A Moonpage Project"',
+                        '"image": "ipfs://"',
+                        imgIpfsHash,
+                        '"}'
+                    )
+                )
+            )
+        );
+        json = string(abi.encodePacked("data:application/json;base64,", json));
+        return json;
     }
 
     function _beforeTokenTransfer(

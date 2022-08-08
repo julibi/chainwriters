@@ -14,6 +14,8 @@ interface IMoonpageManager {
 
     function distributeShares(uint256 _projectId) external;
 
+    function increaseBalance(uint256 _projectId, uint256 _amount) external;
+
     function increaseCurrentTokenId(uint256 _projectId) external;
 
     function setIsBaseDataFrozen(uint256 _projectId, bool _shouldBeFrozen)
@@ -24,9 +26,19 @@ interface IMoonpageManager {
         uint256 _premintedByCreator
     ) external;
 
+    function projectIdOfToken(uint256 _projectId)
+        external
+        view
+        returns (uint256);
+
     function exists(uint256 _projectId) external view returns (bool);
 
     function isFrozen(uint256 _projectId) external view returns (bool);
+
+    function readProjectBalance(uint256 _projectId)
+        external
+        view
+        returns (uint256);
 
     function readBaseData(uint256 _projectId)
         external

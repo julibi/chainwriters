@@ -16,9 +16,10 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
     uint256 public fee = 15;
     IMoonpageCollection public collection;
 
-    // should deploy a little seperate contract per project, where the payment is being sent and
+    // todo add animation url and consider it inside metadata
+
+    // should deploy a little seperate contract per project, where the royalties are being sent and
     // where everything is being split
-    // TODO: determine first id of this collection, and last id of gen ed and in general last id
     struct BaseData {
         string title;
         string subtitle;
@@ -55,6 +56,7 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
     mapping(uint256 => Edition) public editions;
     mapping(uint256 => mapping(uint256 => Contribution)) public contributions;
     mapping(uint256 => uint8) public contributionsIndeces;
+    mapping(uint256 => uint256) public projectBalances;
     mapping(uint256 => bool) public existingProjectIds;
     mapping(uint256 => bool) public curatedProjectIds;
     mapping(uint256 => bool) public frozenProjectIds;
@@ -137,6 +139,7 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         editions[_projectId].lastGenEdTokenId = startId + _firstEditionAmount;
         editions[_projectId].endTokenId = startId + maxAmountEdition;
         contributionsIndeces[_projectId] = 0;
+        projectBalances[_projectId] = 0;
         existingProjectIds[_projectId] = true;
         curatedProjectIds[_projectId] = false;
         frozenProjectIds[_projectId] = false;
@@ -178,7 +181,6 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         string[] calldata _roles
     ) external onlyCreator(_projectId) whenNotPaused {
         // in theory user can put the same contributor 3 times - we don't care
-
         AuthorShare storage share = authorShares[_projectId];
         require(!frozenProjectIds[_projectId], "Base data frozen");
         require(
@@ -246,8 +248,146 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
     }
 
     // ------------------
+    // Can only be called by a Collection
+    // ------------------
+
+    function increaseBalance(uint256 _projectId, uint256 _amount)
+        external
+        whenNotPaused
+        onlyCollection
+    {
+        projectBalances[_projectId] = projectBalances[_projectId].add(_amount);
+    }
+
+    function increaseCurrentTokenId(uint256 _projectId)
+        external
+        whenNotPaused
+        onlyCollection
+    {
+        editions[_projectId].currentTokenId = editions[_projectId]
+            .currentTokenId
+            .add(1);
+    }
+
+    function setIsBaseDataFrozen(uint256 _projectId, bool _shouldBeFrozen)
+        external
+        whenNotPaused
+        onlyCollection
+    {
+        frozenProjectIds[_projectId] = _shouldBeFrozen;
+    }
+
+    function setPremintedByCreator(
+        uint256 _projectId,
+        uint8 _premintedByCreator
+    ) external whenNotPaused onlyCollection {
+        baseDatas[_projectId].premintedByCreator = _premintedByCreator;
+    }
+
+    // put this into seperate contract?
+    function distributeShares(uint256 _projectId)
+        external
+        whenNotPaused
+        onlyCollection
+    {
+        address creatorAddress = baseDatas[_projectId].creatorAddress;
+        uint256 leftShares = 100 - fee;
+        uint256 balanceTotal = projectBalances[_projectId];
+        uint256 foundationShareInMatic = (balanceTotal * fee) / 100;
+        uint256 contribIndex = contributionsIndeces[_projectId];
+        AuthorShare storage authorShare = authorShares[_projectId];
+        if (contribIndex == 0) {
+            authorShare.share = leftShares;
+            authorShare.shareInMatic = (balanceTotal * leftShares) / 100;
+        } else {
+            for (uint256 i = 0; i < contribIndex; i++) {
+                Contribution storage contrib = contributions[_projectId][i];
+                leftShares = leftShares - contrib.share;
+                contrib.shareInMatic = (balanceTotal * contrib.share) / 100;
+                if (i == (contribIndex - 1)) {
+                    authorShare.share = leftShares;
+                    authorShare.shareInMatic =
+                        (balanceTotal * leftShares) /
+                        100;
+                }
+                collection.withdraw(
+                    contrib.shareRecipient,
+                    contrib.shareInMatic
+                );
+            }
+        }
+
+        collection.withdraw(creatorAddress, authorShare.shareInMatic);
+        collection.withdraw(factory, foundationShareInMatic);
+        projectBalances[_projectId] = 0;
+    }
+
+    // ------------------
+    // Admin Functions
+    // ------------------
+
+    function setIsCurated(uint256 _projectId)
+        external
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
+        require(existingProjectIds[_projectId], "Does not exist");
+        curatedProjectIds[_projectId] = true;
+        emit Curated(_projectId, true);
+    }
+
+    function setFactory(address _factory)
+        external
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
+        factory = address(_factory);
+    }
+
+    function setCollection(address _collection)
+        external
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
+        collection = IMoonpageCollection(_collection);
+    }
+
+    function setMaxAmountEdition(uint256 _newMaxAmount)
+        external
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
+        maxAmountEdition = _newMaxAmount;
+    }
+
+    function setMinPrice(uint256 _minPrice)
+        external
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
+        minPrice = _minPrice;
+    }
+
+    function pause() external onlyRole(PAUSER_ROLE) {
+        _pause();
+    }
+
+    function unpause() external onlyRole(PAUSER_ROLE) {
+        _unpause();
+    }
+
+    // ------------------
     // Read functions
     // ------------------
+
+    function projectIdOfToken(uint256 _tokenId)
+        external
+        view
+        returns (uint256)
+    {
+        uint256 highestPossibleTokenId = projectsLength.mul(maxAmountEdition);
+        require(_tokenId <= highestPossibleTokenId, "tokenId too big");
+        for (uint256 i = 1; i <= projectsLength; i++) {
+            if (_tokenId <= (i.mul(maxAmountEdition))) {
+                return i;
+            }
+        }
+    }
 
     function isFrozen(uint256 _projectId) external view returns (bool) {
         return frozenProjectIds[_projectId];
@@ -255,6 +395,14 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
 
     function exists(uint256 _projectId) external view returns (bool) {
         return existingProjectIds[_projectId];
+    }
+
+    function readProjectBalance(uint256 _projectId)
+        external
+        view
+        returns (uint256)
+    {
+        return projectBalances[_projectId];
     }
 
     function readBaseData(uint256 _projectId)
@@ -348,115 +496,6 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         returns (uint256)
     {
         return contributionsIndeces[_projectId];
-    }
-
-    // ------------------
-    // Can only be called by a Collection
-    // ------------------
-
-    function increaseCurrentTokenId(uint256 _projectId)
-        external
-        onlyCollection
-    {
-        editions[_projectId].currentTokenId = editions[_projectId]
-            .currentTokenId
-            .add(1);
-    }
-
-    function setIsBaseDataFrozen(uint256 _projectId, bool _shouldBeFrozen)
-        external
-        onlyCollection
-    {
-        frozenProjectIds[_projectId] = _shouldBeFrozen;
-    }
-
-    function setPremintedByCreator(
-        uint256 _projectId,
-        uint8 _premintedByCreator
-    ) external onlyCollection {
-        baseDatas[_projectId].premintedByCreator = _premintedByCreator;
-    }
-
-    // who can call this?
-    function distributeShares(uint256 _projectId) external {
-        BaseData storage baseData = baseDatas[_projectId];
-        address authorAddress = baseData.creatorAddress;
-        // IS THIS SAFE?
-        require(address(authorAddress) != address(0), "Not authorized");
-
-        // TODO make it work!
-        // uint256 leftShares = 100 - fee;
-        // uint256 balanceTotal = address(collectionAddr).balance;
-        // uint256 foundationShareInMatic = (balanceTotal * fee) / 100;
-        // uint256 contribIndex = contributionsIndeces[collectionAddr];
-        // AuthorShare storage authorShare = authorShares[collectionAddr];
-        // IMoonpageCollection collection = IMoonpageCollection(collectionAddr);
-        // if (contribIndex == 0) {
-        //     authorShare.share = leftShares;
-        //     authorShare.shareInMatic = (balanceTotal * leftShares) / 100;
-        // }
-        // for (uint256 i = 0; i < contribIndex; i++) {
-        //     Contribution storage contrib = contributions[_projectId][i];
-        //     leftShares = leftShares - contrib.share;
-        //     contrib.shareInMatic = (balanceTotal * contrib.share) / 100;
-        //     if (i == (contribIndex - 1)) {
-        //         authorShare.share = leftShares;
-        //         authorShare.shareInMatic = (balanceTotal * leftShares) / 100;
-        //     }
-        //     collection.withdraw(contrib.shareRecipient, contrib.shareInMatic);
-        // }
-
-        // collection.withdraw(authorAddress, authorShare.shareInMatic);
-        // collection.withdraw(factory, foundationShareInMatic);
-    }
-
-    // ------------------
-    // Admin Functions
-    // ------------------
-
-    function setIsCurated(uint256 _projectId)
-        external
-        onlyRole(DEFAULT_ADMIN_ROLE)
-    {
-        require(existingProjectIds[_projectId], "Does not exist");
-        curatedProjectIds[_projectId] = true;
-        emit Curated(_projectId, true);
-    }
-
-    function setFactory(address _factory)
-        external
-        onlyRole(DEFAULT_ADMIN_ROLE)
-    {
-        factory = address(_factory);
-    }
-
-    function setCollection(address _collection)
-        external
-        onlyRole(DEFAULT_ADMIN_ROLE)
-    {
-        collection = IMoonpageCollection(_collection);
-    }
-
-    function setMaxAmountEdition(uint256 _newMaxAmount)
-        external
-        onlyRole(DEFAULT_ADMIN_ROLE)
-    {
-        maxAmountEdition = _newMaxAmount;
-    }
-
-    function setMinPrice(uint256 _minPrice)
-        external
-        onlyRole(DEFAULT_ADMIN_ROLE)
-    {
-        minPrice = _minPrice;
-    }
-
-    function pause() external onlyRole(PAUSER_ROLE) {
-        _pause();
-    }
-
-    function unpause() external onlyRole(PAUSER_ROLE) {
-        _unpause();
     }
 
     // ------------------
