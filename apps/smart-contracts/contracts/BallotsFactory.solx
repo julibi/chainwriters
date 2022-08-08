@@ -16,7 +16,7 @@ contract BallotsFactory is Ownable {
     }
 
     function createBallot(address _collection) external returns (address) {
-        (, , , address authorAddress, , , , ) = moonpageManager.readBaseData(
+        (, , , address authorAddress, , , , , ) = moonpageManager.readBaseData(
             _collection
         );
 

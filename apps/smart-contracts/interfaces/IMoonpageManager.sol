@@ -4,25 +4,31 @@ pragma solidity ^0.8.9;
 interface IMoonpageManager {
     function setupDao(
         address _caller,
-        address _collection,
+        uint256 _projectId,
         string calldata _title,
-        string calldata _textCID
+        string calldata _textCID,
+        string calldata _originalLanguage,
+        uint256 _initialMintPrice,
+        uint256 _firstEditionAmount
     ) external;
 
-    function distributeShares() external;
+    function distributeShares(uint256 _projectId) external;
 
-    function increaseCurrentTokenId(uint256 _projectId, uint256 _amountMinted)
-        external;
+    function increaseCurrentTokenId(uint256 _projectId) external;
 
     function setIsBaseDataFrozen(uint256 _projectId, bool _shouldBeFrozen)
         external;
 
     function setPremintedByCreator(
         uint256 _projectId,
-        uint8 _premintedByCreator
+        uint256 _premintedByCreator
     ) external;
 
-    function readBaseData(address _collection)
+    function exists(uint256 _projectId) external view returns (bool);
+
+    function isFrozen(uint256 _projectId) external view returns (bool);
+
+    function readBaseData(uint256 _projectId)
         external
         view
         returns (
@@ -34,24 +40,29 @@ interface IMoonpageManager {
             string memory,
             string memory,
             string memory,
-            uint256,
-            uint256,
-            bool,
-            bool,
-            bool,
-            bool,
-            uint256,
-            uint256,
-            uint256,
             uint256
         );
 
-    function readAuthorShare(address _collection)
+    function readAuthorShare(uint256 _projectId)
         external
         view
         returns (uint256, uint256);
 
-    function readContribution(address _collection, uint256 _index)
+    function readEditionData(uint256 _projectId)
+        external
+        view
+        returns (
+            uint256,
+            uint256,
+            uint256,
+            uint256,
+            uint256,
+            uint256,
+            uint256,
+            uint256
+        );
+
+    function readContribution(uint256 _projectId, uint256 _index)
         external
         view
         returns (
@@ -61,7 +72,7 @@ interface IMoonpageManager {
             uint256
         );
 
-    function readContributionIndex(address _collection)
+    function readContributionIndex(uint256 _projectId)
         external
         view
         returns (uint256);

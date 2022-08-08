@@ -9,7 +9,8 @@ import "../interfaces/IMoonpageCollection.sol";
 contract MoonpageManager is AccessControlEnumerable, Pausable {
     using SafeMath for uint256;
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
-    uint256 public constant MAX_AMOUNT_EDITION = 1000;
+    uint256 public maxAmountEdition = 1000;
+    uint256 public minPrice = 1 ether;
     uint256 public projectsLength = 0;
     address public factory;
     uint256 public fee = 15;
@@ -27,17 +28,7 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         string imgIpfsHash;
         string blurbIpfsHash;
         string originalLanguage;
-        uint256 currentEdition;
         uint256 premintedByCreator;
-        bool exists;
-        bool isCurated;
-        bool isBaseDataFrozen;
-        bool paused;
-        // should this be here or in Edition?
-        uint256 startTokenId;
-        uint256 currentTokenId;
-        uint256 endTokenId;
-        uint256 lastGenEdTokenId;
     }
     struct AuthorShare {
         uint256 share;
@@ -51,16 +42,23 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
     }
     struct Edition {
         uint256 current;
-        uint256 maxAmount;
+        uint256 initialMintPrice;
         uint256 mintPrice;
+        uint256 startTokenId;
+        uint256 currentTokenId;
+        uint256 lastGenEdTokenId; // id of last token in Genesis Edition of a collection
+        uint256 currentEdLastTokenId; // id of last token in current edition
+        uint256 endTokenId;
     }
-
     mapping(uint256 => BaseData) public baseDatas;
     mapping(uint256 => AuthorShare) public authorShares;
-    mapping(uint256 => mapping(uint256 => Edition)) public editions;
+    mapping(uint256 => Edition) public editions;
     mapping(uint256 => mapping(uint256 => Contribution)) public contributions;
-    mapping(uint256 => uint256) public editionsIndeces;
     mapping(uint256 => uint8) public contributionsIndeces;
+    mapping(uint256 => bool) public existingProjectIds;
+    mapping(uint256 => bool) public curatedProjectIds;
+    mapping(uint256 => bool) public frozenProjectIds;
+    mapping(uint256 => bool) public pausedProjectIds;
 
     event Configured(
         uint256 projectId,
@@ -72,6 +70,11 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
     event TextSet(uint256 projectId, string textHash);
     event ContributorAdded(address contributor, uint256 share, string role);
     event Curated(uint256 project, bool isCurated);
+    event NextEditionEnabled(
+        uint256 editionId,
+        uint256 maxSupply,
+        uint256 mintPrice
+    );
 
     constructor(address _collection) {
         _setupRole(PAUSER_ROLE, msg.sender);
@@ -94,6 +97,7 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
 
     modifier onlyCollection() {
         require(msg.sender == address(collection), "Not authorized");
+        _;
     }
 
     // ------------------
@@ -110,39 +114,33 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         uint256 _initialMintPrice,
         uint256 _firstEditionAmount
     ) external onlyFactory whenNotPaused {
-        uint256 startId = _projectId * MAX_AMOUNT_EDITION;
-        BaseData memory newBaseData = BaseData(
-            _title, // title
-            "", // subtitle
-            "", // genre
-            address(_caller), // creatorAddress
-            _textCID, // textIpfsHash
-            "", // imgIpfsHash
-            "", // blurbIpfsHash
-            _originalLanguage, // originalLanguage
-            1, // currentEdition
-            0, // premintedByCreator
-            true, // exists
-            false, // isCurated
-            false, // isBaseDataFrozen
-            false, // paused
-            startId, // startTokenId
-            startId, // currentTokenId
-            startId + MAX_AMOUNT_EDITION, // endTokenId - 10k reserved for each project
-            startId + _firstEditionAmount
-        );
-
-        AuthorShare memory newAuthorShare = AuthorShare(100 - fee, 0);
-        Edition memory newEdition = Edition(
-            1,
-            _firstEditionAmount,
-            _initialMintPrice
-        );
-        baseDatas[_projectId] = newBaseData;
-        authorShares[_projectId] = newAuthorShare;
-        editions[_projectId][0] = newEdition;
+        baseDatas[_projectId].title = _title;
+        baseDatas[_projectId].subtitle = "";
+        baseDatas[_projectId].genre = "";
+        baseDatas[_projectId].creatorAddress = address(_caller);
+        baseDatas[_projectId].textIpfsHash = _textCID;
+        baseDatas[_projectId].imgIpfsHash = "";
+        baseDatas[_projectId].blurbIpfsHash = "";
+        baseDatas[_projectId].originalLanguage = _originalLanguage;
+        baseDatas[_projectId].premintedByCreator = 0;
+        authorShares[_projectId].share = 100 - fee;
+        authorShares[_projectId].shareInMatic = 0;
+        uint256 startId = _projectId * maxAmountEdition;
+        editions[_projectId].current = 1;
+        editions[_projectId].initialMintPrice = _initialMintPrice;
+        editions[_projectId].mintPrice = _initialMintPrice;
+        editions[_projectId].startTokenId = startId;
+        editions[_projectId].currentTokenId = startId;
+        editions[_projectId].currentEdLastTokenId =
+            startId +
+            _firstEditionAmount;
+        editions[_projectId].lastGenEdTokenId = startId + _firstEditionAmount;
+        editions[_projectId].endTokenId = startId + maxAmountEdition;
         contributionsIndeces[_projectId] = 0;
-        editionsIndeces[_projectId] = 0;
+        existingProjectIds[_projectId] = true;
+        curatedProjectIds[_projectId] = false;
+        frozenProjectIds[_projectId] = false;
+        pausedProjectIds[_projectId] = false;
         projectsLength++;
     }
 
@@ -153,7 +151,7 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         string calldata _genre,
         string calldata _subtitle
     ) external onlyCreator(_projectId) whenNotPaused {
-        require(!baseDatas[_projectId].isBaseDataFrozen, "Base data frozen");
+        require(!frozenProjectIds[_projectId], "Base data frozen");
         baseDatas[_projectId].imgIpfsHash = _imgHash;
         baseDatas[_projectId].blurbIpfsHash = _blurbHash;
         baseDatas[_projectId].genre = _genre;
@@ -167,7 +165,7 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         onlyCreator(_projectId)
         whenNotPaused
     {
-        require(!baseDatas[_projectId].isBaseDataFrozen, "Base data frozen");
+        require(!frozenProjectIds[_projectId], "Base data frozen");
         baseDatas[_projectId].textIpfsHash = _ipfsHash;
 
         emit TextSet(_projectId, _ipfsHash);
@@ -182,7 +180,7 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         // in theory user can put the same contributor 3 times - we don't care
 
         AuthorShare storage share = authorShares[_projectId];
-        require(!baseDatas[_projectId].isBaseDataFrozen, "Base data frozen");
+        require(!frozenProjectIds[_projectId], "Base data frozen");
         require(
             contributionsIndeces[_projectId] == 0,
             "Contributors set already"
@@ -218,30 +216,46 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         uint256 _newEdAmount,
         uint256 _newEdMintPrice
     ) external onlyCreator(_projectId) whenNotPaused {
-        // TODO
-        // if (editions[_projectId].current == 1) {
-        //     (, , , , , , bool auctionsEnded) = auctionsManager
-        //         .readAuctionSettings(_projectId);
-        //     require(auctionsEnded, "Auctions not finished yet");
-        // } else {
-        //     require(
-        //         totalSupply() == edition.maxAmount,
-        //         "Current edition has not sold out"
-        //     );
-        // }
-        // edition.current++;
-        // edition.mintPrice = _newEdMintPrice;
-        // edition.maxAmount = edition.maxAmount + _newEdAmount;
-        // emit NextEditionEnabled(
-        //     edition.current,
-        //     edition.maxAmount,
-        //     edition.mintPrice
-        // );
+        require(
+            editions[_projectId].currentTokenId + _newEdAmount <=
+                editions[_projectId].endTokenId,
+            "Exceeds possible amount"
+        );
+        require(_newEdMintPrice >= minPrice, "Price too low");
+        require(
+            editions[_projectId].currentTokenId ==
+                editions[_projectId].currentEdLastTokenId,
+            "Current edition has not sold out"
+        );
+
+        editions[_projectId].current++;
+        editions[_projectId].mintPrice = _newEdMintPrice;
+        editions[_projectId].startTokenId =
+            editions[_projectId].currentTokenId +
+            1;
+        editions[_projectId].currentEdLastTokenId =
+            editions[_projectId].currentTokenId +
+            _newEdAmount +
+            1;
+
+        emit NextEditionEnabled(
+            editions[_projectId].current,
+            _newEdAmount,
+            _newEdMintPrice
+        );
     }
 
     // ------------------
     // Read functions
     // ------------------
+
+    function isFrozen(uint256 _projectId) external view returns (bool) {
+        return frozenProjectIds[_projectId];
+    }
+
+    function exists(uint256 _projectId) external view returns (bool) {
+        return existingProjectIds[_projectId];
+    }
 
     function readBaseData(uint256 _projectId)
         external
@@ -255,15 +269,6 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
             string memory,
             string memory,
             string memory,
-            uint256,
-            uint256,
-            bool,
-            bool,
-            bool,
-            bool,
-            uint256,
-            uint256,
-            uint256,
             uint256
         )
     {
@@ -277,16 +282,7 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
             data.imgIpfsHash,
             data.blurbIpfsHash,
             data.originalLanguage,
-            data.currentEdition,
-            data.premintedByCreator,
-            data.exists,
-            data.isCurated,
-            data.isBaseDataFrozen,
-            data.paused,
-            data.startTokenId,
-            data.currentTokenId,
-            data.endTokenId,
-            data.lastGenEdTokenId
+            data.premintedByCreator
         );
     }
 
@@ -297,6 +293,34 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
     {
         AuthorShare storage aShare = authorShares[_projectId];
         return (aShare.share, aShare.shareInMatic);
+    }
+
+    function readEditionData(uint256 _projectId)
+        external
+        view
+        returns (
+            uint256,
+            uint256,
+            uint256,
+            uint256,
+            uint256,
+            uint256,
+            uint256,
+            uint256
+        )
+    {
+        Edition storage data = editions[_projectId];
+
+        return (
+            data.current,
+            data.initialMintPrice,
+            data.mintPrice,
+            data.startTokenId,
+            data.currentTokenId,
+            data.lastGenEdTokenId,
+            data.currentEdLastTokenId,
+            data.endTokenId
+        );
     }
 
     function readContribution(uint256 _projectId, uint256 _index)
@@ -330,20 +354,20 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
     // Can only be called by a Collection
     // ------------------
 
-    function increaseCurrentTokenId(uint256 _projectId, uint256 _amountMinted)
+    function increaseCurrentTokenId(uint256 _projectId)
         external
         onlyCollection
     {
-        baseDatas[_projectId].currentTokenId = baseDatas[_projectId]
+        editions[_projectId].currentTokenId = editions[_projectId]
             .currentTokenId
-            .add(_amountMinted);
+            .add(1);
     }
 
     function setIsBaseDataFrozen(uint256 _projectId, bool _shouldBeFrozen)
         external
         onlyCollection
     {
-        baseDatas[_projectId].isBaseDataFrozen = _shouldBeFrozen;
+        frozenProjectIds[_projectId] = _shouldBeFrozen;
     }
 
     function setPremintedByCreator(
@@ -394,8 +418,8 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         external
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
-        require(baseDatas[_projectId].exists, "Does not exist");
-        baseDatas[_projectId].isCurated = true;
+        require(existingProjectIds[_projectId], "Does not exist");
+        curatedProjectIds[_projectId] = true;
         emit Curated(_projectId, true);
     }
 
@@ -411,6 +435,20 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
         collection = IMoonpageCollection(_collection);
+    }
+
+    function setMaxAmountEdition(uint256 _newMaxAmount)
+        external
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
+        maxAmountEdition = _newMaxAmount;
+    }
+
+    function setMinPrice(uint256 _minPrice)
+        external
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
+        minPrice = _minPrice;
     }
 
     function pause() external onlyRole(PAUSER_ROLE) {

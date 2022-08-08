@@ -5,54 +5,36 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
-import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "../interfaces/IMoonpageManager.sol";
 import "../interfaces/IAuctionsManager.sol";
 
-// TODO: first id is 0 - either increment in the beginning or transfer the first one to Library
 // needs to be ownable? But how make it is deployed by factory ownable when
 contract MoonpageCollection is
     ERC721,
     ERC721Enumerable,
     ERC721URIStorage,
-    Pausable,
-    AccessControl
+    Ownable,
+    Pausable
 {
     using Counters for Counters.Counter;
-    bytes32 public constant CREATOR_ROLE = keccak256("CREATOR_ROLE");
-    bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
+    uint256 public maxMintableCreator = 4;
     Counters.Counter private _tokenIdCounter;
     IMoonpageManager public moonpageManager;
     IAuctionsManager public auctionsManager;
     string public baseUri;
 
-    uint256 public lastGenEd;
-
     event BaseUriSet(string indexed baseUri);
     event Minted(uint256 edition, address account, uint256 tokenId);
     event Paused(address collection, bool paused);
-    event NextEditionEnabled(
-        uint256 nextEdId,
-        uint256 maxSupply,
-        uint256 mintPrice
-    );
     event URISet(string uri);
 
-    constructor(
-        address _caller,
-        address _mpAddress,
-        address _amAddress,
-        uint256 _initialMintPrice,
-        uint256 _firstEditionAmount
-    ) ERC721("Moonpage", "MP") {
+    constructor(address _mpAddress, address _amAddress)
+        ERC721("Moonpage", "MP")
+    {
         moonpageManager = IMoonpageManager(_mpAddress);
         auctionsManager = IAuctionsManager(_amAddress);
-        _grantRole(PAUSER_ROLE, _caller);
-        _grantRole(CREATOR_ROLE, _caller);
-        // grant Minter role and only let minter role mint
-
-        lastGenEd = _firstEditionAmount;
     }
 
     modifier onlyDaoManager() {
@@ -60,42 +42,48 @@ contract MoonpageCollection is
         _;
     }
 
+    modifier ifProjectExists(uint256 _projectId) {
+        require(moonpageManager.exists(_projectId), "Invalid projectId");
+        _;
+    }
+
+    modifier onlyProjectCreator(uint256 _projectId) {
+        (, , , address creatorAddress, , , , , ) = moonpageManager.readBaseData(
+            _projectId
+        );
+        require(msg.sender == address(creatorAddress), "Not authorized");
+        _;
+    }
+
     // the first edition is being sold in a reverse auction
     function buy(uint256 _projectId) external payable whenNotPaused {
         (
             ,
-            ,
-            ,
-            ,
-            ,
-            ,
-            ,
-            ,
-            ,
-            ,
-            ,
-            ,
-            ,
+            uint256 initialMintPrice,
             ,
             ,
             uint256 currentTokenId,
-            uint256 endTokenId,
+            uint256 lastGenEdTokenId,
+            ,
 
-        ) = moonpageManager.readBaseData(_projectId);
+        ) = moonpageManager.readEditionData(_projectId);
         (, , , , , bool auctionsStarted, bool auctionsEnded) = auctionsManager
             .readAuctionSettings(_projectId);
         require(auctionsStarted, "Auctions have not started");
         require(!auctionsEnded, "Auctions ended");
-        uint256 price = auctionsManager.getPrice(_projectId, edition.mintPrice);
-        bool shouldFinalize = (currentTokenId + 1) == endTokenId;
+        require(
+            (currentTokenId + 1) <= lastGenEdTokenId,
+            "Amount exceeds cap."
+        );
+        uint256 price = auctionsManager.getPrice(_projectId, initialMintPrice);
         require(msg.value >= price, "Value sent not sufficient");
 
-        mint(msg.sender, 1);
-        moonpageManager.increaseCurrentTokenId(_pojectId, 1);
+        mint(_projectId, msg.sender, 1);
         uint256 refund = msg.value - price;
         if (refund > 0) {
             payable(msg.sender).transfer(refund);
         }
+        bool shouldFinalize = (currentTokenId + 1) == lastGenEdTokenId;
         if (shouldFinalize) {
             auctionsManager.endAuctions(_projectId);
             moonpageManager.distributeShares(_projectId);
@@ -109,22 +97,30 @@ contract MoonpageCollection is
         payable
         whenNotPaused
     {
-        uint256 projectEdition = moonpageManager.editionsIndeces[_projectId];
-        require(projectEdition > 0, "Public minting possible from edition 2");
-        // continue here
+        (
+            uint256 current,
+            ,
+            uint256 mintPrice,
+            ,
+            uint256 currentTokenId,
+            ,
+            uint256 currentEdLastTokenId,
+
+        ) = moonpageManager.readEditionData(_projectId);
+        require(current > 1, "Public minting possible from edition 2");
         require(
-            (totalSupply() + _amount) <= edition.maxAmount,
+            (currentTokenId + _amount) <= currentEdLastTokenId,
             "Amount exceeds cap."
         );
         require(
-            msg.value >=
-                editions[_projectId][projectEdition].mintPrice * _amount,
+            msg.value >= (mintPrice * _amount),
             "Value sent not sufficient."
         );
-        bool shouldFinalize = (totalSupply() + _amount) == edition.maxAmount;
-        mint(msg.sender, _amount);
+        bool shouldFinalize = (currentTokenId + _amount) ==
+            currentEdLastTokenId;
+        mint(_projectId, msg.sender, _amount);
         if (shouldFinalize) {
-            moonpageManager.distributeShares();
+            moonpageManager.distributeShares(_projectId);
         }
     }
 
@@ -132,38 +128,34 @@ contract MoonpageCollection is
     // Functions for Creator
     // ------------------
 
-    function setBaseUri(string memory _baseUri)
-        public
-        onlyRole(CREATOR_ROLE)
-        whenNotPaused
-    {
-        baseUri = _baseUri;
-        emit BaseUriSet(baseUri);
-    }
-
     function startAuctions(
         uint256 _projectId,
         uint256 _amountForCreator,
-        string memory _newUri,
         uint256 _discountRate
-    ) external onlyRole(CREATOR_ROLE) whenNotPaused {
+    )
+        external
+        whenNotPaused
+        ifProjectExists(_projectId)
+        onlyProjectCreator(_projectId)
+    {
+        (, , , , , , , , uint256 premintedByCreator) = moonpageManager
+            .readBaseData(_projectId);
         require(
-            moonpageManager.readBaseData(_projectId).exists,
-            "Invalid projectId"
+            (premintedByCreator == 0) && !moonpageManager.isFrozen(_projectId),
+            "Auctions already started"
         );
         require(
-            _amountForCreator > 0 && _amountForCreator < 4,
-            "Invalid amount"
+            (_amountForCreator > 0) && (_amountForCreator < maxMintableCreator),
+            "Invalid amount for maxMintableCreator"
         );
         auctionsManager.startAuctions(
             _projectId,
             _amountForCreator,
             _discountRate
         );
-        moonpageManager.setIsBaseDataFrozen(_projectId, _amountForCreator);
-        moonpageManager.setPremintedByCreator(_projectId, true);
-        mint(msg.sender, _amountForCreator);
-        setBaseUri(_newUri);
+        moonpageManager.setIsBaseDataFrozen(_projectId, true);
+        moonpageManager.setPremintedByCreator(_projectId, _amountForCreator);
+        mint(_projectId, msg.sender, _amountForCreator);
     }
 
     // ------------------
@@ -176,13 +168,21 @@ contract MoonpageCollection is
         uint256 _amount
     ) internal {
         require(_receiver != address(0), "No null address");
+        (
+            uint256 current,
+            ,
+            ,
+            ,
+            uint256 currentTokenId,
+            ,
+            uint256 currentEdLastTokenId,
 
+        ) = moonpageManager.readEditionData(_projectId);
         for (uint256 i = 0; i < _amount; i++) {
-            uint256 tokenId = _tokenIdCounter.current();
-            _tokenIdCounter.increment();
-            if (tokenId <= edition.maxAmount) {
-                _safeMint(_receiver, tokenId);
-                emit Minted(edition.current, _receiver, tokenId);
+            if (currentTokenId <= currentEdLastTokenId) {
+                _safeMint(_receiver, currentTokenId + i);
+                emit Minted(current, _receiver, currentTokenId + i);
+                moonpageManager.increaseCurrentTokenId(_projectId);
             }
         }
     }
@@ -193,10 +193,14 @@ contract MoonpageCollection is
 
     function setContracts(address _mpManager, address _aManager)
         external
-        onlyRole(DEFAULT_ADMIN_ROLE)
+        onlyOwner
     {
         moonpageManager = IMoonpageManager(_mpManager);
         auctionsManager = IAuctionsManager(_aManager);
+    }
+
+    function setMaxMintableCreator(uint256 _maxAmount) external onlyOwner {
+        maxMintableCreator = _maxAmount;
     }
 
     // ------------------
@@ -212,12 +216,12 @@ contract MoonpageCollection is
     // Explicit overrides
     // ------------------
 
-    function pause() external onlyRole(PAUSER_ROLE) {
+    function pause() external onlyOwner {
         _pause();
         emit Paused(address(this), true);
     }
 
-    function unpause() external onlyRole(PAUSER_ROLE) {
+    function unpause() external onlyOwner {
         _unpause();
         emit Paused(address(this), false);
     }
@@ -247,10 +251,17 @@ contract MoonpageCollection is
 
     // The following functions are overrides required by Solidity.
 
+    function _burn(uint256 tokenId)
+        internal
+        override(ERC721, ERC721URIStorage)
+    {
+        super._burn(tokenId);
+    }
+
     function supportsInterface(bytes4 interfaceId)
         public
         view
-        override(ERC721, ERC721Enumerable, AccessControl)
+        override(ERC721, ERC721Enumerable)
         returns (bool)
     {
         return super.supportsInterface(interfaceId);

@@ -2,23 +2,23 @@
 pragma solidity ^0.8.9;
 
 interface IAuctionsManager {
-    function setupAuctionSettings(address _collection) external;
+    function setupAuctionSettings(uint256 _projectId) external;
 
     function startAuctions(
-        address _collection,
+        uint256 _projectId,
         uint256 _amountForCreator,
         uint256 _discountRate
     ) external;
 
-    function getPrice(address _collection, uint256 _startPrice)
+    function getPrice(uint256 _projectId, uint256 _startPrice)
         external
         returns (uint256);
 
-    function triggerNextAuction(address _collection) external;
+    function triggerNextAuction(uint256 _projectId) external;
 
-    function endAuctions(address _collection) external;
+    function endAuctions(uint256 _projectId) external;
 
-    function readAuctionSettings(address _collection)
+    function readAuctionSettings(uint256 _projectId)
         external
         view
         returns (

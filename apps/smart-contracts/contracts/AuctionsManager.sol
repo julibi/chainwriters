@@ -2,16 +2,17 @@
 pragma solidity ^0.8.9;
 
 import "@openzeppelin/contracts/security/Pausable.sol";
-import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "../interfaces/IMoonpageManager.sol";
 import "../interfaces/IMoonpageCollection.sol";
 import "../interfaces/IMoonpageFactory.sol";
 
-contract AuctionsManager is Pausable, AccessControl {
-    bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
+// should just be ownable???
+contract AuctionsManager is Pausable, Ownable {
     uint256 public constant AUCTION_DURATION = 1 days;
     IMoonpageManager public moonpageManager;
     IMoonpageFactory public moonpageFactory;
+    IMoonpageCollection public moonpageCollection;
 
     struct AuctionSettings {
         bool exists;
@@ -25,7 +26,7 @@ contract AuctionsManager is Pausable, AccessControl {
     mapping(uint256 => AuctionSettings) public auctions;
 
     event AuctionsStarted(
-        address collection,
+        uint256 projectId,
         uint256 premintedAmount,
         uint256 time
     );
@@ -33,36 +34,34 @@ contract AuctionsManager is Pausable, AccessControl {
     event ExpirationSet(uint256 projectId, uint256 expirationTime);
 
     modifier onlyCollection() {
-        require(auctions[msg.sender].exists, "Not authorized");
+        require(msg.sender == address(moonpageCollection), "Not authorized");
         _;
-    }
-
-    constructor() {
-        _setupRole(PAUSER_ROLE, msg.sender);
-        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
     }
 
     // ------------------
     // Gated external functions
     // -----------------
 
-    function setContracts(address _manager, address _factory)
-        external
-        onlyRole(DEFAULT_ADMIN_ROLE)
-    {
+    // only called by owner
+    function setContracts(
+        address _manager,
+        address _factory,
+        address _collection
+    ) external onlyOwner {
         moonpageManager = IMoonpageManager(_manager);
         moonpageFactory = IMoonpageFactory(_factory);
+        moonpageCollection = IMoonpageCollection(_collection);
     }
 
     // only called by factory
     function setupAuctionSettings(uint256 _projectId) external {
         require(msg.sender == address(moonpageFactory), "Not authorized");
         require(!auctions[_projectId].exists, "Already added");
-        (, , , address authorAddress, , , , ) = moonpageManager.readBaseData(
+        (, , , address creatorAddress, , , , , ) = moonpageManager.readBaseData(
             _projectId
         );
         auctions[_projectId].exists = true;
-        auctions[_projectId].creator = authorAddress;
+        auctions[_projectId].creator = creatorAddress;
         auctions[_projectId].discountRate = 0;
         auctions[_projectId].startAt = 0;
         auctions[_projectId].expiresAt = 0;
@@ -70,7 +69,7 @@ contract AuctionsManager is Pausable, AccessControl {
         auctions[_projectId].auctionsEnded = false;
     }
 
-    // only called by a collection
+    // only called by collection
     function startAuctions(
         uint256 _projectId,
         uint256 _amountForCreator,
@@ -90,13 +89,14 @@ contract AuctionsManager is Pausable, AccessControl {
         emit AuctionsStarted(_projectId, _amountForCreator, block.timestamp);
     }
 
-    // only called by a collection
+    // only called by collection
     function triggerNextAuction(uint256 _projectId) external onlyCollection {
         auctions[_projectId].startAt = block.timestamp;
         auctions[_projectId].expiresAt = block.timestamp + AUCTION_DURATION;
         emit ExpirationSet(_projectId, block.timestamp + AUCTION_DURATION);
     }
 
+    // only called by collection
     function endAuctions(uint256 _projectId) external onlyCollection {
         require(!auctions[_projectId].auctionsEnded, "Already ended");
         auctions[_projectId].auctionsEnded = true;
@@ -107,26 +107,26 @@ contract AuctionsManager is Pausable, AccessControl {
     // Ungated external functions
     // -----------------
 
-    function retriggerAuction(address _collection) external {
+    function retriggerAuction(uint256 _projectId) external {
         require(
-            auctions[_collection].expiresAt < block.timestamp,
+            auctions[_projectId].expiresAt < block.timestamp,
             "Triggering unnecessary. Auction running."
         );
-        auctions[_collection].startAt = block.timestamp;
-        auctions[_collection].expiresAt = block.timestamp + AUCTION_DURATION;
-        emit ExpirationSet(_collection, block.timestamp + AUCTION_DURATION);
+        auctions[_projectId].startAt = block.timestamp;
+        auctions[_projectId].expiresAt = block.timestamp + AUCTION_DURATION;
+        emit ExpirationSet(_projectId, block.timestamp + AUCTION_DURATION);
     }
 
     // ------------------
     // View functions
     // -----------------
 
-    function getPrice(address _collection, uint256 _startPrice)
+    function getPrice(uint256 _projectId, uint256 _startPrice)
         public
         view
         returns (uint256)
     {
-        AuctionSettings memory auctionSetting = auctions[_collection];
+        AuctionSettings memory auctionSetting = auctions[_projectId];
         if (auctionSetting.auctionsStarted && !auctionSetting.auctionsEnded) {
             uint256 timeElapsed = block.timestamp - auctionSetting.startAt;
             uint256 discount = auctionSetting.discountRate * timeElapsed;
@@ -135,7 +135,7 @@ contract AuctionsManager is Pausable, AccessControl {
         return 0;
     }
 
-    function readAuctionSettings(address _collection)
+    function readAuctionSettings(uint256 _projectId)
         external
         view
         returns (
@@ -148,7 +148,7 @@ contract AuctionsManager is Pausable, AccessControl {
             bool
         )
     {
-        AuctionSettings storage data = auctions[_collection];
+        AuctionSettings storage data = auctions[_projectId];
 
         return (
             data.exists,

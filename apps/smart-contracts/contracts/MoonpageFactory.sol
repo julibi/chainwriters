@@ -9,16 +9,17 @@ import "../interfaces/IAuctionsManager.sol";
 import "./MoonpageCollection.sol";
 
 contract MoonpageFactory is Ownable, Pausable {
-    uint256 public firstEditionMin = 3;
+    uint256 public firstEditionMin = 5;
     uint256 public firstEditionMax = 1000;
     IMoonpageManager public moonpageManager;
     IAuctionsManager public auctionsManager;
     uint256 public projectsIndex = 1;
-    event CollectionCreated(
-        address indexed caller,
+    event ProjectCreated(
+        address owner,
         uint256 projectId,
         string title,
         string textIpfsHash,
+        string originalLanguage,
         uint256 initialMintPrice,
         uint256 firstEditionAmount
     );
@@ -34,7 +35,7 @@ contract MoonpageFactory is Ownable, Pausable {
         string calldata _originalLanguage,
         uint256 _initialMintPrice,
         uint256 _firstEditionAmount
-    ) external whenNotPaused returns (address) {
+    ) external whenNotPaused {
         require(
             _firstEditionAmount > firstEditionMin &&
                 _firstEditionAmount < firstEditionMax,
@@ -50,10 +51,12 @@ contract MoonpageFactory is Ownable, Pausable {
             _firstEditionAmount
         );
         auctionsManager.setupAuctionSettings(projectsIndex);
-        emit CollectionCreated(
+        emit ProjectCreated(
             msg.sender,
+            projectsIndex,
             _title,
             _textIpfsHash,
+            _originalLanguage,
             _initialMintPrice,
             _firstEditionAmount
         );
