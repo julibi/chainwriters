@@ -366,6 +366,8 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         _unpause();
     }
 
+    receive() external payable {}
+
     // ------------------
     // Read functions
     // ------------------

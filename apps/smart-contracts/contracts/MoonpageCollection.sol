@@ -209,6 +209,9 @@ contract MoonpageCollection is
         payable(_to).transfer(_amount);
     }
 
+    // needed?
+    receive() external payable {}
+
     // ------------------
     // Explicit overrides
     // ------------------

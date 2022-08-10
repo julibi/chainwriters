@@ -54,7 +54,7 @@ contract AuctionsManager is Pausable, Ownable {
     }
 
     // only called by factory
-    function setupAuctionSettings(uint256 _projectId) external {
+    function setupAuctionSettings(uint256 _projectId) external whenNotPaused {
         require(msg.sender == address(moonpageFactory), "Not authorized");
         require(!auctions[_projectId].exists, "Already added");
         (, , , address creatorAddress, , , , , ) = moonpageManager.readBaseData(
@@ -116,6 +116,9 @@ contract AuctionsManager is Pausable, Ownable {
         auctions[_projectId].expiresAt = block.timestamp + AUCTION_DURATION;
         emit ExpirationSet(_projectId, block.timestamp + AUCTION_DURATION);
     }
+
+    // needed?
+    receive() external payable {}
 
     // ------------------
     // View functions

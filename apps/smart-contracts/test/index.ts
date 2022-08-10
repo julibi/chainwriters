@@ -9,11 +9,6 @@ import {
   AuctionsManager,
 } from "../typechain";
 
-// const wait = (seconds: number) =>
-//   new Promise((resolve, _) => {
-//     setTimeout(resolve, seconds * 1000);
-//   });
-
 const advanceDays = async (days: any) => {
   await ethers.provider.send("evm_increaseTime", [60 * 60 * 24 * days]);
   await ethers.provider.send("evm_mine", []);
@@ -135,6 +130,9 @@ describe("Project", function () {
       // CREATE A COLLECTION AND A BALLOT
       // -----------------
       const projectId = await Factory.projectsIndex();
+      const test1 = await AuctionsManager.readAuctionSettings(1);
+      // it can read from the acutions manager
+      console.log({ test1 });
       const creationTX = await FactoryAsCreator.createProject(
         title,
         textIpfsHash,
@@ -327,8 +325,3 @@ describe("Project", function () {
     });
   });
 });
-
-// TODO
-// royalties
-// proxy - ubgradability
-// tests

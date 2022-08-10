@@ -6,7 +6,6 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "../interfaces/IMoonpageManager.sol";
 import "../interfaces/IAuctionsManager.sol";
-import "./MoonpageCollection.sol";
 
 contract MoonpageFactory is Ownable, Pausable {
     uint256 public firstEditionMin = 5;
@@ -50,6 +49,7 @@ contract MoonpageFactory is Ownable, Pausable {
             _initialMintPrice,
             _firstEditionAmount
         );
+        // this line causes problems when testing
         auctionsManager.setupAuctionSettings(projectsIndex);
         emit ProjectCreated(
             msg.sender,
