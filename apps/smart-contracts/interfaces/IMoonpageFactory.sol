@@ -2,7 +2,7 @@
 pragma solidity ^0.8.9;
 
 interface IMoonpageFactory {
-    function createDao(
+    function createProject(
         string calldata _title,
         string calldata _symbol,
         string calldata _textIpfsHash,

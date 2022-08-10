@@ -66,26 +66,31 @@ async function deployAll() {
   await BallotsFactory.deployed();
   console.log(`BallotFactory contract deployed to: ${BallotsFactory.address}`);
 
-  // Collection arguments
-  const title = "My little Phony";
-  const textIpfsHash = "QmTw3pWBQinwuHS57FcWyUGBpvGqLHQZkn1eKjp89XXyFg";
-  const initialMintPrice = hre.ethers.utils.parseUnits("0.05", 18);
-  const firstEditionMax = 4;
-
-  // setFactory on Moonpage Manager
-  await MoonpageManager.setFactory(MoonpageFactory.address);
-  await MoonpageManager.setCollection(MoonpageCollection.address);
   // set Contract on Moonpage Collection
   await MoonpageCollection.setContracts(
     MoonpageManager.address,
     AuctionsManager.address
   );
+
+  // setFactory on Moonpage Manager
+  await MoonpageManager.setContracts(
+    MoonpageFactory.address,
+    MoonpageCollection.address
+  );
+
   // set Contracts on Auctions Manager
   await AuctionsManager.setContracts(
     MoonpageManager.address,
     MoonpageFactory.address,
     MoonpageCollection.address
   );
+
+  // set Contracts on Factory
+  await MoonpageFactory.setContracts(
+    MoonpageManager.address,
+    MoonpageCollection.address
+  );
+
   // set Contracts on Ballots Factory
   await BallotsFactory.setContract(
     MoonpageManager.address,

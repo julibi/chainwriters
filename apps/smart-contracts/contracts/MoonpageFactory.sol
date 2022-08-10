@@ -29,7 +29,7 @@ contract MoonpageFactory is Ownable, Pausable {
         auctionsManager = IAuctionsManager(_auctionsManager);
     }
 
-    function createDao(
+    function createProject(
         string calldata _title,
         string calldata _textIpfsHash,
         string calldata _originalLanguage,

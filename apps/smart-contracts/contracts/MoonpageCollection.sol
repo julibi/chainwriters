@@ -163,6 +163,7 @@ contract MoonpageCollection is
         address _receiver,
         uint256 _amount
     ) internal {
+        // todo some more requires, so that I cannot mint some randome tokens
         require(_receiver != address(0), "No null address");
         (
             uint256 current,

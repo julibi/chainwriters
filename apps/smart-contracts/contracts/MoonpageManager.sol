@@ -127,6 +127,7 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         baseDatas[_projectId].premintedByCreator = 0;
         authorShares[_projectId].share = 100 - fee;
         authorShares[_projectId].shareInMatic = 0;
+        // todo: fix this bug
         uint256 startId = _projectId * maxAmountEdition;
         editions[_projectId].current = 1;
         editions[_projectId].initialMintPrice = _initialMintPrice;
@@ -335,18 +336,12 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         emit Curated(_projectId, true);
     }
 
-    function setFactory(address _factory)
-        external
-        onlyRole(DEFAULT_ADMIN_ROLE)
-    {
-        factory = address(_factory);
-    }
-
-    function setCollection(address _collection)
+    function setContracts(address _collection, address _factory)
         external
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
         collection = IMoonpageCollection(_collection);
+        factory = address(_factory);
     }
 
     function setMaxAmountEdition(uint256 _newMaxAmount)
