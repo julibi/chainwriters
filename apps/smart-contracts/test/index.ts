@@ -135,15 +135,15 @@ describe("Project", function () {
       // CREATE A COLLECTION AND A BALLOT
       // -----------------
       const projectId = await Factory.projectsIndex();
-      const test = await Manager.factory();
-      console.log({ test });
-      await FactoryAsCreator.createProject(
+      const creationTX = await FactoryAsCreator.createProject(
         title,
         textIpfsHash,
         originalLanguage,
         mintPrice,
         firstEditionMax
       );
+
+      await creationTX.wait();
 
       // const baseData = await ManagerAsCreator.baseDatas(projectId);
 
