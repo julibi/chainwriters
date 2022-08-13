@@ -74,8 +74,8 @@ async function deployAll() {
 
   // setFactory on Moonpage Manager
   await MoonpageManager.setContracts(
-    MoonpageFactory.address,
-    MoonpageCollection.address
+    MoonpageCollection.address,
+    MoonpageFactory.address
   );
 
   // set Contracts on Auctions Manager
@@ -88,7 +88,7 @@ async function deployAll() {
   // set Contracts on Factory
   await MoonpageFactory.setContracts(
     MoonpageManager.address,
-    MoonpageCollection.address
+    AuctionsManager.address
   );
 
   // set Contracts on Ballots Factory
@@ -104,6 +104,10 @@ async function deployAll() {
   // verify contract
   console.log("Verifying...");
   await Promise.all([
+    hre.run("verify:verify", {
+      address: MoonpageCollection.address,
+      constructorArguments: [],
+    }),
     hre.run("verify:verify", {
       address: MoonpageManager.address,
       constructorArguments: [MoonpageCollection.address],

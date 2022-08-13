@@ -14,5 +14,11 @@ interface IMoonpageCollection {
 
     function balanceOf(address _owner) external view returns (uint256);
 
+    function startAuctions(
+        uint256 _projectId,
+        uint256 _amountForCreator,
+        uint256 _discountRate
+    ) external;
+
     function ownerOf(uint256 _tokenId) external view returns (address);
 }

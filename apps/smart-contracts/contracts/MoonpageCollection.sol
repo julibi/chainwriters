@@ -6,13 +6,12 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/utils/Counters.sol";
+// import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/utils/Base64.sol";
 import "../interfaces/IMoonpageManager.sol";
 import "../interfaces/IAuctionsManager.sol";
 
-// needs to be ownable? But how make it is deployed by factory ownable when
 contract MoonpageCollection is
     ERC721,
     ERC721Enumerable,
@@ -20,9 +19,9 @@ contract MoonpageCollection is
     Ownable,
     Pausable
 {
-    using Counters for Counters.Counter;
+    //using Counters for Counters.Counter;
     uint256 public maxMintableCreator = 4;
-    Counters.Counter private _tokenIdCounter;
+    // Counters.Counter private _tokenIdCounter;
     IMoonpageManager public moonpageManager;
     IAuctionsManager public auctionsManager;
     string public baseUri;

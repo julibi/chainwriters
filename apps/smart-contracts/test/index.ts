@@ -1,5 +1,6 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { ethers, waffle } from "hardhat";
+import { expect } from "chai";
 import {
   MoonpageManager,
   MoonpageCollection,
@@ -41,7 +42,7 @@ describe("Project", function () {
   const title = "My little Phony";
   const textIpfsHash = "QmTw3pWBQinwuHS57FcWyUGBpvGqLHQZkn1eKjp89XXyFg";
   const originalLanguage = "ENG";
-  const mintPrice = ethers.utils.parseUnits("0.1", 18);
+  const myMintPrice = ethers.utils.parseUnits("0.1", 18);
   const firstEditionMax = 6;
   const provider = waffle.provider;
 
@@ -115,7 +116,10 @@ describe("Project", function () {
     );
 
     // set Contracts on Factory
-    await FactoryAsDeployer.setContracts(Manager.address, Collection.address);
+    await FactoryAsDeployer.setContracts(
+      Manager.address,
+      AuctionsManager.address
+    );
 
     // set Contracts on Ballots Factory
     await BallotsFactoryAsDeployer.setContract(
@@ -130,94 +134,204 @@ describe("Project", function () {
       // CREATE A COLLECTION AND A BALLOT
       // -----------------
       const projectId = await Factory.projectsIndex();
-      const test1 = await AuctionsManager.readAuctionSettings(1);
-      // it can read from the acutions manager
-      console.log({ test1 });
+      expect(projectId).to.equal(1);
+
+      await expect(
+        FactoryAsCreator.createProject(
+          title,
+          textIpfsHash,
+          originalLanguage,
+          myMintPrice,
+          1001
+        )
+      ).to.revertedWith("Incorrect amount");
+
+      // first project creation
       const creationTX = await FactoryAsCreator.createProject(
         title,
         textIpfsHash,
         originalLanguage,
-        mintPrice,
+        myMintPrice,
         firstEditionMax
       );
 
       await creationTX.wait();
 
-      // const baseData = await ManagerAsCreator.baseDatas(projectId);
+      const baseData = await Manager.baseDatas(projectId);
+      const [authorShare, authorShareInMatic] = await Manager.readAuthorShare(
+        projectId
+      );
+      const [
+        current,
+        initialMintPrice,
+        mintPrice,
+        startTokenId,
+        currentTokenId,
+        lastGenEdTokenId,
+        currentEdLastTokenId,
+        endTokenId,
+      ] = await Manager.readEditionData(projectId);
+      const contributionIndex = await Manager.readContributionIndex(projectId);
+      const projectBalance = await Manager.readProjectBalance(projectId);
+      const projectExists = await Manager.exists(projectId);
+      const isProjectCurated = await Manager.curatedProjectIds(projectId);
+      const isProjectFrozen = await Manager.isFrozen(projectId);
+      const isProjectPaused = await Manager.pausedProjectIds(projectId);
+      expect(baseData.title).to.equal("My little Phony");
+      expect(baseData.subtitle).to.equal("");
+      expect(baseData.genre).to.equal("");
+      expect(baseData.creatorAddress).to.equal(creator.address);
+      expect(baseData.textIpfsHash).to.equal(textIpfsHash);
+      expect(baseData.imgIpfsHash).to.equal("");
+      expect(baseData.blurbIpfsHash).to.equal("");
+      expect(baseData.originalLanguage).to.equal("ENG");
+      expect(baseData.premintedByCreator).to.equal("0");
+      expect(authorShare).to.equal(85);
+      expect(authorShareInMatic).to.equal(0);
+      expect(current).to.equal(1);
+      expect(initialMintPrice).to.equal(myMintPrice);
+      expect(mintPrice).to.equal(myMintPrice);
+      expect(startTokenId).to.equal(1);
+      expect(currentTokenId).to.equal(1);
+      expect(lastGenEdTokenId).to.equal(6);
+      expect(currentEdLastTokenId).to.equal(6);
+      expect(endTokenId).to.equal(1000);
+      expect(contributionIndex).to.equal(0);
+      expect(projectBalance).to.equal(0);
+      expect(projectExists).to.equal(true);
+      expect(isProjectCurated).to.equal(false);
+      expect(isProjectFrozen).to.equal(false);
+      expect(isProjectPaused).to.equal(false);
 
-      //   // configure
-      //   const baseDataBefore = await Manager.baseDatas(CollectionAddress);
-      //   const genreBefore = baseDataBefore.genre;
-      //   const subtitleBefore = baseDataBefore.subtitle;
-      //   const configureTx = await ManagerAsAuthor.configureProjectDetails(
-      //     CollectionAddress,
-      //     "",
-      //     "",
-      //     "Fiction",
-      //     "My fancy subtitle"
-      //   );
-      //   await configureTx.wait();
-      //   const baseDataAfter = await ManagerAsAuthor.baseDatas(CollectionAddress);
-      //   const genreAfter = baseDataAfter.genre;
-      //   const subtitleAfter = baseDataAfter.subtitle;
-      //   const titleAfter = baseDataAfter.title;
-      //   // data is set correctly inside Dao
-      //   expect(genreBefore).to.equal("");
-      //   expect(subtitleBefore).to.equal("");
-      //   expect(genreAfter).to.equal("Fiction");
-      //   expect(subtitleAfter).to.equal("My fancy subtitle");
-      //   // and data is reflected in Collection, too
-      //   expect(titleAfter).to.equal(title);
-      //   expect(await Collection.moonpageManager()).to.equal(Manager.address);
-      //   // // add contributors
-      //   const addContribsTx = await ManagerAsAuthor.addContributors(
-      //     CollectionAddress,
-      //     [contribA.address, contribB.address],
-      //     [25, 15],
-      //     ["co-writer", "marketer"]
-      //   );
-      //   await addContribsTx.wait();
-      //   const firstContributor = await Manager.contributions(
-      //     CollectionAddress,
-      //     0
-      //   );
-      //   const secondContributor = await Manager.contributions(
-      //     CollectionAddress,
-      //     1
-      //   );
-      //   expect(firstContributor[0]).to.equal(contribA.address);
-      //   expect(secondContributor[0]).to.equal(contribB.address);
-      //   const discountRate = 10000000000;
-      //   const authorOwnsAmount = 2;
-      //   // author triggers collection
-      //   await CollectionAsAuthor.startAuctions(
-      //     authorOwnsAmount,
-      //     "ipfs://testuri",
-      //     discountRate
-      //   );
-      //   // author owns correct amount now
-      //   expect(await Collection.balanceOf(author.address)).to.equal(
-      //     authorOwnsAmount
-      //   );
-      //   // preminted is two
-      //   expect(await Collection.premintedByCreator()).to.equal(authorOwnsAmount);
-      //   // discountRate is correct
-      //   const auctionSettings = await AuctionsManager.auctions(CollectionAddress);
-      //   expect(auctionSettings.discountRate).to.equal(discountRate);
-      //   // auctionStarted is true
-      //   expect(auctionSettings.auctionsStarted).to.equal(true);
-      //   // start At is correct
-      //   // expiresAt is set
-      //   // userA sucessfully buys
-      //   const CollectionAsUserA = Collection.connect(userA);
-      //   await CollectionAsUserA.buy({
-      //     value: mintPrice,
-      //   });
-      //   expect(await Collection.balanceOf(userA.address)).to.equal(1);
+      // second creation
+      const FactoryAsSecondCreator = Factory.connect(userA);
+      const secondCreationTX = await FactoryAsSecondCreator.createProject(
+        "",
+        "textIpfsHash",
+        "ENG",
+        myMintPrice,
+        100
+      );
+
+      await secondCreationTX.wait();
+      const [
+        current2,
+        initialMintPrice2,
+        mintPrice2,
+        startTokenId2,
+        currentTokenId2,
+        lastGenEdTokenId2,
+        currentEdLastTokenId2,
+        endTokenId2,
+      ] = await Manager.readEditionData(2);
+      expect(current2).to.equal(1);
+      expect(initialMintPrice2).to.equal(myMintPrice);
+      expect(mintPrice2).to.equal(myMintPrice);
+      expect(startTokenId2).to.equal(1001);
+      expect(currentTokenId2).to.equal(1001);
+      expect(lastGenEdTokenId2).to.equal(1100);
+      expect(currentEdLastTokenId2).to.equal(1100);
+      expect(endTokenId2).to.equal(2000);
+
+      // third creation
+      const FactoryAsThirdCreator = Factory.connect(userB);
+      const thirdCreationTX = await FactoryAsThirdCreator.createProject(
+        "thirdProject",
+        "textIpfsHash",
+        "ENG",
+        myMintPrice,
+        188
+      );
+
+      await thirdCreationTX.wait();
+      const [
+        current3,
+        initialMintPrice3,
+        mintPrice3,
+        startTokenId3,
+        currentTokenId3,
+        lastGenEdTokenId3,
+        currentEdLastTokenId3,
+        endTokenId3,
+      ] = await Manager.readEditionData(3);
+      expect(current3).to.equal(1);
+      expect(initialMintPrice3).to.equal(myMintPrice);
+      expect(mintPrice3).to.equal(myMintPrice);
+      expect(startTokenId3).to.equal(2001);
+      expect(currentTokenId3).to.equal(2001);
+      expect(lastGenEdTokenId3).to.equal(2188);
+      expect(currentEdLastTokenId3).to.equal(2188);
+      expect(endTokenId3).to.equal(3000);
+
+      // creator configures
+      const configureTx = await ManagerAsCreator.configureProjectDetails(
+        1,
+        "",
+        "",
+        "Fiction",
+        "My fancy subtitle"
+      );
+      await configureTx.wait();
+      const baseDataAfter = await Manager.baseDatas(1);
+      const genreAfter = baseDataAfter.genre;
+      const subtitleAfter = baseDataAfter.subtitle;
+      expect(genreAfter).to.equal("Fiction");
+      expect(subtitleAfter).to.equal("My fancy subtitle");
+
+      // creator adds contributors
+      const addContribsTx = await ManagerAsCreator.addContributors(
+        1,
+        [contribA.address, contribB.address],
+        [25, 15],
+        ["co-writer", "marketer"]
+      );
+      await addContribsTx.wait();
+      const firstContributor = await Manager.contributions(1, 0);
+      const secondContributor = await Manager.contributions(1, 1);
+      expect(firstContributor[0]).to.equal(contribA.address);
+      expect(secondContributor[0]).to.equal(contribB.address);
+
+      // cannot add contributors again
+      await expect(
+        ManagerAsCreator.addContributors(
+          1,
+          [deployer.address],
+          [10],
+          ["random"]
+        )
+      ).to.revertedWith("Contributors set already");
+
+      // creator starts auctions
+      const discountRate = 10000000000;
+      const authorOwnsAmount = 2;
+      await CollectionAsCreator.startAuctions(
+        1,
+        authorOwnsAmount,
+        discountRate
+      );
+      expect(await Collection.balanceOf(creator.address)).to.equal(
+        authorOwnsAmount
+      );
+      const baseDataAfterStartingAuctions = await Manager.baseDatas(1);
+      expect(baseDataAfterStartingAuctions.premintedByCreator).to.equal(
+        authorOwnsAmount
+      );
+      const auctionSettings = await AuctionsManager.auctions(1);
+      expect(auctionSettings.discountRate).to.equal(discountRate);
+      expect(auctionSettings.auctionsStarted).to.equal(true);
+      // start At is correct
+      // expiresAt is set
+
+      // userA buys in auction
+      const CollectionAsUserA = Collection.connect(userA);
+      await CollectionAsUserA.buy(1, {
+        value: mintPrice,
+      });
+      expect(await Collection.balanceOf(userA.address)).to.equal(1);
       //   // get user balance before distribution of shares
-      //   const authorBalanceBefore = await provider.getBalance(author.address);
-      //   const contribABalanceBefore = await provider.getBalance(contribA.address);
-      //   const contribBBalanceBefore = await provider.getBalance(contribB.address);
+      const creatorBalanceBefore = await provider.getBalance(creator.address);
+      const contribABalanceBefore = await provider.getBalance(contribA.address);
+      const contribBBalanceBefore = await provider.getBalance(contribB.address);
       //   // userA sucessfully buys
       //   const CollectionAsUserB = Collection.connect(userB);
       //   const selloutTx = await CollectionAsUserB.buy({

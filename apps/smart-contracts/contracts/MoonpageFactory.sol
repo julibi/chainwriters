@@ -49,8 +49,7 @@ contract MoonpageFactory is Ownable, Pausable {
             _initialMintPrice,
             _firstEditionAmount
         );
-        // this line causes problems when testing
-        auctionsManager.setupAuctionSettings(projectsIndex);
+        auctionsManager.setupAuctionSettings(projectsIndex, msg.sender);
         emit ProjectCreated(
             msg.sender,
             projectsIndex,

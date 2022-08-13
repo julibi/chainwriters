@@ -127,8 +127,9 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         baseDatas[_projectId].premintedByCreator = 0;
         authorShares[_projectId].share = 100 - fee;
         authorShares[_projectId].shareInMatic = 0;
-        // todo: fix this bug
-        uint256 startId = _projectId * maxAmountEdition;
+        uint256 startId = (_projectId * maxAmountEdition) +
+            1 -
+            maxAmountEdition;
         editions[_projectId].current = 1;
         editions[_projectId].initialMintPrice = _initialMintPrice;
         editions[_projectId].mintPrice = _initialMintPrice;
@@ -136,9 +137,13 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         editions[_projectId].currentTokenId = startId;
         editions[_projectId].currentEdLastTokenId =
             startId +
-            _firstEditionAmount;
-        editions[_projectId].lastGenEdTokenId = startId + _firstEditionAmount;
-        editions[_projectId].endTokenId = startId + maxAmountEdition;
+            _firstEditionAmount -
+            1;
+        editions[_projectId].lastGenEdTokenId =
+            startId +
+            _firstEditionAmount -
+            1;
+        editions[_projectId].endTokenId = startId + maxAmountEdition - 1;
         contributionsIndeces[_projectId] = 0;
         projectBalances[_projectId] = 0;
         existingProjectIds[_projectId] = true;
@@ -280,7 +285,7 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
 
     function setPremintedByCreator(
         uint256 _projectId,
-        uint8 _premintedByCreator
+        uint256 _premintedByCreator
     ) external whenNotPaused onlyCollection {
         baseDatas[_projectId].premintedByCreator = _premintedByCreator;
     }

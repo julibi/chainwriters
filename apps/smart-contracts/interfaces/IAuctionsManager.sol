@@ -8,7 +8,8 @@ interface IAuctionsManager {
         address _collection
     ) external;
 
-    function setupAuctionSettings(uint256 _projectId) external;
+    function setupAuctionSettings(uint256 _projectId, address _creator)
+        external;
 
     function getPrice(uint256 _projectId, uint256 _startPrice)
         external
