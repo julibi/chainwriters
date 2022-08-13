@@ -67,17 +67,14 @@ contract MoonpageCollection is
             .readAuctionSettings(_projectId);
         require(auctionsStarted, "Auctions have not started");
         require(!auctionsEnded, "Auctions ended");
-        require(
-            (currentTokenId + 1) <= lastGenEdTokenId,
-            "Amount exceeds cap."
-        );
+        require(currentTokenId <= lastGenEdTokenId, "Amount exceeds cap.");
         uint256 price = auctionsManager.getPrice(_projectId, initialMintPrice);
         require(msg.value >= price, "Value sent not sufficient");
 
         mint(_projectId, msg.sender, 1);
         moonpageManager.increaseBalance(_projectId, price);
 
-        bool shouldFinalize = (currentTokenId + 1) == lastGenEdTokenId;
+        bool shouldFinalize = currentTokenId == lastGenEdTokenId;
         if (shouldFinalize) {
             auctionsManager.endAuctions(_projectId);
             moonpageManager.distributeShares(_projectId);
@@ -140,7 +137,8 @@ contract MoonpageCollection is
             "Auctions already started"
         );
         require(
-            (_amountForCreator > 0) && (_amountForCreator < maxMintableCreator),
+            (_amountForCreator > 0) &&
+                (_amountForCreator <= maxMintableCreator),
             "Invalid amount for maxMintableCreator"
         );
         auctionsManager.startAuctions(
@@ -199,6 +197,14 @@ contract MoonpageCollection is
         maxMintableCreator = _maxAmount;
     }
 
+    function emergencyWithdraw(address _to, uint256 _amount)
+        external
+        onlyOwner
+    {
+        require(_to != address(0), "Cannot withdraw to the 0 address");
+        payable(_to).transfer(_amount);
+    }
+
     // ------------------
     // Dao Manager functions
     // ------------------
@@ -207,9 +213,6 @@ contract MoonpageCollection is
         require(_to != address(0), "Cannot withdraw to the 0 address");
         payable(_to).transfer(_amount);
     }
-
-    // needed?
-    receive() external payable {}
 
     // ------------------
     // Explicit overrides

@@ -1,6 +1,7 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { ethers, waffle } from "hardhat";
 import { expect } from "chai";
+import { formatEther } from "@ethersproject/units";
 import {
   MoonpageManager,
   MoonpageCollection,
@@ -309,9 +310,6 @@ describe("Project", function () {
         authorOwnsAmount,
         discountRate
       );
-      expect(await Collection.balanceOf(creator.address)).to.equal(
-        authorOwnsAmount
-      );
       const baseDataAfterStartingAuctions = await Manager.baseDatas(1);
       expect(baseDataAfterStartingAuctions.premintedByCreator).to.equal(
         authorOwnsAmount
@@ -322,45 +320,65 @@ describe("Project", function () {
       // start At is correct
       // expiresAt is set
 
-      // userA buys in auction
-      const CollectionAsUserA = Collection.connect(userA);
-      await CollectionAsUserA.buy(1, {
-        value: mintPrice,
-      });
-      expect(await Collection.balanceOf(userA.address)).to.equal(1);
-      //   // get user balance before distribution of shares
       const creatorBalanceBefore = await provider.getBalance(creator.address);
       const contribABalanceBefore = await provider.getBalance(contribA.address);
       const contribBBalanceBefore = await provider.getBalance(contribB.address);
-      //   // userA sucessfully buys
-      //   const CollectionAsUserB = Collection.connect(userB);
-      //   const selloutTx = await CollectionAsUserB.buy({
-      //     value: mintPrice,
-      //   });
-      //   await selloutTx.wait();
-      //   expect(await Collection.balanceOf(userB.address)).to.equal(1);
-      //   // check if total balance is split correctly
-      //   // factory gets 15%, co-writer gets 25%, marketer 15% and author the rest
-      //   const collectionBalance = await provider.getBalance(Collection.address);
-      //   const factoryBalance = await provider.getBalance(Factory.address);
-      //   const authorBalanceAfter = await provider.getBalance(author.address);
-      //   const contribABalanceAfter = await provider.getBalance(contribA.address);
-      //   const contribBBalanceAfter = await provider.getBalance(contribB.address);
-      //   const gainsAuthor = formatEther(
-      //     authorBalanceAfter.sub(authorBalanceBefore)
-      //   );
-      //   const gainsContribA = formatEther(
-      //     contribABalanceAfter.sub(contribABalanceBefore)
-      //   );
-      //   const gainsContribB = formatEther(
-      //     contribBBalanceAfter.sub(contribBBalanceBefore)
-      //   );
-      //   // expect(gainsAuthor).to.equal("0.09");
-      //   // expect(gainsContribA).to.equal("0.05");
-      //   // expect(gainsContribB).to.equal("0.03");
-      //   // expect(formatEther(factoryBalance)).to.equal("0.03");
-      //   // expect(formatEther(collectionBalance)).to.equal("0.0");
-      //   // author can enable next edition
+
+      const CollectionAsUserA = Collection.connect(userA);
+      const CollectionAsUserB = Collection.connect(userB);
+
+      await CollectionAsUserA.buy(1, {
+        value: mintPrice,
+      });
+      await CollectionAsUserA.buy(1, {
+        value: mintPrice,
+      });
+      await CollectionAsUserB.buy(1, {
+        value: mintPrice,
+      });
+      await CollectionAsUserB.buy(1, {
+        value: mintPrice,
+      });
+
+      expect(await Collection.balanceOf(userA.address)).to.equal(2);
+      expect(await Collection.balanceOf(userB.address)).to.equal(2);
+      expect(await Collection.balanceOf(creator.address)).to.equal(
+        authorOwnsAmount
+      );
+
+      // balance is split correctly
+      // total of 0.4 MATIC
+      // factory gets 15%
+      // co-writer gets 25%
+      // marketer 15%
+      // creator gets 45%
+      const collectionBalance = await provider.getBalance(Collection.address);
+      const factoryBalance = await provider.getBalance(Factory.address);
+      const creatorBalanceAfter = await provider.getBalance(creator.address);
+      const contribABalanceAfter = await provider.getBalance(contribA.address);
+      const contribBBalanceAfter = await provider.getBalance(contribB.address);
+      const gainsAuthor = formatEther(
+        creatorBalanceAfter.sub(creatorBalanceBefore)
+      );
+      const gainsContribA = formatEther(
+        contribABalanceAfter.sub(contribABalanceBefore)
+      );
+      const gainsContribB = formatEther(
+        contribBBalanceAfter.sub(contribBBalanceBefore)
+      );
+      console.log({ gainsAuthor });
+      console.log({ gainsContribA });
+      console.log({ gainsContribB });
+      console.log(formatEther(factoryBalance));
+      console.log(formatEther(collectionBalance));
+      // unfortunately due to gas, these are not fully accurate
+      // expect(gainsContribB).to.equal("0.06");
+      // expect(gainsContribA).to.equal("0.1");
+      // expect(gainsAuthor).to.equal("0.18");
+      // expect(formatEther(factoryBalance)).to.equal("0.06");
+      // expect(formatEther(collectionBalance)).to.equal("0.0");
+      // author can enable next edition
+
       //   const enableNextEdTX = await CollectionAsAuthor.enableNextEdition(
       //     4,
       //     mintPrice
