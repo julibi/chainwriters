@@ -225,12 +225,12 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         uint256 _newEdMintPrice
     ) external onlyCreator(_projectId) whenNotPaused {
         require(
-            editions[_projectId].currentTokenId ==
+            editions[_projectId].currentTokenId >=
                 editions[_projectId].currentEdLastTokenId,
             "Current edition has not sold out"
         );
         require(
-            editions[_projectId].currentTokenId + _newEdAmount <=
+            (editions[_projectId].currentTokenId + _newEdAmount - 1) <=
                 editions[_projectId].endTokenId,
             "Exceeds possible amount"
         );
@@ -238,12 +238,9 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
 
         editions[_projectId].current++;
         editions[_projectId].mintPrice = _newEdMintPrice;
-        editions[_projectId].startTokenId =
-            editions[_projectId].currentTokenId +
-            1;
         editions[_projectId].currentEdLastTokenId =
             editions[_projectId].currentTokenId +
-            _newEdAmount +
+            _newEdAmount -
             1;
 
         emit NextEditionEnabled(

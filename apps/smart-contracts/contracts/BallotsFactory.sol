@@ -61,9 +61,4 @@ contract BallotsFactory is Ownable, Pausable {
     function unpause() external onlyOwner {
         _unpause();
     }
-
-    function withdraw(address _to) external payable onlyOwner {
-        require(_to != address(0), "Cannot withdraw to the 0 address");
-        payable(_to).transfer(address(this).balance);
-    }
 }

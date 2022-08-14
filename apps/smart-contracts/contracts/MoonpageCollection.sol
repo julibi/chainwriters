@@ -51,6 +51,7 @@ contract MoonpageCollection is
         _;
     }
 
+    // is it possible to mint a token twice???
     // the first edition is being sold in a reverse auction
     function buy(uint256 _projectId) external payable whenNotPaused {
         (
@@ -100,17 +101,17 @@ contract MoonpageCollection is
         ) = moonpageManager.readEditionData(_projectId);
         require(current > 1, "Public minting possible from edition 2");
         require(
-            (currentTokenId + _amount) <= currentEdLastTokenId,
-            "Amount exceeds cap."
+            (currentTokenId + _amount - 1) <= currentEdLastTokenId,
+            "Amount exceeds cap"
         );
         require(
             msg.value >= (mintPrice * _amount),
-            "Value sent not sufficient."
+            "Value sent not sufficient"
         );
-        mint(_projectId, msg.sender, _amount);
-        moonpageManager.increaseBalance(_projectId, _amount);
-        bool shouldFinalize = (currentTokenId + _amount) ==
+        bool shouldFinalize = (currentTokenId + _amount - 1) ==
             currentEdLastTokenId;
+        moonpageManager.increaseBalance(_projectId, mintPrice * _amount);
+        mint(_projectId, msg.sender, _amount);
         if (shouldFinalize) {
             moonpageManager.distributeShares(_projectId);
         }

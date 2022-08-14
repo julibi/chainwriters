@@ -1,7 +1,7 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { ethers, waffle } from "hardhat";
 import { expect } from "chai";
-import { formatEther } from "@ethersproject/units";
+import { formatEther, parseUnits } from "@ethersproject/units";
 import {
   MoonpageManager,
   MoonpageCollection,
@@ -44,6 +44,7 @@ describe("Project", function () {
   const textIpfsHash = "QmTw3pWBQinwuHS57FcWyUGBpvGqLHQZkn1eKjp89XXyFg";
   const originalLanguage = "ENG";
   const myMintPrice = ethers.utils.parseUnits("0.1", 18);
+  const secondEdPrice = ethers.utils.parseUnits("1.5", 18);
   const firstEditionMax = 6;
   const provider = waffle.provider;
 
@@ -320,9 +321,9 @@ describe("Project", function () {
       // start At is correct
       // expiresAt is set
 
-      const creatorBalanceBefore = await provider.getBalance(creator.address);
-      const contribABalanceBefore = await provider.getBalance(contribA.address);
-      const contribBBalanceBefore = await provider.getBalance(contribB.address);
+      const creatorBalance1 = await provider.getBalance(creator.address);
+      const contribABalance1 = await provider.getBalance(contribA.address);
+      const contribBBalance1 = await provider.getBalance(contribB.address);
 
       const CollectionAsUserA = Collection.connect(userA);
       const CollectionAsUserB = Collection.connect(userB);
@@ -333,6 +334,11 @@ describe("Project", function () {
       await CollectionAsUserA.buy(1, {
         value: mintPrice,
       });
+
+      await expect(
+        ManagerAsCreator.enableNextEdition(1, 20, secondEdPrice)
+      ).to.revertedWith("Current edition has not sold out");
+
       await CollectionAsUserB.buy(1, {
         value: mintPrice,
       });
@@ -354,18 +360,12 @@ describe("Project", function () {
       // creator gets 45%
       const collectionBalance = await provider.getBalance(Collection.address);
       const factoryBalance = await provider.getBalance(Factory.address);
-      const creatorBalanceAfter = await provider.getBalance(creator.address);
-      const contribABalanceAfter = await provider.getBalance(contribA.address);
-      const contribBBalanceAfter = await provider.getBalance(contribB.address);
-      const gainsAuthor = formatEther(
-        creatorBalanceAfter.sub(creatorBalanceBefore)
-      );
-      const gainsContribA = formatEther(
-        contribABalanceAfter.sub(contribABalanceBefore)
-      );
-      const gainsContribB = formatEther(
-        contribBBalanceAfter.sub(contribBBalanceBefore)
-      );
+      const creatorBalance2 = await provider.getBalance(creator.address);
+      const contribABalance2 = await provider.getBalance(contribA.address);
+      const contribBBalance2 = await provider.getBalance(contribB.address);
+      const gainsAuthor = formatEther(creatorBalance2.sub(creatorBalance1));
+      const gainsContribA = formatEther(contribABalance2.sub(contribABalance1));
+      const gainsContribB = formatEther(contribBBalance2.sub(contribBBalance1));
       console.log({ gainsAuthor });
       console.log({ gainsContribA });
       console.log({ gainsContribB });
@@ -379,41 +379,117 @@ describe("Project", function () {
       // expect(formatEther(collectionBalance)).to.equal("0.0");
       // author can enable next edition
 
-      //   const enableNextEdTX = await CollectionAsAuthor.enableNextEdition(
-      //     4,
-      //     mintPrice
-      //   );
-      //   await enableNextEdTX.wait();
-      //   const newEdition = await Collection.edition();
-      //   expect(parseInt(newEdition.current._hex, 16)).to.equal(2);
-      //   expect(parseInt(newEdition.maxAmount._hex, 16)).to.equal(8);
-      //   expect(formatEther(newEdition.mintPrice._hex)).to.equal("0.1");
-      //   // after second edition sells out, funds are correctly distributed again
-      //   const userAMintTx = await CollectionAsUserA.publicMint(2, {
-      //     value: mintPrice.mul(2),
-      //   });
-      //   await userAMintTx.wait();
-      //   const ed2BalanceUserA = await Collection.balanceOf(userA.address);
-      //   expect(ed2BalanceUserA).to.equal(3);
-      //   const userBMintTx = await CollectionAsUserB.publicMint(1, {
-      //     value: mintPrice,
-      //   });
-      //   await userBMintTx.wait();
-      //   const ed2BalanceUserB = await Collection.balanceOf(userB.address);
-      //   expect(ed2BalanceUserB).to.equal(2);
-      //   const factoryBalance2 = await provider.getBalance(Factory.address);
-      //   // expect(formatEther(factoryBalance2)).to.equal("0.03");
-      //   const newAuthorBalance = await provider.getBalance(author.address);
-      //   const newContribABalance = await provider.getBalance(contribA.address);
-      //   const newContribBBalance = await provider.getBalance(contribB.address);
-      //   const authorTotalGains = newAuthorBalance.sub(authorBalanceBefore);
-      //   const contribATotalGains = newContribABalance.sub(contribABalanceBefore);
-      //   const contribBTotalGains = newContribBBalance.sub(contribBBalanceBefore);
+      // creator enables new edition
+      const enableNextEdTX = await ManagerAsCreator.enableNextEdition(
+        1,
+        20,
+        secondEdPrice
+      );
+      await enableNextEdTX.wait();
+      const [
+        newCurrent,
+        ,
+        newMintPrice,
+        newStartTokenId,
+        newCurrentTokenId,
+        newLastGenEdTokenId,
+        newCurrentEdLastTokenId,
+        newEndTokenId,
+      ] = await Manager.readEditionData(projectId);
+      expect(newCurrent).to.equal(2);
+      expect(newMintPrice).to.equal(secondEdPrice);
+      expect(newStartTokenId).to.equal(1);
+      expect(newCurrentTokenId).to.equal(7);
+      expect(newLastGenEdTokenId).to.equal(6);
+      expect(newCurrentEdLastTokenId).to.equal(26);
+      expect(newEndTokenId).to.equal(1000);
 
-      //   // this varies a bit depending on gas... do a "more or less comparison" or deduct the gas fees
-      //   // expect(formatEther(authorTotalGains)).to.equal("0.089944618316026652");
-      //   // expect(formatEther(contribATotalGains)).to.equal("0.05");
-      //   // expect(formatEther(contribBTotalGains)).to.equal("0.03");
+      // meanwhile Project ID 2 auctions start and people buy - and edition data changes with minting as expected
+      await CollectionAsUserA.startAuctions(2, authorOwnsAmount, discountRate);
+      const project2BaseData = await Manager.baseDatas(2);
+      expect(project2BaseData.premintedByCreator).to.equal(authorOwnsAmount);
+      const project2AuctionSettings = await AuctionsManager.auctions(2);
+      expect(project2AuctionSettings.discountRate).to.equal(discountRate);
+      expect(project2AuctionSettings.auctionsStarted).to.equal(true);
+
+      await CollectionAsDeployer.buy(2, {
+        value: myMintPrice,
+      });
+      const [
+        currentEdition,
+        ,
+        ,
+        currentStartToken,
+        currentCurrentToken,
+        lastGenEdToken,
+        currentEdLastToken,
+        endToken,
+      ] = await Manager.readEditionData(2);
+      expect(currentEdition).to.equal(1);
+      expect(currentStartToken).to.equal(1001);
+      expect(currentCurrentToken).to.equal(1004);
+      expect(lastGenEdToken).to.equal(1100);
+      expect(currentEdLastToken).to.equal(1100);
+      expect(endToken).to.equal(2000);
+
+      // new edition of Project ID 1 also sells out and distribution works again
+      await CollectionAsUserA.publicMint(1, 10, {
+        value: secondEdPrice.mul(10),
+      });
+      await CollectionAsUserB.publicMint(1, 10, {
+        value: secondEdPrice.mul(10),
+      });
+      await expect(
+        CollectionAsDeployer.publicMint(1, 1, {
+          value: secondEdPrice,
+        })
+      ).to.revertedWith("Amount exceeds cap");
+      const factoryBalance3 = await provider.getBalance(Factory.address);
+      const creatorBalance3 = await provider.getBalance(creator.address);
+      const contribABalance3 = await provider.getBalance(contribA.address);
+      const contribBBalance3 = await provider.getBalance(contribB.address);
+      // balance is split correctly
+      // total of 30 MATIC
+      // factory gets 15% - 4.5 MATIC
+      // co-writer gets 25% - 7.5 MATIC
+      // marketer 15% - 4.5 MATIC
+      // creator gets 45% - 13.5 MATIC
+      // unfortunately due to gas, these are not fully accurate
+      // expect(formatEther(creatorBalance3.sub(creatorBalance2))).to.equal("13.5");
+      // expect(formatEther(contribABalance3.sub(contribABalance2))).to.equal("7.5");
+      // expect(formatEther(contribBBalance3.sub(contribBBalance2))).to.equal("4.5");
+      // expect(formatEther(formatEther(factoryBalance3.sub(factoryBalance))).to.equal("4.5");
+      console.log(
+        "factory: ",
+        formatEther(factoryBalance3.sub(factoryBalance))
+      );
+      console.log(
+        "creator: ",
+        formatEther(creatorBalance3.sub(creatorBalance2))
+      );
+      console.log(
+        "contrib a: ",
+        formatEther(contribABalance3.sub(contribABalance2))
+      );
+      console.log(
+        "contrib b: ",
+        formatEther(contribBBalance3.sub(contribBBalance2))
+      );
+
+      // project creator - and creator only – can deploy a ballot
+      await expect(BallotsFactoryAsDeployer.createBallot(1)).to.revertedWith(
+        "Not authorized"
+      );
+      await expect(BallotsFactoryAsCreator.createBallot(100)).to.revertedWith(
+        "No collection"
+      );
+      const BallotCreationTX = await BallotsFactoryAsCreator.createBallot(1);
+
+      await expect(BallotsFactoryAsCreator.createBallot(1)).to.revertedWith(
+        "Ballot already exists"
+      );
+
+      console.log({ BallotCreationTX });
 
       //   // afterwards author creates (deploys) a ballot and starts a vote
       //   await BallotsFactoryAsAuthor.createBallot(CollectionAddress);
@@ -457,3 +533,8 @@ describe("Project", function () {
     });
   });
 });
+
+// and then test the metadata
+// what should the json look like?
+// what should it look like with royalties?
+// add payments splitter
