@@ -62,7 +62,7 @@ contract Ballot is AccessControlEnumerable {
         ) = moonpageManager.readEditionData(_projectId);
         startId = startTokenId;
         endId = lastGenEdTokenId;
-        maxVotes = lastGenEdTokenId - startTokenId;
+        maxVotes = lastGenEdTokenId - startTokenId + 1;
         state = State.NotVoting;
     }
 

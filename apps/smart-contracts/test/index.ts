@@ -483,55 +483,84 @@ describe("Project", function () {
       await expect(BallotsFactoryAsCreator.createBallot(100)).to.revertedWith(
         "No collection"
       );
-      const BallotCreationTX = await BallotsFactoryAsCreator.createBallot(1);
-
+      await BallotsFactoryAsCreator.createBallot(1);
       await expect(BallotsFactoryAsCreator.createBallot(1)).to.revertedWith(
         "Ballot already exists"
       );
-      const receipt = await BallotCreationTX.wait();
-      const creationEvent = receipt.events?.find(
-        (event: any) => event.event === "BallotCreated"
+      const ballotAddress = await BallotsFactory.ballots(1);
+      expect(await BallotsFactory.ballotsLength()).to.equal(1);
+      const BallotFactory = await ethers.getContractFactory("Ballot");
+      Ballot = BallotFactory.attach(ballotAddress);
+      BallotAsCreator = Ballot.connect(creator);
+
+      // voting from start to finish - only Gen Ed token owners can vote
+      // in this case tokenId 1 - 6 (incl)
+      await BallotAsCreator.startVote(
+        "Publish it as a real book?",
+        ["Yes", "No", "abstention"],
+        false
       );
 
-      //   // afterwards author creates (deploys) a ballot and starts a vote
-      //   await BallotsFactoryAsAuthor.createBallot(CollectionAddress);
-      //   const ballotAddress = await BallotsFactoryAsAuthor.ballots(
-      //     CollectionAddress
-      //   );
-      //   const BallotFactory = await ethers.getContractFactory("Ballot");
-      //   Ballot = BallotFactory.attach(ballotAddress);
-      //   BallotAsAuthor = Ballot.connect(author);
+      await expect(
+        BallotAsCreator.startVote(
+          "Random second vote that cannot happen at the same time.",
+          ["Yes", "No", "abstention"],
+          false
+        )
+      ).to.revertedWith("Impossible at this state");
 
-      //   await BallotAsAuthor.startVote(
-      //     "Publish it as a real book?",
-      //     ["Yes", "No", "abstention"],
-      //     false
-      //   );
+      const startId = await Ballot.startId();
+      const endId = await Ballot.endId();
+      const maxVotes = await Ballot.maxVotes();
+      console.log({ startId, endId, maxVotes });
+      expect(startId).to.equal(startTokenId);
+      expect(endId).to.equal(lastGenEdTokenId);
+      expect(maxVotes).to.equal(lastGenEdTokenId.sub(startTokenId).add(1));
 
-      //   // userA votes with tokenId 2 - she votes 0->"yes"
-      //   const BallotAsUserA = Ballot.connect(userA);
-      //   await BallotAsUserA.vote(2, 0);
+      await BallotAsCreator.vote(1, 1);
+      await BallotAsCreator.vote(2, 2);
+      await expect(BallotAsCreator.endVote()).to.be.revertedWith(
+        "Vote not yet expired"
+      );
+      const BallotAsUserA = Ballot.connect(userA);
+      const BallotAsUserB = Ballot.connect(userB);
+      await expect(BallotAsUserA.vote(1, 0)).to.be.revertedWith(
+        "Not authorized"
+      );
+      await expect(BallotAsUserA.vote(3, 8)).to.be.revertedWith(
+        "Invalid option"
+      );
+      await BallotAsUserA.vote(3, 0);
+      await expect(BallotAsUserA.vote(3, 0)).to.be.revertedWith(
+        "Already voted"
+      );
 
-      //   // userB votes with tokenId 3 - he votes 1->"no"
-      //   const BallotAsUserB = Ballot.connect(userB);
-      //   await BallotAsUserB.vote(3, 1);
+      const voteResults = await Ballot.voteSettings(0);
+      expect(voteResults.votesCount).to.equal("3");
+      expect(voteResults.option1Votes).to.equal("1");
+      expect(voteResults.option2Votes).to.equal("1");
+      expect(voteResults.option3Votes).to.equal("1");
 
-      //   // vote cannot be ended before expiry or before everyone has voted
-      //   await expect(BallotAsAuthor.endVote()).to.revertedWith(
-      //     "Vote not yet expired"
-      //   );
+      await BallotAsUserA.vote(4, 0);
+      await BallotAsUserB.vote(5, 0);
+      await BallotAsUserB.vote(6, 0);
 
-      //   // userA votes some more for yes, coz she got another 2
-      //   await BallotAsUserA.vote(4, 0);
-      //   await BallotAsUserA.vote(5, 0);
+      await BallotAsCreator.endVote();
+      await expect(BallotAsCreator.endVote()).to.be.revertedWith(
+        "Impossible at this state"
+      );
 
-      //   // vote ends and results can be read
-      //   await advanceDays(9);
-      //   await expect(BallotAsAuthor.endVote()).to.not.reverted;
-      //   const voteResults = await Ballot.voteSettings(0);
-      //   expect(voteResults.votesCount).to.equal("4");
-      //   expect(voteResults.option1Votes).to.equal("3");
-      //   expect(voteResults.option2Votes).to.equal("1");
+      // create another vote
+      await BallotAsCreator.startVote(
+        "A second vote. Want an exclusive meeting?",
+        ["Yes", "No", "abstention"],
+        false
+      );
+      await BallotAsUserA.vote(4, 0);
+      await BallotAsUserB.vote(5, 0);
+      await BallotAsUserB.vote(6, 0);
+      await advanceDays(9);
+      await expect(BallotAsCreator.endVote()).to.not.reverted;
     });
   });
 });
