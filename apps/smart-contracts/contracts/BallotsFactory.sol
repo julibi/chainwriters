@@ -12,6 +12,11 @@ contract BallotsFactory is Ownable, Pausable {
     IMoonpageManager public moonpageManager;
     IMoonpageCollection public moonpageCollection;
     mapping(uint256 => address) public ballots;
+    event BallotCreated(
+        uint256 _projectId,
+        uint256 _timeCreated,
+        address _ballotAddress
+    );
 
     constructor(address _mpManager, address _collection) {
         moonpageManager = IMoonpageManager(_mpManager);
@@ -39,6 +44,7 @@ contract BallotsFactory is Ownable, Pausable {
         );
         ballots[_projectId] = address(ballot);
         ballotsLength++;
+        emit BallotCreated(_projectId, block.timestamp, address(ballot));
         return address(ballot);
     }
 

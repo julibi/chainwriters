@@ -488,8 +488,10 @@ describe("Project", function () {
       await expect(BallotsFactoryAsCreator.createBallot(1)).to.revertedWith(
         "Ballot already exists"
       );
-
-      console.log({ BallotCreationTX });
+      const receipt = await BallotCreationTX.wait();
+      const creationEvent = receipt.events?.find(
+        (event: any) => event.event === "BallotCreated"
+      );
 
       //   // afterwards author creates (deploys) a ballot and starts a vote
       //   await BallotsFactoryAsAuthor.createBallot(CollectionAddress);
