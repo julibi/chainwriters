@@ -269,6 +269,7 @@ describe("Project", function () {
       const configureTx = await ManagerAsCreator.configureProjectDetails(
         1,
         "",
+        "bullShitIPFSCIDHASH",
         "",
         "Fiction",
         "My fancy subtitle"
@@ -351,7 +352,17 @@ describe("Project", function () {
       expect(await Collection.balanceOf(creator.address)).to.equal(
         authorOwnsAmount
       );
-
+      expect(await Manager.projectIdOfToken(3)).to.equal(1);
+      expect(await Manager.editionOfToken(1, 3)).to.equal(1);
+      expect(await Manager.projectIdOfToken(4)).to.equal(1);
+      expect(await Manager.editionOfToken(1, 4)).to.equal(1);
+      expect(await Manager.projectIdOfToken(5)).to.equal(1);
+      expect(await Manager.editionOfToken(1, 5)).to.equal(1);
+      expect(await Manager.projectIdOfToken(6)).to.equal(1);
+      expect(await Manager.editionOfToken(1, 6)).to.equal(1);
+      const tokenURIOfToken1 = await Collection.tokenURI(1);
+      const tokenURIOfToken6 = await Collection.tokenURI(6);
+      console.log({ tokenURIOfToken1, tokenURIOfToken6 });
       // balance is split correctly
       // total of 0.4 MATIC
       // factory gets 15%
@@ -431,6 +442,15 @@ describe("Project", function () {
       expect(lastGenEdToken).to.equal(1100);
       expect(currentEdLastToken).to.equal(1100);
       expect(endToken).to.equal(2000);
+      expect(await Manager.projectIdOfToken(1001)).to.equal(2);
+      expect(await Manager.editionOfToken(2, 1001)).to.equal(1);
+      expect(await Manager.projectIdOfToken(1002)).to.equal(2);
+      expect(await Manager.editionOfToken(2, 1002)).to.equal(1);
+      expect(await Manager.projectIdOfToken(1003)).to.equal(2);
+      expect(await Manager.editionOfToken(2, 1003)).to.equal(1);
+      expect(await Manager.projectIdOfToken(1004)).to.equal(2);
+      expect(await Manager.editionOfToken(2, 1004)).to.equal(1);
+      const tokenURIOfToken1001 = await Collection.tokenURI(1001);
 
       // new edition of Project ID 1 also sells out and distribution works again
       await CollectionAsUserA.publicMint(1, 10, {
@@ -444,10 +464,19 @@ describe("Project", function () {
           value: secondEdPrice,
         })
       ).to.revertedWith("Amount exceeds cap");
+
+      expect(await Manager.projectIdOfToken(7)).to.equal(1);
+      expect(await Manager.editionOfToken(1, 7)).to.equal(2);
+      expect(await Manager.projectIdOfToken(26)).to.equal(1);
+      expect(await Manager.editionOfToken(1, 26)).to.equal(2);
+      expect(await Manager.projectIdOfToken(27)).to.equal(1);
+      expect(await Manager.editionOfToken(1, 27)).to.equal(0);
+      const tokenURIOfToken7 = await Collection.tokenURI(7);
       const factoryBalance3 = await provider.getBalance(Factory.address);
       const creatorBalance3 = await provider.getBalance(creator.address);
       const contribABalance3 = await provider.getBalance(contribA.address);
       const contribBBalance3 = await provider.getBalance(contribB.address);
+
       // balance is split correctly
       // total of 30 MATIC
       // factory gets 15% - 4.5 MATIC
@@ -565,7 +594,5 @@ describe("Project", function () {
   });
 });
 
-// and then test the metadata
-// what should the json look like?
 // what should it look like with royalties?
 // add payments splitter

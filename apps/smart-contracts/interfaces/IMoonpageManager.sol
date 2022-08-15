@@ -52,6 +52,7 @@ interface IMoonpageManager {
             string memory,
             string memory,
             string memory,
+            string memory,
             uint256
         );
 
@@ -85,6 +86,11 @@ interface IMoonpageManager {
         );
 
     function readContributionIndex(uint256 _projectId)
+        external
+        view
+        returns (uint256);
+
+    function editionOfToken(uint256 _projectId, uint256 _tokenId)
         external
         view
         returns (uint256);

@@ -6,7 +6,6 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-// import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/utils/Base64.sol";
 import "../interfaces/IMoonpageManager.sol";
@@ -19,9 +18,7 @@ contract MoonpageCollection is
     Ownable,
     Pausable
 {
-    //using Counters for Counters.Counter;
     uint256 public maxMintableCreator = 4;
-    // Counters.Counter private _tokenIdCounter;
     IMoonpageManager public moonpageManager;
     IAuctionsManager public auctionsManager;
     string public baseUri;
@@ -44,9 +41,8 @@ contract MoonpageCollection is
     }
 
     modifier onlyProjectCreator(uint256 _projectId) {
-        (, , , address creatorAddress, , , , , ) = moonpageManager.readBaseData(
-            _projectId
-        );
+        (, , , address creatorAddress, , , , , , ) = moonpageManager
+            .readBaseData(_projectId);
         require(msg.sender == address(creatorAddress), "Not authorized");
         _;
     }
@@ -131,7 +127,7 @@ contract MoonpageCollection is
         ifProjectExists(_projectId)
         onlyProjectCreator(_projectId)
     {
-        (, , , , , , , , uint256 premintedByCreator) = moonpageManager
+        (, , , , , , , , , uint256 premintedByCreator) = moonpageManager
             .readBaseData(_projectId);
         require(
             (premintedByCreator == 0) && !moonpageManager.isFrozen(_projectId),
@@ -233,7 +229,6 @@ contract MoonpageCollection is
         return baseUri;
     }
 
-    // todo: make it fully work - what should be inside this data?
     function tokenURI(uint256 _tokenId)
         public
         view
@@ -241,14 +236,16 @@ contract MoonpageCollection is
         returns (string memory)
     {
         uint256 projectId = moonpageManager.projectIdOfToken(_tokenId);
+        uint256 edition = moonpageManager.editionOfToken(projectId, _tokenId);
         (
             string memory title,
-            string memory subtitle,
+            ,
             string memory genre,
             address creatorAddress,
-            string memory textIpfsHash,
+            ,
             string memory imgIpfsHash,
-            string memory blurbIpfsHash,
+            string memory animationIpfsHash,
+            ,
             string memory originalLanguage,
 
         ) = moonpageManager.readBaseData(projectId);
@@ -256,14 +253,21 @@ contract MoonpageCollection is
             bytes(
                 string(
                     abi.encodePacked(
-                        '{"name":',
+                        '{"name": "',
                         title,
-                        "#",
+                        " #",
                         Strings.toString(_tokenId),
-                        '", "description": "A Moonpage Project"',
-                        '"image": "ipfs://"',
+                        '", "description": "',
+                        'A Moonpage DAO Literature NFT", ',
+                        '"image": "ipfs://',
                         imgIpfsHash,
-                        '"}'
+                        '", ',
+                        '"animation_url": "ipfs://',
+                        animationIpfsHash,
+                        '",',
+                        '"attributes": [{ "trait_type": "Edition", "value": "',
+                        Strings.toString(edition),
+                        '" }]}'
                     )
                 )
             )

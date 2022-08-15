@@ -16,8 +16,6 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
     uint256 public fee = 15;
     IMoonpageCollection public collection;
 
-    // todo add animation url and consider it inside metadata
-
     // should deploy a little seperate contract per project, where the royalties are being sent and
     // where everything is being split
     struct BaseData {
@@ -27,6 +25,7 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         address creatorAddress;
         string textIpfsHash;
         string imgIpfsHash;
+        string animationIpfsHash;
         string blurbIpfsHash;
         string originalLanguage;
         uint256 premintedByCreator;
@@ -51,6 +50,7 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         uint256 currentEdLastTokenId; // id of last token in current edition
         uint256 endTokenId;
     }
+
     mapping(uint256 => BaseData) public baseDatas;
     mapping(uint256 => AuthorShare) public authorShares;
     mapping(uint256 => Edition) public editions;
@@ -62,9 +62,12 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
     mapping(uint256 => bool) public frozenProjectIds;
     mapping(uint256 => bool) public pausedProjectIds;
 
+    mapping(uint256 => mapping(uint256 => uint256)) public editionRanges;
+
     event Configured(
         uint256 projectId,
         string imgHash,
+        string animationHash,
         string blurbHash,
         string newGenre,
         string newSubtitle
@@ -122,6 +125,7 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         baseDatas[_projectId].creatorAddress = address(_caller);
         baseDatas[_projectId].textIpfsHash = _textCID;
         baseDatas[_projectId].imgIpfsHash = "";
+        baseDatas[_projectId].animationIpfsHash = "";
         baseDatas[_projectId].blurbIpfsHash = "";
         baseDatas[_projectId].originalLanguage = _originalLanguage;
         baseDatas[_projectId].premintedByCreator = 0;
@@ -130,20 +134,16 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         uint256 startId = (_projectId * maxAmountEdition) +
             1 -
             maxAmountEdition;
+        uint256 currentEdLast = startId + _firstEditionAmount - 1;
         editions[_projectId].current = 1;
         editions[_projectId].initialMintPrice = _initialMintPrice;
         editions[_projectId].mintPrice = _initialMintPrice;
         editions[_projectId].startTokenId = startId;
         editions[_projectId].currentTokenId = startId;
-        editions[_projectId].currentEdLastTokenId =
-            startId +
-            _firstEditionAmount -
-            1;
-        editions[_projectId].lastGenEdTokenId =
-            startId +
-            _firstEditionAmount -
-            1;
+        editions[_projectId].currentEdLastTokenId = currentEdLast;
+        editions[_projectId].lastGenEdTokenId = currentEdLast;
         editions[_projectId].endTokenId = startId + maxAmountEdition - 1;
+        editionRanges[_projectId][1] = currentEdLast;
         contributionsIndeces[_projectId] = 0;
         projectBalances[_projectId] = 0;
         existingProjectIds[_projectId] = true;
@@ -156,17 +156,26 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
     function configureProjectDetails(
         uint256 _projectId,
         string calldata _imgHash,
+        string calldata _animationHash,
         string calldata _blurbHash,
         string calldata _genre,
         string calldata _subtitle
     ) external onlyCreator(_projectId) whenNotPaused {
         require(!frozenProjectIds[_projectId], "Base data frozen");
         baseDatas[_projectId].imgIpfsHash = _imgHash;
+        baseDatas[_projectId].animationIpfsHash = _animationHash;
         baseDatas[_projectId].blurbIpfsHash = _blurbHash;
         baseDatas[_projectId].genre = _genre;
         baseDatas[_projectId].subtitle = _subtitle;
 
-        emit Configured(_projectId, _imgHash, _blurbHash, _genre, _subtitle);
+        emit Configured(
+            _projectId,
+            _imgHash,
+            _animationHash,
+            _blurbHash,
+            _genre,
+            _subtitle
+        );
     }
 
     function setTextIpfsHash(uint256 _projectId, string calldata _ipfsHash)
@@ -242,6 +251,9 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
             editions[_projectId].currentTokenId +
             _newEdAmount -
             1;
+        editionRanges[_projectId][editions[_projectId].current] = editions[
+            _projectId
+        ].currentEdLastTokenId;
 
         emit NextEditionEnabled(
             editions[_projectId].current,
@@ -380,12 +392,33 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         returns (uint256)
     {
         uint256 highestPossibleTokenId = projectsLength.mul(maxAmountEdition);
-        require(_tokenId <= highestPossibleTokenId, "tokenId too big");
-        for (uint256 i = 1; i <= projectsLength; i++) {
-            if (_tokenId <= (i.mul(maxAmountEdition))) {
-                return i;
+        if (_tokenId <= highestPossibleTokenId) {
+            for (uint256 i = 1; i <= projectsLength; i++) {
+                if (_tokenId <= (i.mul(maxAmountEdition))) {
+                    return i;
+                }
             }
         }
+        return 0;
+    }
+
+    function editionOfToken(uint256 _projectId, uint256 _tokenId)
+        external
+        view
+        returns (uint256)
+    {
+        uint256 maxTokenId = _projectId * 1000;
+        uint256 minTokenId = maxTokenId - 1000 + 1;
+        if (_tokenId >= minTokenId && _tokenId <= maxTokenId) {
+            uint256 maxEditions = editions[_projectId].current;
+            for (uint256 i = 1; i <= maxEditions; i++) {
+                if (editionRanges[_projectId][i] >= _tokenId) {
+                    return i;
+                }
+            }
+            return 0;
+        }
+        return 0;
     }
 
     function isFrozen(uint256 _projectId) external view returns (bool) {
@@ -416,6 +449,7 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
             string memory,
             string memory,
             string memory,
+            string memory,
             uint256
         )
     {
@@ -427,6 +461,7 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
             data.creatorAddress,
             data.textIpfsHash,
             data.imgIpfsHash,
+            data.animationIpfsHash,
             data.blurbIpfsHash,
             data.originalLanguage,
             data.premintedByCreator

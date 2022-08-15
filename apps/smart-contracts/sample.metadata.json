@@ -1,0 +1,12 @@
+{
+  "name": "TITLE #TOKENID",
+  "description": "BLURB created by CREATOR brought to you",
+  "image": "ipfs://bla",
+  "animation_url": "ipfs://bla",
+  "attributes": [
+    {
+      "trait_type": "Edition",
+      "value": "EDITIONASNUMBER"
+    }
+  ]
+}

@@ -30,9 +30,8 @@ contract BallotsFactory is Ownable, Pausable {
     {
         bool projectExists = moonpageManager.exists(_projectId);
         require(projectExists, "No collection");
-        (, , , address creatorAddress, , , , , ) = moonpageManager.readBaseData(
-            _projectId
-        );
+        (, , , address creatorAddress, , , , , , ) = moonpageManager
+            .readBaseData(_projectId);
         require(creatorAddress == msg.sender, "Not authorized");
         require(ballots[_projectId] == address(0), "Ballot already exists");
 
