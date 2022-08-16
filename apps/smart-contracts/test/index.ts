@@ -149,16 +149,13 @@ describe("Project", function () {
       ).to.revertedWith("Incorrect amount");
 
       // first project creation
-      const creationTX = await FactoryAsCreator.createProject(
+      await FactoryAsCreator.createProject(
         title,
         textIpfsHash,
         originalLanguage,
         myMintPrice,
         firstEditionMax
       );
-
-      await creationTX.wait();
-
       const baseData = await Manager.baseDatas(projectId);
       const [authorShare, authorShareInMatic] = await Manager.readAuthorShare(
         projectId

@@ -58,8 +58,8 @@ contract AuctionsManager is Pausable, Ownable {
         external
         whenNotPaused
     {
-        // require(msg.sender == address(moonpageFactory), "Not authorized");
-        // require(!auctions[_projectId].exists, "Already added");
+        require(msg.sender == address(moonpageFactory), "Not authorized");
+        require(!auctions[_projectId].exists, "Already added");
 
         auctions[_projectId].exists = true;
         auctions[_projectId].creator = _creatorAddress;

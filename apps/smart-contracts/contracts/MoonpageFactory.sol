@@ -1,18 +1,17 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.9;
 
-// Make it pausable!
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "../interfaces/IMoonpageManager.sol";
 import "../interfaces/IAuctionsManager.sol";
 
 contract MoonpageFactory is Ownable, Pausable {
+    uint256 public projectsIndex = 1;
     uint256 public firstEditionMin = 5;
     uint256 public firstEditionMax = 1000;
     IMoonpageManager public moonpageManager;
     IAuctionsManager public auctionsManager;
-    uint256 public projectsIndex = 1;
     event ProjectCreated(
         address owner,
         uint256 projectId,

@@ -109,7 +109,6 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
     // Write functions for authors
     // ------------------
 
-    // TODO: test if dao has already been created (if textcidhash is the same)
     function setupDao(
         address _caller,
         uint256 _projectId,
@@ -299,7 +298,7 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         baseDatas[_projectId].premintedByCreator = _premintedByCreator;
     }
 
-    // put this into seperate contract?
+    // move back into collection?
     function distributeShares(uint256 _projectId)
         external
         whenNotPaused
