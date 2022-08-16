@@ -42,7 +42,6 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
     }
     struct Edition {
         uint256 current;
-        uint256 initialMintPrice;
         uint256 mintPrice;
         uint256 startTokenId;
         uint256 currentTokenId;
@@ -73,13 +72,28 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         string newSubtitle
     );
     event TextSet(uint256 projectId, string textHash);
-    event ContributorAdded(address contributor, uint256 share, string role);
-    event Curated(uint256 project, bool isCurated);
+    event ContributorAdded(
+        uint256 projectId,
+        address contributor,
+        uint256 share,
+        string role
+    );
+    event Curated(uint256 projectId, bool isCurated);
+    event RangeSet(uint256 projectId, uint256 startId, uint256 endId);
     event NextEditionEnabled(
+        uint256 projectId,
         uint256 editionId,
         uint256 maxSupply,
-        uint256 mintPrice
+        uint256 mintPrice,
+        uint256 startId,
+        uint256 endId
     );
+    event BalanceIncreased(uint256 projectId, uint256 amount);
+    event TokenIdIncreased(uint256 projectId, uint256 amount);
+    event BaseDataFrozen(uint256 projectId, bool frozen);
+    event PremintedByAuthor(uint256 projectId, uint256 amount);
+    event BalanceDecreased(uint256 projectId, uint256 amount);
+    event SetCurated(uint256 projectId, bool curated);
 
     constructor(address _collection) {
         _setupRole(PAUSER_ROLE, msg.sender);
@@ -130,18 +144,18 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         baseDatas[_projectId].premintedByCreator = 0;
         authorShares[_projectId].share = 100 - fee;
         authorShares[_projectId].shareInMatic = 0;
-        uint256 startId = (_projectId * maxAmountEdition) +
-            1 -
-            maxAmountEdition;
+        uint256 startId = (_projectId * maxAmountEdition) -
+            maxAmountEdition +
+            1;
         uint256 currentEdLast = startId + _firstEditionAmount - 1;
+        uint256 endId = startId + maxAmountEdition - 1;
         editions[_projectId].current = 1;
-        editions[_projectId].initialMintPrice = _initialMintPrice;
         editions[_projectId].mintPrice = _initialMintPrice;
         editions[_projectId].startTokenId = startId;
         editions[_projectId].currentTokenId = startId;
         editions[_projectId].currentEdLastTokenId = currentEdLast;
         editions[_projectId].lastGenEdTokenId = currentEdLast;
-        editions[_projectId].endTokenId = startId + maxAmountEdition - 1;
+        editions[_projectId].endTokenId = endId;
         editionRanges[_projectId][1] = currentEdLast;
         contributionsIndeces[_projectId] = 0;
         projectBalances[_projectId] = 0;
@@ -150,6 +164,15 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         frozenProjectIds[_projectId] = false;
         pausedProjectIds[_projectId] = false;
         projectsLength++;
+        emit RangeSet(_projectId, startId, endId);
+        emit NextEditionEnabled(
+            _projectId,
+            1,
+            _firstEditionAmount,
+            _initialMintPrice,
+            startId,
+            endId
+        );
     }
 
     function configureProjectDetails(
@@ -223,7 +246,12 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
             contributions[_projectId][i].role = _roles[i];
             contributionsIndeces[_projectId]++;
             share.share = share.share - _shares[i];
-            emit ContributorAdded(_contributors[i], _shares[i], _roles[i]);
+            emit ContributorAdded(
+                _projectId,
+                _contributors[i],
+                _shares[i],
+                _roles[i]
+            );
         }
     }
 
@@ -255,9 +283,12 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         ].currentEdLastTokenId;
 
         emit NextEditionEnabled(
+            _projectId,
             editions[_projectId].current,
             _newEdAmount,
-            _newEdMintPrice
+            _newEdMintPrice,
+            editions[_projectId].currentTokenId,
+            editions[_projectId].currentEdLastTokenId
         );
     }
 
@@ -271,6 +302,7 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         onlyCollection
     {
         projectBalances[_projectId] = projectBalances[_projectId].add(_amount);
+        emit BalanceIncreased(_projectId, _amount);
     }
 
     function increaseCurrentTokenId(uint256 _projectId)
@@ -281,6 +313,7 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         editions[_projectId].currentTokenId = editions[_projectId]
             .currentTokenId
             .add(1);
+        emit TokenIdIncreased(_projectId, 1);
     }
 
     function setIsBaseDataFrozen(uint256 _projectId, bool _shouldBeFrozen)
@@ -289,6 +322,7 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         onlyCollection
     {
         frozenProjectIds[_projectId] = _shouldBeFrozen;
+        emit BaseDataFrozen(_projectId, true);
     }
 
     function setPremintedByCreator(
@@ -296,6 +330,7 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         uint256 _premintedByCreator
     ) external whenNotPaused onlyCollection {
         baseDatas[_projectId].premintedByCreator = _premintedByCreator;
+        emit PremintedByAuthor(_projectId, _premintedByCreator);
     }
 
     // move back into collection?
@@ -328,12 +363,15 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
                     contrib.shareRecipient,
                     contrib.shareInMatic
                 );
+                emit BalanceDecreased(_projectId, contrib.shareInMatic);
             }
         }
 
         collection.withdraw(creatorAddress, authorShare.shareInMatic);
         collection.withdraw(factory, foundationShareInMatic);
         projectBalances[_projectId] = 0;
+        emit BalanceDecreased(_projectId, authorShare.shareInMatic);
+        emit BalanceDecreased(_projectId, foundationShareInMatic);
     }
 
     // ------------------
@@ -452,7 +490,7 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
             uint256
         )
     {
-        BaseData storage data = baseDatas[_projectId];
+        BaseData memory data = baseDatas[_projectId];
         return (
             data.title,
             data.subtitle,
@@ -472,7 +510,7 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         view
         returns (uint256, uint256)
     {
-        AuthorShare storage aShare = authorShares[_projectId];
+        AuthorShare memory aShare = authorShares[_projectId];
         return (aShare.share, aShare.shareInMatic);
     }
 
@@ -486,15 +524,13 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
             uint256,
             uint256,
             uint256,
-            uint256,
             uint256
         )
     {
-        Edition storage data = editions[_projectId];
+        Edition memory data = editions[_projectId];
 
         return (
             data.current,
-            data.initialMintPrice,
             data.mintPrice,
             data.startTokenId,
             data.currentTokenId,
@@ -514,7 +550,7 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
             uint256
         )
     {
-        Contribution storage contrib = contributions[_projectId][_index];
+        Contribution memory contrib = contributions[_projectId][_index];
         return (
             contrib.shareRecipient,
             contrib.role,

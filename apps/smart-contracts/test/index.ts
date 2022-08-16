@@ -162,7 +162,6 @@ describe("Project", function () {
       );
       const [
         current,
-        initialMintPrice,
         mintPrice,
         startTokenId,
         currentTokenId,
@@ -188,7 +187,6 @@ describe("Project", function () {
       expect(authorShare).to.equal(85);
       expect(authorShareInMatic).to.equal(0);
       expect(current).to.equal(1);
-      expect(initialMintPrice).to.equal(myMintPrice);
       expect(mintPrice).to.equal(myMintPrice);
       expect(startTokenId).to.equal(1);
       expect(currentTokenId).to.equal(1);
@@ -215,7 +213,6 @@ describe("Project", function () {
       await secondCreationTX.wait();
       const [
         current2,
-        initialMintPrice2,
         mintPrice2,
         startTokenId2,
         currentTokenId2,
@@ -224,7 +221,6 @@ describe("Project", function () {
         endTokenId2,
       ] = await Manager.readEditionData(2);
       expect(current2).to.equal(1);
-      expect(initialMintPrice2).to.equal(myMintPrice);
       expect(mintPrice2).to.equal(myMintPrice);
       expect(startTokenId2).to.equal(1001);
       expect(currentTokenId2).to.equal(1001);
@@ -245,7 +241,6 @@ describe("Project", function () {
       await thirdCreationTX.wait();
       const [
         current3,
-        initialMintPrice3,
         mintPrice3,
         startTokenId3,
         currentTokenId3,
@@ -254,7 +249,6 @@ describe("Project", function () {
         endTokenId3,
       ] = await Manager.readEditionData(3);
       expect(current3).to.equal(1);
-      expect(initialMintPrice3).to.equal(myMintPrice);
       expect(mintPrice3).to.equal(myMintPrice);
       expect(startTokenId3).to.equal(2001);
       expect(currentTokenId3).to.equal(2001);
@@ -396,7 +390,6 @@ describe("Project", function () {
       await enableNextEdTX.wait();
       const [
         newCurrent,
-        ,
         newMintPrice,
         newStartTokenId,
         newCurrentTokenId,
@@ -425,7 +418,6 @@ describe("Project", function () {
       });
       const [
         currentEdition,
-        ,
         ,
         currentStartToken,
         currentCurrentToken,

@@ -21,12 +21,13 @@ contract MoonpageCollection is
     uint256 public maxMintableCreator = 4;
     IMoonpageManager public moonpageManager;
     IAuctionsManager public auctionsManager;
-    string public baseUri;
 
-    event BaseUriSet(string indexed baseUri);
-    event Minted(uint256 edition, address account, uint256 tokenId);
-    event Paused(address collection, bool paused);
-    event URISet(string uri);
+    event Minted(
+        uint256 projectId,
+        uint256 edition,
+        address account,
+        uint256 tokenId
+    );
 
     constructor() ERC721("Moonpage", "MP") {}
 
@@ -47,13 +48,11 @@ contract MoonpageCollection is
         _;
     }
 
-    // is it possible to mint a token twice???
     // the first edition is being sold in a reverse auction
     function buy(uint256 _projectId) external payable whenNotPaused {
         (
             ,
-            uint256 initialMintPrice,
-            ,
+            uint256 mintPrice,
             ,
             uint256 currentTokenId,
             uint256 lastGenEdTokenId,
@@ -65,7 +64,7 @@ contract MoonpageCollection is
         require(auctionsStarted, "Auctions have not started");
         require(!auctionsEnded, "Auctions ended");
         require(currentTokenId <= lastGenEdTokenId, "Amount exceeds cap.");
-        uint256 price = auctionsManager.getPrice(_projectId, initialMintPrice);
+        uint256 price = auctionsManager.getPrice(_projectId, mintPrice);
         require(msg.value >= price, "Value sent not sufficient");
 
         mint(_projectId, msg.sender, 1);
@@ -87,7 +86,6 @@ contract MoonpageCollection is
     {
         (
             uint256 current,
-            ,
             uint256 mintPrice,
             ,
             uint256 currentTokenId,
@@ -138,11 +136,7 @@ contract MoonpageCollection is
                 (_amountForCreator <= maxMintableCreator),
             "Invalid amount for maxMintableCreator"
         );
-        auctionsManager.startAuctions(
-            _projectId,
-            _amountForCreator,
-            _discountRate
-        );
+        auctionsManager.startAuctions(_projectId, _discountRate);
         moonpageManager.setIsBaseDataFrozen(_projectId, true);
         moonpageManager.setPremintedByCreator(_projectId, _amountForCreator);
         mint(_projectId, msg.sender, _amountForCreator);
@@ -163,7 +157,6 @@ contract MoonpageCollection is
             uint256 current,
             ,
             ,
-            ,
             uint256 currentTokenId,
             ,
             uint256 currentEdLastTokenId,
@@ -172,7 +165,7 @@ contract MoonpageCollection is
         for (uint256 i = 0; i < _amount; i++) {
             if (currentTokenId <= currentEdLastTokenId) {
                 _safeMint(_receiver, currentTokenId + i);
-                emit Minted(current, _receiver, currentTokenId + i);
+                emit Minted(_projectId, current, _receiver, currentTokenId + i);
                 moonpageManager.increaseCurrentTokenId(_projectId);
             }
         }
@@ -217,16 +210,10 @@ contract MoonpageCollection is
 
     function pause() external onlyOwner {
         _pause();
-        emit Paused(address(this), true);
     }
 
     function unpause() external onlyOwner {
         _unpause();
-        emit Paused(address(this), false);
-    }
-
-    function _baseURI() internal view override returns (string memory) {
-        return baseUri;
     }
 
     function tokenURI(uint256 _tokenId)

@@ -17,11 +17,7 @@ interface IAuctionsManager {
 
     function triggerNextAuction(uint256 _projectId) external;
 
-    function startAuctions(
-        uint256 _projectId,
-        uint256 _amountForCreator,
-        uint256 _discountRate
-    ) external;
+    function startAuctions(uint256 _projectId, uint256 _discountRate) external;
 
     function endAuctions(uint256 _projectId) external;
 

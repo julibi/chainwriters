@@ -71,7 +71,6 @@ interface IMoonpageManager {
             uint256,
             uint256,
             uint256,
-            uint256,
             uint256
         );
 

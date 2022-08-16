@@ -13,7 +13,7 @@ contract MoonpageFactory is Ownable, Pausable {
     IMoonpageManager public moonpageManager;
     IAuctionsManager public auctionsManager;
     event ProjectCreated(
-        address owner,
+        address creator,
         uint256 projectId,
         string title,
         string textIpfsHash,

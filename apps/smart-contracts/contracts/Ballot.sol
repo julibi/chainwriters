@@ -40,6 +40,20 @@ contract Ballot is AccessControlEnumerable {
 
     mapping(uint256 => mapping(uint256 => SingleVote)) internal votings;
     mapping(uint256 => Setting) public voteSettings;
+    event VoteStarted(
+        uint256 votingId,
+        uint256 maxVotes,
+        uint256 time,
+        string proposal
+    );
+    event VoteEnded(
+        uint256 votingId,
+        uint256 time,
+        uint256 option1Votes,
+        uint256 option2Votes,
+        uint256 option3Votes
+    );
+    event Voted(uint256 votingId, uint256 time);
 
     constructor(
         address _collection,
@@ -51,7 +65,6 @@ contract Ballot is AccessControlEnumerable {
         moonpageCollection = IMoonpageCollection(_collection);
         moonpageManager = IMoonpageManager(_mpManager);
         (
-            ,
             ,
             ,
             uint256 startTokenId,
@@ -103,6 +116,7 @@ contract Ballot is AccessControlEnumerable {
         }
         voteSettings[votingsIndex].endTime = block.timestamp + 7 days;
         state = State.Voting;
+        emit VoteStarted(votingsIndex, maxVotes, block.timestamp, _proposal);
     }
 
     function endVote() external onlyRole(CREATOR_ROLE) inState(State.Voting) {
@@ -111,6 +125,13 @@ contract Ballot is AccessControlEnumerable {
         require(allVoted || voteExpired, "Vote not yet expired");
         state = State.NotVoting;
         votingsIndex++;
+        emit VoteEnded(
+            votingsIndex,
+            block.timestamp,
+            voteSettings[votingsIndex].option1Votes,
+            voteSettings[votingsIndex].option2Votes,
+            voteSettings[votingsIndex].option3Votes
+        );
     }
 
     function vote(uint256 _tokenId, uint256 _option)
@@ -138,5 +159,6 @@ contract Ballot is AccessControlEnumerable {
         votings[votingsIndex][_tokenId].vote = _option;
         votings[votingsIndex][_tokenId].voted = true;
         voteSettings[votingsIndex].votesCount++;
+        emit Voted(votingsIndex, block.timestamp);
     }
 }

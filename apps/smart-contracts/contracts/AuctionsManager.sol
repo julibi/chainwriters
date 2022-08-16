@@ -25,11 +25,7 @@ contract AuctionsManager is Pausable, Ownable {
     }
     mapping(uint256 => AuctionSettings) public auctions;
 
-    event AuctionsStarted(
-        uint256 projectId,
-        uint256 premintedAmount,
-        uint256 time
-    );
+    event AuctionsStarted(uint256 projectId, uint256 time);
     event AuctionsEnded(uint256 projectId, uint256 time);
     event ExpirationSet(uint256 projectId, uint256 expirationTime);
 
@@ -71,11 +67,11 @@ contract AuctionsManager is Pausable, Ownable {
     }
 
     // only called by collection
-    function startAuctions(
-        uint256 _projectId,
-        uint256 _amountForCreator,
-        uint256 _discountRate
-    ) external whenNotPaused onlyCollection {
+    function startAuctions(uint256 _projectId, uint256 _discountRate)
+        external
+        whenNotPaused
+        onlyCollection
+    {
         require(
             !auctions[_projectId].auctionsStarted,
             "Auctions already started"
@@ -87,7 +83,7 @@ contract AuctionsManager is Pausable, Ownable {
         auctions[_projectId].expiresAt = block.timestamp + AUCTION_DURATION;
         auctions[_projectId].auctionsStarted = true;
         emit ExpirationSet(_projectId, block.timestamp + AUCTION_DURATION);
-        emit AuctionsStarted(_projectId, _amountForCreator, block.timestamp);
+        emit AuctionsStarted(_projectId, block.timestamp);
     }
 
     // only called by collection
@@ -117,9 +113,6 @@ contract AuctionsManager is Pausable, Ownable {
         auctions[_projectId].expiresAt = block.timestamp + AUCTION_DURATION;
         emit ExpirationSet(_projectId, block.timestamp + AUCTION_DURATION);
     }
-
-    // needed?
-    receive() external payable {}
 
     // ------------------
     // View functions
