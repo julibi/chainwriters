@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/utils/Base64.sol";
@@ -16,7 +17,8 @@ contract MoonpageCollection is
     ERC721Enumerable,
     ERC721URIStorage,
     Ownable,
-    Pausable
+    Pausable,
+    ReentrancyGuard
 {
     uint256 public maxMintableCreator = 4;
     IMoonpageManager public moonpageManager;
@@ -49,7 +51,12 @@ contract MoonpageCollection is
     }
 
     // the first edition is being sold in a reverse auction
-    function buy(uint256 _projectId) external payable whenNotPaused {
+    function buy(uint256 _projectId)
+        external
+        payable
+        whenNotPaused
+        nonReentrant
+    {
         (
             ,
             uint256 mintPrice,
@@ -83,6 +90,7 @@ contract MoonpageCollection is
         external
         payable
         whenNotPaused
+        nonReentrant
     {
         (
             uint256 current,
@@ -122,6 +130,7 @@ contract MoonpageCollection is
     )
         external
         whenNotPaused
+        nonReentrant
         ifProjectExists(_projectId)
         onlyProjectCreator(_projectId)
     {
@@ -195,6 +204,14 @@ contract MoonpageCollection is
         payable(_to).transfer(_amount);
     }
 
+    function pause() external onlyOwner {
+        _pause();
+    }
+
+    function unpause() external onlyOwner {
+        _unpause();
+    }
+
     // ------------------
     // Dao Manager functions
     // ------------------
@@ -207,14 +224,6 @@ contract MoonpageCollection is
     // ------------------
     // Explicit overrides
     // ------------------
-
-    function pause() external onlyOwner {
-        _pause();
-    }
-
-    function unpause() external onlyOwner {
-        _unpause();
-    }
 
     function tokenURI(uint256 _tokenId)
         public

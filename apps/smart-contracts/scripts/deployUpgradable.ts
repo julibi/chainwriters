@@ -7,25 +7,25 @@ export const wait = (seconds: number) =>
 async function deployUpgradable() {
   await hre.run("compile");
 
-  const [deployer] = await hre.ethers.getSigners();
+  const [deployer, a, b] = await hre.ethers.getSigners();
   console.log("Deploying contracts with the account:", deployer.address);
   console.log("Account balance:", (await deployer.getBalance()).toString());
   console.log(`Network: ${hre.ethers.network}`);
 
-  const DummyFactoryFactory = await hre.ethers.getContractFactory(
-    "DummyFactory"
+  const MoonpageFactoryFactory = await hre.ethers.getContractFactory(
+    "MoonpageFactory"
   );
 
   const Proxy = await hre.upgrades.deployProxy(
-    DummyFactoryFactory,
-    ["testname"],
+    MoonpageFactoryFactory,
+    [a.address, b.address],
     {
       kind: "uups",
     }
   );
 
   await Proxy.deployed();
-  console.log(`Proxy deployed to: ${Proxy.address}`);
+  console.log(`MoonpageProxy deployed to: ${Proxy.address}`);
 }
 
 deployUpgradable().catch((error) => {

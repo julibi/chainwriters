@@ -8,7 +8,7 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "../interfaces/IMoonpageManager.sol";
 import "../interfaces/IAuctionsManager.sol";
 
-contract MoonpageFactory is
+contract MoonpageFactoryV2 is
     Initializable,
     PausableUpgradeable,
     AccessControlUpgradeable,
@@ -126,15 +126,11 @@ contract MoonpageFactory is
         payable(_to).transfer(address(this).balance);
     }
 
-    receive() external payable {}
-
-    // ------------------
-    // Explicit overrides
-    // ------------------
-
     function _authorizeUpgrade(address newImplementation)
         internal
         override
         onlyRole(UPGRADER_ROLE)
     {}
+
+    receive() external payable {}
 }

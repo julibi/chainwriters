@@ -1,23 +1,29 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.9;
 
-import "@openzeppelin/contracts/security/Pausable.sol";
-import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
+import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "../interfaces/IMoonpageCollection.sol";
 
-contract MoonpageManager is AccessControlEnumerable, Pausable {
+contract MoonpageManager is
+    Initializable,
+    PausableUpgradeable,
+    AccessControlUpgradeable,
+    UUPSUpgradeable
+{
     using SafeMath for uint256;
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
-    uint256 public maxAmountEdition = 1000;
-    uint256 public minPrice = 1 ether;
-    uint256 public projectsLength = 0;
+    bytes32 public constant UPGRADER_ROLE = keccak256("UPGRADER_ROLE");
+    uint256 public maxAmountEdition;
+    uint256 public minPrice;
+    uint256 public projectsLength;
     address public factory;
-    uint256 public fee = 15;
+    uint256 public fee;
     IMoonpageCollection public collection;
 
-    // should deploy a little seperate contract per project, where the royalties are being sent and
-    // where everything is being split
     struct BaseData {
         string title;
         string subtitle;
@@ -60,7 +66,6 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
     mapping(uint256 => bool) public curatedProjectIds;
     mapping(uint256 => bool) public frozenProjectIds;
     mapping(uint256 => bool) public pausedProjectIds;
-
     mapping(uint256 => mapping(uint256 => uint256)) public editionRanges;
 
     event Configured(
@@ -79,6 +84,7 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         string role
     );
     event Curated(uint256 projectId, bool isCurated);
+    event Paused(uint256 projectId, bool isPaused);
     event RangeSet(uint256 projectId, uint256 startId, uint256 endId);
     event NextEditionEnabled(
         uint256 projectId,
@@ -93,13 +99,6 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
     event BaseDataFrozen(uint256 projectId, bool frozen);
     event PremintedByAuthor(uint256 projectId, uint256 amount);
     event BalanceDecreased(uint256 projectId, uint256 amount);
-    event SetCurated(uint256 projectId, bool curated);
-
-    constructor(address _collection) {
-        _setupRole(PAUSER_ROLE, msg.sender);
-        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
-        collection = IMoonpageCollection(_collection);
-    }
 
     modifier onlyCreator(uint256 _projectId) {
         require(
@@ -119,8 +118,29 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         _;
     }
 
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor() {
+        _disableInitializers();
+    }
+
+    function initialize(address _collection) public initializer {
+        __Pausable_init();
+        __AccessControl_init();
+        __UUPSUpgradeable_init();
+
+        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _grantRole(PAUSER_ROLE, msg.sender);
+        _grantRole(UPGRADER_ROLE, msg.sender);
+        collection = IMoonpageCollection(_collection);
+        maxAmountEdition = 1000;
+        minPrice = 1 ether;
+        projectsLength = 0;
+        factory;
+        fee = 15;
+    }
+
     // ------------------
-    // Write functions for authors
+    // Write functions for creators
     // ------------------
 
     function setupDao(
@@ -333,7 +353,6 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         emit PremintedByAuthor(_projectId, _premintedByCreator);
     }
 
-    // move back into collection?
     function distributeShares(uint256 _projectId)
         external
         whenNotPaused
@@ -387,6 +406,15 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
         emit Curated(_projectId, true);
     }
 
+    function setTogglePaused(uint256 _projectId, bool _state)
+        external
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
+        require(existingProjectIds[_projectId], "Does not exist");
+        pausedProjectIds[_projectId] = _state;
+        emit Paused(_projectId, _state);
+    }
+
     function setContracts(address _collection, address _factory)
         external
         onlyRole(DEFAULT_ADMIN_ROLE)
@@ -415,6 +443,15 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
 
     function unpause() external onlyRole(PAUSER_ROLE) {
         _unpause();
+    }
+
+    function emergencyWithdraw(address _to)
+        external
+        payable
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
+        require(_to != address(0), "Cannot withdraw to the 0 address");
+        payable(_to).transfer(address(this).balance);
     }
 
     receive() external payable {}
@@ -571,12 +608,9 @@ contract MoonpageManager is AccessControlEnumerable, Pausable {
     // Explicit overrides
     // ------------------
 
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        override(AccessControlEnumerable)
-        returns (bool)
-    {
-        return super.supportsInterface(interfaceId);
-    }
+    function _authorizeUpgrade(address newImplementation)
+        internal
+        override
+        onlyRole(UPGRADER_ROLE)
+    {}
 }

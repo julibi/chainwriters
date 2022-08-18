@@ -1,14 +1,22 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.9;
 
-import "@openzeppelin/contracts/security/Pausable.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "../interfaces/IMoonpageManager.sol";
 import "../interfaces/IMoonpageCollection.sol";
 import "../interfaces/IMoonpageFactory.sol";
 
-// should just be ownable???
-contract AuctionsManager is Pausable, Ownable {
+contract AuctionsManager is
+    Initializable,
+    PausableUpgradeable,
+    AccessControlUpgradeable,
+    UUPSUpgradeable
+{
+    bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
+    bytes32 public constant UPGRADER_ROLE = keccak256("UPGRADER_ROLE");
     uint256 public constant AUCTION_DURATION = 1 days;
     IMoonpageManager public moonpageManager;
     IMoonpageFactory public moonpageFactory;
@@ -34,20 +42,32 @@ contract AuctionsManager is Pausable, Ownable {
         _;
     }
 
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor() {
+        _disableInitializers();
+    }
+
+    function initialize(
+        address _mpManager,
+        address _mpFactory,
+        address _mpCollection
+    ) public initializer {
+        __Pausable_init();
+        __AccessControl_init();
+        __UUPSUpgradeable_init();
+
+        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _grantRole(PAUSER_ROLE, msg.sender);
+        _grantRole(UPGRADER_ROLE, msg.sender);
+
+        moonpageManager = IMoonpageManager(_mpManager);
+        moonpageFactory = IMoonpageFactory(_mpFactory);
+        moonpageCollection = IMoonpageCollection(_mpCollection);
+    }
+
     // ------------------
     // Gated external functions
     // -----------------
-
-    // only called by owner
-    function setContracts(
-        address _manager,
-        address _factory,
-        address _collection
-    ) external onlyOwner {
-        moonpageManager = IMoonpageManager(_manager);
-        moonpageFactory = IMoonpageFactory(_factory);
-        moonpageCollection = IMoonpageCollection(_collection);
-    }
 
     // only called by factory
     function setupAuctionSettings(uint256 _projectId, address _creatorAddress)
@@ -69,8 +89,8 @@ contract AuctionsManager is Pausable, Ownable {
     // only called by collection
     function startAuctions(uint256 _projectId, uint256 _discountRate)
         external
-        whenNotPaused
         onlyCollection
+        whenNotPaused
     {
         require(
             !auctions[_projectId].auctionsStarted,
@@ -87,24 +107,66 @@ contract AuctionsManager is Pausable, Ownable {
     }
 
     // only called by collection
-    function triggerNextAuction(uint256 _projectId) external onlyCollection {
+    function triggerNextAuction(uint256 _projectId)
+        external
+        onlyCollection
+        whenNotPaused
+    {
         auctions[_projectId].startAt = block.timestamp;
         auctions[_projectId].expiresAt = block.timestamp + AUCTION_DURATION;
         emit ExpirationSet(_projectId, block.timestamp + AUCTION_DURATION);
     }
 
     // only called by collection
-    function endAuctions(uint256 _projectId) external onlyCollection {
+    function endAuctions(uint256 _projectId)
+        external
+        onlyCollection
+        whenNotPaused
+    {
         require(!auctions[_projectId].auctionsEnded, "Already ended");
         auctions[_projectId].auctionsEnded = true;
         emit AuctionsEnded(_projectId, block.timestamp);
     }
 
     // ------------------
+    // Admin functions
+    // -----------------
+
+    // only called by owner
+    function setContracts(
+        address _manager,
+        address _factory,
+        address _collection
+    ) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        moonpageManager = IMoonpageManager(_manager);
+        moonpageFactory = IMoonpageFactory(_factory);
+        moonpageCollection = IMoonpageCollection(_collection);
+    }
+
+    function pause() external onlyRole(PAUSER_ROLE) {
+        _pause();
+    }
+
+    function unpause() external onlyRole(PAUSER_ROLE) {
+        _unpause();
+    }
+
+    function emergencyWithdraw(address _to)
+        external
+        payable
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
+        require(_to != address(0), "Cannot withdraw to the 0 address");
+        payable(_to).transfer(address(this).balance);
+    }
+
+    receive() external payable {}
+
+    // ------------------
     // Ungated external functions
     // -----------------
 
-    function retriggerAuction(uint256 _projectId) external {
+    function retriggerAuction(uint256 _projectId) external whenNotPaused {
         require(
             auctions[_projectId].expiresAt < block.timestamp,
             "Triggering unnecessary. Auction running."
@@ -157,4 +219,14 @@ contract AuctionsManager is Pausable, Ownable {
             data.auctionsEnded
         );
     }
+
+    // ------------------
+    // Explicit overrides
+    // ------------------
+
+    function _authorizeUpgrade(address newImplementation)
+        internal
+        override
+        onlyRole(UPGRADER_ROLE)
+    {}
 }
