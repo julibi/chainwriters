@@ -1,4 +1,8 @@
 const hre = require("hardhat");
+const bla = require("@openzeppelin/upgrades-core");
+console.log(bla.getImplementationAddress);
+// import { getImplementationAddress } from '@openzeppelin/upgrades-core';
+
 export const wait = (seconds: number) =>
   new Promise((resolve, _) => {
     setTimeout(resolve, seconds * 1000);

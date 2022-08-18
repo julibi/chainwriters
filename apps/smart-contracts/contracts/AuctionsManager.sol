@@ -47,11 +47,7 @@ contract AuctionsManager is
         _disableInitializers();
     }
 
-    function initialize(
-        address _mpManager,
-        address _mpFactory,
-        address _mpCollection
-    ) public initializer {
+    function initialize() public initializer {
         __Pausable_init();
         __AccessControl_init();
         __UUPSUpgradeable_init();
@@ -59,10 +55,6 @@ contract AuctionsManager is
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(PAUSER_ROLE, msg.sender);
         _grantRole(UPGRADER_ROLE, msg.sender);
-
-        moonpageManager = IMoonpageManager(_mpManager);
-        moonpageFactory = IMoonpageFactory(_mpFactory);
-        moonpageCollection = IMoonpageCollection(_mpCollection);
     }
 
     // ------------------
