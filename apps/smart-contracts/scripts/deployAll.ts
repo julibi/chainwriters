@@ -11,7 +11,6 @@ async function deployAll() {
 
   const [deployer] = await hre.ethers.getSigners();
   const provider = await hre.ethers.provider;
-  console.log({ provider });
   console.log("Deploying contracts with the account:", deployer.address);
   console.log("Account balance:", (await deployer.getBalance()).toString());
   console.log(`Network: ${hre.ethers.network}`);
@@ -40,7 +39,7 @@ async function deployAll() {
   );
   await MoonpageManagerProxy.deployed();
 
-  const MoonpageManagerImpl = await upgrades.getImplementationAddress(
+  const MoonpageManagerImplAddress = await upgrades.getImplementationAddress(
     provider,
     MoonpageManagerProxy.address
   );
@@ -50,82 +49,115 @@ async function deployAll() {
   );
 
   console.log(
-    `MoonpageManagerImpl contract deployed to: ${MoonpageManagerImpl.address}`
+    `MoonpageManagerImpl contract deployed to: ${MoonpageManagerImplAddress}`
   );
 
-  // // deploy AuctionsManager
-  // const AuctionsManagerFactory = await hre.ethers.getContractFactory(
-  //   "AuctionsManager"
-  // );
-  // const AuctionsManagerProxy = await hre.upgrades.deployProxy(
-  //   AuctionsManagerFactory,
-  //   [],
-  //   {
-  //     kind: "uups",
-  //   }
-  // );
-  // console.log(
-  //   `AuctionsManagerProxy contract deployed to: ${AuctionsManagerProxy.address}`
-  // );
+  // deploy AuctionsManager
+  const AuctionsManagerFactory = await hre.ethers.getContractFactory(
+    "AuctionsManager"
+  );
+  const AuctionsManagerProxy = await hre.upgrades.deployProxy(
+    AuctionsManagerFactory,
+    [],
+    {
+      kind: "uups",
+    }
+  );
+  await AuctionsManagerProxy.deployed();
 
-  // // deploy MoonpageFactory
-  // const MoonpageFactoryFactory = await hre.ethers.getContractFactory(
-  //   "MoonpageFactory"
-  // );
-  // const MoonpageFactoryProxy = await hre.upgrades.deployProxy(
-  //   MoonpageFactoryFactory,
-  //   [MoonpageManagerProxy.address, AuctionsManagerProxy.address],
-  //   { kind: "uups" }
-  // );
+  const AuctionsManagerImplAddress = await upgrades.getImplementationAddress(
+    provider,
+    AuctionsManagerProxy.address
+  );
 
-  // console.log(
-  //   `MoonpageFactoryProxy contract deployed to: ${MoonpageFactoryProxy.address}`
-  // );
+  console.log(
+    `AuctionsManagerProxy contract deployed to: ${AuctionsManagerProxy.address}`
+  );
 
-  // // deploy BallotFactory
-  // const BallotsFactoryFactory = await hre.ethers.getContractFactory(
-  //   "BallotsFactory"
-  // );
-  // const BallotsFactoryProxy = await hre.upgrades.deployProxy(
-  //   BallotsFactoryFactory,
-  //   [MoonpageManagerProxy.address, MoonpageCollection.address],
-  //   { kind: "uups" }
-  // );
+  console.log(
+    `AuctionsManagerImpl contract deployed to: ${AuctionsManagerImplAddress}`
+  );
 
-  // console.log(
-  //   `BallotsFactoryProxy contract deployed to: ${BallotsFactoryProxy.address}`
-  // );
+  // deploy MoonpageFactory
+  const MoonpageFactoryFactory = await hre.ethers.getContractFactory(
+    "MoonpageFactory"
+  );
+  const MoonpageFactoryProxy = await hre.upgrades.deployProxy(
+    MoonpageFactoryFactory,
+    [MoonpageManagerProxy.address, AuctionsManagerProxy.address],
+    { kind: "uups" }
+  );
 
-  // // set Contract on Moonpage Collection
-  // await MoonpageCollection.setContracts(
-  //   MoonpageManagerProxy.address,
-  //   AuctionsManagerProxy.address
-  // );
+  await MoonpageFactoryProxy.deployed();
 
-  // // setFactory on Moonpage Manager
-  // await MoonpageManagerProxy.setContracts(
-  //   MoonpageCollection.address,
-  //   MoonpageFactoryProxy.address
-  // );
+  const MoonpageFactoryImplAddress = await upgrades.getImplementationAddress(
+    provider,
+    MoonpageFactoryProxy.address
+  );
 
-  // // set Contracts on Auctions Manager
-  // await AuctionsManagerProxy.setContracts(
-  //   MoonpageManagerProxy.address,
-  //   MoonpageFactoryProxy.address,
-  //   MoonpageCollection.address
-  // );
+  console.log(
+    `MoonpageFactoryImpl contract deployed to: ${MoonpageFactoryImplAddress}`
+  );
 
-  // // set Contracts on Factory
-  // await MoonpageFactoryProxy.setContracts(
-  //   MoonpageManagerProxy.address,
-  //   AuctionsManagerProxy.address
-  // );
+  console.log(
+    `MoonpageFactoryProxy contract deployed to: ${MoonpageFactoryProxy.address}`
+  );
 
-  // // set Contracts on Ballots Factory
-  // await BallotsFactoryProxy.setContract(
-  //   MoonpageManagerProxy.address,
-  //   MoonpageCollection.address
-  // );
+  // deploy BallotFactory
+  const BallotsFactoryFactory = await hre.ethers.getContractFactory(
+    "BallotsFactory"
+  );
+  const BallotsFactoryProxy = await hre.upgrades.deployProxy(
+    BallotsFactoryFactory,
+    [MoonpageManagerProxy.address, MoonpageCollection.address],
+    { kind: "uups" }
+  );
+
+  await BallotsFactoryProxy.deployed();
+
+  const BallotsFactoryImplAddress = await upgrades.getImplementationAddress(
+    provider,
+    BallotsFactoryProxy.address
+  );
+
+  console.log(
+    `BallotsFactoryImpl contract deployed to: ${BallotsFactoryImplAddress}`
+  );
+
+  console.log(
+    `BallotsFactoryProxy contract deployed to: ${BallotsFactoryProxy.address}`
+  );
+
+  // set Contract on Moonpage Collection
+  await MoonpageCollection.setContracts(
+    MoonpageManagerProxy.address,
+    AuctionsManagerProxy.address
+  );
+
+  // setFactory on Moonpage Manager
+  await MoonpageManagerProxy.setContracts(
+    MoonpageCollection.address,
+    MoonpageFactoryProxy.address
+  );
+
+  // set Contracts on Auctions Manager
+  await AuctionsManagerProxy.setContracts(
+    MoonpageManagerProxy.address,
+    MoonpageFactoryProxy.address,
+    MoonpageCollection.address
+  );
+
+  // set Contracts on Factory
+  await MoonpageFactoryProxy.setContracts(
+    MoonpageManagerProxy.address,
+    AuctionsManagerProxy.address
+  );
+
+  // set Contracts on Ballots Factory
+  await BallotsFactoryProxy.setContract(
+    MoonpageManagerProxy.address,
+    MoonpageCollection.address
+  );
 
   // wait around for a bit
   console.log("Waiting for etherscan/polygonscan once more...");
@@ -139,32 +171,27 @@ async function deployAll() {
       constructorArguments: [],
     }),
     hre.run("verify:verify", {
-      address: MoonpageManagerImpl.address,
+      address: MoonpageManagerImplAddress,
       constructorArguments: [MoonpageCollection.address],
     }),
     hre.run("verify:verify", {
-      address: MoonpageManagerProxy.address,
+      address: AuctionsManagerImplAddress,
       constructorArguments: [],
     }),
-    // hre.run("verify:verify", {
-    //   address: MoonpageManager.address,
-    //   constructorArguments: [MoonpageCollection.address],
-    // }),
-    // hre.run("verify:verify", {
-    //   address: AuctionsManager.address,
-    //   constructorArguments: [],
-    // }),
-    // hre.run("verify:verify", {
-    //   address: MoonpageFactory.address,
-    //   constructorArguments: [MoonpageManager.address, AuctionsManager.address],
-    // }),
-    // hre.run("verify:verify", {
-    //   address: BallotsFactory.address,
-    //   constructorArguments: [
-    //     MoonpageManager.address,
-    //     MoonpageCollection.address,
-    //   ],
-    // }),
+    hre.run("verify:verify", {
+      address: MoonpageFactoryImplAddress,
+      constructorArguments: [
+        MoonpageManagerImplAddress,
+        AuctionsManagerImplAddress,
+      ],
+    }),
+    hre.run("verify:verify", {
+      address: BallotsFactoryImplAddress,
+      constructorArguments: [
+        MoonpageManagerImplAddress,
+        MoonpageCollection.address,
+      ],
+    }),
   ]);
 }
 
