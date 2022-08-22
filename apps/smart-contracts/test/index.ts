@@ -163,7 +163,10 @@ describe("Project", function () {
     CollectionAsUserB = Collection.connect(userB);
     projectId = await Factory.projectsIndex();
 
-    // project created and gen ed sold out
+    // ------------------
+    // CREATE FIRST PROJECT - has Project ID 1
+    // -----------------
+
     await FactoryAsDeployer.updateAllowlist(creator.address, true);
     await expect(
       FactoryAsCreator.createProject(
@@ -215,6 +218,7 @@ describe("Project", function () {
       )
     ).to.not.reverted;
   });
+
   it("project creation updates data in Manager and AuctionsManager correctly", async () => {
     // auctions start and Gen Ed Sells out
     await CollectionAsCreator.startAuctions(1, authorOwnsAmount, discountRate);
@@ -273,7 +277,8 @@ describe("Project", function () {
     expect(isProjectFrozen).to.equal(true);
     expect(isProjectPaused).to.equal(false);
   });
-  it("enables everyone to publish, except for people on denylist", async () => {
+
+  it("can enable everyone to create a project while preventing denylist accounts from doing so", async () => {
     // second creation
     await FactoryAsDeployer.setIsAllowlistOnly(false);
     const FactoryAsSecondCreator = Factory.connect(userA);
@@ -339,6 +344,7 @@ describe("Project", function () {
     expect(currentEdLastTokenId3).to.equal(2188);
     expect(endTokenId3).to.equal(3000);
   });
+
   it("lets creator configure the project", async () => {
     await expect(
       ManagerAsCreator.configureProjectDetails(
@@ -372,6 +378,7 @@ describe("Project", function () {
     await expect(
       ManagerAsCreator.addContributors(1, [deployer.address], [10], ["random"])
     ).to.revertedWith("Contributors set already");
+    // cannot configure project after starting auction
     await CollectionAsCreator.startAuctions(1, authorOwnsAmount, discountRate);
     await expect(
       ManagerAsCreator.configureProjectDetails(
@@ -384,7 +391,8 @@ describe("Project", function () {
       )
     ).to.be.revertedWith("Base data frozen");
   });
-  it("lets creator start auctions and after sellout of 1st Ed, shares get distributed", async () => {
+
+  it("lets creator start auctions and after sellout of Gen Ed, shares get distributed", async () => {
     // creator starts auctions
     await CollectionAsCreator.startAuctions(1, authorOwnsAmount, discountRate);
     const baseDataAfterStartingAuctions = await Manager.baseDatas(1);
@@ -459,6 +467,7 @@ describe("Project", function () {
     // author can enable next edition
     // creator enables new edition
   });
+
   it("lets creator enable next edition and edition data is updated accordingly", async () => {
     await CollectionAsCreator.startAuctions(1, authorOwnsAmount, discountRate);
     // second creation
@@ -542,6 +551,7 @@ describe("Project", function () {
     expect(await Manager.editionOfToken(2, 1004)).to.equal(1);
     const tokenURIOfToken1001 = await Collection.tokenURI(1001);
   });
+
   it("second edition of Project ID 1 sells out and distribution works again", async () => {
     // auction started + sells out
     await CollectionAsCreator.startAuctions(1, authorOwnsAmount, discountRate);
@@ -607,6 +617,7 @@ describe("Project", function () {
       formatEther(contribBBalance3.sub(contribBBalance2))
     );
   });
+
   it("Ballots work as expected", async () => {
     // auctions start and Gen Ed Sells out
     await CollectionAsCreator.startAuctions(1, authorOwnsAmount, discountRate);
