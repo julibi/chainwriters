@@ -162,12 +162,25 @@ describe("Project", function () {
     CollectionAsUserA = Collection.connect(userA);
     CollectionAsUserB = Collection.connect(userB);
     projectId = await Factory.projectsIndex();
+
+    // project created and gen ed sold out
+    await FactoryAsDeployer.updateAllowlist(creator.address, true);
+    await expect(
+      FactoryAsCreator.createProject(
+        title,
+        textIpfsHash,
+        originalLanguage,
+        myMintPrice,
+        firstEditionMax
+      )
+    ).to.not.reverted;
   });
 
   it("only allows creators on allowlist to publish by default", async () => {
     // allowlist and blacklist
     const isClosedForPublic = await Factory.isAllowlistOnly();
     expect(isClosedForPublic).to.equal(true);
+    await FactoryAsDeployer.updateAllowlist(creator.address, false);
 
     await expect(
       FactoryAsCreator.createProject(
@@ -194,7 +207,7 @@ describe("Project", function () {
 
     await expect(
       FactoryAsCreator.createProject(
-        title,
+        "This should work",
         textIpfsHash,
         originalLanguage,
         myMintPrice,
@@ -203,16 +216,20 @@ describe("Project", function () {
     ).to.not.reverted;
   });
   it("project creation updates data in Manager and AuctionsManager correctly", async () => {
-    await FactoryAsDeployer.updateAllowlist(creator.address, true);
-    await expect(
-      FactoryAsCreator.createProject(
-        title,
-        textIpfsHash,
-        originalLanguage,
-        myMintPrice,
-        firstEditionMax
-      )
-    ).to.not.reverted;
+    // auctions start and Gen Ed Sells out
+    await CollectionAsCreator.startAuctions(1, authorOwnsAmount, discountRate);
+    await CollectionAsUserA.buy(1, {
+      value: myMintPrice,
+    });
+    await CollectionAsUserA.buy(1, {
+      value: myMintPrice,
+    });
+    await CollectionAsUserB.buy(1, {
+      value: myMintPrice,
+    });
+    await CollectionAsUserB.buy(1, {
+      value: myMintPrice,
+    });
     const baseData = await Manager.baseDatas(projectId);
     const [authorShare, authorShareInMatic] = await Manager.readAuthorShare(
       projectId
@@ -240,13 +257,12 @@ describe("Project", function () {
     expect(baseData.imgIpfsHash).to.equal("");
     expect(baseData.blurbIpfsHash).to.equal("");
     expect(baseData.originalLanguage).to.equal("ENG");
-    expect(baseData.premintedByCreator).to.equal("0");
+    expect(baseData.premintedByCreator).to.equal("2");
     expect(authorShare).to.equal(85);
-    expect(authorShareInMatic).to.equal(0);
     expect(current).to.equal(1);
     expect(mintPrice).to.equal(myMintPrice);
     expect(startTokenId).to.equal(1);
-    expect(currentTokenId).to.equal(1);
+    expect(currentTokenId).to.equal(8);
     expect(lastGenEdTokenId).to.equal(7);
     expect(currentEdLastTokenId).to.equal(7);
     expect(endTokenId).to.equal(1000);
@@ -254,20 +270,10 @@ describe("Project", function () {
     expect(projectBalance).to.equal(0);
     expect(projectExists).to.equal(true);
     expect(isProjectCurated).to.equal(false);
-    expect(isProjectFrozen).to.equal(false);
+    expect(isProjectFrozen).to.equal(true);
     expect(isProjectPaused).to.equal(false);
   });
   it("enables everyone to publish, except for people on denylist", async () => {
-    await FactoryAsDeployer.updateAllowlist(creator.address, true);
-    await expect(
-      FactoryAsCreator.createProject(
-        title,
-        textIpfsHash,
-        originalLanguage,
-        myMintPrice,
-        firstEditionMax
-      )
-    ).to.not.reverted;
     // second creation
     await FactoryAsDeployer.setIsAllowlistOnly(false);
     const FactoryAsSecondCreator = Factory.connect(userA);
@@ -334,26 +340,17 @@ describe("Project", function () {
     expect(endTokenId3).to.equal(3000);
   });
   it("lets creator configure the project", async () => {
-    await FactoryAsDeployer.updateAllowlist(creator.address, true);
     await expect(
-      FactoryAsCreator.createProject(
-        title,
-        textIpfsHash,
-        originalLanguage,
-        myMintPrice,
-        firstEditionMax
+      ManagerAsCreator.configureProjectDetails(
+        1,
+        "",
+        "bullShitIPFSCIDHASH",
+        "",
+        "Fiction",
+        "My fancy subtitle"
       )
-    ).to.not.reverted;
-    // creator configures
-    const configureTx = await ManagerAsCreator.configureProjectDetails(
-      1,
-      "",
-      "bullShitIPFSCIDHASH",
-      "",
-      "Fiction",
-      "My fancy subtitle"
-    );
-    await configureTx.wait();
+    ).not.to.reverted;
+
     const baseDataAfter = await Manager.baseDatas(1);
     const genreAfter = baseDataAfter.genre;
     const subtitleAfter = baseDataAfter.subtitle;
@@ -375,18 +372,19 @@ describe("Project", function () {
     await expect(
       ManagerAsCreator.addContributors(1, [deployer.address], [10], ["random"])
     ).to.revertedWith("Contributors set already");
+    await CollectionAsCreator.startAuctions(1, authorOwnsAmount, discountRate);
+    await expect(
+      ManagerAsCreator.configureProjectDetails(
+        1,
+        "",
+        "newipfshash",
+        "",
+        "Horror",
+        "My different fancy subtitle"
+      )
+    ).to.be.revertedWith("Base data frozen");
   });
   it("lets creator start auctions and after sellout of 1st Ed, shares get distributed", async () => {
-    await FactoryAsDeployer.updateAllowlist(creator.address, true);
-    await expect(
-      FactoryAsCreator.createProject(
-        title,
-        textIpfsHash,
-        originalLanguage,
-        myMintPrice,
-        firstEditionMax
-      )
-    ).to.not.reverted;
     // creator starts auctions
     await CollectionAsCreator.startAuctions(1, authorOwnsAmount, discountRate);
     const baseDataAfterStartingAuctions = await Manager.baseDatas(1);
@@ -462,17 +460,9 @@ describe("Project", function () {
     // creator enables new edition
   });
   it("lets creator enable next edition and edition data is updated accordingly", async () => {
-    await FactoryAsDeployer.setIsAllowlistOnly(false);
-    // first creation
-    await FactoryAsCreator.createProject(
-      title,
-      textIpfsHash,
-      originalLanguage,
-      myMintPrice,
-      firstEditionMax
-    );
     await CollectionAsCreator.startAuctions(1, authorOwnsAmount, discountRate);
     // second creation
+    await FactoryAsDeployer.setIsAllowlistOnly(false);
     const FactoryAsSecondCreator = Factory.connect(userA);
     await FactoryAsSecondCreator.createProject(
       "",
@@ -553,17 +543,6 @@ describe("Project", function () {
     const tokenURIOfToken1001 = await Collection.tokenURI(1001);
   });
   it("second edition of Project ID 1 sells out and distribution works again", async () => {
-    // first project created
-    await FactoryAsDeployer.updateAllowlist(creator.address, true);
-    await expect(
-      FactoryAsCreator.createProject(
-        title,
-        textIpfsHash,
-        originalLanguage,
-        myMintPrice,
-        firstEditionMax
-      )
-    ).to.not.reverted;
     // auction started + sells out
     await CollectionAsCreator.startAuctions(1, authorOwnsAmount, discountRate);
     await CollectionAsDeployer.buy(1, {
@@ -628,18 +607,8 @@ describe("Project", function () {
       formatEther(contribBBalance3.sub(contribBBalance2))
     );
   });
-  it("Ballot", async () => {
-    // project created and gen ed sold out
-    await FactoryAsDeployer.updateAllowlist(creator.address, true);
-    await expect(
-      FactoryAsCreator.createProject(
-        title,
-        textIpfsHash,
-        originalLanguage,
-        myMintPrice,
-        firstEditionMax
-      )
-    ).to.not.reverted;
+  it("Ballots work as expected", async () => {
+    // auctions start and Gen Ed Sells out
     await CollectionAsCreator.startAuctions(1, authorOwnsAmount, discountRate);
     await CollectionAsUserA.buy(1, {
       value: myMintPrice,
