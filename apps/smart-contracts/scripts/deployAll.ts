@@ -161,7 +161,7 @@ async function deployAll() {
 
   // wait around for a bit
   console.log("Waiting for etherscan/polygonscan once more...");
-  await wait(60);
+  await wait(30);
 
   // verify contract
   console.log("Verifying Implementations...");
@@ -172,7 +172,7 @@ async function deployAll() {
     }),
     hre.run("verify:verify", {
       address: MoonpageManagerImplAddress,
-      constructorArguments: [MoonpageCollection.address],
+      constructorArguments: [],
     }),
     hre.run("verify:verify", {
       address: AuctionsManagerImplAddress,
@@ -180,18 +180,36 @@ async function deployAll() {
     }),
     hre.run("verify:verify", {
       address: MoonpageFactoryImplAddress,
-      constructorArguments: [
-        MoonpageManagerImplAddress,
-        AuctionsManagerImplAddress,
-      ],
+      constructorArguments: [],
     }),
     hre.run("verify:verify", {
       address: BallotsFactoryImplAddress,
-      constructorArguments: [
-        MoonpageManagerImplAddress,
-        MoonpageCollection.address,
-      ],
+      constructorArguments: [],
     }),
+    // necessary to verify all proxies? also as constructor arguments I pass the
+    // implementation addresses or the proxy addresses? :P
+    // hre.run("verify:verify", {
+    //   address: MoonpageManagerProxy.address
+    //   constructorArguments: [MoonpageCollection.address],
+    // }),
+    // hre.run("verify:verify", {
+    //   address: AuctionsManagerProxy.address,
+    //   constructorArguments: [],
+    // }),
+    // hre.run("verify:verify", {
+    //   address: MoonpageFactoryProxy.address,
+    //   constructorArguments: [
+    //     MoonpageManagerImplAddress,
+    //     AuctionsManagerImplAddress,
+    //   ],
+    // }),
+    // hre.run("verify:verify", {
+    //   address: BallotsFactoryProxy.address,
+    //   constructorArguments: [
+    //     MoonpageManagerImplAddress,
+    //     MoonpageCollection.address,
+    //   ],
+    // }),
   ]);
 }
 
