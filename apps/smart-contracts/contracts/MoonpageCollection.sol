@@ -55,7 +55,7 @@ contract MoonpageCollection is
     }
 
     modifier onlyProjectCreator(uint256 _projectId) {
-        (, , , address creatorAddress, , , , , , ) = moonpageManager
+        (, , , address creatorAddress, , , , , , , ) = moonpageManager
             .readBaseData(_projectId);
         require(msg.sender == address(creatorAddress), "Not authorized");
         _;
@@ -145,7 +145,7 @@ contract MoonpageCollection is
         ifProjectExists(_projectId)
         onlyProjectCreator(_projectId)
     {
-        (, , , , , , , , , uint256 premintedByCreator) = moonpageManager
+        (, , , , , , , , , , uint256 premintedByCreator) = moonpageManager
             .readBaseData(_projectId);
         require(
             (premintedByCreator == 0) && !moonpageManager.isFrozen(_projectId),
@@ -261,6 +261,7 @@ contract MoonpageCollection is
             ,
             ,
             ,
+            ,
             string memory imgIpfsHash,
             string memory animationIpfsHash,
             ,
@@ -309,10 +310,12 @@ contract MoonpageCollection is
         override
         returns (address, uint256)
     {
-        // get the payment splitter
+        uint256 projectId = moonpageManager.projectIdOfToken(_tokenId);
+        require(projectId > 0, "Invalid tokenId");
+        (, , , , address royaltyReceiver, , , , , , ) = moonpageManager
+            .readBaseData(projectId);
         uint256 royaltyAmount = (_salePrice * royaltyFraction) / 10000;
-
-        return (royalty.receiver, royaltyAmount);
+        return (royaltyReceiver, royaltyAmount);
     }
 
     // The following functions are overrides required by Solidity.

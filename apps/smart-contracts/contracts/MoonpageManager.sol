@@ -30,6 +30,7 @@ contract MoonpageManager is
         string subtitle;
         string genre;
         address creatorAddress;
+        address royaltiesSplitter;
         string textIpfsHash;
         string imgIpfsHash;
         string animationIpfsHash;
@@ -144,6 +145,7 @@ contract MoonpageManager is
 
     function setupDao(
         address _caller,
+        address _royaltiesSplitter,
         uint256 _projectId,
         string calldata _title,
         string calldata _textCID,
@@ -155,6 +157,7 @@ contract MoonpageManager is
         baseDatas[_projectId].subtitle = "";
         baseDatas[_projectId].genre = "";
         baseDatas[_projectId].creatorAddress = address(_caller);
+        baseDatas[_projectId].royaltiesSplitter = _royaltiesSplitter;
         baseDatas[_projectId].textIpfsHash = _textCID;
         baseDatas[_projectId].imgIpfsHash = "";
         baseDatas[_projectId].animationIpfsHash = "";
@@ -523,6 +526,7 @@ contract MoonpageManager is
             string memory,
             string memory,
             address,
+            address,
             string memory,
             string memory,
             string memory,
@@ -537,6 +541,7 @@ contract MoonpageManager is
             data.subtitle,
             data.genre,
             data.creatorAddress,
+            data.royaltiesSplitter,
             data.textIpfsHash,
             data.imgIpfsHash,
             data.animationIpfsHash,

@@ -4,6 +4,7 @@ pragma solidity ^0.8.9;
 interface IMoonpageManager {
     function setupDao(
         address _caller,
+        address _royaltiesSplitter,
         uint256 _projectId,
         string calldata _title,
         string calldata _textCID,
@@ -51,6 +52,7 @@ interface IMoonpageManager {
             string memory,
             string memory,
             string memory,
+            address,
             address,
             string memory,
             string memory,

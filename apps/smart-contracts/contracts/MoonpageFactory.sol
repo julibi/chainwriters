@@ -25,6 +25,7 @@ contract MoonpageFactory is
     IAuctionsManager public auctionsManager;
     event ProjectCreated(
         address creator,
+        address royaltiesSplitter,
         uint256 projectId,
         string title,
         string textIpfsHash,
@@ -78,12 +79,19 @@ contract MoonpageFactory is
                 _firstEditionAmount < firstEditionMax,
             "Incorrect amount"
         );
-        address paymentSplitter = new PaymentSplitter(
-            [msg.sender, moonpageDev],
-            [70, 30]
+        address[] memory addressArgs = new address[](2);
+        uint256[] memory percentageArgs = new uint256[](2);
+        addressArgs[0] = address(msg.sender);
+        addressArgs[1] = address(moonpageDev);
+        percentageArgs[0] = 70;
+        percentageArgs[1] = 30;
+        PaymentSplitter royaltiesSplitter = new PaymentSplitter(
+            addressArgs,
+            percentageArgs
         );
         moonpageManager.setupDao(
             msg.sender,
+            address(royaltiesSplitter),
             projectsIndex,
             _title,
             _textIpfsHash,
@@ -94,6 +102,7 @@ contract MoonpageFactory is
         auctionsManager.setupAuctionSettings(projectsIndex, msg.sender);
         emit ProjectCreated(
             msg.sender,
+            address(royaltiesSplitter),
             projectsIndex,
             _title,
             _textIpfsHash,
