@@ -150,9 +150,10 @@ async function deployAll() {
   );
 
   // set Contracts on Factory
-  await MoonpageFactoryProxy.setContracts(
+  await MoonpageFactoryProxy.setAddresses(
     MoonpageManagerProxy.address,
-    AuctionsManagerProxy.address
+    AuctionsManagerProxy.address,
+    deployer.address
   );
 
   // set Contracts on Ballots Factory

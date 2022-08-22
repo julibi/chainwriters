@@ -9,6 +9,7 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/utils/Base64.sol";
+import "@openzeppelin/contracts/token/common/ERC2981.sol";
 import "../interfaces/IMoonpageManager.sol";
 import "../interfaces/IAuctionsManager.sol";
 
@@ -18,12 +19,14 @@ contract MoonpageCollection is
     ERC721URIStorage,
     Ownable,
     Pausable,
-    ReentrancyGuard
+    ReentrancyGuard,
+    ERC2981
 {
     uint256 public maxMintableCreator = 4;
     IMoonpageManager public moonpageManager;
     IAuctionsManager public auctionsManager;
     address public moonpageDev;
+    uint256 royaltyFraction = 700;
 
     event Minted(
         uint256 projectId,
@@ -204,6 +207,10 @@ contract MoonpageCollection is
         moonpageDev = address(_mpDev);
     }
 
+    function setRoyaltyFraction(uint256 _fraction) external onlyOwner {
+        royaltyFraction = _fraction;
+    }
+
     function setMaxMintableCreator(uint256 _maxAmount) external onlyOwner {
         maxMintableCreator = _maxAmount;
     }
@@ -295,6 +302,19 @@ contract MoonpageCollection is
         super._beforeTokenTransfer(from, to, tokenId);
     }
 
+    function royaltyInfo(uint256 _tokenId, uint256 _salePrice)
+        external
+        view
+        virtual
+        override
+        returns (address, uint256)
+    {
+        // get the payment splitter
+        uint256 royaltyAmount = (_salePrice * royaltyFraction) / 10000;
+
+        return (royalty.receiver, royaltyAmount);
+    }
+
     // The following functions are overrides required by Solidity.
 
     function _burn(uint256 tokenId)
@@ -307,7 +327,7 @@ contract MoonpageCollection is
     function supportsInterface(bytes4 interfaceId)
         public
         view
-        override(ERC721, ERC721Enumerable)
+        override(ERC721, ERC721Enumerable, ERC2981)
         returns (bool)
     {
         return super.supportsInterface(interfaceId);

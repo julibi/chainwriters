@@ -5,6 +5,7 @@ import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import "@openzeppelin/contracts/finance/PaymentSplitter.sol";
 import "../interfaces/IMoonpageManager.sol";
 import "../interfaces/IAuctionsManager.sol";
 
@@ -19,6 +20,7 @@ contract MoonpageFactory is
     uint256 public projectsIndex;
     uint256 public firstEditionMin;
     uint256 public firstEditionMax;
+    address public moonpageDev;
     IMoonpageManager public moonpageManager;
     IAuctionsManager public auctionsManager;
     event ProjectCreated(
@@ -76,6 +78,10 @@ contract MoonpageFactory is
                 _firstEditionAmount < firstEditionMax,
             "Incorrect amount"
         );
+        address paymentSplitter = new PaymentSplitter(
+            [msg.sender, moonpageDev],
+            [70, 30]
+        );
         moonpageManager.setupDao(
             msg.sender,
             projectsIndex,
@@ -125,12 +131,14 @@ contract MoonpageFactory is
         denylist[_creator] = _isOnDenylist;
     }
 
-    function setContracts(address _mpManager, address _aManager)
-        external
-        onlyRole(DEFAULT_ADMIN_ROLE)
-    {
+    function setAddresses(
+        address _mpManager,
+        address _aManager,
+        address _mpDev
+    ) external onlyRole(DEFAULT_ADMIN_ROLE) {
         moonpageManager = IMoonpageManager(_mpManager);
         auctionsManager = IAuctionsManager(_aManager);
+        moonpageDev = address(_mpDev);
     }
 
     function setGenesisAmountRange(uint256 _min, uint256 _max)

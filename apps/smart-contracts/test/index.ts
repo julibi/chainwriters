@@ -148,9 +148,10 @@ describe("Project", function () {
     );
 
     // set Contracts on Factory
-    await FactoryAsDeployer.setContracts(
+    await FactoryAsDeployer.setAddresses(
       Manager.address,
-      AuctionsManager.address
+      AuctionsManager.address,
+      deployer.address
     );
 
     // set Contracts on Ballots Factory
