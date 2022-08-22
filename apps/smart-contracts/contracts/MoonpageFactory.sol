@@ -30,6 +30,10 @@ contract MoonpageFactory is
         uint256 initialMintPrice,
         uint256 firstEditionAmount
     );
+    event Received(address from, uint256 amount);
+    bool public isAllowlistOnly;
+    mapping(address => bool) public allowlist;
+    mapping(address => bool) public denylist;
 
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
@@ -50,6 +54,7 @@ contract MoonpageFactory is
 
         moonpageManager = IMoonpageManager(_mpManager);
         auctionsManager = IAuctionsManager(_auctionsManager);
+        isAllowlistOnly = true;
         projectsIndex = 1;
         firstEditionMin = 5;
         firstEditionMax = 1000;
@@ -62,6 +67,10 @@ contract MoonpageFactory is
         uint256 _initialMintPrice,
         uint256 _firstEditionAmount
     ) external whenNotPaused {
+        if (isAllowlistOnly) {
+            require(allowlist[msg.sender], "Not on allowlist");
+        }
+        require(!denylist[msg.sender], "On denylist");
         require(
             _firstEditionAmount > firstEditionMin &&
                 _firstEditionAmount < firstEditionMax,
@@ -93,6 +102,29 @@ contract MoonpageFactory is
     // Admin functions
     // -----------------
 
+    function setIsAllowlistOnly(bool _isAllowlistOnly)
+        external
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
+        isAllowlistOnly = _isAllowlistOnly;
+    }
+
+    function updateAllowlist(address _creator, bool _isOnAllowlist)
+        external
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
+        require(_creator != address(0), "Invalid 0 address");
+        allowlist[_creator] = _isOnAllowlist;
+    }
+
+    function updateDenylist(address _creator, bool _isOnDenylist)
+        external
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
+        require(_creator != address(0), "Invalid 0 address");
+        denylist[_creator] = _isOnDenylist;
+    }
+
     function setContracts(address _mpManager, address _aManager)
         external
         onlyRole(DEFAULT_ADMIN_ROLE)
@@ -122,11 +154,13 @@ contract MoonpageFactory is
         payable
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
-        require(_to != address(0), "Cannot withdraw to the 0 address");
+        require(_to != address(0), "Invalid 0 address");
         payable(_to).transfer(address(this).balance);
     }
 
-    receive() external payable {}
+    receive() external payable {
+        emit Received(msg.sender, msg.value);
+    }
 
     // ------------------
     // Explicit overrides

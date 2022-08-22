@@ -21,6 +21,8 @@ interface IMoonpageManager {
     function setIsBaseDataFrozen(uint256 _projectId, bool _shouldBeFrozen)
         external;
 
+    function setIsPaused(uint256 _projectId, bool _state) external;
+
     function setPremintedByCreator(
         uint256 _projectId,
         uint256 _premintedByCreator
@@ -32,6 +34,8 @@ interface IMoonpageManager {
         returns (uint256);
 
     function exists(uint256 _projectId) external view returns (bool);
+
+    function isPaused(uint256 _projectId) external view returns (bool);
 
     function isFrozen(uint256 _projectId) external view returns (bool);
 

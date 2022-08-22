@@ -32,7 +32,7 @@ async function deployAll() {
   );
   const MoonpageManagerProxy = await hre.upgrades.deployProxy(
     MoonpageManagerFactory,
-    [MoonpageCollection.address],
+    [],
     {
       kind: "uups",
     }
@@ -129,15 +129,17 @@ async function deployAll() {
   );
 
   // set Contract on Moonpage Collection
-  await MoonpageCollection.setContracts(
+  await MoonpageCollection.setAddresses(
     MoonpageManagerProxy.address,
-    AuctionsManagerProxy.address
+    AuctionsManagerProxy.address,
+    deployer.address
   );
 
   // setFactory on Moonpage Manager
-  await MoonpageManagerProxy.setContracts(
+  await MoonpageManagerProxy.setAddresses(
     MoonpageCollection.address,
-    MoonpageFactoryProxy.address
+    MoonpageFactoryProxy.address,
+    deployer.address
   );
 
   // set Contracts on Auctions Manager

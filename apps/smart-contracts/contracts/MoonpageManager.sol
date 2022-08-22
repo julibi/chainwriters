@@ -21,6 +21,7 @@ contract MoonpageManager is
     uint256 public minPrice;
     uint256 public projectsLength;
     address public factory;
+    address public moonpageDev;
     uint256 public fee;
     IMoonpageCollection public collection;
 
@@ -123,7 +124,7 @@ contract MoonpageManager is
         _disableInitializers();
     }
 
-    function initialize(address _collection) public initializer {
+    function initialize() public initializer {
         __Pausable_init();
         __AccessControl_init();
         __UUPSUpgradeable_init();
@@ -131,11 +132,9 @@ contract MoonpageManager is
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(PAUSER_ROLE, msg.sender);
         _grantRole(UPGRADER_ROLE, msg.sender);
-        collection = IMoonpageCollection(_collection);
         maxAmountEdition = 1000;
         minPrice = 1 ether;
         projectsLength = 0;
-        factory;
         fee = 15;
     }
 
@@ -225,7 +224,6 @@ contract MoonpageManager is
         onlyCreator(_projectId)
         whenNotPaused
     {
-        require(!frozenProjectIds[_projectId], "Base data frozen");
         baseDatas[_projectId].textIpfsHash = _ipfsHash;
 
         emit TextSet(_projectId, _ipfsHash);
@@ -361,15 +359,15 @@ contract MoonpageManager is
         address creatorAddress = baseDatas[_projectId].creatorAddress;
         uint256 leftShares = 100 - fee;
         uint256 balanceTotal = projectBalances[_projectId];
-        uint256 foundationShareInMatic = (balanceTotal * fee) / 100;
+        uint256 moonpageDevShareInMatic = (balanceTotal * fee) / 100;
         uint256 contribIndex = contributionsIndeces[_projectId];
-        AuthorShare storage authorShare = authorShares[_projectId];
+        AuthorShare memory authorShare = authorShares[_projectId];
         if (contribIndex == 0) {
             authorShare.share = leftShares;
             authorShare.shareInMatic = (balanceTotal * leftShares) / 100;
         } else {
             for (uint256 i = 0; i < contribIndex; i++) {
-                Contribution storage contrib = contributions[_projectId][i];
+                Contribution memory contrib = contributions[_projectId][i];
                 leftShares = leftShares - contrib.share;
                 contrib.shareInMatic = (balanceTotal * contrib.share) / 100;
                 if (i == (contribIndex - 1)) {
@@ -387,26 +385,26 @@ contract MoonpageManager is
         }
 
         collection.withdraw(creatorAddress, authorShare.shareInMatic);
-        collection.withdraw(factory, foundationShareInMatic);
+        collection.withdraw(moonpageDev, moonpageDevShareInMatic);
         projectBalances[_projectId] = 0;
         emit BalanceDecreased(_projectId, authorShare.shareInMatic);
-        emit BalanceDecreased(_projectId, foundationShareInMatic);
+        emit BalanceDecreased(_projectId, moonpageDevShareInMatic);
     }
 
     // ------------------
     // Admin Functions
     // ------------------
 
-    function setIsCurated(uint256 _projectId)
+    function setIsCurated(uint256 _projectId, bool _state)
         external
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
         require(existingProjectIds[_projectId], "Does not exist");
-        curatedProjectIds[_projectId] = true;
-        emit Curated(_projectId, true);
+        curatedProjectIds[_projectId] = _state;
+        emit Curated(_projectId, _state);
     }
 
-    function setTogglePaused(uint256 _projectId, bool _state)
+    function setIsPaused(uint256 _projectId, bool _state)
         external
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
@@ -415,12 +413,14 @@ contract MoonpageManager is
         emit Paused(_projectId, _state);
     }
 
-    function setContracts(address _collection, address _factory)
-        external
-        onlyRole(DEFAULT_ADMIN_ROLE)
-    {
+    function setAddresses(
+        address _collection,
+        address _factory,
+        address _deployer
+    ) external onlyRole(DEFAULT_ADMIN_ROLE) {
         collection = IMoonpageCollection(_collection);
         factory = address(_factory);
+        moonpageDev = address(_deployer);
     }
 
     function setMaxAmountEdition(uint256 _newMaxAmount)
@@ -493,6 +493,10 @@ contract MoonpageManager is
             return 0;
         }
         return 0;
+    }
+
+    function isPaused(uint256 _projectId) external view returns (bool) {
+        return pausedProjectIds[_projectId];
     }
 
     function isFrozen(uint256 _projectId) external view returns (bool) {

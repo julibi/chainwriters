@@ -23,6 +23,7 @@ contract MoonpageCollection is
     uint256 public maxMintableCreator = 4;
     IMoonpageManager public moonpageManager;
     IAuctionsManager public auctionsManager;
+    address public moonpageDev;
 
     event Minted(
         uint256 projectId,
@@ -31,7 +32,14 @@ contract MoonpageCollection is
         uint256 tokenId
     );
 
-    constructor() ERC721("Moonpage", "MP") {}
+    constructor() ERC721("Moonpage", "MP") {
+        moonpageDev = msg.sender;
+    }
+
+    modifier noNullAddress(address _address) {
+        require(_address != address(0), "Invalid 0 address");
+        _;
+    }
 
     modifier onlyDaoManager() {
         require(msg.sender == address(moonpageManager), "Not authorized");
@@ -70,7 +78,7 @@ contract MoonpageCollection is
             .readAuctionSettings(_projectId);
         require(auctionsStarted, "Auctions have not started");
         require(!auctionsEnded, "Auctions ended");
-        require(currentTokenId <= lastGenEdTokenId, "Amount exceeds cap.");
+        require(currentTokenId <= lastGenEdTokenId, "Amount exceeds cap");
         uint256 price = auctionsManager.getPrice(_projectId, mintPrice);
         require(msg.value >= price, "Value sent not sufficient");
 
@@ -148,6 +156,7 @@ contract MoonpageCollection is
         auctionsManager.startAuctions(_projectId, _discountRate);
         moonpageManager.setIsBaseDataFrozen(_projectId, true);
         moonpageManager.setPremintedByCreator(_projectId, _amountForCreator);
+        mint(_projectId, moonpageDev, 1);
         mint(_projectId, msg.sender, _amountForCreator);
     }
 
@@ -160,7 +169,8 @@ contract MoonpageCollection is
         address _receiver,
         uint256 _amount
     ) internal {
-        // todo some more requires, so that I cannot mint some randome tokens
+        bool isProjectPaused = moonpageManager.isPaused(_projectId);
+        require(!isProjectPaused, "Project paused");
         require(_receiver != address(0), "No null address");
         (
             uint256 current,
@@ -184,12 +194,14 @@ contract MoonpageCollection is
     // Admin functions
     // -----------------
 
-    function setContracts(address _mpManager, address _aManager)
-        external
-        onlyOwner
-    {
+    function setAddresses(
+        address _mpManager,
+        address _aManager,
+        address _mpDev
+    ) external onlyOwner {
         moonpageManager = IMoonpageManager(_mpManager);
         auctionsManager = IAuctionsManager(_aManager);
+        moonpageDev = address(_mpDev);
     }
 
     function setMaxMintableCreator(uint256 _maxAmount) external onlyOwner {
@@ -199,8 +211,8 @@ contract MoonpageCollection is
     function emergencyWithdraw(address _to, uint256 _amount)
         external
         onlyOwner
+        noNullAddress(_to)
     {
-        require(_to != address(0), "Cannot withdraw to the 0 address");
         payable(_to).transfer(_amount);
     }
 
@@ -216,8 +228,11 @@ contract MoonpageCollection is
     // Dao Manager functions
     // ------------------
 
-    function withdraw(address _to, uint256 _amount) external onlyDaoManager {
-        require(_to != address(0), "Cannot withdraw to the 0 address");
+    function withdraw(address _to, uint256 _amount)
+        external
+        onlyDaoManager
+        noNullAddress(_to)
+    {
         payable(_to).transfer(_amount);
     }
 
@@ -236,13 +251,13 @@ contract MoonpageCollection is
         (
             string memory title,
             ,
-            string memory genre,
-            address creatorAddress,
+            ,
+            ,
             ,
             string memory imgIpfsHash,
             string memory animationIpfsHash,
             ,
-            string memory originalLanguage,
+            ,
 
         ) = moonpageManager.readBaseData(projectId);
         string memory json = Base64.encode(
