@@ -1,4 +1,4 @@
-# Moonpage DAO Smart Contract Architecture
+# Moonpage DAO
 
 Moonpage DAO is an NFT launchpad that allows creators to publish their text as NFT project and sell it. Users can buy these NFTs and get access to the text with it.
 Thechically, Moonpage DAO is ONE ERC721 collection in which the same amount of tokenIDs are reserved for each project. When the first user creates a project the tokenIds 1 - 1000 are reserved for her project, the next project will be for IDs 1001 - 2000 etc. ...
@@ -9,9 +9,11 @@ We aim to take 7% royalties. 70% of those 7% go to the creator, 30% goes to Moon
 a) Opensea: we will be setting the royalty fee in the UI of Opensea and set an address as receiver. After the launch, we will setup a service to query all secondary sales to know who should get what about of royalties. We will deploy a contract from which all creators can claim their share of Opensea royalties with the signature they get from our BE service.
 b) ERC2981: whenever a project gets created we deploy a payment splitter that splits shares 70/30, the receivers are the creator address and a Moonpage dev fund address. The splitter contract address is saved for each project inside the MoonpageManager. The `royaltyInfo` function inside the MoonpageCollection returns the splitter and the royaltyAmount. Of course, both vary depending on the project.
 
-# Moonpage DAO Smart Contract Architecture
+## Moonpage DAO Smart Contract Architecture
 
 The Moonpage DAO consists of 6 contracts:
+
+![architecture](https://github.com/julibi/chainwriters/blob/refactor/one-collection/architecture.jpg?raw=true)
 
 - MoonpageCollection
   - Non-Upgradable
