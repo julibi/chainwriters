@@ -13,7 +13,7 @@ b) ERC2981: whenever a project gets created we deploy a payment splitter that sp
 
 The Moonpage DAO consists of 6 contracts:
 
-![architecture](https://github.com/julibi/chainwriters/blob/refactor/one-collection/architecture.png?raw=true)
+![architecture](./architecture.png?raw=true)
 
 - MoonpageCollection
   - Non-Upgradable
