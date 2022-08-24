@@ -1,13 +1,15 @@
 {
-  "name": "chainwriters",
+  "name": "moonpage-graphs",
   "license": "UNLICENSED",
   "scripts": {
     "codegen": "graph codegen",
     "build": "graph build",
-    "deploy": "graph deploy --product hosted-service julibi/Chainwriters",
-    "create-local": "graph create --node http://localhost:8020/ chainwriters",
-    "remove-local": "graph remove --node http://localhost:8020/ chainwriters",
-    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 chainwriters"
+    "authenticate": "graph auth --product hosted-service b56f208fec5e442ab92a4d4fd809c228",
+    "deployOriginal": "graph deploy --node https://api.thegraph.com/deploy/ julibi/moonpage-graphs",
+    "deploy": "graph deploy --product hosted-service julibi/moonpage-graphs",
+    "create-local": "graph create --node http://localhost:8020/ julibi/moonpage-graphs",
+    "remove-local": "graph remove --node http://localhost:8020/ julibi/moonpage-graphs",
+    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 julibi/moonpage-graphs"
   },
   "dependencies": {
     "@graphprotocol/graph-cli": "0.26.0",

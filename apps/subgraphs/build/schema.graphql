@@ -1,37 +1,15 @@
-type Contribution @entity {
+type Project @entity {
   id: ID!
-  address: Bytes!
-  share: BigInt!
-  role: String
-  dao: Dao!
-}
-
-type Edition @entity {
-  id: ID!
-  # totalSupply: BigInt! - not working
-  maxSupply: BigInt!
-  mintPrice: BigInt!
-  dao: Dao!
-  # only available for GenEd
-  # expiresAt: BigInt - not working
-  # premintedByAuthor: BigInt - not working
-}
-
-type Dao @entity {
-  id: ID!
-  author: Bytes!
-  address: Bytes!
+  creator: Bytes!
+  royaltiesSplitter: Bytes!
   createdAt: BigInt!
   title: String!
   textIpfsHash: String!
   imgIpfsHash: String
   blurbIpfsHash: String
+  originalLanguage: String
   subtitle: String
   genre: String
-  metadataCID: String
-  editions: [Edition!] @derivedFrom(field: "dao")
   auctionsStarted: Boolean!
   auctionsEnded: Boolean!
-  paused: Boolean!
-  contributions: [Contribution!] @derivedFrom(field: "dao")
 }

@@ -1,68 +1,34 @@
 specVersion: 0.0.2
-description: Chainwriters graph
-repository: https://github.com/julibi/chainwriters
 schema:
   file: ./schema.graphql
 dataSources:
-  - kind: ethereum/contract
-    name: ProjectFactory
+  - kind: ethereum
+    name: MoonpageFactory
     network: mumbai
     source:
-      address: '0xe022FbD6933135FAdc58581A092656C951eA1217'
-      abi: ProjectFactory
-      startBlock: 26726600
+      address: '0x00ceFed11bA9F81bD8F64F10e896aA05c4F520f4'
+      abi: MoonpageFactory
+      startBlock: 27754817
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
       language: wasm/assemblyscript
       entities:
-        - Dao
-        - Edition
+        - Project
       abis:
-        - name: ProjectFactory
-          file: ./abis/ProjectFactory.json
-        - name: ProjectDao
-          file: ./abis/ProjectDao.json
+        - name: MoonpageFactory
+          file: ./abis/MoonpageFactory.json
       eventHandlers:
-        - event: DaoCreated(indexed address,indexed address,string,string,uint256,uint256)
-          handler: handleDaoCreated
+        - event: AdminChanged(address,address)
+          handler: handleAdminChanged
+        - event: Paused(address)
+          handler: handlePaused
+        - event: ProjectCreated(address,address,uint256,string,string,string,uint256,uint256)
+          handler: handleProjectCreated
+        - event: Received(address,uint256)
+          handler: handleReceived
+        - event: Unpaused(address)
+          handler: handleUnpaused
+        - event: Upgraded(indexed address)
+          handler: handleUpgraded
       file: ./src/mapping.ts
-templates:
-  - kind: ethereum/contract
-    name: ProjectDao
-    network: mumbai
-    source:
-      abi: ProjectDao
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.5
-      language: wasm/assemblyscript
-      file: ./src/mapping.ts
-      entities:
-        - Dao
-        - Contribution
-        - Edition
-      abis:
-        - name: ProjectDao
-          file: ./abis/ProjectDao.json
-      eventHandlers:
-        - event: TextSet(string)
-          handler: handleTextSet
-        - event: Configured(string,string,string,string)
-          handler: handleConfigured
-        - event: ContributorAdded(address,uint256,string)
-          handler: handleContributorAdded
-        - event: AuctionsStarted()
-          handler: handleAuctionsStarted
-        - event: AuctionsEnded()
-          handler: handleAuctionsEnded
-        - event: AuthorMinted(uint256)
-          handler: handleAuthorMinted
-        - event: Minted(uint256,uint256)
-          handler: handleMinted
-        - event: ExpirationSet(uint256,uint256)
-          handler: handleExpirationSet
-        - event: NextEditionEnabled(uint256,uint256,uint256)
-          handler: handleNextEditionEnabled
-        - event: URISet(string)
-          handler: handleURISet
