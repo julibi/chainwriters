@@ -184,7 +184,6 @@ describe("Project", function () {
     // allowlist and blacklist
     const isClosedForPublic = await Factory.isAllowlistOnly();
     expect(isClosedForPublic).to.equal(true);
-    await FactoryAsDeployer.updateAllowlist(creator.address, false);
 
     await expect(
       FactoryAsCreator.createProject(
@@ -218,6 +217,10 @@ describe("Project", function () {
         firstEditionMax
       )
     ).to.not.reverted;
+
+    const bla = await Manager.baseDatas(projectId);
+    // TODO: check if bla.royaltiesSplitter is the same as in royaltyInfo
+    console.log("----------------", { bla });
   });
 
   it("project creation updates data in Manager and AuctionsManager correctly", async () => {
