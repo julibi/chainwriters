@@ -44,6 +44,7 @@ export function handleProjectCreated(event: ProjectCreated): void {
   project.textIpfsHash = event.params.textIpfsHash;
   project.auctionsStarted = false;
   project.auctionsEnded = false;
+  project.genre = 'comedy'; // test change
   project.save();
 }
 
