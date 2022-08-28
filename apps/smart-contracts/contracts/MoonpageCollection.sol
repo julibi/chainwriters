@@ -185,7 +185,8 @@ contract MoonpageCollection is
 
         ) = moonpageManager.readEditionData(_projectId);
         for (uint256 i = 0; i < _amount; i++) {
-            if (currentTokenId <= currentEdLastTokenId) {
+            // TODO: do I need more requires for this?
+            if ((currentTokenId + i) <= currentEdLastTokenId) {
                 _safeMint(_receiver, currentTokenId + i);
                 emit Minted(_projectId, current, _receiver, currentTokenId + i);
                 moonpageManager.increaseCurrentTokenId(_projectId);

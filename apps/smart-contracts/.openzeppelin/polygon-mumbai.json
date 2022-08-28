@@ -260,6 +260,66 @@
       "address": "0xb84290Fb5B9D07c65b6eA0B6D8697Cd29aD6599E",
       "txHash": "0x117d97325f7c8dcf6c88312c78b3e94f523c556ddda65fb8634817c00ae372ee",
       "kind": "uups"
+    },
+    {
+      "address": "0x68793E41d6Ae60D423aB86BBf8f79FD0602e7961",
+      "txHash": "0x2359218080a2d0360e583f0ed61d11737c71546f633227628db6965a0812fb55",
+      "kind": "uups"
+    },
+    {
+      "address": "0x7cc2d4484E73A65095CA47dCd6b04aAD264a5Bc6",
+      "txHash": "0xad20ee995033c6285e2143891de3ac2aa7d82b71c374984e23b04a159c81f134",
+      "kind": "uups"
+    },
+    {
+      "address": "0x726c48991872fdeE91b9e91b4262996E9A4a4073",
+      "txHash": "0xfccf10c2906f40e1f86275c3623d05378f0f01a03f2c306cf75833f8dccfbd33",
+      "kind": "uups"
+    },
+    {
+      "address": "0x1916c175082337F551ECDE7D5d6E717F9BC28ac7",
+      "txHash": "0x82c173812ca31cd241dc53442b2f73010f40a906b09d676f2115efde9bd17df4",
+      "kind": "uups"
+    },
+    {
+      "address": "0x85bc5fADbf3aDd561982b66b060DD453F1e7e182",
+      "txHash": "0xb5849b360d425e05897b6b3d38d27938883da0d35e83bdefd9018e9e59ef532f",
+      "kind": "uups"
+    },
+    {
+      "address": "0xc4aa16B6d37B273a79c6A4b980880E442624b9d9",
+      "txHash": "0xe9e81e7f8cf2e370299d29b42436d59d7260ab06362e6b750def6fce04c4d9c6",
+      "kind": "uups"
+    },
+    {
+      "address": "0xcBA4db53E69DAb4E6587D8aBB451b7B75E599dEc",
+      "txHash": "0x40f440b7a79ac25affffc0c7668d095d231bd1dd5fb06b829976479f0ed76a85",
+      "kind": "uups"
+    },
+    {
+      "address": "0x53387ebfff18fA96e4bd6Cf5469133a9724A9B6C",
+      "txHash": "0x59ed33771f3c08ccc3e3f2b6f11f53e0893b6d8df1a71d131c14cbe7ef1d0f48",
+      "kind": "uups"
+    },
+    {
+      "address": "0x955ca2a17c0866e58d12A0b92b50e901445CD405",
+      "txHash": "0xad31c117555cad570b586a51e8e563dbb0b75f1f596ba806246e23a3dd33fb66",
+      "kind": "uups"
+    },
+    {
+      "address": "0x3fed7ef06D8bd8e033dDb63c7Caf0eC4224B397b",
+      "txHash": "0x81d0f5787065b8ddeee58dc17f2f673734bd0fc1df3ed0ff4740941e83f9bae7",
+      "kind": "uups"
+    },
+    {
+      "address": "0x9e36c1d00d9F8Eb4EE31A5E5D963D2abE8e6F97b",
+      "txHash": "0x2b8dcb1bcfba73c48b7ce58e407fa5a492d88251761edf0d9061f95600e77ba6",
+      "kind": "uups"
+    },
+    {
+      "address": "0x70254e350288d0D53123f7A1344584249A51a61E",
+      "txHash": "0xa1960d602c9ff567c5312d73f6742781116bd7ea1cb732761185119ac6c115a5",
+      "kind": "uups"
     }
   ],
   "impls": {
@@ -2930,6 +2990,507 @@
           "t_mapping(t_uint256,t_address)": {
             "label": "mapping(uint256 => address)",
             "numberOfBytes": "32"
+          },
+          "t_struct(RoleData)34_storage": {
+            "label": "struct AccessControlUpgradeable.RoleData",
+            "members": [
+              {
+                "label": "members",
+                "type": "t_mapping(t_address,t_bool)",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "adminRole",
+                "type": "t_bytes32",
+                "offset": 0,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "dd7e7e933c98ffa390b0917bbb518d97cf71a5d8ab1f6dd3cf7cd17a7de4e3dd": {
+      "address": "0xe036c6ABB34f10Ff09BbfFC8ff4c8973281C0AB5",
+      "txHash": "0x3d85101dc03531294033661b1e8cd3dc5f3c8c7da20fcd1972a5a20c2b2d7dd7",
+      "layout": {
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_paused",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_bool",
+            "contract": "PausableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol:29"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "PausableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol:116"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ERC165Upgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeable.sol:41"
+          },
+          {
+            "label": "_roles",
+            "offset": 0,
+            "slot": "151",
+            "type": "t_mapping(t_bytes32,t_struct(RoleData)34_storage)",
+            "contract": "AccessControlUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol:61"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "152",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "AccessControlUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol:259"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "201",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ERC1967UpgradeUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/ERC1967/ERC1967UpgradeUpgradeable.sol:211"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "251",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "UUPSUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol:107"
+          },
+          {
+            "label": "maxAmountEdition",
+            "offset": 0,
+            "slot": "301",
+            "type": "t_uint256",
+            "contract": "MoonpageManager",
+            "src": "contracts/MoonpageManager.sol:20"
+          },
+          {
+            "label": "minPrice",
+            "offset": 0,
+            "slot": "302",
+            "type": "t_uint256",
+            "contract": "MoonpageManager",
+            "src": "contracts/MoonpageManager.sol:21"
+          },
+          {
+            "label": "projectsLength",
+            "offset": 0,
+            "slot": "303",
+            "type": "t_uint256",
+            "contract": "MoonpageManager",
+            "src": "contracts/MoonpageManager.sol:22"
+          },
+          {
+            "label": "factory",
+            "offset": 0,
+            "slot": "304",
+            "type": "t_address",
+            "contract": "MoonpageManager",
+            "src": "contracts/MoonpageManager.sol:23"
+          },
+          {
+            "label": "moonpageDev",
+            "offset": 0,
+            "slot": "305",
+            "type": "t_address",
+            "contract": "MoonpageManager",
+            "src": "contracts/MoonpageManager.sol:24"
+          },
+          {
+            "label": "fee",
+            "offset": 0,
+            "slot": "306",
+            "type": "t_uint256",
+            "contract": "MoonpageManager",
+            "src": "contracts/MoonpageManager.sol:25"
+          },
+          {
+            "label": "collection",
+            "offset": 0,
+            "slot": "307",
+            "type": "t_contract(IMoonpageCollection)11247",
+            "contract": "MoonpageManager",
+            "src": "contracts/MoonpageManager.sol:26"
+          },
+          {
+            "label": "baseDatas",
+            "offset": 0,
+            "slot": "308",
+            "type": "t_mapping(t_uint256,t_struct(BaseData)9391_storage)",
+            "contract": "MoonpageManager",
+            "src": "contracts/MoonpageManager.sol:61"
+          },
+          {
+            "label": "authorShares",
+            "offset": 0,
+            "slot": "309",
+            "type": "t_mapping(t_uint256,t_struct(AuthorShare)9396_storage)",
+            "contract": "MoonpageManager",
+            "src": "contracts/MoonpageManager.sol:62"
+          },
+          {
+            "label": "editions",
+            "offset": 0,
+            "slot": "310",
+            "type": "t_mapping(t_uint256,t_struct(Edition)9420_storage)",
+            "contract": "MoonpageManager",
+            "src": "contracts/MoonpageManager.sol:63"
+          },
+          {
+            "label": "contributions",
+            "offset": 0,
+            "slot": "311",
+            "type": "t_mapping(t_uint256,t_mapping(t_uint256,t_struct(Contribution)9405_storage))",
+            "contract": "MoonpageManager",
+            "src": "contracts/MoonpageManager.sol:64"
+          },
+          {
+            "label": "contributionsIndeces",
+            "offset": 0,
+            "slot": "312",
+            "type": "t_mapping(t_uint256,t_uint8)",
+            "contract": "MoonpageManager",
+            "src": "contracts/MoonpageManager.sol:65"
+          },
+          {
+            "label": "projectBalances",
+            "offset": 0,
+            "slot": "313",
+            "type": "t_mapping(t_uint256,t_uint256)",
+            "contract": "MoonpageManager",
+            "src": "contracts/MoonpageManager.sol:66"
+          },
+          {
+            "label": "existingProjectIds",
+            "offset": 0,
+            "slot": "314",
+            "type": "t_mapping(t_uint256,t_bool)",
+            "contract": "MoonpageManager",
+            "src": "contracts/MoonpageManager.sol:67"
+          },
+          {
+            "label": "curatedProjectIds",
+            "offset": 0,
+            "slot": "315",
+            "type": "t_mapping(t_uint256,t_bool)",
+            "contract": "MoonpageManager",
+            "src": "contracts/MoonpageManager.sol:68"
+          },
+          {
+            "label": "frozenProjectIds",
+            "offset": 0,
+            "slot": "316",
+            "type": "t_mapping(t_uint256,t_bool)",
+            "contract": "MoonpageManager",
+            "src": "contracts/MoonpageManager.sol:69"
+          },
+          {
+            "label": "pausedProjectIds",
+            "offset": 0,
+            "slot": "317",
+            "type": "t_mapping(t_uint256,t_bool)",
+            "contract": "MoonpageManager",
+            "src": "contracts/MoonpageManager.sol:70"
+          },
+          {
+            "label": "editionRanges",
+            "offset": 0,
+            "slot": "318",
+            "type": "t_mapping(t_uint256,t_mapping(t_uint256,t_uint256))",
+            "contract": "MoonpageManager",
+            "src": "contracts/MoonpageManager.sol:71"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_bytes32": {
+            "label": "bytes32",
+            "numberOfBytes": "32"
+          },
+          "t_contract(IMoonpageCollection)11247": {
+            "label": "contract IMoonpageCollection",
+            "numberOfBytes": "20"
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_bytes32,t_struct(RoleData)34_storage)": {
+            "label": "mapping(bytes32 => struct AccessControlUpgradeable.RoleData)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_bool)": {
+            "label": "mapping(uint256 => bool)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_mapping(t_uint256,t_struct(Contribution)9405_storage))": {
+            "label": "mapping(uint256 => mapping(uint256 => struct MoonpageManager.Contribution))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_mapping(t_uint256,t_uint256))": {
+            "label": "mapping(uint256 => mapping(uint256 => uint256))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_struct(AuthorShare)9396_storage)": {
+            "label": "mapping(uint256 => struct MoonpageManager.AuthorShare)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_struct(BaseData)9391_storage)": {
+            "label": "mapping(uint256 => struct MoonpageManager.BaseData)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_struct(Contribution)9405_storage)": {
+            "label": "mapping(uint256 => struct MoonpageManager.Contribution)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_struct(Edition)9420_storage)": {
+            "label": "mapping(uint256 => struct MoonpageManager.Edition)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_uint256)": {
+            "label": "mapping(uint256 => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_uint8)": {
+            "label": "mapping(uint256 => uint8)",
+            "numberOfBytes": "32"
+          },
+          "t_string_storage": {
+            "label": "string",
+            "numberOfBytes": "32"
+          },
+          "t_struct(AuthorShare)9396_storage": {
+            "label": "struct MoonpageManager.AuthorShare",
+            "members": [
+              {
+                "label": "share",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "shareInMatic",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_struct(BaseData)9391_storage": {
+            "label": "struct MoonpageManager.BaseData",
+            "members": [
+              {
+                "label": "title",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "subtitle",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "genre",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "creatorAddress",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "3"
+              },
+              {
+                "label": "royaltiesSplitter",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "4"
+              },
+              {
+                "label": "textIpfsHash",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "5"
+              },
+              {
+                "label": "imgIpfsHash",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "6"
+              },
+              {
+                "label": "animationIpfsHash",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "7"
+              },
+              {
+                "label": "blurbIpfsHash",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "8"
+              },
+              {
+                "label": "originalLanguage",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "9"
+              },
+              {
+                "label": "premintedByCreator",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "10"
+              }
+            ],
+            "numberOfBytes": "352"
+          },
+          "t_struct(Contribution)9405_storage": {
+            "label": "struct MoonpageManager.Contribution",
+            "members": [
+              {
+                "label": "shareRecipient",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "role",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "share",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "shareInMatic",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "3"
+              }
+            ],
+            "numberOfBytes": "128"
+          },
+          "t_struct(Edition)9420_storage": {
+            "label": "struct MoonpageManager.Edition",
+            "members": [
+              {
+                "label": "current",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "mintPrice",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "startTokenId",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "currentTokenId",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "3"
+              },
+              {
+                "label": "lastGenEdTokenId",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "4"
+              },
+              {
+                "label": "currentEdLastTokenId",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "5"
+              },
+              {
+                "label": "endTokenId",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "6"
+              }
+            ],
+            "numberOfBytes": "224"
           },
           "t_struct(RoleData)34_storage": {
             "label": "struct AccessControlUpgradeable.RoleData",

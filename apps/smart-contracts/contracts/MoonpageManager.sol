@@ -282,8 +282,8 @@ contract MoonpageManager is
         uint256 _newEdMintPrice
     ) external onlyCreator(_projectId) whenNotPaused {
         require(
-            editions[_projectId].currentTokenId >=
-                editions[_projectId].currentEdLastTokenId,
+            editions[_projectId].currentTokenId ==
+                editions[_projectId].currentEdLastTokenId + 1,
             "Current edition has not sold out"
         );
         require(
