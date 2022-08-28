@@ -168,6 +168,16 @@ describe("Project", function () {
     // CREATE FIRST PROJECT - has Project ID 1
     // -----------------
 
+    await expect(
+      FactoryAsCreator.createProject(
+        title,
+        textIpfsHash,
+        originalLanguage,
+        myMintPrice,
+        100
+      )
+    ).to.revertedWith("Not on allowlist");
+
     await FactoryAsDeployer.updateAllowlist(creator.address, true);
     await expect(
       FactoryAsCreator.createProject(
@@ -185,17 +195,7 @@ describe("Project", function () {
     const isClosedForPublic = await Factory.isAllowlistOnly();
     expect(isClosedForPublic).to.equal(true);
 
-    await expect(
-      FactoryAsCreator.createProject(
-        title,
-        textIpfsHash,
-        originalLanguage,
-        myMintPrice,
-        100
-      )
-    ).to.revertedWith("Not on allowlist");
-
-    await FactoryAsDeployer.updateAllowlist(creator.address, true);
+    await FactoryAsDeployer.setIsAllowlistOnly(false);
 
     // first project creation
     await expect(
@@ -216,11 +216,9 @@ describe("Project", function () {
         myMintPrice,
         firstEditionMax
       )
-    ).to.not.reverted;
+    ).not.to.reverted;
 
-    const bla = await Manager.baseDatas(projectId);
     // TODO: check if bla.royaltiesSplitter is the same as in royaltyInfo
-    console.log("----------------", { bla });
   });
 
   it("project creation updates data in Manager and AuctionsManager correctly", async () => {

@@ -1,4 +1,4 @@
-specVersion: 0.0.2
+specVersion: 0.0.4
 schema:
   file: schema.graphql
 dataSources:
@@ -6,9 +6,9 @@ dataSources:
     name: MoonpageFactory
     network: mumbai
     source:
-      address: "0x00ceFed11bA9F81bD8F64F10e896aA05c4F520f4"
+      address: "0x0E041cDC54c7C88d7c207736b7991815a4d0716e"
       abi: MoonpageFactory
-      startBlock: 27754817
+      startBlock: 27816033
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -19,36 +19,31 @@ dataSources:
         - name: MoonpageFactory
           file: MoonpageFactory/abis/MoonpageFactory.json
       eventHandlers:
-        - event: AdminChanged(address,address)
-          handler: handleAdminChanged
-        - event: Paused(address)
-          handler: handlePaused
         - event: ProjectCreated(address,address,uint256,string,string,string,uint256,uint256)
           handler: handleProjectCreated
         - event: Received(address,uint256)
           handler: handleReceived
-        - event: Unpaused(address)
-          handler: handleUnpaused
-        - event: Upgraded(indexed address)
-          handler: handleUpgraded
       file: MoonpageFactory/MoonpageFactory.wasm
   - kind: ethereum
     name: MoonpageManager
     network: mumbai
     source:
-      address: "0xC6A244B65398b6e019168E72530AdbbD9aba1555"
+      address: "0x38bA286db48c9b6593d35EA4c3c607689097a316"
       abi: MoonpageManager
-      startBlock: 27754817
+      startBlock: 27816033
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
       language: wasm/assemblyscript
       entities:
         - Project
+        - Edition
       abis:
         - name: MoonpageManager
           file: MoonpageManager/abis/MoonpageManager.json
       eventHandlers:
         - event: Configured(uint256,string,string,string,string,string)
           handler: handleProjectConfigured
+        - event: NextEditionEnabled(uint256,uint256,uint256,uint256,uint256,uint256)
+          handler: handleNextEditionEnabled
       file: MoonpageFactory/MoonpageFactory.wasm

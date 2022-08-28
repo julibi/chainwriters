@@ -1,3 +1,12 @@
+type Edition @entity {
+  id: ID!
+  project: Project!
+  edition: BigInt!
+  startId: BigInt
+  endId: BigInt
+  mintPrice: BigInt
+}
+
 type Project @entity {
   id: ID!
   creator: Bytes!
@@ -17,4 +26,6 @@ type Project @entity {
   auctionsEnded: Boolean!
   startId: BigInt
   endId: BigInt
+  currentTokenId: BigInt
+  editions: [Edition!] @derivedFrom(field: "project")
 }

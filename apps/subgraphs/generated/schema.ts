@@ -11,20 +11,112 @@ import {
   BigDecimal
 } from "@graphprotocol/graph-ts";
 
+export class Edition extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save Edition entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save Edition entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("Edition", id.toString(), this);
+    }
+  }
+
+  static load(id: string): Edition | null {
+    return changetype<Edition | null>(store.get("Edition", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get project(): string {
+    let value = this.get("project");
+    return value!.toString();
+  }
+
+  set project(value: string) {
+    this.set("project", Value.fromString(value));
+  }
+
+  get edition(): BigInt {
+    let value = this.get("edition");
+    return value!.toBigInt();
+  }
+
+  set edition(value: BigInt) {
+    this.set("edition", Value.fromBigInt(value));
+  }
+
+  get startId(): BigInt | null {
+    let value = this.get("startId");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set startId(value: BigInt | null) {
+    if (!value) {
+      this.unset("startId");
+    } else {
+      this.set("startId", Value.fromBigInt(<BigInt>value));
+    }
+  }
+
+  get endId(): BigInt | null {
+    let value = this.get("endId");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set endId(value: BigInt | null) {
+    if (!value) {
+      this.unset("endId");
+    } else {
+      this.set("endId", Value.fromBigInt(<BigInt>value));
+    }
+  }
+
+  get mintPrice(): BigInt | null {
+    let value = this.get("mintPrice");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set mintPrice(value: BigInt | null) {
+    if (!value) {
+      this.unset("mintPrice");
+    } else {
+      this.set("mintPrice", Value.fromBigInt(<BigInt>value));
+    }
+  }
+}
+
 export class Project extends Entity {
   constructor(id: string) {
     super();
     this.set("id", Value.fromString(id));
-
-    this.set("creator", Value.fromBytes(Bytes.empty()));
-    this.set("royaltiesSplitter", Value.fromBytes(Bytes.empty()));
-    this.set("createdAt", Value.fromBigInt(BigInt.zero()));
-    this.set("title", Value.fromString(""));
-    this.set("textIpfsHash", Value.fromString(""));
-    this.set("initialMintPrice", Value.fromBigInt(BigInt.zero()));
-    this.set("firstEditionAmount", Value.fromBigInt(BigInt.zero()));
-    this.set("auctionsStarted", Value.fromBoolean(false));
-    this.set("auctionsEnded", Value.fromBoolean(false));
   }
 
   save(): void {
@@ -267,6 +359,40 @@ export class Project extends Entity {
       this.unset("endId");
     } else {
       this.set("endId", Value.fromBigInt(<BigInt>value));
+    }
+  }
+
+  get currentTokenId(): BigInt | null {
+    let value = this.get("currentTokenId");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set currentTokenId(value: BigInt | null) {
+    if (!value) {
+      this.unset("currentTokenId");
+    } else {
+      this.set("currentTokenId", Value.fromBigInt(<BigInt>value));
+    }
+  }
+
+  get editions(): Array<string> | null {
+    let value = this.get("editions");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toStringArray();
+    }
+  }
+
+  set editions(value: Array<string> | null) {
+    if (!value) {
+      this.unset("editions");
+    } else {
+      this.set("editions", Value.fromStringArray(<Array<string>>value));
     }
   }
 }

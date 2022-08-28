@@ -1,43 +1,20 @@
 import { log } from '@graphprotocol/graph-ts';
 import { BigInt } from '@graphprotocol/graph-ts';
 import {
-  AdminChanged,
   Paused,
   ProjectCreated,
   Received,
-  RoleAdminChanged,
-  RoleGranted,
-  RoleRevoked,
-  Unpaused,
-  Upgraded,
 } from '../generated/MoonpageFactory/MoonpageFactory';
-import { Configured } from '../generated/MoonpageManager/MoonpageManager';
-import { Project } from '../generated/schema';
-
-export function handleAdminChanged(event: AdminChanged): void {
-  // // Entities can be loaded from the store using a string ID; this ID
-  // // needs to be unique across all entities of the same type
-  // let entity = ExampleEntity.load(event.transaction.from.toHex());
-  // // Entities only exist after they have been saved to the store;
-  // // `null` checks allow to create entities on demand
-  // if (!entity) {
-  //   entity = new ExampleEntity(event.transaction.from.toHex());
-  //   // Entity fields can be set using simple assignments
-  //   entity.count = BigInt.fromI32(0);
-  // }
-  // // BigInt and BigDecimal math are supported
-  // entity.count = entity.count + BigInt.fromI32(1);
-  // // Entity fields can be set based on event parameters
-  // entity.previousAdmin = event.params.previousAdmin;
-  // entity.newAdmin = event.params.newAdmin;
-  // // Entities can be written to the store with `.save()`
-  // entity.save();
-}
+import {
+  Configured,
+  NextEditionEnabled,
+} from '../generated/MoonpageManager/MoonpageManager';
+import { Edition, Project } from '../generated/schema';
 
 export function handlePaused(event: Paused): void {}
 
 export function handleProjectCreated(event: ProjectCreated): void {
-  let project = new Project(event.params.projectId.toHexString());
+  let project = new Project(event.params.projectId.toString());
   project.creator = event.params.creator;
   project.royaltiesSplitter = event.params.royaltiesSplitter;
   project.createdAt = event.block.timestamp;
@@ -51,12 +28,10 @@ export function handleProjectCreated(event: ProjectCreated): void {
 }
 
 export function handleProjectConfigured(event: Configured): void {
-  let projectId = event.params.projectId.toHex();
+  let projectId = event.params.projectId.toString();
   let project = Project.load(projectId);
   if (!project) {
-    throw new Error(
-      `Could not find project with ID ${event.params.projectId.toHexString()}`
-    );
+    throw new Error(`Could not find project with ID`);
   }
   project.imgIpfsHash = event.params.imgHash;
   project.animationIpfsHash = event.params.animationHash;
@@ -66,14 +41,19 @@ export function handleProjectConfigured(event: Configured): void {
   project.save();
 }
 
+export function handleNextEditionEnabled(event: NextEditionEnabled): void {
+  let edition = new Edition(
+    event.transaction.hash.toHexString() + event.params.editionId.toHexString()
+  );
+  if (!edition) {
+    throw new Error('Could not create edition for project');
+  }
+  edition.project = event.params.projectId.toString();
+  edition.edition = event.params.editionId;
+  edition.startId = event.params.startId;
+  edition.endId = event.params.endId;
+  edition.mintPrice = event.params.mintPrice;
+  edition.save();
+}
+
 export function handleReceived(event: Received): void {}
-
-export function handleRoleAdminChanged(event: RoleAdminChanged): void {}
-
-export function handleRoleGranted(event: RoleGranted): void {}
-
-export function handleRoleRevoked(event: RoleRevoked): void {}
-
-export function handleUnpaused(event: Unpaused): void {}
-
-export function handleUpgraded(event: Upgraded): void {}
