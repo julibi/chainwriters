@@ -115,6 +115,23 @@ export class Project extends Entity {
     }
   }
 
+  get animationIpfsHash(): string | null {
+    let value = this.get("animationIpfsHash");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set animationIpfsHash(value: string | null) {
+    if (!value) {
+      this.unset("animationIpfsHash");
+    } else {
+      this.set("animationIpfsHash", Value.fromString(<string>value));
+    }
+  }
+
   get blurbIpfsHash(): string | null {
     let value = this.get("blurbIpfsHash");
     if (!value || value.kind == ValueKind.NULL) {

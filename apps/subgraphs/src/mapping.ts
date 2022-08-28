@@ -51,7 +51,19 @@ export function handleProjectCreated(event: ProjectCreated): void {
 }
 
 export function handleProjectConfigured(event: Configured): void {
-  // event.params.projectId;
+  let projectId = event.params.projectId.toHex();
+  let project = Project.load(projectId);
+  if (!project) {
+    throw new Error(
+      `Could not find project with ID ${event.params.projectId.toHexString()}`
+    );
+  }
+  project.imgIpfsHash = event.params.imgHash;
+  project.animationIpfsHash = event.params.animationHash;
+  project.blurbIpfsHash = event.params.blurbHash;
+  project.genre = event.params.newGenre;
+  project.subtitle = event.params.newSubtitle;
+  project.save();
 }
 
 export function handleReceived(event: Received): void {}

@@ -6,6 +6,7 @@ type Project @entity {
   title: String!
   textIpfsHash: String!
   imgIpfsHash: String
+  animationIpfsHash: String
   blurbIpfsHash: String
   initialMintPrice: BigInt!
   firstEditionAmount: BigInt!
