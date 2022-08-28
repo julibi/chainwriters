@@ -11,6 +11,7 @@ import {
   Unpaused,
   Upgraded,
 } from '../generated/MoonpageFactory/MoonpageFactory';
+import { Configured } from '../generated/MoonpageManager/MoonpageManager';
 import { Project } from '../generated/schema';
 
 export function handleAdminChanged(event: AdminChanged): void {
@@ -42,10 +43,15 @@ export function handleProjectCreated(event: ProjectCreated): void {
   project.createdAt = event.block.timestamp;
   project.title = event.params.title;
   project.textIpfsHash = event.params.textIpfsHash;
+  project.firstEditionAmount = event.params.firstEditionAmount;
+  project.initialMintPrice = event.params.initialMintPrice;
   project.auctionsStarted = false;
   project.auctionsEnded = false;
-  project.genre = 'comedy'; // test change
   project.save();
+}
+
+export function handleProjectConfigured(event: Configured): void {
+  // event.params.projectId;
 }
 
 export function handleReceived(event: Received): void {}

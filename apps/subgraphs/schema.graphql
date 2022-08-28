@@ -7,9 +7,13 @@ type Project @entity {
   textIpfsHash: String!
   imgIpfsHash: String
   blurbIpfsHash: String
+  initialMintPrice: BigInt!
+  firstEditionAmount: BigInt!
   originalLanguage: String
   subtitle: String
   genre: String
   auctionsStarted: Boolean!
   auctionsEnded: Boolean!
+  startId: BigInt
+  endId: BigInt
 }

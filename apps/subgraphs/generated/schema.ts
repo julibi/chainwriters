@@ -21,6 +21,8 @@ export class Project extends Entity {
     this.set("createdAt", Value.fromBigInt(BigInt.zero()));
     this.set("title", Value.fromString(""));
     this.set("textIpfsHash", Value.fromString(""));
+    this.set("initialMintPrice", Value.fromBigInt(BigInt.zero()));
+    this.set("firstEditionAmount", Value.fromBigInt(BigInt.zero()));
     this.set("auctionsStarted", Value.fromBoolean(false));
     this.set("auctionsEnded", Value.fromBoolean(false));
   }
@@ -130,6 +132,24 @@ export class Project extends Entity {
     }
   }
 
+  get initialMintPrice(): BigInt {
+    let value = this.get("initialMintPrice");
+    return value!.toBigInt();
+  }
+
+  set initialMintPrice(value: BigInt) {
+    this.set("initialMintPrice", Value.fromBigInt(value));
+  }
+
+  get firstEditionAmount(): BigInt {
+    let value = this.get("firstEditionAmount");
+    return value!.toBigInt();
+  }
+
+  set firstEditionAmount(value: BigInt) {
+    this.set("firstEditionAmount", Value.fromBigInt(value));
+  }
+
   get originalLanguage(): string | null {
     let value = this.get("originalLanguage");
     if (!value || value.kind == ValueKind.NULL) {
@@ -197,5 +217,39 @@ export class Project extends Entity {
 
   set auctionsEnded(value: boolean) {
     this.set("auctionsEnded", Value.fromBoolean(value));
+  }
+
+  get startId(): BigInt | null {
+    let value = this.get("startId");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set startId(value: BigInt | null) {
+    if (!value) {
+      this.unset("startId");
+    } else {
+      this.set("startId", Value.fromBigInt(<BigInt>value));
+    }
+  }
+
+  get endId(): BigInt | null {
+    let value = this.get("endId");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set endId(value: BigInt | null) {
+    if (!value) {
+      this.unset("endId");
+    } else {
+      this.set("endId", Value.fromBigInt(<BigInt>value));
+    }
   }
 }

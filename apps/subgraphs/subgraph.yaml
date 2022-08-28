@@ -32,3 +32,23 @@ dataSources:
         - event: Upgraded(indexed address)
           handler: handleUpgraded
       file: ./src/mapping.ts
+  - kind: ethereum
+    name: MoonpageManager
+    network: mumbai
+    source:
+      address: '0xC6A244B65398b6e019168E72530AdbbD9aba1555'
+      abi: MoonpageManager
+      startBlock: 27754817
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Project
+      abis:
+        - name: MoonpageManager
+          file: ./abis/MoonpageManager.json
+      eventHandlers:
+        - event: Configured(uint256,string,string,string,string,string)
+          handler: handleProjectConfigured
+      file: ./src/mapping.ts
