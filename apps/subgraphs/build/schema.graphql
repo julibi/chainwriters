@@ -7,6 +7,14 @@ type Edition @entity {
   mintPrice: BigInt
 }
 
+type Contributor @entity {
+  id: ID!
+  project: Project!
+  address: Bytes!
+  role: String
+  sharePercentage: BigInt!
+}
+
 type Project @entity {
   id: ID!
   creator: Bytes!
@@ -27,5 +35,7 @@ type Project @entity {
   startId: BigInt
   endId: BigInt
   currentTokenId: BigInt
+  claimableMaticTotal: BigInt
+  contributors: [Contributor!] @derivedFrom(field: "project")
   editions: [Edition!] @derivedFrom(field: "project")
 }

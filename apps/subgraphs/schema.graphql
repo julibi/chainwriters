@@ -7,6 +7,22 @@ type Edition @entity {
   mintPrice: BigInt
 }
 
+type Contributor @entity {
+  id: ID!
+  project: Project!
+  address: Bytes!
+  role: String
+  sharePercentage: BigInt!
+}
+
+type Mint @entity {
+  id: ID!
+  project: Project!
+  edition: BigInt!
+  receiver: Bytes!
+  tokenId: BigInt!
+}
+
 type Project @entity {
   id: ID!
   creator: Bytes!
@@ -26,6 +42,13 @@ type Project @entity {
   auctionsEnded: Boolean!
   startId: BigInt
   endId: BigInt
-  currentTokenId: BigInt
+  # handle these sechs
+  currentTokenId: BigInt!
+  claimableMaticTotal: BigInt
+  isPaused: Boolean
+  isFrozen: Boolean
+  premintedByAuthor: number
+  minted: [Mint!] @derivedFrom(field: "project")
+  contributors: [Contributor!] @derivedFrom(field: "project")
   editions: [Edition!] @derivedFrom(field: "project")
 }

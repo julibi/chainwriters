@@ -46,4 +46,6 @@ dataSources:
           handler: handleProjectConfigured
         - event: NextEditionEnabled(uint256,uint256,uint256,uint256,uint256,uint256)
           handler: handleNextEditionEnabled
+        - event: ContributorAdded(uint256,address,uint256,string)
+          handler: handleContributorAdded
       file: MoonpageFactory/MoonpageFactory.wasm

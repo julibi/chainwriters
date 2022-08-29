@@ -193,7 +193,7 @@ contract MoonpageManager is
             _firstEditionAmount,
             _initialMintPrice,
             startId,
-            endId
+            currentEdLast
         );
     }
 

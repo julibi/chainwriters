@@ -44,6 +44,14 @@ dataSources:
       eventHandlers:
         - event: Configured(uint256,string,string,string,string,string)
           handler: handleProjectConfigured
+        - event: RangeSet(uint256,uint256,uint256)
+          handler: handleRangeSet
+        - event: ContributorAdded(uint256,address,uint256,string)
+          handler: handleContributorAdded
         - event: NextEditionEnabled(uint256,uint256,uint256,uint256,uint256,uint256)
           handler: handleNextEditionEnabled
+        - event: TextSet(uint256,string)
+          handler: handleTextSet
+        - event: TokenIdIncreased(uint256,uint256)
+          handler: handleTokenIdIncreased
       file: ./src/mapping.ts
