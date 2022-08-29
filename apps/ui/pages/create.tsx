@@ -11,7 +11,7 @@ import { toast } from 'react-toastify';
 import { parseEther } from 'ethers/lib/utils';
 import { useWeb3React } from '@web3-react/core';
 import ProgressBar from '../components/ProgressBar';
-import useFactoryContract from '../hooks/useFactoryContract';
+import useFactoryContract from '../hooks/useMoonpageFactoryContract';
 import {
   BaseButton,
   BASE_BORDER_RADIUS,
@@ -50,6 +50,7 @@ import {
   SectionTitle,
   SectionTitleWrapper,
 } from '../components/HomePage/ProjectSection';
+import useMoonpageManager from '../hooks/useMoonpageManager';
 
 const Root = styled.div`
   display: flex;
@@ -229,14 +230,11 @@ const Create = () => {
   const [creatingDao, setCreatingDao] = useState<boolean>(false);
   const [subtitle, setSubtitle] = useState<string>('');
   const [authorMintAmount, setAuthorMintAmount] = useState<number>(0);
-  const getDaoContract = useDaoContract();
+
   const createSetConfiguration = useCreateSetConfiguration();
   const createAuthorMint = useCreateAuthorMint();
   const createSetContributors = useCreateSetContributors();
-  const daoContract = useMemo(
-    () => (daoAddress ? getDaoContract(daoAddress) : null),
-    [daoAddress, getDaoContract]
-  );
+  const daoContract = useMoonpageManager();
   const contribInitialState = {
     1: { address: '', share: 0, role: '' },
     2: { address: '', share: 0, role: '' },

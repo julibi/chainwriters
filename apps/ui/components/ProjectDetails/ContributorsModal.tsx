@@ -1,11 +1,11 @@
-import React, { useCallback, useMemo, useState } from 'react'
-import { toast } from 'react-toastify'
-import styled from 'styled-components'
-import BaseModal from '../BaseModal'
-import ContributorsForm from '../Create/ContributorsForm'
-import { useCreateSetContributors } from '../../state/projects/create/hooks'
-import useDaoContract from '../../state/useDaoContract'
-import ToastLink from '../ToastLink'
+import React, { useCallback, useMemo, useState } from 'react';
+import { toast } from 'react-toastify';
+import styled from 'styled-components';
+import BaseModal from '../BaseModal';
+import ContributorsForm from '../Create/ContributorsForm';
+import { useCreateSetContributors } from '../../state/projects/create/hooks';
+import useMoonpageManager from '../../hooks/useMoonpageManager';
+import ToastLink from '../ToastLink';
 
 const ContentWrapper = styled.div`
   margin: 2rem;
@@ -17,27 +17,29 @@ const ContentWrapper = styled.div`
   height: 600px;
 `;
 
-export interface Contribution {
+export interface Contributor {
   address: string;
   share: number;
   role: string;
 }
 
 interface ContributorsModalProps {
-  projectAddress: string;
+  projectId: string;
   onClose: () => void;
   onFailure: () => void;
   onPending: () => void;
-  onSuccess: (contributorList: Contribution[]) => void;
+  onSuccess: (contributorList: Contributor[]) => void;
 }
 
-const ContributorsModal = ({ projectAddress, onClose, onFailure, onPending, onSuccess }: ContributorsModalProps) => {
-  const getDaoContract = useDaoContract();
+const ContributorsModal = ({
+  projectId,
+  onClose,
+  onFailure,
+  onPending,
+  onSuccess,
+}: ContributorsModalProps) => {
   const createSetContributors = useCreateSetContributors();
-  const daoContract = useMemo(
-    () => (projectAddress ? getDaoContract(projectAddress) : null),
-    [projectAddress, getDaoContract]
-  );
+  const MoonpageManager = useMoonpageManager();
   const [pending, setPending] = useState<boolean>(false);
   const contribInitialState = {
     1: { address: '', share: 0, role: '' },
@@ -47,17 +49,17 @@ const ContributorsModal = ({ projectAddress, onClose, onFailure, onPending, onSu
   const [contributors, setContributors] = useState(contribInitialState);
   const contributorList = useMemo(() => {
     const contribsArray = [];
-    Object.entries(contributors).map(contrib => {
+    Object.entries(contributors).map((contrib) => {
       if (contrib[1].address.length > 0 && contrib[1].share > 0) {
         contribsArray.push(contrib[1]);
       }
-    })
+    });
     return contribsArray;
   }, [contributors]);
 
   const handleAddContributors = useCallback(async () => {
     await createSetContributors(
-      daoContract,
+      MoonpageManager,
       contributorList,
       (loading) => setPending(loading),
       (x, y, z) => {
@@ -84,7 +86,7 @@ const ContributorsModal = ({ projectAddress, onClose, onFailure, onPending, onSu
   }, [
     contributorList,
     createSetContributors,
-    daoContract,
+    MoonpageManager,
     onClose,
     onFailure,
     onPending,
@@ -94,19 +96,21 @@ const ContributorsModal = ({ projectAddress, onClose, onFailure, onPending, onSu
   return (
     <BaseModal onClose={onClose}>
       <ContentWrapper>
-      <ContributorsForm
-        contributors={contributors}
-        contributorList={contributorList}
-        loading={pending}
-        onChange={(idx,key, val) => setContributors({
-          ...contributors,
-          [idx]: { ...contributors[idx], [key]: val },
-        })}
-        onSubmit={handleAddContributors}
-      />
+        <ContributorsForm
+          contributors={contributors}
+          contributorList={contributorList}
+          loading={pending}
+          onChange={(idx, key, val) =>
+            setContributors({
+              ...contributors,
+              [idx]: { ...contributors[idx], [key]: val },
+            })
+          }
+          onSubmit={handleAddContributors}
+        />
       </ContentWrapper>
     </BaseModal>
   );
-}
+};
 
-export default ContributorsModal
+export default ContributorsModal;

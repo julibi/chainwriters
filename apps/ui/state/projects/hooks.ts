@@ -4,9 +4,8 @@ import { Multicall } from 'ethereum-multicall';
 import client from '../../apolloclient';
 import { JsonRpcProvider } from '@ethersproject/providers';
 import { RPC_URLS } from '../../connectors';
-import useProjectContract from '../../hooks/useProjectContract';
 
-interface Contribution {
+interface Contributor {
   id: string;
   address: string;
   sharePercentage: number;
@@ -32,18 +31,15 @@ export interface ProjectData {
   textIpfsHash: string | null;
   imgIpfsHash: string | null;
   blurbIpfsHash: string | null;
-  contributions: Contribution[] | null;
+  contributors: Contributor[] | null;
+  mintCount: number;
+  initialMintPrice: BigNumber;
   editions: Edition[];
-  // coming from Contract directly
-  currentEditionMaxSupply: number;
-  // coming from multicall
   auctionsStarted: boolean;
   auctionsEnded: boolean;
   premintedByAuthor: number;
-  totalSupplyGenEd: number;
-  expiresAt: number;
-  mintPrice: BigInt;
-  paused: boolean;
+  mintPrice: BigNumber;
+  isPaused?: boolean;
 }
 
 const provider = new JsonRpcProvider(RPC_URLS[80001], 80001);
@@ -142,9 +138,10 @@ export const GET_ONE_PROJECT = gql`
       startId
       endId
       currentId
+      initialMintPrice
       auctionsStarted
       auctionsEnded
-      contributions {
+      contributors {
         id
         address
         sharePercentage
@@ -343,13 +340,15 @@ export const useGetProjectDetails = (projectId: string) => {
       imgIpfsHash,
       blurbIpfsHash,
       mintCount,
+      initialMintPrice,
+      mintPrice,
       premintedByAuthor,
       auctionsStarted,
       auctionsEnded,
-      contributions,
+      contributors,
       editions,
     } = project;
-    const contributionsFormatted = contributions.map((contrib) => {
+    const contributionsFormatted = contributors.map((contrib) => {
       return {
         ...contrib,
         share: Number(contrib.share),
@@ -373,12 +372,14 @@ export const useGetProjectDetails = (projectId: string) => {
       textIpfsHash,
       imgIpfsHash,
       blurbIpfsHash,
+      initialMintPrice,
+      mintCount,
+      mintPrice,
       auctionsStarted,
       auctionsEnded,
-      contributions: contributionsFormatted,
+      contributors: contributionsFormatted,
       editions: editionsFormatted,
       premintedByAuthor,
-      // expiresAt,
     };
   };
 };

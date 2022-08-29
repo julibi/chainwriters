@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { BigNumber, Contract } from 'ethers';
+import { BigNumber } from 'ethers';
 import { formatEther } from 'ethers/lib/utils';
 import styled from 'styled-components';
 import { toast } from 'react-toastify';
@@ -10,6 +10,7 @@ import PieChart from '../PieChart';
 import ToastLink from '../ToastLink';
 import { useWeb3React } from '@web3-react/core';
 import Loading from '../Loading';
+import useMoonpageCollection from '../../hooks/useMoonpageCollection';
 const Root = styled.div`
   flex: 1;
   display: flex;
@@ -51,7 +52,6 @@ interface MintSectionProps {
   maxSupply: number;
   totalSupply: number;
   mintPrice: BigNumber;
-  projectContract: Contract;
   refetch: VoidFunction;
 }
 
@@ -60,12 +60,13 @@ const MintSection = ({
   totalSupply,
   maxSupply,
   mintPrice,
-  projectContract,
   refetch,
 }: MintSectionProps) => {
+  console.log({ totalSupply });
   const [amount, setAmount] = useState<number>(1);
   const [mintPending, setMintPending] = useState<boolean>(false);
   const { account, chainId } = useWeb3React();
+  const collection = useMoonpageCollection();
 
   const price = useMemo(() => {
     if (mintPrice) {
@@ -82,15 +83,15 @@ const MintSection = ({
   }, [amount]);
 
   const handleMint = useCallback(async () => {
-    if (account && projectContract) {
+    if (account && collection) {
       try {
         setMintPending(true);
-        const tx = await projectContract.mint(amount, { value: price });
+        const tx = await collection.mint(amount, { value: price });
         const { hash } = tx;
         toast.info(
           <ToastLink hash={hash} chainId={chainId} message={'Minting...'} />
         );
-        projectContract.provider.once(hash, (transaction) => {
+        collection.provider.once(hash, (transaction) => {
           refetch();
           setAmount(1);
           setMintPending(false);
@@ -109,14 +110,12 @@ const MintSection = ({
         setMintPending(false);
       }
     }
-  }, [account, amount, chainId, price, projectContract, refetch]);
+  }, [account, amount, chainId, price, collection, refetch]);
 
   return (
     <Root>
       <Title>{`MINT - EDITION ${currentEdition}`}</Title>
-      <Price>{`Price ${formatEther(
-        parseInt(price._hex, 16).toString()
-      )} MATIC`}</Price>
+      <Price>{`Price ${price ? formatEther(price) : 0} MATIC`}</Price>
       <PieChart part={totalSupply ?? 0} whole={maxSupply} />
       <ControlWrapper>
         <StyledControl onClick={handleDecrement} disabled={amount === 1}>
@@ -134,7 +133,6 @@ const MintSection = ({
           +
         </StyledControl>
       </ControlWrapper>
-      <BlockSpan>(Max: 10)</BlockSpan>
       <StyledPrimaryButton
         disabled={amount > maxSupply - totalSupply}
         onClick={handleMint}

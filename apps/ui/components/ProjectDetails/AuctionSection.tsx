@@ -16,6 +16,7 @@ import {
   StyledPrimaryButton,
 } from '../../pages/projects/[projectId]';
 import { ProjectData } from '../../state/projects/hooks';
+import { BigNumber } from 'ethers';
 
 const AuctionTitle = styled.h2`
   text-align: center;
@@ -63,6 +64,9 @@ interface AuctionSectionProps {
   loading: boolean;
   onRetriggerAuction: VoidFunction;
   onFetchCurrentPrice: VoidFunction;
+  totalSupply: number;
+  maxSupply: number;
+  startingPrice: BigNumber;
 }
 
 const AuctionSection = ({
@@ -70,6 +74,9 @@ const AuctionSection = ({
   loading,
   onFetchCurrentPrice,
   onRetriggerAuction,
+  totalSupply,
+  maxSupply,
+  startingPrice,
 }: AuctionSectionProps) => {
   const showsAuctionText = useCallback(() => {
     const now = Math.round(new Date().getTime() / 1000);
@@ -113,20 +120,13 @@ const AuctionSection = ({
           <Key>{'Starting Price'}</Key>
           {projectData && (
             <Val>{`${formatEther(
-              parseInt(
-                // @ts-ignore
-                projectData.editions[0].mintPrice._hex,
-                16
-              ).toString()
+              parseInt(projectData.editions[0].mintPrice._hex, 16).toString()
             )} MATIC`}</Val>
           )}
         </InfoBlock>
       </FlexWrapper>
       <PieChartWrapper>
-        <PieChart
-          part={projectData.totalSupplyGenEd}
-          whole={projectData.editions[0].maxSupply}
-        />
+        <PieChart part={totalSupply} whole={maxSupply} />
       </PieChartWrapper>
       <FlexWrapper style={{ marginBlockEnd: '0' }}>
         <InfoBlock>
@@ -137,7 +137,7 @@ const AuctionSection = ({
               fontFamily: 'Inter Bold',
             }}
           >
-            {projectData.totalSupplyGenEd}
+            {totalSupply}
           </Val>
         </InfoBlock>
         {projectData.auctionsStarted && !projectData.auctionsEnded && (

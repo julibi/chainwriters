@@ -1,11 +1,12 @@
-import { useWeb3React } from '@web3-react/core'
-import { toast } from 'react-toastify'
+import { useWeb3React } from '@web3-react/core';
+import { Contract } from 'ethers';
+import { toast } from 'react-toastify';
 import { Contributor } from '../../../pages/create';
 
 export const useCreateSetConfiguration = () => {
   const { chainId } = useWeb3React();
   return async (
-    daoContract: any,
+    contract: Contract,
     coverImgCID: string,
     blurbCID: string,
     genre: string,
@@ -16,7 +17,7 @@ export const useCreateSetConfiguration = () => {
   ) => {
     loadingFunc(true);
     try {
-      const Tx = await daoContract.configureProjectDetails(
+      const Tx = await contract.configureProjectDetails(
         coverImgCID,
         blurbCID,
         genre,
@@ -25,7 +26,7 @@ export const useCreateSetConfiguration = () => {
       const { hash } = Tx;
       onLoad(chainId, hash, 'Pending transaction...');
 
-      daoContract.provider.once(hash, (transaction) => {
+      contract.provider.once(hash, (transaction) => {
         onSuccess(chainId, hash, 'Success!');
         loadingFunc(false);
       });
@@ -39,7 +40,7 @@ export const useCreateSetConfiguration = () => {
 export const useCreateAuthorMint = () => {
   const { chainId } = useWeb3React();
   return async (
-    daoContract: any,
+    contract: Contract,
     authorMintAmount: number,
     metadataCID: string,
     loadingFunc: (x: boolean) => void,
@@ -48,11 +49,11 @@ export const useCreateAuthorMint = () => {
   ) => {
     loadingFunc(true);
     try {
-      const Tx = await daoContract.authorMint(authorMintAmount, metadataCID);
+      const Tx = await contract.authorMint(authorMintAmount, metadataCID);
       const { hash } = Tx;
       onLoad(chainId, hash, 'Pending transaction...');
 
-      daoContract.provider.once(hash, (transaction) => {
+      contract.provider.once(hash, (transaction) => {
         onSuccess(chainId, hash, 'Success!');
         loadingFunc(false);
       });
@@ -66,7 +67,7 @@ export const useCreateAuthorMint = () => {
 export const useCreateSetContributors = () => {
   const { chainId } = useWeb3React();
   return async (
-    daoContract: any,
+    contract: Contract,
     contributorList: Contributor[],
     loadingFunc: (x: boolean) => void,
     onLoad: (chainId: number, hash: string, message: string) => void,
@@ -84,12 +85,15 @@ export const useCreateSetContributors = () => {
     });
 
     try {
-      // TODO: multicall?
-      const Tx = await daoContract.addContributors(addressesArray, sharesArray, rolesArray);
+      const Tx = await contract.addContributors(
+        addressesArray,
+        sharesArray,
+        rolesArray
+      );
       const { hash } = Tx;
       onLoad(chainId, hash, 'Pending transaction...');
 
-      daoContract.provider.once(hash, (transaction) => {
+      contract.provider.once(hash, (transaction) => {
         onSuccess(chainId, hash, 'Success!');
         loadingFunc(false);
       });

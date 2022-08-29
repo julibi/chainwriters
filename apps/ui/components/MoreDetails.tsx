@@ -108,7 +108,7 @@ const MoreDetails = ({ children, styles, title, open }: MoreDetailsProps) => {
       </Header>
       <div>
         <ArrowWrapper onClick={() => setUp(!up)}>
-          <Arrow className="arrow" up={up} />
+          <Arrow className="arrow" up={!up} />
         </ArrowWrapper>
       </div>
     </Root>

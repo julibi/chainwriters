@@ -189,7 +189,6 @@ const Projects = () => {
 
   useEffect(() => {
     if (data) {
-      console.log({ data });
       setProjects(data.projects);
     }
   }, [data]);

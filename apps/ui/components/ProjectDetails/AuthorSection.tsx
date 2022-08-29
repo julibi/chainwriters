@@ -16,6 +16,7 @@ import {
   PINK,
   INTER_BOLD,
 } from '../../themes';
+
 import { SectionTitle } from '../HomePage/ProjectSection';
 import Emoji from '../Emojis';
 import Checkmark from '../Checkmark';
@@ -25,7 +26,7 @@ import { ProjectData } from '../../state/projects/hooks';
 import ProgressBar from '../ProgressBar';
 import ConfigureModal from './ConfigureModal';
 import ToastLink from '../ToastLink';
-import ContributorsModal, { Contribution } from './ContributorsModal';
+import ContributorsModal, { Contributor } from './ContributorsModal';
 import BaseModal from '../BaseModal';
 import InputField from '../InputField';
 import {
@@ -36,6 +37,7 @@ import {
   MintButton,
 } from '../../pages/projects/[projectId]';
 import { BLURB_FETCH_ERROR } from '../../constants';
+import useMoonpageCollection from '../../hooks/useMoonpageCollection';
 
 const Root = styled.section`
   display: flex;
@@ -129,8 +131,7 @@ interface AuthorSectionProps {
     imgHash: string,
     blurbHash: string
   ) => void;
-  onAddContributors: (contribs: Contribution[]) => void;
-  ProjectContract: Contract;
+  onAddContributors: (contribs: Contributor[]) => void;
   projectId: string;
   refetch: VoidFunction;
 }
@@ -140,13 +141,13 @@ const AuthorSection = ({
   projectData,
   onConfigure,
   onAddContributors,
-  ProjectContract,
   projectId,
   refetch,
 }: AuthorSectionProps) => {
   const { account, chainId } = useWeb3React();
   // @ts-ignore
   const client = create('https://ipfs.infura.io:5001/api/v0');
+  const Collection = useMoonpageCollection();
   const [showConfigureModal, setShowConfigureModal] = useState<boolean>(false);
   const [configurePending, setConfigurePending] = useState<boolean>(false);
   const [showContributorsModal, setShowContributorsModal] =
@@ -173,7 +174,7 @@ const AuthorSection = ({
     ) => {
       try {
         setConfigurePending(true);
-        const Tx = await ProjectContract.configureProjectDetails(
+        const Tx = await Collection.configureProjectDetails(
           imgHash,
           blurbHash,
           genre,
@@ -183,7 +184,7 @@ const AuthorSection = ({
         toast.info(
           <ToastLink hash={hash} chainId={chainId} message={'Configuring...'} />
         );
-        ProjectContract.provider.once(hash, async (transaction) => {
+        Collection.provider.once(hash, async (transaction) => {
           setConfigurePending(false);
           setShowConfigureModal(false);
           onConfigure(genre, subtitle, imgHash, blurbHash);
@@ -195,7 +196,7 @@ const AuthorSection = ({
         setShowConfigureModal(false);
       }
     },
-    [ProjectContract, chainId, onConfigure]
+    [Collection, chainId, onConfigure]
   );
 
   const authorMint = useCallback(async () => {
@@ -230,7 +231,7 @@ const AuthorSection = ({
 
     try {
       const uploadedMeta = await client.add(metadata);
-      const Tx = await ProjectContract.authorMint(
+      const Tx = await Collection.authorMint(
         authorMintInput,
         `ipfs://${uploadedMeta.path}`
       );
@@ -242,7 +243,7 @@ const AuthorSection = ({
           message={'Author Mint pending...'}
         />
       );
-      ProjectContract.provider.once(hash, (transaction) => {
+      Collection.provider.once(hash, (transaction) => {
         refetch();
         setAuthorMintPending(false);
         toast.success('Minted!');
@@ -259,7 +260,7 @@ const AuthorSection = ({
     projectData.imgIpfsHash,
     blurb,
     client,
-    ProjectContract,
+    Collection,
     authorMintInput,
     chainId,
     refetch,
@@ -268,10 +269,10 @@ const AuthorSection = ({
   const triggerFirstAuction = useCallback(async () => {
     if (
       projectData &&
-      projectData.author &&
+      projectData.creator &&
       projectData.editions[0] &&
       account &&
-      account.toLowerCase() === projectData.author.toLowerCase()
+      account.toLowerCase() === projectData.creator.toLowerCase()
     ) {
       try {
         setTriggerPending(true);
@@ -280,7 +281,7 @@ const AuthorSection = ({
           60 * 60 * 24
         );
         const discountRate = parseInt(discountRateBig._hex, 16);
-        const Tx = await ProjectContract.triggerFirstAuction(discountRate);
+        const Tx = await Collection.triggerFirstAuction(discountRate);
         const { hash } = Tx;
         toast.info(
           <ToastLink
@@ -289,7 +290,7 @@ const AuthorSection = ({
             message={'Triggering auctions...'}
           />
         );
-        ProjectContract.provider.once(hash, async (transaction) => {
+        Collection.provider.once(hash, async (transaction) => {
           refetch();
           setTriggerPending(false);
           toast.success('Auctions have started!');
@@ -301,7 +302,7 @@ const AuthorSection = ({
         setTriggerPending(false);
       }
     }
-  }, [projectData, account, ProjectContract, chainId, refetch]);
+  }, [projectData, account, Collection, chainId, refetch]);
 
   const unlockNextEdition = useCallback(
     async (amount: number, price: string) => {
@@ -309,10 +310,7 @@ const AuthorSection = ({
 
       try {
         setUnlockEditionPending(true);
-        const Tx = await ProjectContract.enableNextEdition(
-          amount,
-          formattedPrice
-        );
+        const Tx = await Collection.enableNextEdition(amount, formattedPrice);
         const { hash } = Tx;
         toast.info(
           <ToastLink
@@ -321,7 +319,7 @@ const AuthorSection = ({
             message={'Unlocking next edition...'}
           />
         );
-        ProjectContract.provider.once(hash, (transaction) => {
+        Collection.provider.once(hash, (transaction) => {
           refetch();
           setUnlockEditionPending(false);
           setShowUnlockEditionModal(false);
@@ -334,7 +332,7 @@ const AuthorSection = ({
         setShowUnlockEditionModal(false);
       }
     },
-    [ProjectContract, chainId, refetch]
+    [Collection, chainId, refetch]
   );
 
   const configured = useMemo(() => {
@@ -353,14 +351,15 @@ const AuthorSection = ({
   }, [projectData]);
 
   const canTriggerNextEdition = useMemo(() => {
-    let canTrigger = false;
-    if (
-      projectData &&
-      projectData.currentEditionMaxSupply ===
-        projectData.currentEditionTotalSupply
-    ) {
-      canTrigger = true;
-    }
+    const canTrigger = false;
+    // TODO
+    // if (
+    //   projectData &&
+    //   projectData.currentEditionMaxSupply ===
+    //     projectData.currentEditionTotalSupply
+    // ) {
+    //   canTrigger = true;
+    // }
     return canTrigger;
   }, [projectData]);
 
@@ -450,7 +449,7 @@ const AuthorSection = ({
         <MoreDetails
           title={
             projectData.auctionsStarted ||
-            projectData.contributions.length > 0 ? (
+            projectData.contributors?.length > 0 ? (
               <Flex>
                 <span>{'2) Add Contributors'}</span>
                 <Checkmark />
@@ -468,7 +467,7 @@ const AuthorSection = ({
               done before triggering the auctions.
             </p>
             {projectData.auctionsStarted ||
-            projectData.contributions.length > 0 ? (
+            projectData.contributors?.length > 0 ? (
               <DoneAction>{'Add Contributors'}</DoneAction>
             ) : (
               <TriggerButton
@@ -489,7 +488,7 @@ const AuthorSection = ({
         <MoreDetails
           open={
             projectData.premintedByAuthor === 0 &&
-            (configured || projectData.contributions.length > 0)
+            (configured || projectData.contributors?.length > 0)
           }
           title={
             projectData.premintedByAuthor > 0 ? (
@@ -608,7 +607,7 @@ const AuthorSection = ({
           onClose={() => setShowContributorsModal(false)}
           onFailure={() => setContributorsPending(false)}
           onPending={() => setContributorsPending(true)}
-          onSuccess={(contributorList: Contribution[]) => {
+          onSuccess={(contributorList: Contributor[]) => {
             setContributorsPending(false);
             onAddContributors(contributorList);
           }}
