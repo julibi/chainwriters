@@ -4,8 +4,8 @@ import { formatEther } from 'ethers/lib/utils';
 import styled from 'styled-components';
 import { toast } from 'react-toastify';
 import { BaseButton } from '../../themes';
-import { StyledPrimaryButton } from '../../pages/projects/[projectAddress]';
-import { Title } from '../../pages/projects/[projectAddress]';
+import { StyledPrimaryButton } from '../../pages/projects/[projectId]';
+import { Title } from '../../pages/projects/[projectId]';
 import PieChart from '../PieChart';
 import ToastLink from '../ToastLink';
 import { useWeb3React } from '@web3-react/core';
@@ -95,7 +95,11 @@ const MintSection = ({
           setAmount(1);
           setMintPending(false);
           toast.success(
-            <ToastLink hash={hash} chainId={chainId} message={'Successfully minted!'} />
+            <ToastLink
+              hash={hash}
+              chainId={chainId}
+              message={'Successfully minted!'}
+            />
           );
         });
       } catch (e: unknown) {
@@ -123,7 +127,7 @@ const MintSection = ({
           onClick={handleIncrement}
           disabled={
             amount === 10 ||
-            (amount === maxSupply - totalSupply) ||
+            amount === maxSupply - totalSupply ||
             maxSupply === totalSupply
           }
         >

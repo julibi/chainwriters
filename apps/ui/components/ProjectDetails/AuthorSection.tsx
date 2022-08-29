@@ -34,7 +34,7 @@ import {
   ModalText,
   CTAWrapper,
   MintButton,
-} from '../../pages/projects/[projectAddress]';
+} from '../../pages/projects/[projectId]';
 import { BLURB_FETCH_ERROR } from '../../constants';
 
 const Root = styled.section`
@@ -122,7 +122,7 @@ const DoneAction = styled.div`
 
 interface AuthorSectionProps {
   blurb: string;
-  daoData: ProjectData;
+  projectData: ProjectData;
   onConfigure: (
     genre: string,
     subtitle: string,
@@ -131,17 +131,17 @@ interface AuthorSectionProps {
   ) => void;
   onAddContributors: (contribs: Contribution[]) => void;
   ProjectContract: Contract;
-  projectAddress: string;
+  projectId: string;
   refetch: VoidFunction;
 }
 
 const AuthorSection = ({
   blurb,
-  daoData,
+  projectData,
   onConfigure,
   onAddContributors,
   ProjectContract,
-  projectAddress,
+  projectId,
   refetch,
 }: AuthorSectionProps) => {
   const { account, chainId } = useWeb3React();
@@ -205,24 +205,26 @@ const AuthorSection = ({
     // and have this kind of URI ipfs://cidhash/{id} be setting dynamically on every next edition being enabled
     // BE needed...
     // const betterMetadataObjectExample = {
-    //   name: daoData.title,
+    //   name: projectData.title,
     //   description: blurb ?? '',
     //   attributes: [
     //     {
     //       trait_type: "edition",
-    //       value: daoData.currentEdition
+    //       value: projectData.currentEdition
     //     }
     //   ],
-    //   image: daoData?.imgIpfsHash ? `ipfs://${daoData.imgIpfsHash}` : '',
+    //   image: projectData?.imgIpfsHash ? `ipfs://${projectData.imgIpfsHash}` : '',
     // };
 
     const metadataObject = {
-      name: daoData.title,
+      name: projectData.title,
       description:
         blurb && blurb !== BLURB_FETCH_ERROR
           ? `${blurb} (Created with Moonpage)`
           : 'Created with Moonpage',
-      image: daoData?.imgIpfsHash ? `ipfs://${daoData.imgIpfsHash}` : '',
+      image: projectData?.imgIpfsHash
+        ? `ipfs://${projectData.imgIpfsHash}`
+        : '',
     };
     const metadata = JSON.stringify(metadataObject, null, 2);
 
@@ -253,8 +255,8 @@ const AuthorSection = ({
       setShowAuthorMintModal(false);
     }
   }, [
-    daoData.title,
-    daoData.imgIpfsHash,
+    projectData.title,
+    projectData.imgIpfsHash,
     blurb,
     client,
     ProjectContract,
@@ -265,16 +267,18 @@ const AuthorSection = ({
 
   const triggerFirstAuction = useCallback(async () => {
     if (
-      daoData &&
-      daoData.author &&
-      daoData.editions[0] &&
+      projectData &&
+      projectData.author &&
+      projectData.editions[0] &&
       account &&
-      account.toLowerCase() === daoData.author.toLowerCase()
+      account.toLowerCase() === projectData.author.toLowerCase()
     ) {
       try {
         setTriggerPending(true);
         // @ts-ignore
-        const discountRateBig = daoData.editions[0].mintPrice.div(60 * 60 * 24);
+        const discountRateBig = projectData.editions[0].mintPrice.div(
+          60 * 60 * 24
+        );
         const discountRate = parseInt(discountRateBig._hex, 16);
         const Tx = await ProjectContract.triggerFirstAuction(discountRate);
         const { hash } = Tx;
@@ -297,7 +301,7 @@ const AuthorSection = ({
         setTriggerPending(false);
       }
     }
-  }, [daoData, account, ProjectContract, chainId, refetch]);
+  }, [projectData, account, ProjectContract, chainId, refetch]);
 
   const unlockNextEdition = useCallback(
     async (amount: number, price: string) => {
@@ -335,44 +339,45 @@ const AuthorSection = ({
 
   const configured = useMemo(() => {
     let hasConfigured = false;
-    if (daoData) {
+    if (projectData) {
       if (
-        daoData.blurbIpfsHash ||
-        daoData.imgIpfsHash ||
-        daoData.genre ||
-        daoData.subtitle
+        projectData.blurbIpfsHash ||
+        projectData.imgIpfsHash ||
+        projectData.genre ||
+        projectData.subtitle
       ) {
         hasConfigured = true;
       }
     }
     return hasConfigured;
-  }, [daoData]);
+  }, [projectData]);
 
   const canTriggerNextEdition = useMemo(() => {
     let canTrigger = false;
     if (
-      daoData &&
-      daoData.currentEditionMaxSupply === daoData.currentEditionTotalSupply
+      projectData &&
+      projectData.currentEditionMaxSupply ===
+        projectData.currentEditionTotalSupply
     ) {
       canTrigger = true;
     }
     return canTrigger;
-  }, [daoData]);
+  }, [projectData]);
 
   const calculatedProgress = useMemo((): number => {
     let percentage = 0;
-    if (!daoData) return percentage;
+    if (!projectData) return percentage;
     if (configured) {
       percentage = 33;
     }
-    if (daoData.premintedByAuthor > 0) {
+    if (projectData.premintedByAuthor > 0) {
       percentage = 66;
     }
-    if (daoData.auctionsStarted) {
+    if (projectData.auctionsStarted) {
       percentage = 100;
     }
     return percentage;
-  }, [daoData, configured]);
+  }, [projectData, configured]);
 
   const calculatedProgressIndicationText = useMemo((): string => {
     let text = 'Next: Configure';
@@ -409,7 +414,7 @@ const AuthorSection = ({
       <ActionItems>
         <MoreDetails
           title={
-            configured || daoData.auctionsStarted ? (
+            configured || projectData.auctionsStarted ? (
               <Flex>
                 <span>{'1) Configure Project'}</span>
                 <Checkmark />
@@ -426,7 +431,7 @@ const AuthorSection = ({
               your project more appealing and trustworthy. This action can only
               be done before triggering the auctions.
             </p>
-            {configured || daoData.auctionsStarted ? (
+            {configured || projectData.auctionsStarted ? (
               <DoneAction>{'Configure Project'}</DoneAction>
             ) : (
               <TriggerButton
@@ -444,7 +449,8 @@ const AuthorSection = ({
         </MoreDetails>
         <MoreDetails
           title={
-            daoData.auctionsStarted || daoData.contributions.length > 0 ? (
+            projectData.auctionsStarted ||
+            projectData.contributions.length > 0 ? (
               <Flex>
                 <span>{'2) Add Contributors'}</span>
                 <Checkmark />
@@ -461,7 +467,8 @@ const AuthorSection = ({
               contributors to your project will receive. This action can only be
               done before triggering the auctions.
             </p>
-            {daoData.auctionsStarted || daoData.contributions.length > 0 ? (
+            {projectData.auctionsStarted ||
+            projectData.contributions.length > 0 ? (
               <DoneAction>{'Add Contributors'}</DoneAction>
             ) : (
               <TriggerButton
@@ -481,14 +488,14 @@ const AuthorSection = ({
         </MoreDetails>
         <MoreDetails
           open={
-            daoData.premintedByAuthor === 0 &&
-            (configured || daoData.contributions.length > 0)
+            projectData.premintedByAuthor === 0 &&
+            (configured || projectData.contributions.length > 0)
           }
           title={
-            daoData.premintedByAuthor > 0 ? (
+            projectData.premintedByAuthor > 0 ? (
               <Flex>
-                <span>{`3) Minted Your ${daoData.premintedByAuthor} ${
-                  daoData.premintedByAuthor === 1 ? 'Copy' : 'Copies'
+                <span>{`3) Minted Your ${projectData.premintedByAuthor} ${
+                  projectData.premintedByAuthor === 1 ? 'Copy' : 'Copies'
                 }`}</span>
                 <Checkmark />
               </Flex>
@@ -503,7 +510,7 @@ const AuthorSection = ({
               Make sure to claim some NFTs for yourself :) This is mandatory for
               triggering the auction in the next.
             </p>
-            {daoData.premintedByAuthor > 0 ? (
+            {projectData.premintedByAuthor > 0 ? (
               <DoneAction>{'Mint Your Copies'}</DoneAction>
             ) : (
               <TriggerButton
@@ -520,9 +527,11 @@ const AuthorSection = ({
           </>
         </MoreDetails>
         <MoreDetails
-          open={daoData.premintedByAuthor > 0 && !daoData.auctionsStarted}
+          open={
+            projectData.premintedByAuthor > 0 && !projectData.auctionsStarted
+          }
           title={
-            daoData.auctionsStarted ? (
+            projectData.auctionsStarted ? (
               <Flex>
                 <span>{'4) Trigger Auctions'}</span>
                 <Checkmark />
@@ -539,7 +548,8 @@ const AuthorSection = ({
               will not be able to configure or add contributors anymore. You
               need to claim your NFTs before you can trigger it.
             </p>
-            {daoData.premintedByAuthor > 0 && !daoData.auctionsStarted ? (
+            {projectData.premintedByAuthor > 0 &&
+            !projectData.auctionsStarted ? (
               <TriggerButton
                 onClick={triggerFirstAuction}
                 disabled={triggerPending}
@@ -594,7 +604,7 @@ const AuthorSection = ({
       )}
       {showContributorsModal && (
         <ContributorsModal
-          projectAddress={projectAddress}
+          projectId={projectId}
           onClose={() => setShowContributorsModal(false)}
           onFailure={() => setContributorsPending(false)}
           onPending={() => setContributorsPending(true)}
@@ -611,7 +621,7 @@ const AuthorSection = ({
             <ModalText>
               {`You as an author can mint an amount of your project's Genesis
               Edition NFTs for yourself. Only after minting this amount, can you
-              trigger the public auctions for your first edition. MAX: ${daoData.currentEditionMaxSupply}`}
+              trigger the public auctions for your first edition. MAX: ${projectData.currentEditionMaxSupply}`}
             </ModalText>
             <CTAWrapper>
               <InputField
@@ -628,7 +638,7 @@ const AuthorSection = ({
                 error={
                   (Number(authorMintInput) < 1 ||
                     Number(authorMintInput) >
-                      daoData.currentEditionMaxSupply) &&
+                      projectData.currentEditionMaxSupply) &&
                   'Incorrect amount.'
                 }
               />
@@ -636,7 +646,7 @@ const AuthorSection = ({
                 disabled={
                   authorMintPending ||
                   Number(authorMintInput) < 1 ||
-                  Number(authorMintInput) > daoData.currentEditionMaxSupply
+                  Number(authorMintInput) > projectData.currentEditionMaxSupply
                 }
                 onClick={authorMint}
               >

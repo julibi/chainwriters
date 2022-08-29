@@ -33,8 +33,14 @@ dataSources:
           handler: handleBaseDataFrozen
         - event: PremintedByAuthor(uint256,uint256)
           handler: handlePremintedByAuthor
-        - event: TextSet(uint256,string)
-          handler: handleTextSet
+        - event: TextUpdated(uint256,string)
+          handler: handleTextUpdated
+        - event: BlurbUpdated(uint256,string)
+          handler: handleBlurbUpdated
+        - event: ImageUpdated(uint256,string)
+          handler: handleImageUpdated
+        - event: AnimationUpdated(uint256,string)
+          handler: handleAnimationUpdated
         - event: TokenIdIncreased(uint256,uint256)
           handler: handleTokenIdIncreased
         - event: BalanceIncreased(uint256,uint256)

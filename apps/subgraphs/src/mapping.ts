@@ -12,6 +12,9 @@ import {
   ProjectCreated,
   ProjectPaused,
   TextUpdated,
+  BlurbUpdated,
+  ImageUpdated,
+  AnimationUpdated,
   TokenIdIncreased,
 } from '../generated/MoonpageManager/MoonpageManager';
 import { Minted } from '../generated/MoonpageCollection/MoonpageCollection';
@@ -151,7 +154,7 @@ export function handleImageUpdated(event: ImageUpdated): void {
   project.save();
 }
 
-export function handleAnimationUpdated(event: AnmimationUpdated): void {
+export function handleAnimationUpdated(event: AnimationUpdated): void {
   let projectId = event.params.projectId.toString();
   let project = Project.load(projectId);
   if (!project) {

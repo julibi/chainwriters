@@ -322,14 +322,12 @@ export const MintButton = styled(BaseButton)<MintButtonProps>`
 const ProjectDetailView = () => {
   const { account, chainId } = useWeb3React();
   const router = useRouter();
-  let projectAddress = router.query.projectAddress;
-  projectAddress = Array.isArray(projectAddress)
-    ? projectAddress[0]
-    : projectAddress;
-  const getProjectDetails = useGetProjectDetails(projectAddress as string);
-  const ProjectContract = useProjectContract(projectAddress as string);
-  const getShowText = useShowText(projectAddress as string);
-  const [daoData, setDaoData] = useState<ProjectData | null>(null);
+  let projectId = router.query.projectId;
+  projectId = Array.isArray(projectId) ? projectId[0] : projectId;
+  const getProjectDetails = useGetProjectDetails(projectId as string);
+  const ProjectContract = useProjectContract(projectId as string);
+  const getShowText = useShowText(projectId as string);
+  const [projectData, setProjectData] = useState<ProjectData | null>(null);
   const [coverImgLink, setCoverImgLink] = useState<string>(null);
   const [successfullyLoaded, setSuccessfullyLoaded] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
@@ -341,9 +339,9 @@ const ProjectDetailView = () => {
   const [isNFTOwner, setIsNFTOwner] = useState<boolean>(false);
 
   const callGetProjectDetails = useCallback(
-    async (projectAddress: string) => {
-      const ProjectData: ProjectData = await getProjectDetails(projectAddress);
-      setDaoData(ProjectData);
+    async (projectId: string) => {
+      const ProjectData: ProjectData = await getProjectDetails(projectId);
+      setProjectData(ProjectData);
       if (ProjectData?.imgIpfsHash) {
         setCoverImgLink(`https://ipfs.io/ipfs/${ProjectData.imgIpfsHash}`);
       }
@@ -353,20 +351,20 @@ const ProjectDetailView = () => {
   );
 
   const callGetIsNFTOwner = useCallback(async () => {
-    if (daoData) {
-      const context = await getShowText(daoData.currentEdition);
-      console.log({ context, daoData });
+    if (projectData) {
+      const context = await getShowText(projectData.currentEdition);
+      console.log({ context, projectData });
       if (context) {
         const { allowed } = context;
         setIsNFTOwner(allowed);
       }
     }
-  }, [daoData, getShowText]);
+  }, [projectData, getShowText]);
 
   const fetchBlurb = useCallback(async () => {
-    if (daoData && daoData.blurbIpfsHash) {
+    if (projectData && projectData.blurbIpfsHash) {
       const response = await fetch(
-        `https://ipfs.io/ipfs/${daoData.blurbIpfsHash}`
+        `https://ipfs.io/ipfs/${projectData.blurbIpfsHash}`
       );
       if (!response.ok) {
         setBlurb(BLURB_FETCH_ERROR);
@@ -377,48 +375,48 @@ const ProjectDetailView = () => {
     } else {
       setBlurb(BLURB_FETCH_ERROR);
     }
-  }, [daoData]);
+  }, [projectData]);
 
   const isAuthor = useMemo(() => {
     if (
-      daoData &&
+      projectData &&
       account &&
-      account.toLowerCase() === daoData.author.toLowerCase()
+      account.toLowerCase() === projectData.creator.toLowerCase()
     ) {
       return true;
     }
     return false;
-  }, [daoData, account]);
+  }, [projectData, account]);
 
   const authorShare = useMemo(() => {
     let result = 85;
-    if (daoData && daoData.contributions.length > 0) {
-      const contributorsShareTotal = daoData.contributions.reduce(
-        (partialSum, a) => partialSum + a.share,
+    if (projectData && projectData.contributions.length > 0) {
+      const contributorsShareTotal = projectData.contributions.reduce(
+        (partialSum, a) => partialSum + a.sharePercentage,
         0
       );
       result = result - contributorsShareTotal;
     }
     return result;
-  }, [daoData]);
+  }, [projectData]);
 
   useEffect(() => {
-    if (projectAddress) {
+    if (projectId) {
       // @ts-ignore
-      callGetProjectDetails(projectAddress);
+      callGetProjectDetails(projectId);
     }
-  }, [projectAddress]);
+  }, [projectId]);
 
   useEffect(() => {
-    if (daoData) {
+    if (projectData) {
       fetchBlurb();
       callGetIsNFTOwner();
     }
-  }, [daoData, callGetIsNFTOwner, fetchBlurb]);
+  }, [projectData, callGetIsNFTOwner, fetchBlurb]);
 
   const mint = useCallback(async () => {
     // is this working?
-    // const isLastNFT = daoData.currentEditionTotalSupply + 1 === daoData.currentEditionMaxSupply;
+    // const isLastNFT = projectData.currentEditionTotalSupply + 1 === projectData.currentEditionMaxSupply;
     setMintPending(true);
     ProjectContract.buy({ value: currentPrice })
       .then((mintTx) => {
@@ -441,9 +439,9 @@ const ProjectDetailView = () => {
           setMintPending(false);
           setShowBuyModal(false);
           // @ts-ignore
-          callGetProjectDetails(projectAddress);
+          callGetProjectDetails(projectId);
           // if (isLastNFT) {
-          //   setDaoData({...daoData, auctionsEnded: true });
+          //   setProjectData({...projectData, auctionsEnded: true });
           // }
         });
       })
@@ -452,13 +450,7 @@ const ProjectDetailView = () => {
         toast.error('Sorry, something went wrong...');
         setMintPending(false);
       });
-  }, [
-    projectAddress,
-    ProjectContract,
-    callGetProjectDetails,
-    chainId,
-    currentPrice,
-  ]);
+  }, [projectId, callGetProjectDetails, chainId, currentPrice]);
 
   const fetchCurrentPrice = async () => {
     setLoading(true);
@@ -479,7 +471,7 @@ const ProjectDetailView = () => {
       );
       ProjectContract.provider.once(hash, (transaction) => {
         // @ts-ignore
-        callGetProjectDetails(projectAddress);
+        callGetProjectDetails(projectId);
         setLoading(false);
       });
     } catch (e: unknown) {
@@ -487,26 +479,28 @@ const ProjectDetailView = () => {
       toast.error(e.reason ?? 'Something went wrong.');
       setLoading(false);
     }
-  }, [ProjectContract, callGetProjectDetails, chainId, projectAddress]);
+  }, [ProjectContract, callGetProjectDetails, chainId, projectId]);
 
   const handleClickRead = useCallback(
     (e) => {
       e.preventDefault();
-      router.push(`/projects/${projectAddress}/read`);
+      router.push(`/projects/${projectId}/read`);
     },
-    [projectAddress, router]
+    [projectId, router]
   );
 
   return (
     <Root>
-      {!daoData && !successfullyLoaded && <Loading height={530} />}
-      {daoData && successfullyLoaded && (
+      {!projectData && !successfullyLoaded && <Loading height={530} />}
+      {projectData && successfullyLoaded && (
         <>
           <MainInfoWrapper>
             <InfoLeft>
               <Title>
-                {daoData.title}
-                {daoData.subtitle && <Subtitle>{daoData.subtitle}</Subtitle>}
+                {projectData.title}
+                {projectData.subtitle && (
+                  <Subtitle>{projectData.subtitle}</Subtitle>
+                )}
               </Title>
               <ImageWrapper>
                 {isNFTOwner && (
@@ -524,28 +518,28 @@ const ProjectDetailView = () => {
               </ImageWrapper>
               <Author>
                 <Key>{'Author '}</Key>
-                <Val>{truncateAddress(daoData.author)}</Val>
+                <Val>{truncateAddress(projectData.creator)}</Val>
               </Author>
               <Genre>
                 <Key>{'Genre '}</Key>
-                <Val>{daoData.genre ?? 'Unknown'}</Val>
+                <Val>{projectData.genre ?? 'Unknown'}</Val>
               </Genre>
             </InfoLeft>
             <InfoRight>
-              {daoData.currentEdition > 1 && (
+              {projectData.currentEdition > 1 && (
                 <MintSection
-                  currentEdition={daoData.currentEdition}
-                  totalSupply={daoData.currentEditionTotalSupply}
-                  maxSupply={daoData.currentEditionMaxSupply}
-                  mintPrice={daoData.currentEditionMintPrice}
+                  currentEdition={projectData.currentEdition}
+                  totalSupply={projectData.currentEditionTotalSupply}
+                  maxSupply={projectData.currentEditionMaxSupply}
+                  mintPrice={projectData.currentEditionMintPrice}
                   projectContract={ProjectContract}
                   // @ts-ignore
-                  refetch={() => callGetProjectDetails(projectAddress)}
+                  refetch={() => callGetProjectDetails(projectId)}
                 />
               )}
-              {daoData.currentEdition === 1 && (
+              {projectData.currentEdition === 1 && (
                 <AuctionSection
-                  daoData={daoData}
+                  projectData={projectData}
                   loading={loading}
                   onFetchCurrentPrice={fetchCurrentPrice}
                   onRetriggerAuction={retriggerAuction}
@@ -564,21 +558,27 @@ const ProjectDetailView = () => {
             <Shares>
               <Share>
                 <ShareTitle>Author</ShareTitle>
-                <ShareAddress>{truncateAddress(daoData.author)}</ShareAddress>
+                <ShareAddress>
+                  {truncateAddress(projectData.creator)}
+                </ShareAddress>
                 <SharePercentage>{`${authorShare} %`}</SharePercentage>
               </Share>
-              {daoData.contributions.map((cntrb, i) => (
+              {projectData.contributions.map((cntrb, i) => (
                 <Share key={i}>
                   <ShareTitle>
                     {cntrb.role.length ? cntrb.role : 'Unknown role'}
                   </ShareTitle>
                   <ShareAddress>{truncateAddress(cntrb.address)}</ShareAddress>
-                  <SharePercentage>{`${cntrb.share} %`}</SharePercentage>
+                  <SharePercentage>{`${cntrb.sharePercentage} %`}</SharePercentage>
                 </Share>
               ))}
               <Share>
                 <ShareTitle>PePo Dev Foundation</ShareTitle>
-                <ShareAddress>{truncateAddress(daoData.factory)}</ShareAddress>
+                <ShareAddress>
+                  {/* TODO */}
+                  {/* {truncateAddress(projectData.factory)} */}
+                  replace me
+                </ShareAddress>
                 <SharePercentage>15 %</SharePercentage>
               </Share>
             </Shares>
@@ -588,12 +588,12 @@ const ProjectDetailView = () => {
           {isAuthor && (
             <AuthorSection
               blurb={blurb}
-              projectAddress={projectAddress}
+              projectId={projectId}
               ProjectContract={ProjectContract}
-              daoData={daoData}
+              projectData={projectData}
               onConfigure={(genre, subtitle, imgHash, blurbHash) => {
-                setDaoData({
-                  ...daoData,
+                setProjectData({
+                  ...projectData,
                   genre,
                   subtitle,
                   imgIpfsHash: imgHash,
@@ -602,11 +602,14 @@ const ProjectDetailView = () => {
               }}
               onAddContributors={(ContributorList) => {
                 // @ts-ignore
-                setDaoData({ ...daoData, contributions: ContributorList });
+                setProjectData({
+                  ...projectData,
+                  contributions: ContributorList,
+                });
               }}
               refetch={() => {
                 // @ts-ignore
-                callGetProjectDetails(projectAddress);
+                callGetProjectDetails(projectId);
               }}
             />
           )}

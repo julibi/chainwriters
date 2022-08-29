@@ -32,6 +32,28 @@ export class AdminChanged__Params {
   }
 }
 
+export class AnimationUpdated extends ethereum.Event {
+  get params(): AnimationUpdated__Params {
+    return new AnimationUpdated__Params(this);
+  }
+}
+
+export class AnimationUpdated__Params {
+  _event: AnimationUpdated;
+
+  constructor(event: AnimationUpdated) {
+    this._event = event;
+  }
+
+  get projectId(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+
+  get newIpfsHash(): string {
+    return this._event.parameters[1].value.toString();
+  }
+}
+
 export class BalanceDecreased extends ethereum.Event {
   get params(): BalanceDecreased__Params {
     return new BalanceDecreased__Params(this);
@@ -113,6 +135,28 @@ export class BeaconUpgraded__Params {
 
   get beacon(): Address {
     return this._event.parameters[0].value.toAddress();
+  }
+}
+
+export class BlurbUpdated extends ethereum.Event {
+  get params(): BlurbUpdated__Params {
+    return new BlurbUpdated__Params(this);
+  }
+}
+
+export class BlurbUpdated__Params {
+  _event: BlurbUpdated;
+
+  constructor(event: BlurbUpdated) {
+    this._event = event;
+  }
+
+  get projectId(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+
+  get newIpfsHash(): string {
+    return this._event.parameters[1].value.toString();
   }
 }
 
@@ -203,6 +247,28 @@ export class Curated__Params {
 
   get isCurated(): boolean {
     return this._event.parameters[1].value.toBoolean();
+  }
+}
+
+export class ImageUpdated extends ethereum.Event {
+  get params(): ImageUpdated__Params {
+    return new ImageUpdated__Params(this);
+  }
+}
+
+export class ImageUpdated__Params {
+  _event: ImageUpdated;
+
+  constructor(event: ImageUpdated) {
+    this._event = event;
+  }
+
+  get projectId(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+
+  get newIpfsHash(): string {
+    return this._event.parameters[1].value.toString();
   }
 }
 
@@ -460,16 +526,16 @@ export class RoleRevoked__Params {
   }
 }
 
-export class TextSet extends ethereum.Event {
-  get params(): TextSet__Params {
-    return new TextSet__Params(this);
+export class TextUpdated extends ethereum.Event {
+  get params(): TextUpdated__Params {
+    return new TextUpdated__Params(this);
   }
 }
 
-export class TextSet__Params {
-  _event: TextSet;
+export class TextUpdated__Params {
+  _event: TextUpdated;
 
-  constructor(event: TextSet) {
+  constructor(event: TextUpdated) {
     this._event = event;
   }
 
@@ -477,7 +543,7 @@ export class TextSet__Params {
     return this._event.parameters[0].value.toBigInt();
   }
 
-  get textHash(): string {
+  get newIpfsHash(): string {
     return this._event.parameters[1].value.toString();
   }
 }
@@ -2435,40 +2501,6 @@ export class SetPremintedByCreatorCall__Outputs {
   }
 }
 
-export class SetTextIpfsHashCall extends ethereum.Call {
-  get inputs(): SetTextIpfsHashCall__Inputs {
-    return new SetTextIpfsHashCall__Inputs(this);
-  }
-
-  get outputs(): SetTextIpfsHashCall__Outputs {
-    return new SetTextIpfsHashCall__Outputs(this);
-  }
-}
-
-export class SetTextIpfsHashCall__Inputs {
-  _call: SetTextIpfsHashCall;
-
-  constructor(call: SetTextIpfsHashCall) {
-    this._call = call;
-  }
-
-  get _projectId(): BigInt {
-    return this._call.inputValues[0].value.toBigInt();
-  }
-
-  get _ipfsHash(): string {
-    return this._call.inputValues[1].value.toString();
-  }
-}
-
-export class SetTextIpfsHashCall__Outputs {
-  _call: SetTextIpfsHashCall;
-
-  constructor(call: SetTextIpfsHashCall) {
-    this._call = call;
-  }
-}
-
 export class SetupDaoCall extends ethereum.Call {
   get inputs(): SetupDaoCall__Inputs {
     return new SetupDaoCall__Inputs(this);
@@ -2549,6 +2581,142 @@ export class UnpauseCall__Outputs {
   _call: UnpauseCall;
 
   constructor(call: UnpauseCall) {
+    this._call = call;
+  }
+}
+
+export class UpdateAnimationIpfsHashCall extends ethereum.Call {
+  get inputs(): UpdateAnimationIpfsHashCall__Inputs {
+    return new UpdateAnimationIpfsHashCall__Inputs(this);
+  }
+
+  get outputs(): UpdateAnimationIpfsHashCall__Outputs {
+    return new UpdateAnimationIpfsHashCall__Outputs(this);
+  }
+}
+
+export class UpdateAnimationIpfsHashCall__Inputs {
+  _call: UpdateAnimationIpfsHashCall;
+
+  constructor(call: UpdateAnimationIpfsHashCall) {
+    this._call = call;
+  }
+
+  get _projectId(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+
+  get _ipfsHash(): string {
+    return this._call.inputValues[1].value.toString();
+  }
+}
+
+export class UpdateAnimationIpfsHashCall__Outputs {
+  _call: UpdateAnimationIpfsHashCall;
+
+  constructor(call: UpdateAnimationIpfsHashCall) {
+    this._call = call;
+  }
+}
+
+export class UpdateBlurbIpfsHashCall extends ethereum.Call {
+  get inputs(): UpdateBlurbIpfsHashCall__Inputs {
+    return new UpdateBlurbIpfsHashCall__Inputs(this);
+  }
+
+  get outputs(): UpdateBlurbIpfsHashCall__Outputs {
+    return new UpdateBlurbIpfsHashCall__Outputs(this);
+  }
+}
+
+export class UpdateBlurbIpfsHashCall__Inputs {
+  _call: UpdateBlurbIpfsHashCall;
+
+  constructor(call: UpdateBlurbIpfsHashCall) {
+    this._call = call;
+  }
+
+  get _projectId(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+
+  get _ipfsHash(): string {
+    return this._call.inputValues[1].value.toString();
+  }
+}
+
+export class UpdateBlurbIpfsHashCall__Outputs {
+  _call: UpdateBlurbIpfsHashCall;
+
+  constructor(call: UpdateBlurbIpfsHashCall) {
+    this._call = call;
+  }
+}
+
+export class UpdateImgIpfsHashCall extends ethereum.Call {
+  get inputs(): UpdateImgIpfsHashCall__Inputs {
+    return new UpdateImgIpfsHashCall__Inputs(this);
+  }
+
+  get outputs(): UpdateImgIpfsHashCall__Outputs {
+    return new UpdateImgIpfsHashCall__Outputs(this);
+  }
+}
+
+export class UpdateImgIpfsHashCall__Inputs {
+  _call: UpdateImgIpfsHashCall;
+
+  constructor(call: UpdateImgIpfsHashCall) {
+    this._call = call;
+  }
+
+  get _projectId(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+
+  get _ipfsHash(): string {
+    return this._call.inputValues[1].value.toString();
+  }
+}
+
+export class UpdateImgIpfsHashCall__Outputs {
+  _call: UpdateImgIpfsHashCall;
+
+  constructor(call: UpdateImgIpfsHashCall) {
+    this._call = call;
+  }
+}
+
+export class UpdateTextIpfsHashCall extends ethereum.Call {
+  get inputs(): UpdateTextIpfsHashCall__Inputs {
+    return new UpdateTextIpfsHashCall__Inputs(this);
+  }
+
+  get outputs(): UpdateTextIpfsHashCall__Outputs {
+    return new UpdateTextIpfsHashCall__Outputs(this);
+  }
+}
+
+export class UpdateTextIpfsHashCall__Inputs {
+  _call: UpdateTextIpfsHashCall;
+
+  constructor(call: UpdateTextIpfsHashCall) {
+    this._call = call;
+  }
+
+  get _projectId(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+
+  get _ipfsHash(): string {
+    return this._call.inputValues[1].value.toString();
+  }
+}
+
+export class UpdateTextIpfsHashCall__Outputs {
+  _call: UpdateTextIpfsHashCall;
+
+  constructor(call: UpdateTextIpfsHashCall) {
     this._call = call;
   }
 }

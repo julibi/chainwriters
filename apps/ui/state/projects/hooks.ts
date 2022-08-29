@@ -4,29 +4,27 @@ import { Multicall } from 'ethereum-multicall';
 import client from '../../apolloclient';
 import { JsonRpcProvider } from '@ethersproject/providers';
 import { RPC_URLS } from '../../connectors';
-import PROJECT_ABI from '../../abis/project.json';
 import useProjectContract from '../../hooks/useProjectContract';
 
 interface Contribution {
   id: string;
   address: string;
-  share: number;
+  sharePercentage: number;
   role: string;
-  dao: string;
 }
 
 export interface Edition {
   id: string;
-  maxSupply: number;
+  edition: number;
+  startId: BigNumber;
+  endId: BigNumber;
   mintPrice: BigNumber;
-  dao: string;
 }
 
 export interface ProjectData {
   // coming from subgraph
   id: string;
-  address?: string;
-  author: string;
+  creator: string;
   createdAt: number;
   title: string;
   subtitle: string | null;
@@ -36,21 +34,16 @@ export interface ProjectData {
   blurbIpfsHash: string | null;
   contributions: Contribution[] | null;
   editions: Edition[];
-  metadataCID: string | null;
   // coming from Contract directly
   currentEditionMaxSupply: number;
   // coming from multicall
   auctionsStarted: boolean;
   auctionsEnded: boolean;
-  currentEdition: number;
-  currentEditionTotalSupply: number;
-  currentEditionMintPrice: BigNumber;
   premintedByAuthor: number;
   totalSupplyGenEd: number;
   expiresAt: number;
   mintPrice: BigInt;
   paused: boolean;
-  factory: string;
 }
 
 const provider = new JsonRpcProvider(RPC_URLS[80001], 80001);
@@ -132,31 +125,36 @@ export const GET_ONLY_AUCTIONS = gql`
   }
 `;
 
-export const GET_ONE_DAO = gql`
-  query oneDaoQuery($address: String!) {
-    dao(id: $address) {
+export const GET_ONE_PROJECT = gql`
+  query oneProjectQuery($id: String!) {
+    project(id: $id) {
       id
-      author
-      address
+      creator
       createdAt
       title
       subtitle
       genre
       textIpfsHash
       imgIpfsHash
+      mintCount
+      premintedByAuthor
       blurbIpfsHash
-      metadataCID
-      # auctionsStarted
-      # auctionsEnded
+      startId
+      endId
+      currentId
+      auctionsStarted
+      auctionsEnded
       contributions {
         id
         address
-        share
+        sharePercentage
         role
       }
       editions {
         id
-        maxSupply
+        edition
+        startId
+        endId
         mintPrice
       }
     }
@@ -214,130 +212,129 @@ const convertToRegularNumber = (bigInt, BigIntFromMulticall) => {
   return parseInt(bigInt._hex, 16);
 };
 
-export const useGetProjectDetails = (projectAddress: string) => {
-  const ProjectContract = useProjectContract(projectAddress);
-  return async (address: string): Promise<ProjectData> => {
-    if (!address) {
-      return null;
-    }
+export const useGetProjectDetails = (projectId: string) => {
+  // const ProjectContract = useProjectContract(projectAddress);
+  return async (projectId: string): Promise<ProjectData> => {
+    //   if (!address) {
+    //     return null;
+    //   }
 
-    // multicall
-    const addressLow = address.toLowerCase();
-    const multicallContext = {
-      reference: 'PROJECT_DETAILS',
-      contractAddress: addressLow,
-      abi: PROJECT_ABI,
-      calls: [
-        {
-          reference: 'project',
-          methodName: 'project',
-          methodParameters: [],
-        },
-        {
-          reference: 'currentEdition',
-          methodName: 'currentEdition',
-          methodParameters: [],
-        },
-        {
-          reference: 'expiresAt',
-          methodName: 'expiresAt',
-          methodParameters: [],
-        },
-        {
-          reference: 'totalSupplyGenEd',
-          methodName: 'totalSupply',
-          methodParameters: [1],
-        },
-        {
-          reference: 'mintPrice',
-          // it should be getPrice
-          methodName: 'INITIAL_MINT_PRICE',
-          methodParameters: [],
-        },
-        {
-          reference: 'currentEditionMintPrice',
-          methodName: 'currentEditionMintPrice',
-          methodParameters: [],
-        },
-        {
-          reference: 'currentEditionMax',
-          methodName: 'currentEditionMax',
-          methodParameters: [],
-        },
-        {
-          reference: 'auctionsStarted',
-          methodName: 'auctionStarted',
-          methodParameters: [],
-        },
-        {
-          reference: 'auctionsEnded',
-          methodName: 'auctionPhaseFinished',
-          methodParameters: [],
-        },
-        {
-          reference: 'paused',
-          methodName: 'paused',
-          methodParameters: [],
-        },
-        {
-          reference: 'factory',
-          methodName: 'factory',
-          methodParameters: [],
-        },
-      ],
-    };
-    const result = (await multicall.call(multicallContext)).results
-      .PROJECT_DETAILS.callsReturnContext;
-    let premintedByAuthor = result.find((x) => x.reference == 'project')
-      .returnValues[7];
-    let currentEdition = result.find((x) => x.reference == 'currentEdition')
-      .returnValues[0];
-    let totalSupplyGenEd = result.find((x) => x.reference == 'totalSupplyGenEd')
-      .returnValues[0];
-    // these could be fetched from subgraph,
-    //but struggling with updating/refetch issue - hence using this solution for now
-    const auctionsStarted = result.find((x) => x.reference == 'auctionsStarted')
-      .returnValues[0];
-    const auctionsEnded = result.find((x) => x.reference == 'auctionsEnded')
-      .returnValues[0];
-    const expiresAt = parseInt(
-      result
-        .find((x) => x.reference == 'expiresAt')
-        .returnValues[0].hex.toString(),
-      16
-    );
-    let mintPrice = result.find((x) => x.reference == 'mintPrice')
-      .returnValues[0];
-    let currentEditionMintPrice = result.find(
-      (x) => x.reference == 'currentEditionMintPrice'
-    ).returnValues[0];
-    currentEditionMintPrice = BigNumber.from(
-      parseInt(currentEditionMintPrice.hex, 16).toString()
-    );
-    currentEdition = convertToRegularNumber(currentEdition, true);
-    const currentEditionMax = result.find(
-      (x) => x.reference === 'currentEditionMax'
-    ).returnValues[0];
-    const currentEditionMaxSupply = parseInt(currentEditionMax.hex, 16);
-    premintedByAuthor = convertToRegularNumber(premintedByAuthor, true);
-    totalSupplyGenEd = convertToRegularNumber(totalSupplyGenEd, true);
-    mintPrice = BigNumber.from(parseInt(mintPrice.hex, 16).toString());
-    const paused = result.find((x) => x.reference === 'paused').returnValues[0];
-    const factory = result.find((x) => x.reference === 'factory')
-      .returnValues[0];
-    // not using useQuery here, because we have to wait for the the var `address`,
-    // and int main body or custom hook it cannot be present from the start
+    //   // multicall
+    //   const addressLow = address.toLowerCase();
+    //   const multicallContext = {
+    //     reference: 'PROJECT_DETAILS',
+    //     contractAddress: addressLow,
+    //     abi: PROJECT_ABI,
+    //     calls: [
+    //       {
+    //         reference: 'project',
+    //         methodName: 'project',
+    //         methodParameters: [],
+    //       },
+    //       {
+    //         reference: 'currentEdition',
+    //         methodName: 'currentEdition',
+    //         methodParameters: [],
+    //       },
+    //       {
+    //         reference: 'expiresAt',
+    //         methodName: 'expiresAt',
+    //         methodParameters: [],
+    //       },
+    //       {
+    //         reference: 'totalSupplyGenEd',
+    //         methodName: 'totalSupply',
+    //         methodParameters: [1],
+    //       },
+    //       {
+    //         reference: 'mintPrice',
+    //         // it should be getPrice
+    //         methodName: 'INITIAL_MINT_PRICE',
+    //         methodParameters: [],
+    //       },
+    //       {
+    //         reference: 'currentEditionMintPrice',
+    //         methodName: 'currentEditionMintPrice',
+    //         methodParameters: [],
+    //       },
+    //       {
+    //         reference: 'currentEditionMax',
+    //         methodName: 'currentEditionMax',
+    //         methodParameters: [],
+    //       },
+    //       {
+    //         reference: 'auctionsStarted',
+    //         methodName: 'auctionStarted',
+    //         methodParameters: [],
+    //       },
+    //       {
+    //         reference: 'auctionsEnded',
+    //         methodName: 'auctionPhaseFinished',
+    //         methodParameters: [],
+    //       },
+    //       {
+    //         reference: 'paused',
+    //         methodName: 'paused',
+    //         methodParameters: [],
+    //       },
+    //       {
+    //         reference: 'factory',
+    //         methodName: 'factory',
+    //         methodParameters: [],
+    //       },
+    //     ],
+    //   };
+    //   const result = (await multicall.call(multicallContext)).results
+    //     .PROJECT_DETAILS.callsReturnContext;
+    //   let premintedByAuthor = result.find((x) => x.reference == 'project')
+    //     .returnValues[7];
+    //   let currentEdition = result.find((x) => x.reference == 'currentEdition')
+    //     .returnValues[0];
+    //   let totalSupplyGenEd = result.find((x) => x.reference == 'totalSupplyGenEd')
+    //     .returnValues[0];
+    //   // these could be fetched from subgraph,
+    //   //but struggling with updating/refetch issue - hence using this solution for now
+    //   const auctionsStarted = result.find((x) => x.reference == 'auctionsStarted')
+    //     .returnValues[0];
+    //   const auctionsEnded = result.find((x) => x.reference == 'auctionsEnded')
+    //     .returnValues[0];
+    //   const expiresAt = parseInt(
+    //     result
+    //       .find((x) => x.reference == 'expiresAt')
+    //       .returnValues[0].hex.toString(),
+    //     16
+    //   );
+    //   let mintPrice = result.find((x) => x.reference == 'mintPrice')
+    //     .returnValues[0];
+    //   let currentEditionMintPrice = result.find(
+    //     (x) => x.reference == 'currentEditionMintPrice'
+    //   ).returnValues[0];
+    //   currentEditionMintPrice = BigNumber.from(
+    //     parseInt(currentEditionMintPrice.hex, 16).toString()
+    //   );
+    //   currentEdition = convertToRegularNumber(currentEdition, true);
+    //   const currentEditionMax = result.find(
+    //     (x) => x.reference === 'currentEditionMax'
+    //   ).returnValues[0];
+    //   const currentEditionMaxSupply = parseInt(currentEditionMax.hex, 16);
+    //   premintedByAuthor = convertToRegularNumber(premintedByAuthor, true);
+    //   totalSupplyGenEd = convertToRegularNumber(totalSupplyGenEd, true);
+    //   mintPrice = BigNumber.from(parseInt(mintPrice.hex, 16).toString());
+    //   const paused = result.find((x) => x.reference === 'paused').returnValues[0];
+    //   const factory = result.find((x) => x.reference === 'factory')
+    //     .returnValues[0];
+    //   // not using useQuery here, because we have to wait for the the var `address`,
+    //   // and int main body or custom hook it cannot be present from the start
     const {
-      data: { dao },
+      data: { project },
     } = await client.query({
-      query: GET_ONE_DAO,
-      variables: { address: addressLow },
+      query: GET_ONE_PROJECT,
+      variables: { id: projectId },
     });
 
-    // subgraph call
     const {
       id,
-      author,
+      creator,
       createdAt,
       title,
       subtitle,
@@ -345,12 +342,13 @@ export const useGetProjectDetails = (projectAddress: string) => {
       textIpfsHash,
       imgIpfsHash,
       blurbIpfsHash,
-      metadataCID,
-      //auctionsStarted,
-      // auctionsEnded,
+      mintCount,
+      premintedByAuthor,
+      auctionsStarted,
+      auctionsEnded,
       contributions,
       editions,
-    } = dao;
+    } = project;
     const contributionsFormatted = contributions.map((contrib) => {
       return {
         ...contrib,
@@ -365,17 +363,9 @@ export const useGetProjectDetails = (projectAddress: string) => {
       };
     });
 
-    const currentEdTotalSupplyBig = await ProjectContract.totalSupply(
-      currentEdition
-    );
-    const currentEditionTotalSupply = parseInt(
-      currentEdTotalSupplyBig._hex,
-      16
-    );
-
     return {
       id,
-      author,
+      creator,
       createdAt,
       title,
       subtitle,
@@ -383,21 +373,12 @@ export const useGetProjectDetails = (projectAddress: string) => {
       textIpfsHash,
       imgIpfsHash,
       blurbIpfsHash,
-      metadataCID,
-      currentEdition,
-      currentEditionTotalSupply,
-      currentEditionMaxSupply,
-      currentEditionMintPrice,
       auctionsStarted,
       auctionsEnded,
       contributions: contributionsFormatted,
       editions: editionsFormatted,
       premintedByAuthor,
-      totalSupplyGenEd,
-      expiresAt,
-      mintPrice,
-      paused,
-      factory,
+      // expiresAt,
     };
   };
 };

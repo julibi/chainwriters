@@ -14,7 +14,7 @@ import {
   Key,
   Val,
   StyledPrimaryButton,
-} from '../../pages/projects/[projectAddress]';
+} from '../../pages/projects/[projectId]';
 import { ProjectData } from '../../state/projects/hooks';
 
 const AuctionTitle = styled.h2`
@@ -59,14 +59,14 @@ const PieChartWrapper = styled.div`
 `;
 
 interface AuctionSectionProps {
-  daoData: ProjectData;
+  projectData: ProjectData;
   loading: boolean;
   onRetriggerAuction: VoidFunction;
   onFetchCurrentPrice: VoidFunction;
 }
 
 const AuctionSection = ({
-  daoData,
+  projectData,
   loading,
   onFetchCurrentPrice,
   onRetriggerAuction,
@@ -74,8 +74,8 @@ const AuctionSection = ({
   const showsAuctionText = useCallback(() => {
     const now = Math.round(new Date().getTime() / 1000);
 
-    if (!daoData) return;
-    const { auctionsStarted, auctionsEnded, expiresAt } = daoData;
+    if (!projectData) return;
+    const { auctionsStarted, auctionsEnded, expiresAt } = projectData;
     if (auctionsEnded) {
       return <Key style={{ textAlign: 'center' }}>{'Auctions finished'}</Key>;
     }
@@ -102,7 +102,7 @@ const AuctionSection = ({
     return (
       <Key style={{ textAlign: 'center' }}>{'Auction Has Not Started Yet'}</Key>
     );
-  }, [daoData]);
+  }, [projectData]);
 
   return (
     <>
@@ -111,11 +111,11 @@ const AuctionSection = ({
         <InfoBlock>{showsAuctionText()}</InfoBlock>
         <InfoBlock>
           <Key>{'Starting Price'}</Key>
-          {daoData && (
+          {projectData && (
             <Val>{`${formatEther(
               parseInt(
                 // @ts-ignore
-                daoData.editions[0].mintPrice._hex,
+                projectData.editions[0].mintPrice._hex,
                 16
               ).toString()
             )} MATIC`}</Val>
@@ -124,8 +124,8 @@ const AuctionSection = ({
       </FlexWrapper>
       <PieChartWrapper>
         <PieChart
-          part={daoData.totalSupplyGenEd}
-          whole={daoData.editions[0].maxSupply}
+          part={projectData.totalSupplyGenEd}
+          whole={projectData.editions[0].maxSupply}
         />
       </PieChartWrapper>
       <FlexWrapper style={{ marginBlockEnd: '0' }}>
@@ -137,12 +137,12 @@ const AuctionSection = ({
               fontFamily: 'Inter Bold',
             }}
           >
-            {daoData.totalSupplyGenEd}
+            {projectData.totalSupplyGenEd}
           </Val>
         </InfoBlock>
-        {daoData.auctionsStarted && !daoData.auctionsEnded && (
+        {projectData.auctionsStarted && !projectData.auctionsEnded && (
           <>
-            {Math.floor(Date.now() / 1000) > daoData.expiresAt ? (
+            {Math.floor(Date.now() / 1000) > projectData.expiresAt ? (
               <StyledPrimaryButton
                 onClick={onRetriggerAuction}
                 disabled={loading}
@@ -167,7 +167,7 @@ const AuctionSection = ({
             )}
           </>
         )}
-        {(!daoData.auctionsStarted || daoData.auctionsEnded) && (
+        {(!projectData.auctionsStarted || projectData.auctionsEnded) && (
           <StyledPrimaryButton disabled>Get Current Price</StyledPrimaryButton>
         )}
       </FlexWrapper>

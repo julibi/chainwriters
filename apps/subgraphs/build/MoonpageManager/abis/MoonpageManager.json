@@ -34,6 +34,25 @@
       },
       {
         "indexed": false,
+        "internalType": "string",
+        "name": "newIpfsHash",
+        "type": "string"
+      }
+    ],
+    "name": "AnimationUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "projectId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
         "internalType": "uint256",
         "name": "amount",
         "type": "uint256"
@@ -91,6 +110,25 @@
       }
     ],
     "name": "BeaconUpgraded",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "projectId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "newIpfsHash",
+        "type": "string"
+      }
+    ],
+    "name": "BlurbUpdated",
     "type": "event"
   },
   {
@@ -184,6 +222,25 @@
       }
     ],
     "name": "Curated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "projectId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "newIpfsHash",
+        "type": "string"
+      }
+    ],
+    "name": "ImageUpdated",
     "type": "event"
   },
   {
@@ -453,11 +510,11 @@
       {
         "indexed": false,
         "internalType": "string",
-        "name": "textHash",
+        "name": "newIpfsHash",
         "type": "string"
       }
     ],
-    "name": "TextSet",
+    "name": "TextUpdated",
     "type": "event"
   },
   {
@@ -1680,24 +1737,6 @@
   {
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "_projectId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "string",
-        "name": "_ipfsHash",
-        "type": "string"
-      }
-    ],
-    "name": "setTextIpfsHash",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "address",
         "name": "_caller",
         "type": "address"
@@ -1765,6 +1804,78 @@
   {
     "inputs": [],
     "name": "unpause",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_projectId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "_ipfsHash",
+        "type": "string"
+      }
+    ],
+    "name": "updateAnimationIpfsHash",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_projectId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "_ipfsHash",
+        "type": "string"
+      }
+    ],
+    "name": "updateBlurbIpfsHash",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_projectId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "_ipfsHash",
+        "type": "string"
+      }
+    ],
+    "name": "updateImgIpfsHash",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_projectId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "_ipfsHash",
+        "type": "string"
+      }
+    ],
+    "name": "updateTextIpfsHash",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

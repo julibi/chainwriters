@@ -83,8 +83,8 @@ const ProjectItem = ({
 }: ProjectItemTypes) => {
   const router = useRouter();
   const handleClick = (e) => {
-    // e.preventDefault();
-    // router.push(`projects/${address}`);
+    e.preventDefault();
+    router.push(`projects/${id}`);
   };
 
   return (
