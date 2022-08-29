@@ -44,10 +44,12 @@ type Project @entity {
   endId: BigInt
   # handle these sechs
   currentTokenId: BigInt!
-  claimableMaticTotal: BigInt
-  isPaused: Boolean
+  balance: BigInt!
+  isCurated: Boolean
   isFrozen: Boolean
-  premintedByAuthor: number
+  isPaused: Boolean
+  premintedByAuthor: BigInt
+  mintCount: BigInt!
   minted: [Mint!] @derivedFrom(field: "project")
   contributors: [Contributor!] @derivedFrom(field: "project")
   editions: [Edition!] @derivedFrom(field: "project")

@@ -86,7 +86,7 @@ contract MoonpageManager is
         string role
     );
     event Curated(uint256 projectId, bool isCurated);
-    event Paused(uint256 projectId, bool isPaused);
+    event ProjectPaused(uint256 projectId, bool isPaused);
     event RangeSet(uint256 projectId, uint256 startId, uint256 endId);
     event NextEditionEnabled(
         uint256 projectId,
@@ -413,7 +413,7 @@ contract MoonpageManager is
     {
         require(existingProjectIds[_projectId], "Does not exist");
         pausedProjectIds[_projectId] = _state;
-        emit Paused(_projectId, _state);
+        emit ProjectPaused(_projectId, _state);
     }
 
     function setAddresses(

@@ -15,6 +15,14 @@ type Contributor @entity {
   sharePercentage: BigInt!
 }
 
+type Mint @entity {
+  id: ID!
+  project: Project!
+  edition: BigInt!
+  receiver: Bytes!
+  tokenId: BigInt!
+}
+
 type Project @entity {
   id: ID!
   creator: Bytes!
@@ -34,8 +42,15 @@ type Project @entity {
   auctionsEnded: Boolean!
   startId: BigInt
   endId: BigInt
-  currentTokenId: BigInt
-  claimableMaticTotal: BigInt
+  # handle these sechs
+  currentTokenId: BigInt!
+  balance: BigInt!
+  isCurated: Boolean
+  isFrozen: Boolean
+  isPaused: Boolean
+  premintedByAuthor: BigInt
+  mintCount: BigInt!
+  minted: [Mint!] @derivedFrom(field: "project")
   contributors: [Contributor!] @derivedFrom(field: "project")
   editions: [Edition!] @derivedFrom(field: "project")
 }

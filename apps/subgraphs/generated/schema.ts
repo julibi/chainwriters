@@ -190,6 +190,75 @@ export class Contributor extends Entity {
   }
 }
 
+export class Mint extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save Mint entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save Mint entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("Mint", id.toString(), this);
+    }
+  }
+
+  static load(id: string): Mint | null {
+    return changetype<Mint | null>(store.get("Mint", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get project(): string {
+    let value = this.get("project");
+    return value!.toString();
+  }
+
+  set project(value: string) {
+    this.set("project", Value.fromString(value));
+  }
+
+  get edition(): BigInt {
+    let value = this.get("edition");
+    return value!.toBigInt();
+  }
+
+  set edition(value: BigInt) {
+    this.set("edition", Value.fromBigInt(value));
+  }
+
+  get receiver(): Bytes {
+    let value = this.get("receiver");
+    return value!.toBytes();
+  }
+
+  set receiver(value: Bytes) {
+    this.set("receiver", Value.fromBytes(value));
+  }
+
+  get tokenId(): BigInt {
+    let value = this.get("tokenId");
+    return value!.toBigInt();
+  }
+
+  set tokenId(value: BigInt) {
+    this.set("tokenId", Value.fromBigInt(value));
+  }
+}
+
 export class Project extends Entity {
   constructor(id: string) {
     super();
@@ -439,8 +508,53 @@ export class Project extends Entity {
     }
   }
 
-  get currentTokenId(): BigInt | null {
+  get currentTokenId(): BigInt {
     let value = this.get("currentTokenId");
+    return value!.toBigInt();
+  }
+
+  set currentTokenId(value: BigInt) {
+    this.set("currentTokenId", Value.fromBigInt(value));
+  }
+
+  get balance(): BigInt {
+    let value = this.get("balance");
+    return value!.toBigInt();
+  }
+
+  set balance(value: BigInt) {
+    this.set("balance", Value.fromBigInt(value));
+  }
+
+  get isCurated(): boolean {
+    let value = this.get("isCurated");
+    return value!.toBoolean();
+  }
+
+  set isCurated(value: boolean) {
+    this.set("isCurated", Value.fromBoolean(value));
+  }
+
+  get isFrozen(): boolean {
+    let value = this.get("isFrozen");
+    return value!.toBoolean();
+  }
+
+  set isFrozen(value: boolean) {
+    this.set("isFrozen", Value.fromBoolean(value));
+  }
+
+  get isPaused(): boolean {
+    let value = this.get("isPaused");
+    return value!.toBoolean();
+  }
+
+  set isPaused(value: boolean) {
+    this.set("isPaused", Value.fromBoolean(value));
+  }
+
+  get premintedByAuthor(): BigInt | null {
+    let value = this.get("premintedByAuthor");
     if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
@@ -448,28 +562,37 @@ export class Project extends Entity {
     }
   }
 
-  set currentTokenId(value: BigInt | null) {
+  set premintedByAuthor(value: BigInt | null) {
     if (!value) {
-      this.unset("currentTokenId");
+      this.unset("premintedByAuthor");
     } else {
-      this.set("currentTokenId", Value.fromBigInt(<BigInt>value));
+      this.set("premintedByAuthor", Value.fromBigInt(<BigInt>value));
     }
   }
 
-  get claimableMaticTotal(): BigInt | null {
-    let value = this.get("claimableMaticTotal");
+  get mintCount(): BigInt {
+    let value = this.get("mintCount");
+    return value!.toBigInt();
+  }
+
+  set mintCount(value: BigInt) {
+    this.set("mintCount", Value.fromBigInt(value));
+  }
+
+  get minted(): Array<string> | null {
+    let value = this.get("minted");
     if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
-      return value.toBigInt();
+      return value.toStringArray();
     }
   }
 
-  set claimableMaticTotal(value: BigInt | null) {
+  set minted(value: Array<string> | null) {
     if (!value) {
-      this.unset("claimableMaticTotal");
+      this.unset("minted");
     } else {
-      this.set("claimableMaticTotal", Value.fromBigInt(<BigInt>value));
+      this.set("minted", Value.fromStringArray(<Array<string>>value));
     }
   }
 

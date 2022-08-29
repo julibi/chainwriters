@@ -1,21 +1,22 @@
 import { log } from '@graphprotocol/graph-ts';
 import { BigInt } from '@graphprotocol/graph-ts';
+import { ProjectCreated } from '../generated/MoonpageFactory/MoonpageFactory';
 import {
-  Paused,
-  ProjectCreated,
-  Received,
-} from '../generated/MoonpageFactory/MoonpageFactory';
-import {
+  BalanceDecreased,
+  BalanceIncreased,
+  BaseDataFrozen,
   Configured,
   ContributorAdded,
+  Curated,
   NextEditionEnabled,
+  PremintedByAuthor,
+  ProjectPaused,
   RangeSet,
   TextSet,
   TokenIdIncreased,
 } from '../generated/MoonpageManager/MoonpageManager';
+import { Minted } from '../generated/MoonpageCollection/MoonpageCollection';
 import { Contributor, Edition, Project } from '../generated/schema';
-
-export function handlePaused(event: Paused): void {}
 
 export function handleProjectCreated(event: ProjectCreated): void {
   let project = new Project(event.params.projectId.toString());
@@ -26,26 +27,43 @@ export function handleProjectCreated(event: ProjectCreated): void {
   project.textIpfsHash = event.params.textIpfsHash;
   project.firstEditionAmount = event.params.firstEditionAmount;
   project.initialMintPrice = event.params.initialMintPrice;
-  project.currentTokenId = 0;
-  project.claimableMaticTotal = 0;
-  project.premintedByAuthor = 0;
+  // Continue here - get the correct tokenID!
+  // project.currentTokenId = BigInt.fromString(event.params.projectId.times());
+  project.balance = BigInt.fromString('0');
+  project.premintedByAuthor = BigInt.fromString('0');
   project.isPaused = false;
   project.isFrozen = false;
   project.auctionsStarted = false;
   project.auctionsEnded = false;
+  project.mintCount = BigInt.fromString('0');
   project.save();
 }
 
-export function handleRangeSet(event: RangeSet): void {
-  let projectId = event.params.projectId.toString();
-  let project = Project.load(projectId);
-  if (!project) {
-    throw new Error(`Could not find project with ID`);
+// export function handleRangeSet(event: RangeSet): void {
+//   let projectId = event.params.projectId.toString();
+//   let project = Project.load(projectId);
+//   if (!project) {
+//     throw new Error(`Could not find project with ID`);
+//   }
+//   project.currentTokenId = event.params.startId;
+//   project.startId = event.params.startId;
+//   project.endId = event.params.endId;
+//   project.save();
+// }
+
+export function handleNextEditionEnabled(event: NextEditionEnabled): void {
+  let edition = new Edition(
+    event.transaction.hash.toHexString() + event.params.editionId.toHexString()
+  );
+  if (!edition) {
+    throw new Error('Could not create edition for project');
   }
-  project.currentTokenId = event.params.startId;
-  project.startId = event.params.startId;
-  project.endId = event.params.endId;
-  project.save();
+  edition.project = event.params.projectId.toString();
+  edition.edition = event.params.editionId;
+  edition.startId = event.params.startId;
+  edition.endId = event.params.endId;
+  edition.mintPrice = event.params.mintPrice;
+  edition.save();
 }
 
 export function handleProjectConfigured(event: Configured): void {
@@ -78,19 +96,25 @@ export function handleContributorAdded(event: ContributorAdded): void {
   contributor.save();
 }
 
-export function handleNextEditionEnabled(event: NextEditionEnabled): void {
-  let edition = new Edition(
-    event.transaction.hash.toHexString() + event.params.editionId.toHexString()
-  );
-  if (!edition) {
-    throw new Error('Could not create edition for project');
+export function handleBaseDataFrozen(event: BaseDataFrozen): void {
+  let projectId = event.params.projectId.toString();
+  let project = Project.load(projectId);
+  if (!project) {
+    throw new Error(`Could not find project with ID`);
   }
-  edition.project = event.params.projectId.toString();
-  edition.edition = event.params.editionId;
-  edition.startId = event.params.startId;
-  edition.endId = event.params.endId;
-  edition.mintPrice = event.params.mintPrice;
-  edition.save();
+  project.isFrozen = event.params.frozen;
+  project.save();
+}
+
+export function handlePremintedByAuthor(event: PremintedByAuthor): void {
+  let projectId = event.params.projectId.toString();
+  let project = Project.load(projectId);
+  if (!project) {
+    throw new Error(`Could not find project with ID`);
+  }
+
+  project.premintedByAuthor = event.params.amount;
+  project.save();
 }
 
 export function handleTextSet(event: TextSet): void {
@@ -104,14 +128,67 @@ export function handleTextSet(event: TextSet): void {
   project.save();
 }
 
+export function handleMint(event: Minted): void {
+  let projectId = event.params.projectId.toString();
+  let project = Project.load(projectId);
+  if (!project) {
+    throw new Error(`Could not find project with ID`);
+  }
+  // TODO save the whole mint in the the MINT entity
+  project.mintCount = project.mintCount.plus(BigInt.fromString('1'));
+  project.save();
+}
+
 export function handleTokenIdIncreased(event: TokenIdIncreased): void {
   let projectId = event.params.projectId.toString();
   let project = Project.load(projectId);
   if (!project) {
     throw new Error(`Could not find project with ID`);
   }
-
-  // continue here
+  project.currentTokenId = project.currentTokenId.plus(event.params.amount);
+  project.save();
 }
 
-export function handleReceived(event: Received): void {}
+export function handleBalanceIncreased(event: BalanceIncreased): void {
+  let projectId = event.params.projectId.toString();
+  let project = Project.load(projectId);
+  if (!project) {
+    throw new Error(`Could not find project with ID`);
+  }
+
+  project.balance = project.balance.plus(event.params.amount);
+  project.save();
+}
+
+export function handleBalanceDecreased(event: BalanceDecreased): void {
+  let projectId = event.params.projectId.toString();
+  let project = Project.load(projectId);
+  if (!project) {
+    throw new Error(`Could not find project with ID`);
+  }
+
+  project.balance = project.balance.minus(event.params.amount);
+  project.save();
+}
+
+export function handlePaused(event: ProjectPaused): void {
+  let projectId = event.params.projectId.toString();
+  let project = Project.load(projectId);
+  if (!project) {
+    throw new Error(`Could not find project with ID`);
+  }
+
+  project.isPaused = event.params.isPaused;
+  project.save();
+}
+
+export function handleCurated(event: Curated): void {
+  let projectId = event.params.projectId.toString();
+  let project = Project.load(projectId);
+  if (!project) {
+    throw new Error(`Could not find project with ID`);
+  }
+
+  project.isCurated = event.params.isCurated;
+  project.save();
+}

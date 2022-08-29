@@ -275,28 +275,6 @@ export class Paused__Params {
     this._event = event;
   }
 
-  get projectId(): BigInt {
-    return this._event.parameters[0].value.toBigInt();
-  }
-
-  get isPaused(): boolean {
-    return this._event.parameters[1].value.toBoolean();
-  }
-}
-
-export class Paused1 extends ethereum.Event {
-  get params(): Paused1__Params {
-    return new Paused1__Params(this);
-  }
-}
-
-export class Paused1__Params {
-  _event: Paused1;
-
-  constructor(event: Paused1) {
-    this._event = event;
-  }
-
   get account(): Address {
     return this._event.parameters[0].value.toAddress();
   }
@@ -321,6 +299,28 @@ export class PremintedByAuthor__Params {
 
   get amount(): BigInt {
     return this._event.parameters[1].value.toBigInt();
+  }
+}
+
+export class ProjectPaused extends ethereum.Event {
+  get params(): ProjectPaused__Params {
+    return new ProjectPaused__Params(this);
+  }
+}
+
+export class ProjectPaused__Params {
+  _event: ProjectPaused;
+
+  constructor(event: ProjectPaused) {
+    this._event = event;
+  }
+
+  get projectId(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+
+  get isPaused(): boolean {
+    return this._event.parameters[1].value.toBoolean();
   }
 }
 
