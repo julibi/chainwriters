@@ -243,6 +243,7 @@ contract MoonpageManager is
         onlyCreator(_projectId)
         whenNotPaused
     {
+        require(!pausedProjectIds[_projectId], "Project is paused");
         baseDatas[_projectId].textIpfsHash = _ipfsHash;
 
         emit TextSet(_projectId, _ipfsHash);
@@ -297,6 +298,7 @@ contract MoonpageManager is
         uint256 _newEdAmount,
         uint256 _newEdMintPrice
     ) external onlyCreator(_projectId) whenNotPaused {
+        require(!pausedProjectIds[_projectId], "Project is paused");
         require(
             editions[_projectId].currentTokenId ==
                 editions[_projectId].currentEdLastTokenId + 1,

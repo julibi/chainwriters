@@ -19,6 +19,7 @@ const advanceDays = async (days: any) => {
 
 // TODO
 // I cannot mint some random tokens
+// test that author cannot changes textipfshash when paused and no one can mint when paused
 
 describe("Project", function () {
   let deployer: SignerWithAddress;
