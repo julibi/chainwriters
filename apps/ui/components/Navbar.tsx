@@ -111,7 +111,7 @@ const MobileNavListItem = styled.li`
 
 const routes = [
   { name: 'Home', path: '/' },
-  // { name: 'Projects', path: '/projects' },
+  { name: 'Projects', path: '/projects' },
   // { name: 'Create', path: '/create' },
   // { name: 'My Bookshelf', path: '/mybookshelf' },
   { name: 'About', path: '/about' },

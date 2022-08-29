@@ -11,7 +11,7 @@ import {
   PremintedByAuthor,
   ProjectCreated,
   ProjectPaused,
-  TextSet,
+  TextUpdated,
   TokenIdIncreased,
 } from '../generated/MoonpageManager/MoonpageManager';
 import { Minted } from '../generated/MoonpageCollection/MoonpageCollection';
@@ -118,14 +118,47 @@ export function handlePremintedByAuthor(event: PremintedByAuthor): void {
   project.save();
 }
 
-export function handleTextSet(event: TextSet): void {
+export function handleTextUpdated(event: TextUpdated): void {
   let projectId = event.params.projectId.toString();
   let project = Project.load(projectId);
   if (!project) {
     throw new Error(`Could not find project with ID`);
   }
 
-  project.textIpfsHash = event.params.textHash;
+  project.textIpfsHash = event.params.newIpfsHash;
+  project.save();
+}
+
+export function handleBlurbUpdated(event: BlurbUpdated): void {
+  let projectId = event.params.projectId.toString();
+  let project = Project.load(projectId);
+  if (!project) {
+    throw new Error(`Could not find project with ID`);
+  }
+
+  project.blurbIpfsHash = event.params.newIpfsHash;
+  project.save();
+}
+
+export function handleImageUpdated(event: ImageUpdated): void {
+  let projectId = event.params.projectId.toString();
+  let project = Project.load(projectId);
+  if (!project) {
+    throw new Error(`Could not find project with ID`);
+  }
+
+  project.imgIpfsHash = event.params.newIpfsHash;
+  project.save();
+}
+
+export function handleAnimationUpdated(event: AnmimationUpdated): void {
+  let projectId = event.params.projectId.toString();
+  let project = Project.load(projectId);
+  if (!project) {
+    throw new Error(`Could not find project with ID`);
+  }
+
+  project.animationIpfsHash = event.params.newIpfsHash;
   project.save();
 }
 

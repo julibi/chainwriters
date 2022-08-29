@@ -13,7 +13,7 @@ import {
 } from '../components/HomePage/ProjectSection';
 import { ProjectItem } from '../components/ProjectItem';
 import {
-  useFetchAllAuctions,
+  useFetchAllProjects,
   useFetchAllProjectsDesc,
   useFetchAllProjectsOldAsc,
 } from '../state/projects/hooks';
@@ -135,11 +135,10 @@ const ProjectItems = styled.div`
   }
 `;
 
-interface Dao {
+interface Project {
   id: string;
-  author: string;
-  address: string;
-  createdAt: string;
+  creator: string;
+  createdAt?: string;
   title: string;
   imgIpfsHash?: string;
   subtitle?: string;
@@ -149,25 +148,29 @@ interface Dao {
 }
 
 const Projects = () => {
-  const [daos, setDaos] = useState<Dao[] | null>(null);
-  const [searchedDaos, setSearchedDaos] = useState<Dao[] | null>(null);
+  const [projects, setProjects] = useState<Project[] | null>(null);
+  const [searchedDaos, setSearchedDaos] = useState<Project[] | null>(null);
   const [searchInput, setSearchInput] = useState<string>('');
   const [hasSearched, setHasSearched] = useState<boolean>(false);
   const fetchAllDesc = useFetchAllProjectsDesc();
   const fetchAllAsc = useFetchAllProjectsOldAsc();
-  const fetchAuctions = useFetchAllAuctions();
-  const { data, loading } = fetchAllDesc();
+  const fetchProjects = useFetchAllProjects();
+  const { data, loading } = fetchProjects();
 
   const search = useCallback(
-    (filtered?: Dao[]) => {
-      const daoArray = filtered ?? daos;
-      if (daoArray && daoArray.length > 0 && searchInput.trim().length > 0) {
+    (filtered?: Project[]) => {
+      const projectsArray = filtered ?? projects;
+      if (
+        projectsArray &&
+        projectsArray.length > 0 &&
+        searchInput.trim().length > 0
+      ) {
         const search = searchInput.trim().toLowerCase();
-        const result = daoArray.filter(
-          (dao: Dao) =>
+        const result = projectsArray.filter(
+          (dao: Project) =>
             dao.title.toLowerCase().includes(search) ||
             dao.subtitle?.toLowerCase().includes(search) ||
-            dao.author.toLowerCase().includes(search)
+            dao.creator.toLowerCase().includes(search)
         );
         setHasSearched(true);
         if (result.length > 0) {
@@ -175,7 +178,7 @@ const Projects = () => {
         }
       }
     },
-    [daos, searchInput]
+    [projects, searchInput]
   );
 
   const reset = () => {
@@ -186,7 +189,8 @@ const Projects = () => {
 
   useEffect(() => {
     if (data) {
-      setDaos(data.daos);
+      console.log({ data });
+      setProjects(data.projects);
     }
   }, [data]);
 
@@ -215,7 +219,9 @@ const Projects = () => {
             <SearchButton
               // @ts-ignore
               onClick={search}
-              disabled={!daos || daos.length < 1 || searchInput.length < 1}
+              disabled={
+                !projects || projects.length < 1 || searchInput.length < 1
+              }
             >
               <Image
                 src={'/SearchIcon.svg'}
@@ -242,7 +248,7 @@ const Projects = () => {
                     if (searchInput.length > 0 && hasSearched) {
                       search(data.daos);
                     } else {
-                      setDaos(data.daos);
+                      setProjects(data.daos);
                     }
                   }
                 },
@@ -256,7 +262,7 @@ const Projects = () => {
                     if (searchInput.length > 0 && hasSearched) {
                       search(data.daos);
                     } else {
-                      setDaos(data.daos);
+                      setProjects(data.daos);
                     }
                   }
                 },
@@ -265,12 +271,13 @@ const Projects = () => {
                 id: 3,
                 value: 'Auctions only',
                 onSelect: () => {
-                  const { error, loading, data } = fetchAuctions();
+                  // TODO - fetch the right projects
+                  const { error, loading, data } = fetchProjects();
                   if (!error && !loading) {
                     if (searchInput.length > 0 && hasSearched) {
                       search(data.daos);
                     } else {
-                      setDaos(data.daos);
+                      setProjects(data.daos);
                     }
                   }
                 },
@@ -278,7 +285,7 @@ const Projects = () => {
             ]}
           />
         </Filtering>
-        {loading && !daos && <Loading height={530} />}
+        {loading && !projects && <Loading height={530} />}
         <ProjectItems>
           {hasSearched && !searchedDaos && (
             <NoResultsWrapper>
@@ -288,16 +295,12 @@ const Projects = () => {
           {hasSearched &&
             searchedDaos &&
             searchedDaos.map(
-              (
-                { title, author, address, genre, subtitle, imgIpfsHash, id },
-                idx
-              ) => (
+              ({ title, creator, genre, subtitle, imgIpfsHash, id }, idx) => (
                 <ProjectItem
                   key={idx}
                   id={id}
-                  address={address}
                   title={title}
-                  author={author}
+                  creator={creator}
                   imgIpfsHash={imgIpfsHash}
                   subtitle={subtitle}
                   genre={genre}
@@ -306,18 +309,14 @@ const Projects = () => {
             )}
           {!hasSearched &&
             !searchedDaos &&
-            daos &&
-            daos.map(
-              (
-                { title, author, address, genre, subtitle, imgIpfsHash, id },
-                idx
-              ) => (
+            projects &&
+            projects.map(
+              ({ title, creator, genre, subtitle, imgIpfsHash, id }, idx) => (
                 <ProjectItem
                   key={idx}
                   id={id}
-                  address={address}
+                  creator={creator}
                   title={title}
-                  author={author}
                   imgIpfsHash={imgIpfsHash}
                   subtitle={subtitle}
                   genre={genre}

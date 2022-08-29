@@ -65,8 +65,7 @@ const Label = styled.span`
 
 interface ProjectItemTypes {
   id: string;
-  address: string;
-  author: string;
+  creator: string;
   title: string;
   imgIpfsHash: string;
   subtitle: string;
@@ -76,8 +75,7 @@ interface ProjectItemTypes {
 
 const ProjectItem = ({
   id,
-  address,
-  author,
+  creator,
   title,
   imgIpfsHash,
   subtitle,
@@ -119,7 +117,7 @@ const ProjectItem = ({
         )}
         <Flex>
           <Label>Author</Label>
-          <div>{truncateAddress(author)}</div>
+          <div>{truncateAddress(creator)}</div>
         </Flex>
       </InfoWrapper>
     </Root>

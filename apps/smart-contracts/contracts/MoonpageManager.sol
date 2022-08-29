@@ -91,7 +91,10 @@ contract MoonpageManager is
         string newGenre,
         string newSubtitle
     );
-    event TextSet(uint256 projectId, string textHash);
+    event TextUpdated(uint256 projectId, string newIpfsHash);
+    event BlurbUpdated(uint256 projectId, string newIpfsHash);
+    event ImageUpdated(uint256 projectId, string newIpfsHash);
+    event AnimationUpdated(uint256 projectId, string newIpfsHash);
     event ContributorAdded(
         uint256 projectId,
         address contributor,
@@ -238,7 +241,7 @@ contract MoonpageManager is
         );
     }
 
-    function setTextIpfsHash(uint256 _projectId, string calldata _ipfsHash)
+    function updateTextIpfsHash(uint256 _projectId, string calldata _ipfsHash)
         external
         onlyCreator(_projectId)
         whenNotPaused
@@ -246,7 +249,37 @@ contract MoonpageManager is
         require(!pausedProjectIds[_projectId], "Project is paused");
         baseDatas[_projectId].textIpfsHash = _ipfsHash;
 
-        emit TextSet(_projectId, _ipfsHash);
+        emit TextUpdated(_projectId, _ipfsHash);
+    }
+
+    function updateImgIpfsHash(uint256 _projectId, string calldata _ipfsHash)
+        external
+        onlyCreator(_projectId)
+        whenNotPaused
+    {
+        require(!pausedProjectIds[_projectId], "Project is paused");
+        baseDatas[_projectId].imgIpfsHash = _ipfsHash;
+
+        emit ImageUpdated(_projectId, _ipfsHash);
+    }
+
+    function updateAnimationIpfsHash(
+        uint256 _projectId,
+        string calldata _ipfsHash
+    ) external onlyCreator(_projectId) whenNotPaused {
+        require(!pausedProjectIds[_projectId], "Project is paused");
+        baseDatas[_projectId].animationIpfsHash = _ipfsHash;
+        emit AnimationUpdated(_projectId, _ipfsHash);
+    }
+
+    function updateBlurbIpfsHash(uint256 _projectId, string calldata _ipfsHash)
+        external
+        onlyCreator(_projectId)
+        whenNotPaused
+    {
+        require(!pausedProjectIds[_projectId], "Project is paused");
+        baseDatas[_projectId].blurbIpfsHash = _ipfsHash;
+        emit BlurbUpdated(_projectId, _ipfsHash);
     }
 
     function addContributors(

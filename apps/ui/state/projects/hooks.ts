@@ -1,11 +1,11 @@
-import { gql, useQuery } from '@apollo/client'
-import { BigNumber } from '@ethersproject/bignumber'
-import { Multicall } from 'ethereum-multicall'
-import client from '../../apolloclient'
-import { JsonRpcProvider } from '@ethersproject/providers'
-import { RPC_URLS } from '../../connectors'
-import PROJECT_ABI from '../../abis/project.json'
-import useProjectContract from '../../hooks/useProjectContract'
+import { gql, useQuery } from '@apollo/client';
+import { BigNumber } from '@ethersproject/bignumber';
+import { Multicall } from 'ethereum-multicall';
+import client from '../../apolloclient';
+import { JsonRpcProvider } from '@ethersproject/providers';
+import { RPC_URLS } from '../../connectors';
+import PROJECT_ABI from '../../abis/project.json';
+import useProjectContract from '../../hooks/useProjectContract';
 
 interface Contribution {
   id: string;
@@ -32,8 +32,8 @@ export interface ProjectData {
   subtitle: string | null;
   genre: string | null;
   textIpfsHash: string | null;
-  imgIpfsHash: string | null; 
-  blurbIpfsHash: string | null; 
+  imgIpfsHash: string | null;
+  blurbIpfsHash: string | null;
   contributions: Contribution[] | null;
   editions: Edition[];
   metadataCID: string | null;
@@ -53,13 +53,10 @@ export interface ProjectData {
   factory: string;
 }
 
-const provider = new JsonRpcProvider(
-  RPC_URLS[80001],
-  80001
-);
+const provider = new JsonRpcProvider(RPC_URLS[80001], 80001);
 const multicall = new Multicall({
   ethersProvider: provider,
-  tryAggregate: false
+  tryAggregate: false,
 });
 
 export const GET_TOP_DAOS = gql`
@@ -98,12 +95,11 @@ export const GET_ALL_DAOS_DESC = gql`
   }
 `;
 
-export const GET_ALL_DAOS_ASC = gql`
-  query allDaosQuery {
-    daos(orderBy: createdAt, orderDirection: asc) {
+export const GET_ALL_PROJECTS_ASC = gql`
+  query allProjectsQuery {
+    projects(orderBy: createdAt, orderDirection: asc) {
       id
-      author
-      address
+      creator
       createdAt
       title
       imgIpfsHash
@@ -116,8 +112,12 @@ export const GET_ALL_DAOS_ASC = gql`
 `;
 
 export const GET_ONLY_AUCTIONS = gql`
-  query allDaosQuery {
-    daos(orderBy: createdAt, orderDirection: desc, where: { auctionsStarted: true, auctionsEnded: false }) {
+  query allQuery {
+    daos(
+      orderBy: createdAt
+      orderDirection: desc
+      where: { auctionsStarted: true, auctionsEnded: false }
+    ) {
       id
       author
       address
@@ -183,16 +183,22 @@ export const useFetchAllProjectsDesc = () => {
 };
 
 export const useFetchAllProjectsOldAsc = () => {
-  const { loading, error, data, refetch } = useQuery(GET_ALL_DAOS_ASC);
+  const { loading, error, data, refetch } = useQuery(GET_ALL_PROJECTS_ASC);
   return () => ({
-    loading, error, data, refetch
+    loading,
+    error,
+    data,
+    refetch,
   });
 };
 
-export const useFetchAllAuctions = () => {
-  const { loading, error, data, refetch } = useQuery(GET_ONLY_AUCTIONS);
+export const useFetchAllProjects = () => {
+  const { loading, error, data, refetch } = useQuery(GET_ALL_PROJECTS_ASC);
   return () => ({
-    loading, error, data, refetch
+    loading,
+    error,
+    data,
+    refetch,
   });
 };
 
@@ -202,14 +208,14 @@ export const useFetchTopProjects = () => {
 };
 
 const convertToRegularNumber = (bigInt, BigIntFromMulticall) => {
-  if(BigIntFromMulticall) {
-    return parseInt(bigInt.hex, 16)
+  if (BigIntFromMulticall) {
+    return parseInt(bigInt.hex, 16);
   }
-  return parseInt(bigInt._hex, 16)
+  return parseInt(bigInt._hex, 16);
 };
 
-export const useGetProjectDetails = (projectAddress: string) => { 
-  const ProjectContract = useProjectContract(projectAddress); 
+export const useGetProjectDetails = (projectAddress: string) => {
+  const ProjectContract = useProjectContract(projectAddress);
   return async (address: string): Promise<ProjectData> => {
     if (!address) {
       return null;
@@ -305,9 +311,13 @@ export const useGetProjectDetails = (projectAddress: string) => {
     let currentEditionMintPrice = result.find(
       (x) => x.reference == 'currentEditionMintPrice'
     ).returnValues[0];
-    currentEditionMintPrice = BigNumber.from(parseInt(currentEditionMintPrice.hex, 16).toString());
+    currentEditionMintPrice = BigNumber.from(
+      parseInt(currentEditionMintPrice.hex, 16).toString()
+    );
     currentEdition = convertToRegularNumber(currentEdition, true);
-    const currentEditionMax = result.find((x) => x.reference === 'currentEditionMax').returnValues[0];
+    const currentEditionMax = result.find(
+      (x) => x.reference === 'currentEditionMax'
+    ).returnValues[0];
     const currentEditionMaxSupply = parseInt(currentEditionMax.hex, 16);
     premintedByAuthor = convertToRegularNumber(premintedByAuthor, true);
     totalSupplyGenEd = convertToRegularNumber(totalSupplyGenEd, true);
@@ -389,5 +399,5 @@ export const useGetProjectDetails = (projectAddress: string) => {
       paused,
       factory,
     };
-  };;
+  };
 };
