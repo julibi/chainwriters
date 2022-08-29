@@ -508,13 +508,13 @@ export class Project extends Entity {
     }
   }
 
-  get currentTokenId(): BigInt {
-    let value = this.get("currentTokenId");
+  get currentId(): BigInt {
+    let value = this.get("currentId");
     return value!.toBigInt();
   }
 
-  set currentTokenId(value: BigInt) {
-    this.set("currentTokenId", Value.fromBigInt(value));
+  set currentId(value: BigInt) {
+    this.set("currentId", Value.fromBigInt(value));
   }
 
   get balance(): BigInt {

@@ -42,8 +42,7 @@ type Project @entity {
   auctionsEnded: Boolean!
   startId: BigInt
   endId: BigInt
-  # handle these sechs
-  currentTokenId: BigInt!
+  currentId: BigInt!
   balance: BigInt!
   isCurated: Boolean
   isFrozen: Boolean

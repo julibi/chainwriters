@@ -283,27 +283,50 @@
       "inputs": [
         {
           "indexed": false,
+          "internalType": "address",
+          "name": "creator",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "royaltiesSplitter",
+          "type": "address"
+        },
+        {
+          "indexed": false,
           "internalType": "uint256",
           "name": "projectId",
           "type": "uint256"
         },
         {
           "indexed": false,
-          "internalType": "bool",
-          "name": "isPaused",
-          "type": "bool"
-        }
-      ],
-      "name": "ProjectPaused",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
+          "internalType": "string",
+          "name": "title",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "textIpfsHash",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "originalLanguage",
+          "type": "string"
+        },
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "projectId",
+          "name": "initialMintPrice",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "firstEditionAmount",
           "type": "uint256"
         },
         {
@@ -317,9 +340,34 @@
           "internalType": "uint256",
           "name": "endId",
           "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "currentEdLastId",
+          "type": "uint256"
         }
       ],
-      "name": "RangeSet",
+      "name": "ProjectCreated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "projectId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "bool",
+          "name": "isPaused",
+          "type": "bool"
+        }
+      ],
+      "name": "ProjectPaused",
       "type": "event"
     },
     {

@@ -70,6 +70,19 @@ contract MoonpageManager is
     mapping(uint256 => bool) public pausedProjectIds;
     mapping(uint256 => mapping(uint256 => uint256)) public editionRanges;
 
+    event ProjectCreated(
+        address creator,
+        address royaltiesSplitter,
+        uint256 projectId,
+        string title,
+        string textIpfsHash,
+        string originalLanguage,
+        uint256 initialMintPrice,
+        uint256 firstEditionAmount,
+        uint256 startId,
+        uint256 endId,
+        uint256 currentEdLastId
+    );
     event Configured(
         uint256 projectId,
         string imgHash,
@@ -87,7 +100,6 @@ contract MoonpageManager is
     );
     event Curated(uint256 projectId, bool isCurated);
     event ProjectPaused(uint256 projectId, bool isPaused);
-    event RangeSet(uint256 projectId, uint256 startId, uint256 endId);
     event NextEditionEnabled(
         uint256 projectId,
         uint256 editionId,
@@ -186,13 +198,17 @@ contract MoonpageManager is
         frozenProjectIds[_projectId] = false;
         pausedProjectIds[_projectId] = false;
         projectsLength++;
-        emit RangeSet(_projectId, startId, endId);
-        emit NextEditionEnabled(
+        emit ProjectCreated(
+            _caller,
+            _royaltiesSplitter,
             _projectId,
-            1,
-            _firstEditionAmount,
+            _title,
+            _textCID,
+            _originalLanguage,
             _initialMintPrice,
+            _firstEditionAmount,
             startId,
+            endId,
             currentEdLast
         );
     }

@@ -3,32 +3,12 @@ schema:
   file: schema.graphql
 dataSources:
   - kind: ethereum
-    name: MoonpageFactory
-    network: mumbai
-    source:
-      address: "0x9e36c1d00d9F8Eb4EE31A5E5D963D2abE8e6F97b"
-      abi: MoonpageFactory
-      startBlock: 27817929
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.5
-      language: wasm/assemblyscript
-      entities:
-        - Project
-      abis:
-        - name: MoonpageFactory
-          file: MoonpageFactory/abis/MoonpageFactory.json
-      eventHandlers:
-        - event: ProjectCreated(address,address,uint256,string,string,string,uint256,uint256)
-          handler: handleProjectCreated
-      file: MoonpageFactory/MoonpageFactory.wasm
-  - kind: ethereum
     name: MoonpageManager
     network: mumbai
     source:
-      address: "0x955ca2a17c0866e58d12A0b92b50e901445CD405"
+      address: "0xaf7cE20f494c4c17B8ce5D67b797cc2E325A89b0"
       abi: MoonpageManager
-      startBlock: 27817929
+      startBlock: 27828385
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -36,10 +16,13 @@ dataSources:
       entities:
         - Project
         - Edition
+        - Contributor
       abis:
         - name: MoonpageManager
           file: MoonpageManager/abis/MoonpageManager.json
       eventHandlers:
+        - event: ProjectCreated(address,address,uint256,string,string,string,uint256,uint256,uint256,uint256,uint256)
+          handler: handleProjectCreated
         - event: NextEditionEnabled(uint256,uint256,uint256,uint256,uint256,uint256)
           handler: handleNextEditionEnabled
         - event: Configured(uint256,string,string,string,string,string)
@@ -62,14 +45,35 @@ dataSources:
           handler: handlePaused
         - event: Curated(uint256,bool)
           handler: handleCurated
-      file: MoonpageFactory/MoonpageFactory.wasm
+      file: MoonpageManager/MoonpageManager.wasm
   - kind: ethereum
     name: MoonpageCollection
     network: mumbai
     source:
-      address: "0x4236b0f08898a84e0a03d24cdee7d831e372177a"
+      address: "0xE04829d36b53F8307e8836bffC4F1f729E3e8333"
       abi: MoonpageCollection
-      startBlock: 27817929
+      startBlock: 27828385
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Project
+        - Mint
+      abis:
+        - name: MoonpageCollection
+          file: MoonpageCollection/abis/MoonpageCollection.json
+      eventHandlers:
+        - event: Minted(uint256,uint256,address,uint256)
+          handler: handleMint
+      file: MoonpageManager/MoonpageManager.wasm
+  - kind: ethereum
+    name: AuctionsManager
+    network: mumbai
+    source:
+      address: "0xF3A8e6884983cFFEF676CcE2150807B0308e343b"
+      abi: AuctionsManager
+      startBlock: 27828385
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -77,9 +81,11 @@ dataSources:
       entities:
         - Project
       abis:
-        - name: MoonpageCollection
-          file: MoonpageCollection/abis/MoonpageCollection.json
+        - name: AuctionsManager
+          file: AuctionsManager/abis/AuctionsManager.json
       eventHandlers:
-        - event: Minted(uint256,uint256,address,uint256)
-          handler: handleMint
-      file: MoonpageFactory/MoonpageFactory.wasm
+        - event: AuctionsStarted(uint256,uint256)
+          handler: handleAuctionsStarted
+        - event: AuctionsEnded(uint256,uint256)
+          handler: handleAuctionsEnded
+      file: MoonpageManager/MoonpageManager.wasm

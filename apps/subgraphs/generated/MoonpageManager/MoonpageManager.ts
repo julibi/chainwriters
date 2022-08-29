@@ -302,6 +302,64 @@ export class PremintedByAuthor__Params {
   }
 }
 
+export class ProjectCreated extends ethereum.Event {
+  get params(): ProjectCreated__Params {
+    return new ProjectCreated__Params(this);
+  }
+}
+
+export class ProjectCreated__Params {
+  _event: ProjectCreated;
+
+  constructor(event: ProjectCreated) {
+    this._event = event;
+  }
+
+  get creator(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get royaltiesSplitter(): Address {
+    return this._event.parameters[1].value.toAddress();
+  }
+
+  get projectId(): BigInt {
+    return this._event.parameters[2].value.toBigInt();
+  }
+
+  get title(): string {
+    return this._event.parameters[3].value.toString();
+  }
+
+  get textIpfsHash(): string {
+    return this._event.parameters[4].value.toString();
+  }
+
+  get originalLanguage(): string {
+    return this._event.parameters[5].value.toString();
+  }
+
+  get initialMintPrice(): BigInt {
+    return this._event.parameters[6].value.toBigInt();
+  }
+
+  get firstEditionAmount(): BigInt {
+    return this._event.parameters[7].value.toBigInt();
+  }
+
+  get startId(): BigInt {
+    return this._event.parameters[8].value.toBigInt();
+  }
+
+  get endId(): BigInt {
+    return this._event.parameters[9].value.toBigInt();
+  }
+
+  get currentEdLastId(): BigInt {
+    return this._event.parameters[10].value.toBigInt();
+  }
+}
+
 export class ProjectPaused extends ethereum.Event {
   get params(): ProjectPaused__Params {
     return new ProjectPaused__Params(this);
@@ -321,32 +379,6 @@ export class ProjectPaused__Params {
 
   get isPaused(): boolean {
     return this._event.parameters[1].value.toBoolean();
-  }
-}
-
-export class RangeSet extends ethereum.Event {
-  get params(): RangeSet__Params {
-    return new RangeSet__Params(this);
-  }
-}
-
-export class RangeSet__Params {
-  _event: RangeSet;
-
-  constructor(event: RangeSet) {
-    this._event = event;
-  }
-
-  get projectId(): BigInt {
-    return this._event.parameters[0].value.toBigInt();
-  }
-
-  get startId(): BigInt {
-    return this._event.parameters[1].value.toBigInt();
-  }
-
-  get endId(): BigInt {
-    return this._event.parameters[2].value.toBigInt();
   }
 }
 

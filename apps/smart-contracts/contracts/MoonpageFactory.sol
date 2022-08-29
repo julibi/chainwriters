@@ -23,16 +23,6 @@ contract MoonpageFactory is
     address public moonpageDev;
     IMoonpageManager public moonpageManager;
     IAuctionsManager public auctionsManager;
-    event ProjectCreated(
-        address creator,
-        address royaltiesSplitter,
-        uint256 projectId,
-        string title,
-        string textIpfsHash,
-        string originalLanguage,
-        uint256 initialMintPrice,
-        uint256 firstEditionAmount
-    );
     event Received(address from, uint256 amount);
     bool public isAllowlistOnly;
     mapping(address => bool) public allowlist;
@@ -100,16 +90,6 @@ contract MoonpageFactory is
             _firstEditionAmount
         );
         auctionsManager.setupAuctionSettings(projectsIndex, msg.sender);
-        emit ProjectCreated(
-            msg.sender,
-            address(royaltiesSplitter),
-            projectsIndex,
-            _title,
-            _textIpfsHash,
-            _originalLanguage,
-            _initialMintPrice,
-            _firstEditionAmount
-        );
         projectsIndex++;
     }
 
