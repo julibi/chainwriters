@@ -236,7 +236,7 @@ const About = () => {
                 <Field>Software Engineer</Field>
                 <Introduction>
                   Experienced developer specialising in Web3. As a software
-                  engineer she has contributed to multiple prestigious NFT
+                  engineer she has contributed to multiple well-known NFT
                   projects such as{' '}
                   <LinkWrapper url="https://www.polychainmonsters.com">
                     Polychain Monsters
@@ -270,7 +270,6 @@ const About = () => {
                 >
                   <Name>Olivia</Name>
                 </StyledLink>
-                <Title>Co-Founder</Title>
                 <Field>Marketing & Community Manager</Field>
                 <Introduction>
                   {`Novelist and editor. Her novel `}

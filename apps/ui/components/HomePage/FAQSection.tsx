@@ -35,7 +35,7 @@ const FAQSection = () => {
         <MoreDetails title={'When will Moonpage launch?'}>
           <>
             <p>
-              The Mainnet launch is planned for the beginning of August 2022.
+              The Mainnet launch is planned for the middle of September 2022.
             </p>
           </>
         </MoreDetails>
