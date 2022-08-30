@@ -38,6 +38,7 @@ import {
 } from '../../pages/projects/[projectId]';
 import { BLURB_FETCH_ERROR } from '../../constants';
 import useMoonpageCollection from '../../hooks/useMoonpageCollection';
+import useMoonpageManager from '../../hooks/useMoonpageManager';
 
 const Root = styled.section`
   display: flex;
@@ -147,7 +148,8 @@ const AuthorSection = ({
   const { account, chainId } = useWeb3React();
   // @ts-ignore
   const client = create('https://ipfs.infura.io:5001/api/v0');
-  const Collection = useMoonpageCollection();
+  const collection = useMoonpageCollection();
+  const mpManager = useMoonpageManager();
   const [showConfigureModal, setShowConfigureModal] = useState<boolean>(false);
   const [configurePending, setConfigurePending] = useState<boolean>(false);
   const [showContributorsModal, setShowContributorsModal] =
@@ -174,7 +176,7 @@ const AuthorSection = ({
     ) => {
       try {
         setConfigurePending(true);
-        const Tx = await Collection.configureProjectDetails(
+        const Tx = await collection.configureProjectDetails(
           imgHash,
           blurbHash,
           genre,
@@ -184,7 +186,7 @@ const AuthorSection = ({
         toast.info(
           <ToastLink hash={hash} chainId={chainId} message={'Configuring...'} />
         );
-        Collection.provider.once(hash, async (transaction) => {
+        collection.provider.once(hash, async (transaction) => {
           setConfigurePending(false);
           setShowConfigureModal(false);
           onConfigure(genre, subtitle, imgHash, blurbHash);
@@ -196,92 +198,24 @@ const AuthorSection = ({
         setShowConfigureModal(false);
       }
     },
-    [Collection, chainId, onConfigure]
+    [collection, chainId, onConfigure]
   );
 
-  const authorMint = useCallback(async () => {
-    setAuthorMintPending(true);
-
-    // TODO: enable more differentiated metadata with EDITION trait
-    // and have this kind of URI ipfs://cidhash/{id} be setting dynamically on every next edition being enabled
-    // BE needed...
-    // const betterMetadataObjectExample = {
-    //   name: projectData.title,
-    //   description: blurb ?? '',
-    //   attributes: [
-    //     {
-    //       trait_type: "edition",
-    //       value: projectData.currentEdition
-    //     }
-    //   ],
-    //   image: projectData?.imgIpfsHash ? `ipfs://${projectData.imgIpfsHash}` : '',
-    // };
-
-    const metadataObject = {
-      name: projectData.title,
-      description:
-        blurb && blurb !== BLURB_FETCH_ERROR
-          ? `${blurb} (Created with Moonpage)`
-          : 'Created with Moonpage',
-      image: projectData?.imgIpfsHash
-        ? `ipfs://${projectData.imgIpfsHash}`
-        : '',
-    };
-    const metadata = JSON.stringify(metadataObject, null, 2);
-
-    try {
-      const uploadedMeta = await client.add(metadata);
-      const Tx = await Collection.authorMint(
-        authorMintInput,
-        `ipfs://${uploadedMeta.path}`
-      );
-      const { hash } = Tx;
-      toast.info(
-        <ToastLink
-          hash={hash}
-          chainId={chainId}
-          message={'Author Mint pending...'}
-        />
-      );
-      Collection.provider.once(hash, (transaction) => {
-        refetch();
-        setAuthorMintPending(false);
-        toast.success('Minted!');
-        setShowAuthorMintModal(false);
-      });
-    } catch (e: unknown) {
-      // @ts-ignore
-      toast.error(e.reason ?? 'Something went wrong.');
-      setAuthorMintPending(false);
-      setShowAuthorMintModal(false);
-    }
-  }, [
-    projectData.title,
-    projectData.imgIpfsHash,
-    blurb,
-    client,
-    Collection,
-    authorMintInput,
-    chainId,
-    refetch,
-  ]);
-
-  const triggerFirstAuction = useCallback(async () => {
+  const startAuctions = useCallback(async () => {
     if (
       projectData &&
-      projectData.creator &&
-      projectData.editions[0] &&
       account &&
       account.toLowerCase() === projectData.creator.toLowerCase()
     ) {
       try {
         setTriggerPending(true);
-        // @ts-ignore
-        const discountRateBig = projectData.editions[0].mintPrice.div(
-          60 * 60 * 24
-        );
+        const discountRateBig = projectData.initialMintPrice.div(60 * 60 * 24);
         const discountRate = parseInt(discountRateBig._hex, 16);
-        const Tx = await Collection.triggerFirstAuction(discountRate);
+        const Tx = await collection.startAuctions(
+          projectId,
+          Number(authorMintInput),
+          discountRate
+        );
         const { hash } = Tx;
         toast.info(
           <ToastLink
@@ -290,7 +224,7 @@ const AuthorSection = ({
             message={'Triggering auctions...'}
           />
         );
-        Collection.provider.once(hash, async (transaction) => {
+        collection.provider.once(hash, async (transaction) => {
           refetch();
           setTriggerPending(false);
           toast.success('Auctions have started!');
@@ -302,7 +236,7 @@ const AuthorSection = ({
         setTriggerPending(false);
       }
     }
-  }, [projectData, account, Collection, chainId, refetch]);
+  }, [projectData, account, collection, chainId, refetch]);
 
   const unlockNextEdition = useCallback(
     async (amount: number, price: string) => {
@@ -310,7 +244,11 @@ const AuthorSection = ({
 
       try {
         setUnlockEditionPending(true);
-        const Tx = await Collection.enableNextEdition(amount, formattedPrice);
+        const Tx = await mpManager.enableNextEdition(
+          projectId,
+          amount,
+          formattedPrice
+        );
         const { hash } = Tx;
         toast.info(
           <ToastLink
@@ -319,7 +257,7 @@ const AuthorSection = ({
             message={'Unlocking next edition...'}
           />
         );
-        Collection.provider.once(hash, (transaction) => {
+        collection.provider.once(hash, (transaction) => {
           refetch();
           setUnlockEditionPending(false);
           setShowUnlockEditionModal(false);
@@ -332,7 +270,7 @@ const AuthorSection = ({
         setShowUnlockEditionModal(false);
       }
     },
-    [Collection, chainId, refetch]
+    [collection, chainId, refetch]
   );
 
   const configured = useMemo(() => {
@@ -350,18 +288,18 @@ const AuthorSection = ({
     return hasConfigured;
   }, [projectData]);
 
+  const currentEdition = useMemo(
+    () => (projectData ? projectData.editions[0] : undefined),
+    [projectData]
+  );
+
   const canTriggerNextEdition = useMemo(() => {
-    const canTrigger = false;
-    // TODO
-    // if (
-    //   projectData &&
-    //   projectData.currentEditionMaxSupply ===
-    //     projectData.currentEditionTotalSupply
-    // ) {
-    //   canTrigger = true;
-    // }
-    return canTrigger;
-  }, [projectData]);
+    console.log(currentEdition.endId, projectData.currentId);
+    if (projectData.currentId - 1 == currentEdition.endId) {
+      return true;
+    }
+    return false;
+  }, [currentEdition, projectData]);
 
   const calculatedProgress = useMemo((): number => {
     let percentage = 0;
@@ -487,52 +425,12 @@ const AuthorSection = ({
         </MoreDetails>
         <MoreDetails
           open={
-            projectData.premintedByAuthor === 0 &&
-            (configured || projectData.contributors?.length > 0)
-          }
-          title={
-            projectData.premintedByAuthor > 0 ? (
-              <Flex>
-                <span>{`3) Minted Your ${projectData.premintedByAuthor} ${
-                  projectData.premintedByAuthor === 1 ? 'Copy' : 'Copies'
-                }`}</span>
-                <Checkmark />
-              </Flex>
-            ) : (
-              '3) Mint Your Copies'
-            )
-          }
-          styles={{ marginBlockEnd: '1rem' }}
-        >
-          <>
-            <p>
-              Make sure to claim some NFTs for yourself :) This is mandatory for
-              triggering the auction in the next.
-            </p>
-            {projectData.premintedByAuthor > 0 ? (
-              <DoneAction>{'Mint Your Copies'}</DoneAction>
-            ) : (
-              <TriggerButton
-                onClick={() => setShowAuthorMintModal(true)}
-                disabled={authorMintPending}
-              >
-                {authorMintPending ? (
-                  <Loading height={20} dotHeight={20} />
-                ) : (
-                  'Mint Your Copies'
-                )}
-              </TriggerButton>
-            )}
-          </>
-        </MoreDetails>
-        <MoreDetails
-          open={
             projectData.premintedByAuthor > 0 && !projectData.auctionsStarted
           }
           title={
             projectData.auctionsStarted ? (
               <Flex>
-                <span>{'4) Trigger Auctions'}</span>
+                <span>{'3) Start Auctions'}</span>
                 <Checkmark />
               </Flex>
             ) : (
@@ -543,16 +441,12 @@ const AuthorSection = ({
         >
           <>
             <p>
-              Start the auctions for your Genesis Edition. Once you do that, you
-              will not be able to configure or add contributors anymore. You
-              need to claim your NFTs before you can trigger it.
+              Start the auctions for your Genesis Edition. Make sure to claim an
+              amount of NFTs for yourself. At least 1 and max 4.
             </p>
             {projectData.premintedByAuthor > 0 &&
             !projectData.auctionsStarted ? (
-              <TriggerButton
-                onClick={triggerFirstAuction}
-                disabled={triggerPending}
-              >
+              <TriggerButton onClick={startAuctions} disabled={triggerPending}>
                 {triggerPending ? (
                   <Loading height={20} dotHeight={20} />
                 ) : (
@@ -620,7 +514,7 @@ const AuthorSection = ({
             <ModalText>
               {`You as an author can mint an amount of your project's Genesis
               Edition NFTs for yourself. Only after minting this amount, can you
-              trigger the public auctions for your first edition. MAX: ${projectData.currentEditionMaxSupply}`}
+              trigger the public auctions for your first edition. MAX: 4`}
             </ModalText>
             <CTAWrapper>
               <InputField
@@ -679,46 +573,21 @@ const AuthorSection = ({
                 }}
                 error={
                   (Number(nextEditionMaxAmount) < 1 ||
-                    Number(nextEditionMaxAmount) > 10000) &&
-                  'Must be between 1 and 10000.'
+                    Number(nextEditionMaxAmount) >
+                      projectData.endId - projectData.currentId) &&
+                  `Must be between 1 and ${
+                    projectData.endId - projectData.currentId
+                  }.`
                 }
               />
-              {/* <InputField
-                label={'Mint Price'}
-                value={nextEditionMintPrice}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                  setMextEditionMintPrice(Number(e.target.value));
-                }}
-                // TODO: increase after development
-                error={nextEditionMintPrice < 1 && 'Price too low.'}
-              />
-              <MintButton
-                disabled={
-                  unlockEditionPending ||
-                  nextEditionMaxAmount < 1 ||
-                  nextEditionMaxAmount > 10000 ||
-                  nextEditionMintPrice < 1
-                }
-                onClick={async () =>
-                  await unlockNextEdition(
-                    nextEditionMaxAmount,
-                    nextEditionMintPrice
-                  )
-                }
-              >
-                {unlockEditionPending ? (
-                  <Loading height={20} dotHeight={20} />
-                ) : (
-                  'UNLOCK'
-                )}
-              </MintButton> */}
               <InputField
                 label={'Mint Price'}
                 value={nextEditionMintPrice}
                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
                   setMextEditionMintPrice(e.target.value);
                 }}
-                error={Number(nextEditionMintPrice) < 0.01 && 'Price too low.'}
+                // TODO: read this from contract -  min price is 1ETH
+                error={Number(nextEditionMintPrice) < 1 && 'Price too low.'}
               />
               <MintButton
                 disabled={

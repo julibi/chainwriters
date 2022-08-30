@@ -11,6 +11,7 @@ import ToastLink from '../ToastLink';
 import { useWeb3React } from '@web3-react/core';
 import Loading from '../Loading';
 import useMoonpageCollection from '../../hooks/useMoonpageCollection';
+
 const Root = styled.div`
   flex: 1;
   display: flex;
@@ -42,12 +43,8 @@ const StyledFakeInput = styled.span`
   text-align: center;
 `;
 
-const BlockSpan = styled.span`
-  display: inline-block;
-  margin-block: 1rem;
-`;
-
 interface MintSectionProps {
+  projectId: number;
   currentEdition: number;
   maxSupply: number;
   totalSupply: number;
@@ -56,13 +53,13 @@ interface MintSectionProps {
 }
 
 const MintSection = ({
+  projectId,
   currentEdition,
   totalSupply,
   maxSupply,
   mintPrice,
   refetch,
 }: MintSectionProps) => {
-  console.log({ totalSupply });
   const [amount, setAmount] = useState<number>(1);
   const [mintPending, setMintPending] = useState<boolean>(false);
   const { account, chainId } = useWeb3React();
@@ -86,7 +83,9 @@ const MintSection = ({
     if (account && collection) {
       try {
         setMintPending(true);
-        const tx = await collection.mint(amount, { value: price });
+        const tx = await collection.publicMint(projectId, amount, {
+          value: price,
+        });
         const { hash } = tx;
         toast.info(
           <ToastLink hash={hash} chainId={chainId} message={'Minting...'} />

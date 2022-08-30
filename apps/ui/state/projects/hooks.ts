@@ -15,8 +15,8 @@ interface Contributor {
 export interface Edition {
   id: string;
   edition: number;
-  startId: BigNumber;
-  endId: BigNumber;
+  startId: number;
+  endId: number;
   mintPrice: BigNumber;
 }
 
@@ -33,12 +33,14 @@ export interface ProjectData {
   blurbIpfsHash: string | null;
   contributors: Contributor[] | null;
   mintCount: number;
+  currentId: number;
+  startId: number;
+  endId: number;
   initialMintPrice: BigNumber;
   editions: Edition[];
   auctionsStarted: boolean;
   auctionsEnded: boolean;
   premintedByAuthor: number;
-  mintPrice: BigNumber;
   isPaused?: boolean;
 }
 
@@ -132,9 +134,9 @@ export const GET_ONE_PROJECT = gql`
       genre
       textIpfsHash
       imgIpfsHash
-      mintCount
       premintedByAuthor
       blurbIpfsHash
+      mintCount
       startId
       endId
       currentId
@@ -340,8 +342,10 @@ export const useGetProjectDetails = (projectId: string) => {
       imgIpfsHash,
       blurbIpfsHash,
       mintCount,
+      currentId,
+      startId,
+      endId,
       initialMintPrice,
-      mintPrice,
       premintedByAuthor,
       auctionsStarted,
       auctionsEnded,
@@ -373,8 +377,10 @@ export const useGetProjectDetails = (projectId: string) => {
       imgIpfsHash,
       blurbIpfsHash,
       initialMintPrice,
+      currentId,
+      startId,
+      endId,
       mintCount,
-      mintPrice,
       auctionsStarted,
       auctionsEnded,
       contributors: contributionsFormatted,

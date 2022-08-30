@@ -36,6 +36,7 @@ import AuthorSection from '../../components/ProjectDetails/AuthorSection';
 import AuctionSection from '../../components/ProjectDetails/AuctionSection';
 import useMoonpageCollection from '../../hooks/useMoonpageCollection';
 import useAuctionsManager from '../../hooks/useAuctionsManager';
+import Checkbox from '../../components/Checkbox';
 
 const Root = styled.div`
   display: flex;
@@ -328,8 +329,8 @@ const ProjectDetailView = () => {
     ? router.query.projectId[0]
     : router.query.projectId;
   const getProjectDetails = useGetProjectDetails(projectId);
-  const Collection = useMoonpageCollection();
-  const AuctionsManager = useAuctionsManager();
+  const collection = useMoonpageCollection();
+  const auctionsManager = useAuctionsManager();
   const { allowedToRead, readingData, text } = useShowText(projectId);
   const [projectData, setProjectData] = useState<ProjectData | null>(null);
   const [coverImgLink, setCoverImgLink] = useState<string>(null);
@@ -339,10 +340,10 @@ const ProjectDetailView = () => {
   const [mintPending, setMintPending] = useState<boolean>(false);
   const [currentPrice, setCurrentPrice] = useState(null);
   const [blurb, setBlurb] = useState<null | string>(null);
+  const [agreed, setAgreed] = useState<boolean>(false);
   const callGetProjectDetails = useCallback(
     async (projectId: string) => {
       const projectData: ProjectData = await getProjectDetails(projectId);
-      console.log({ projectData });
       setProjectData(projectData);
       if (projectData?.imgIpfsHash) {
         setCoverImgLink(`https://ipfs.io/ipfs/${projectData.imgIpfsHash}`);
@@ -396,6 +397,11 @@ const ProjectDetailView = () => {
     return result;
   }, [projectData]);
 
+  const currentEdition = useMemo(
+    () => (projectData ? projectData.editions[0] : undefined),
+    [projectData]
+  );
+
   useEffect(() => {
     if (projectId) {
       callGetProjectDetails(projectId);
@@ -409,10 +415,10 @@ const ProjectDetailView = () => {
   }, [projectData, fetchBlurb]);
 
   const mint = useCallback(async () => {
-    // is this working?
-    // const isLastNFT = projectData.currentEditionTotalSupply + 1 === projectData.currentEditionMaxSupply;
+    const isLastNFT = projectData.currentId === currentEdition.endId;
     setMintPending(true);
-    Collection.buy({ projectId, value: currentPrice })
+    collection
+      .buy(projectId, { value: currentPrice })
       .then((mintTx) => {
         const { hash } = mintTx;
         toast.info(
@@ -422,7 +428,7 @@ const ProjectDetailView = () => {
             message={'Mint pending...'}
           />
         );
-        Collection.provider.once(hash, (transaction) => {
+        collection.provider.once(hash, (transaction) => {
           toast.success(
             <ToastLink
               hash={hash}
@@ -433,9 +439,9 @@ const ProjectDetailView = () => {
           setMintPending(false);
           setShowBuyModal(false);
           callGetProjectDetails(projectId);
-          // if (isLastNFT) {
-          //   setProjectData({...projectData, auctionsEnded: true });
-          // }
+          if (isLastNFT) {
+            setProjectData({ ...projectData, auctionsEnded: true });
+          }
         });
       })
       .catch((e: unknown) => {
@@ -443,11 +449,19 @@ const ProjectDetailView = () => {
         toast.error('Sorry, something went wrong...');
         setMintPending(false);
       });
-  }, [Collection, currentPrice, projectId, chainId, callGetProjectDetails]);
+  }, [
+    projectData,
+    currentEdition.endId,
+    collection,
+    projectId,
+    currentPrice,
+    chainId,
+    callGetProjectDetails,
+  ]);
 
   const fetchCurrentPrice = async () => {
     setLoading(true);
-    const price = await AuctionsManager.getPrice(
+    const price = await auctionsManager.getPrice(
       projectId,
       projectData.initialMintPrice
     );
@@ -458,23 +472,23 @@ const ProjectDetailView = () => {
   };
 
   const retriggerAuction = useCallback(async () => {
-    // try {
-    //   setLoading(true);
-    //   const Tx = await Collection.retriggerAuction();
-    //   const { hash } = Tx;
-    //   toast.info(
-    //     <ToastLink hash={hash} chainId={chainId} message={'Retriggering...'} />
-    //   );
-    //   Collection.provider.once(hash, (transaction) => {
-    //     callGetProjectDetails(projectId);
-    //     setLoading(false);
-    //   });
-    // } catch (e: unknown) {
-    //   // @ts-ignore
-    //   toast.error(e.reason ?? 'Something went wrong.');
-    //   setLoading(false);
-    // }
-  }, [Collection, callGetProjectDetails, chainId, projectId]);
+    try {
+      setLoading(true);
+      const Tx = await auctionsManager.retriggerAuction(projectId);
+      const { hash } = Tx;
+      toast.info(
+        <ToastLink hash={hash} chainId={chainId} message={'Retriggering...'} />
+      );
+      auctionsManager.provider.once(hash, (transaction) => {
+        callGetProjectDetails(projectId);
+        setLoading(false);
+      });
+    } catch (e: unknown) {
+      // @ts-ignore
+      toast.error(e.reason ?? 'Something went wrong.');
+      setLoading(false);
+    }
+  }, [auctionsManager, callGetProjectDetails, chainId, projectId]);
 
   const handleClickRead = useCallback(
     (e) => {
@@ -483,6 +497,10 @@ const ProjectDetailView = () => {
     },
     [projectId, router]
   );
+
+  const toggleChecked = useCallback(() => {
+    setAgreed(!agreed);
+  }, [agreed]);
 
   return (
     <Root>
@@ -523,10 +541,11 @@ const ProjectDetailView = () => {
             <InfoRight>
               {projectData.editions?.length > 1 && (
                 <MintSection
+                  projectId={projectId}
                   currentEdition={projectData.editions.length}
-                  totalSupply={projectData.mintCount}
-                  maxSupply={1000}
-                  mintPrice={projectData.mintPrice}
+                  totalSupply={projectData.currentId - currentEdition.startId}
+                  maxSupply={currentEdition.endId - currentEdition.startId + 1}
+                  mintPrice={currentEdition.mintPrice}
                   refetch={() => callGetProjectDetails(projectId)}
                 />
               )}
@@ -535,7 +554,7 @@ const ProjectDetailView = () => {
                   projectData={projectData}
                   loading={loading}
                   totalSupply={Number(projectData.mintCount)}
-                  maxSupply={1000}
+                  maxSupply={currentEdition.endId - currentEdition.startId + 1}
                   startingPrice={projectData.initialMintPrice}
                   onFetchCurrentPrice={fetchCurrentPrice}
                   onRetriggerAuction={retriggerAuction}
@@ -618,7 +637,14 @@ const ProjectDetailView = () => {
               {`In a dutch auction the price keeps going down. Don't miss the
               chance and mint now!`}
             </ModalText>
-            <MintButton disabled={mintPending} onClick={mint}>
+            <Checkbox
+              onChange={toggleChecked}
+              check={agreed}
+              readonly={false}
+              // TODO
+              label={'Legal text'}
+            />
+            <MintButton disabled={mintPending || !agreed} onClick={mint}>
               {mintPending ? <Loading height={20} dotHeight={20} /> : 'MINT'}
             </MintButton>
           </ContentWrapper>
