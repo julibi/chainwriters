@@ -232,7 +232,7 @@ const About = () => {
                 >
                   <Name>Hyun-Kyung</Name>
                 </StyledLink>
-                <Title>Co-Founder</Title>
+                <Title>Founder</Title>
                 <Field>Software Engineer</Field>
                 <Introduction>
                   Experienced developer specialising in Web3. As a software
