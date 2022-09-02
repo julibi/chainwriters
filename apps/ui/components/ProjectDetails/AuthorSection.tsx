@@ -2,7 +2,6 @@ import React, { ChangeEvent, useCallback, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
 import styled from 'styled-components';
 import { BigNumber } from '@ethersproject/bignumber';
-import { Contract } from '@ethersproject/contracts';
 import { useWeb3React } from '@web3-react/core';
 import { create } from 'ipfs-http-client';
 import {
@@ -21,12 +20,11 @@ import { SectionTitle } from '../HomePage/ProjectSection';
 import Emoji from '../Emojis';
 import Checkmark from '../Checkmark';
 import Loading from '../Loading';
-import MoreDetails from '../MoreDetails';
-import { ProjectData } from '../../state/projects/hooks';
+import MoreDetails from '../../components/MoreDetails';
 import ProgressBar from '../ProgressBar';
 import ConfigureModal from './ConfigureModal';
 import ToastLink from '../ToastLink';
-import ContributorsModal, { Contributor } from './ContributorsModal';
+import ContributorsModal from './ContributorsModal';
 import BaseModal from '../BaseModal';
 import InputField from '../InputField';
 import {
@@ -36,9 +34,9 @@ import {
   CTAWrapper,
   MintButton,
 } from '../../pages/projects/[projectId]';
-import { BLURB_FETCH_ERROR } from '../../constants';
 import useMoonpageCollection from '../../hooks/useMoonpageCollection';
 import useMoonpageManager from '../../hooks/useMoonpageManager';
+import { Contributor, ProjectData } from '../../state/projects/types';
 
 const Root = styled.section`
   display: flex;
@@ -294,8 +292,7 @@ const AuthorSection = ({
   );
 
   const canTriggerNextEdition = useMemo(() => {
-    console.log(currentEdition.endId, projectData.currentId);
-    if (projectData.currentId - 1 == currentEdition.endId) {
+    if (Number(projectData.currentId) - 1 == Number(currentEdition.endId)) {
       return true;
     }
     return false;

@@ -13,6 +13,7 @@ import './styles.css';
 import ToastContainer from '../components/ToastContainer';
 import client from '../apolloclient';
 import { ApolloProvider } from '@apollo/client';
+import { ProjectsProvider } from '../providers';
 
 const GlobalStyle = createGlobalStyle`
 html{
@@ -96,12 +97,14 @@ function CustomApp({ Component, pageProps }: AppProps) {
       <GlobalStyle />
       <Web3ReactProvider getLibrary={getLibrary}>
         <ApolloProvider client={client}>
-          <main className="app">
-            <ToastContainer />
-            <Layout>
-              <Component {...pageProps} />
-            </Layout>
-          </main>
+          <ProjectsProvider>
+            <main className="app">
+              <ToastContainer />
+              <Layout>
+                <Component {...pageProps} />
+              </Layout>
+            </main>
+          </ProjectsProvider>
         </ApolloProvider>
       </Web3ReactProvider>
     </>

@@ -44,10 +44,10 @@ const StyledFakeInput = styled.span`
 `;
 
 interface MintSectionProps {
-  projectId: number;
+  projectId: string;
   currentEdition: number;
-  maxSupply: number;
-  totalSupply: number;
+  maxSupply: BigNumber;
+  totalSupply: BigNumber;
   mintPrice: BigNumber;
   refetch: VoidFunction;
 }
@@ -115,7 +115,7 @@ const MintSection = ({
     <Root>
       <Title>{`MINT - EDITION ${currentEdition}`}</Title>
       <Price>{`Price ${price ? formatEther(price) : 0} MATIC`}</Price>
-      <PieChart part={totalSupply ?? 0} whole={maxSupply} />
+      <PieChart part={Number(totalSupply) ?? 0} whole={Number(maxSupply)} />
       <ControlWrapper>
         <StyledControl onClick={handleDecrement} disabled={amount === 1}>
           -
@@ -125,7 +125,7 @@ const MintSection = ({
           onClick={handleIncrement}
           disabled={
             amount === 10 ||
-            amount === maxSupply - totalSupply ||
+            amount === Number(maxSupply.sub(totalSupply)) ||
             maxSupply === totalSupply
           }
         >
@@ -133,7 +133,7 @@ const MintSection = ({
         </StyledControl>
       </ControlWrapper>
       <StyledPrimaryButton
-        disabled={amount > maxSupply - totalSupply}
+        disabled={amount > Number(maxSupply.sub(totalSupply))}
         onClick={handleMint}
       >
         {mintPending ? <Loading height={20} dotHeight={20} /> : 'MINT'}

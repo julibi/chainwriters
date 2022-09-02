@@ -15,8 +15,8 @@ import {
   Val,
   StyledPrimaryButton,
 } from '../../pages/projects/[projectId]';
-import { ProjectData } from '../../state/projects/hooks';
 import { BigNumber } from 'ethers';
+import { ProjectData } from '../../state/projects/types';
 
 const AuctionTitle = styled.h2`
   text-align: center;
@@ -64,8 +64,8 @@ interface AuctionSectionProps {
   loading: boolean;
   onRetriggerAuction: VoidFunction;
   onFetchCurrentPrice: VoidFunction;
-  totalSupply: number;
-  maxSupply: number;
+  totalSupply: BigNumber;
+  maxSupply: BigNumber;
   startingPrice: BigNumber;
 }
 
@@ -126,7 +126,7 @@ const AuctionSection = ({
         </InfoBlock>
       </FlexWrapper>
       <PieChartWrapper>
-        <PieChart part={totalSupply} whole={maxSupply} />
+        <PieChart part={Number(totalSupply)} whole={Number(maxSupply)} />
       </PieChartWrapper>
       <FlexWrapper style={{ marginBlockEnd: '0' }}>
         <InfoBlock>

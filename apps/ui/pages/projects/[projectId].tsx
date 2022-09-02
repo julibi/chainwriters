@@ -12,7 +12,6 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import { BLURB_FETCH_ERROR } from '../../constants';
-import { useGetProjectDetails } from '../../state/projects/hooks';
 import BaseModal from '../../components/BaseModal';
 import Loading from '../../components/Loading';
 import MintSection from '../../components/ProjectDetails/MintSection';
@@ -31,12 +30,13 @@ import {
 } from '../../themes';
 
 import useShowText from '../../hooks/useShowText';
-import { ProjectData } from '../../state/projects/hooks';
 import AuthorSection from '../../components/ProjectDetails/AuthorSection';
 import AuctionSection from '../../components/ProjectDetails/AuctionSection';
 import useMoonpageCollection from '../../hooks/useMoonpageCollection';
 import useAuctionsManager from '../../hooks/useAuctionsManager';
 import Checkbox from '../../components/Checkbox';
+import { useProjects } from '../../hooks/useProjects';
+import { BigNumber } from 'ethers';
 
 const Root = styled.div`
   display: flex;
@@ -328,36 +328,29 @@ const ProjectDetailView = () => {
   const projectId: string = Array.isArray(router.query.projectId)
     ? router.query.projectId[0]
     : router.query.projectId;
-  const getProjectDetails = useGetProjectDetails(projectId);
+  const { data, refetch, isLoading: isProjectLoading } = useProjects();
   const collection = useMoonpageCollection();
   const auctionsManager = useAuctionsManager();
-  const { allowedToRead, readingData, text } = useShowText(projectId);
-  const [projectData, setProjectData] = useState<ProjectData | null>(null);
+  const { allowedToRead } = useShowText(projectId);
   const [coverImgLink, setCoverImgLink] = useState<string>(null);
-  const [successfullyLoaded, setSuccessfullyLoaded] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [showBuyModal, setShowBuyModal] = useState<boolean>(false);
   const [mintPending, setMintPending] = useState<boolean>(false);
   const [currentPrice, setCurrentPrice] = useState(null);
   const [blurb, setBlurb] = useState<null | string>(null);
   const [agreed, setAgreed] = useState<boolean>(false);
-  const callGetProjectDetails = useCallback(
-    async (projectId: string) => {
-      const projectData: ProjectData = await getProjectDetails(projectId);
-      setProjectData(projectData);
-      if (projectData?.imgIpfsHash) {
-        setCoverImgLink(`https://ipfs.io/ipfs/${projectData.imgIpfsHash}`);
-      }
-      setSuccessfullyLoaded(true);
-    },
-    [getProjectDetails]
-  );
+  console.log({ data });
+  useEffect(() => {
+    if (data?.imgIpfsHash) {
+      setCoverImgLink(`https://ipfs.io/ipfs/${data.imgIpfsHash}`);
+    }
+  }, [data]);
 
   const fetchBlurb = useCallback(async () => {
-    if (projectData && projectData.blurbIpfsHash) {
+    if (data?.blurbIpfsHash) {
       try {
         const response = await fetch(
-          `https://ipfs.io/ipfs/${projectData.blurbIpfsHash}`
+          `https://ipfs.io/ipfs/${data.blurbIpfsHash}`
         );
         if (response.ok) {
           const fetchedBlurb = await response.text();
@@ -372,50 +365,48 @@ const ProjectDetailView = () => {
     } else {
       setBlurb(BLURB_FETCH_ERROR);
     }
-  }, [projectData]);
+  }, [data]);
 
   const isAuthor = useMemo(() => {
     if (
-      projectData &&
+      data &&
       account &&
-      account.toLowerCase() === projectData.creator.toLowerCase()
+      account.toLowerCase() === data.creator?.toLowerCase()
     ) {
       return true;
     }
     return false;
-  }, [projectData, account]);
+  }, [data, account]);
 
   const authorShare = useMemo(() => {
     let result = 85;
-    if (projectData && projectData.contributors?.length > 0) {
-      const contributorsShareTotal = projectData.contributors?.reduce(
-        (partialSum, a) => partialSum + a.sharePercentage,
+    if (data && data.contributors?.length > 0) {
+      const contributorsShareTotal = data.contributors?.reduce(
+        (partialSum, a) => partialSum + Number(a.sharePercentage),
         0
       );
       result = result - contributorsShareTotal;
     }
     return result;
-  }, [projectData]);
+  }, [data]);
 
   const currentEdition = useMemo(
-    () => (projectData ? projectData.editions[0] : undefined),
-    [projectData]
+    () => (data && data.editions ? data.editions[0] : undefined),
+    [data]
+  );
+
+  const isLastNFT = useMemo(
+    () => Number(data?.currentId) === Number(currentEdition?.endId),
+    [data, currentEdition]
   );
 
   useEffect(() => {
-    if (projectId) {
-      callGetProjectDetails(projectId);
-    }
-  }, [projectId]);
-
-  useEffect(() => {
-    if (projectData) {
+    if (data) {
       fetchBlurb();
     }
-  }, [projectData, fetchBlurb]);
+  }, [data, fetchBlurb]);
 
   const mint = useCallback(async () => {
-    const isLastNFT = projectData.currentId === currentEdition.endId;
     setMintPending(true);
     collection
       .buy(projectId, { value: currentPrice })
@@ -438,10 +429,7 @@ const ProjectDetailView = () => {
           );
           setMintPending(false);
           setShowBuyModal(false);
-          callGetProjectDetails(projectId);
-          if (isLastNFT) {
-            setProjectData({ ...projectData, auctionsEnded: true });
-          }
+          refetch();
         });
       })
       .catch((e: unknown) => {
@@ -449,21 +437,13 @@ const ProjectDetailView = () => {
         toast.error('Sorry, something went wrong...');
         setMintPending(false);
       });
-  }, [
-    projectData,
-    currentEdition.endId,
-    collection,
-    projectId,
-    currentPrice,
-    chainId,
-    callGetProjectDetails,
-  ]);
+  }, [collection, projectId, currentPrice, chainId, refetch]);
 
   const fetchCurrentPrice = async () => {
     setLoading(true);
     const price = await auctionsManager.getPrice(
       projectId,
-      projectData.initialMintPrice
+      data?.initialMintPrice
     );
 
     setCurrentPrice(price);
@@ -480,7 +460,7 @@ const ProjectDetailView = () => {
         <ToastLink hash={hash} chainId={chainId} message={'Retriggering...'} />
       );
       auctionsManager.provider.once(hash, (transaction) => {
-        callGetProjectDetails(projectId);
+        refetch();
         setLoading(false);
       });
     } catch (e: unknown) {
@@ -488,7 +468,7 @@ const ProjectDetailView = () => {
       toast.error(e.reason ?? 'Something went wrong.');
       setLoading(false);
     }
-  }, [auctionsManager, callGetProjectDetails, chainId, projectId]);
+  }, [auctionsManager, chainId, projectId, refetch]);
 
   const handleClickRead = useCallback(
     (e) => {
@@ -504,16 +484,15 @@ const ProjectDetailView = () => {
 
   return (
     <Root>
-      {!projectData && !successfullyLoaded && <Loading height={530} />}
-      {projectData && successfullyLoaded && (
+      {!data && isProjectLoading ? (
+        <Loading height={530} />
+      ) : (
         <>
           <MainInfoWrapper>
             <InfoLeft>
               <Title>
-                {projectData.title}
-                {projectData.subtitle && (
-                  <Subtitle>{projectData.subtitle}</Subtitle>
-                )}
+                {data.title}
+                {data.subtitle && <Subtitle>{data.subtitle}</Subtitle>}
               </Title>
               <ImageWrapper>
                 {allowedToRead && (
@@ -531,31 +510,35 @@ const ProjectDetailView = () => {
               </ImageWrapper>
               <Author>
                 <Key>{'Author '}</Key>
-                <Val>{truncateAddress(projectData.creator)}</Val>
+                <Val>{truncateAddress(data.creator)}</Val>
               </Author>
               <Genre>
                 <Key>{'Genre '}</Key>
-                <Val>{projectData.genre ?? 'Unknown'}</Val>
+                <Val>{data.genre ?? 'Unknown'}</Val>
               </Genre>
             </InfoLeft>
             <InfoRight>
-              {projectData.editions?.length > 1 && (
+              {data.editions?.length > 1 && (
                 <MintSection
                   projectId={projectId}
-                  currentEdition={projectData.editions.length}
-                  totalSupply={projectData.currentId - currentEdition.startId}
-                  maxSupply={currentEdition.endId - currentEdition.startId + 1}
+                  currentEdition={data.editions.length}
+                  totalSupply={data.currentId.sub(currentEdition?.startId)}
+                  maxSupply={currentEdition?.endId
+                    .sub(currentEdition?.startId)
+                    .add(BigNumber.from('1'))}
                   mintPrice={currentEdition.mintPrice}
-                  refetch={() => callGetProjectDetails(projectId)}
+                  refetch={refetch}
                 />
               )}
-              {projectData.editions?.length === 1 && (
+              {data.editions?.length === 1 && (
                 <AuctionSection
-                  projectData={projectData}
+                  projectData={data}
                   loading={loading}
-                  totalSupply={Number(projectData.mintCount)}
-                  maxSupply={currentEdition.endId - currentEdition.startId + 1}
-                  startingPrice={projectData.initialMintPrice}
+                  totalSupply={data.mintCount}
+                  maxSupply={currentEdition?.endId
+                    .sub(currentEdition?.startId)
+                    .add(BigNumber.from('1'))}
+                  startingPrice={data.initialMintPrice}
                   onFetchCurrentPrice={fetchCurrentPrice}
                   onRetriggerAuction={retriggerAuction}
                 />
@@ -573,12 +556,10 @@ const ProjectDetailView = () => {
             <Shares>
               <Share>
                 <ShareTitle>Author</ShareTitle>
-                <ShareAddress>
-                  {truncateAddress(projectData.creator)}
-                </ShareAddress>
+                <ShareAddress>{truncateAddress(data?.creator)}</ShareAddress>
                 <SharePercentage>{`${authorShare} %`}</SharePercentage>
               </Share>
-              {projectData.contributors?.map((cntrb, i) => (
+              {data.contributors?.map((cntrb, i) => (
                 <Share key={i}>
                   <ShareTitle>
                     {cntrb.role.length ? cntrb.role : 'Unknown role'}
@@ -591,7 +572,7 @@ const ProjectDetailView = () => {
                 <ShareTitle>Moonpage</ShareTitle>
                 <ShareAddress>
                   {/* TODO */}
-                  {/* {truncateAddress(projectData.factory)} */}
+                  {/* {truncateAddress(data.factory)} */}
                   replace me
                 </ShareAddress>
                 <SharePercentage>15 %</SharePercentage>
@@ -604,25 +585,10 @@ const ProjectDetailView = () => {
             <AuthorSection
               blurb={blurb}
               projectId={projectId}
-              projectData={projectData}
-              onConfigure={(genre, subtitle, imgHash, blurbHash) => {
-                setProjectData({
-                  ...projectData,
-                  genre,
-                  subtitle,
-                  imgIpfsHash: imgHash,
-                  blurbIpfsHash: blurbHash,
-                });
-              }}
-              onAddContributors={(ContributorList) => {
-                setProjectData({
-                  ...projectData,
-                  contributors: ContributorList,
-                });
-              }}
-              refetch={() => {
-                callGetProjectDetails(projectId);
-              }}
+              projectData={data}
+              onConfigure={refetch}
+              onAddContributors={refetch}
+              refetch={refetch}
             />
           )}
         </>

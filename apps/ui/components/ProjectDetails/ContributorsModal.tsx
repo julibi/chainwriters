@@ -17,12 +17,6 @@ const ContentWrapper = styled.div`
   height: 600px;
 `;
 
-export interface Contributor {
-  address: string;
-  share: number;
-  role: string;
-}
-
 interface ContributorsModalProps {
   projectId: string;
   onClose: () => void;

@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useWeb3React } from '@web3-react/core';
 import { GET_ONE_PROJECT } from '../state/projects/hooks';
-import client from '../apolloclient';
+
 import useProjectBalanceOfUser from './useProjectBalanceOfUser';
+import client from '../apolloclient';
 
 export interface ReadData {
   creator: string;
