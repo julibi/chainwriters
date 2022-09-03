@@ -14,21 +14,18 @@ export const ProjectsContext = createContext(defaultContext);
 export const ProjectsProvider = ({ children }: ProjectProviderProps) => {
   // TODO where to get the id?
   const projectId = '2';
-  const { data, isLoading, error, refetch } = useGetProject(projectId);
+  const { project, isLoading, error, refetch } = useGetProject(projectId);
   // TODO distinguish between actual Project type and the ProjectData Type
   // TODO set on hook/provider structure and where the types should go
-  const formattedData = useMemo(() => {
-    return {};
-  }, [data]);
 
   const api = useMemo<ProjectApi>(
     () => ({
       isLoading,
-      data: data?.project,
+      data: project,
       error,
       refetch,
     }),
-    [data, isLoading, error, refetch]
+    [project, isLoading, error, refetch]
   );
 
   return (

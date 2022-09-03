@@ -20,7 +20,7 @@ export interface Project {
   auctionsStarted: boolean;
   blurbIpfsHash: string | null;
   contributors: Contributor[] | null;
-  createdAt: number;
+  createdAt: string;
   creator: string;
   currentId: BigNumber;
   editions: Edition[];

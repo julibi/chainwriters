@@ -1,6 +1,8 @@
+import { useMemo } from 'react';
 import { gql, useQuery } from '@apollo/client';
-import { ProjectResult } from '../../state/projects/types';
+import { BigNumber } from 'ethers';
 import { ProjectVars } from './project.types';
+import { ProjectResult } from '../../state/projects/types';
 
 export const GET_ONE_PROJECT = gql`
   query oneProjectQuery($id: String!) {
@@ -47,5 +49,32 @@ export function useGetProject(projectId: string) {
     variables: { id: projectId },
   });
 
-  return { isLoading: loading, error, data, refetch };
+  const formattedData = useMemo(() => {
+    if (!data) return;
+    const { project } = data;
+    const formattedContributors = project.contributors?.map((contributor) => ({
+      ...contributor,
+      ['sharePercentage']: BigNumber.from(contributor.sharePercentage),
+    }));
+    const formattedEditions = project.editions?.map((edition) => ({
+      ...edition,
+      ['edition']: BigNumber.from(edition.edition),
+      ['startId']: BigNumber.from(edition.startId),
+      ['endId']: BigNumber.from(edition.endId),
+      ['mintPrice']: BigNumber.from(edition.mintPrice),
+    }));
+    return {
+      ...data.project,
+      mintCount: BigNumber.from(project.mintCount),
+      startId: BigNumber.from(project.startId),
+      endId: BigNumber.from(project.currentId),
+      currentId: BigNumber.from(project.currentId),
+      initialMintPrice: BigNumber.from(project.initialMintPrice),
+      premintedByAuthor: BigNumber.from(project.premintedByAuthor),
+      contributors: formattedContributors,
+      editions: formattedEditions,
+    };
+  }, [data]);
+
+  return { isLoading: loading, error, project: formattedData, refetch };
 }
