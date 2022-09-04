@@ -12,6 +12,9 @@ export const GET_ALL_PROJECTS = gql`
       creator
       editions {
         id
+        edition
+        startId
+        endId
       }
       genre
       id
@@ -43,7 +46,7 @@ export function useGetAllProjects() {
       ...project,
       mintCount: BigNumber.from(project.mintCount),
       startId: BigNumber.from(project.startId),
-      endId: BigNumber.from(project.currentId),
+      endId: BigNumber.from(project.endId),
       currentId: BigNumber.from(project.currentId),
       initialMintPrice: BigNumber.from(project.initialMintPrice),
       premintedByAuthor: BigNumber.from(project.premintedByAuthor),

@@ -1,13 +1,53 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useWeb3React } from '@web3-react/core';
 import useMoonpageCollection from '../../hooks/useMoonpageCollection';
+import { useProjects } from '../../hooks/projects';
+import { Project } from '../projects-provider/projects-provider.types';
 
 const useGetAllNftsOfUser = () => {
   const { account } = useWeb3React();
   const collection = useMoonpageCollection();
+  const { allProjects, areAllProjectsLoading, allProjectsFetchError } =
+    useProjects();
   const [balance, setBalance] = useState<number>(0);
   const [nfts, setNfts] = useState<number[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+
+  const getProjectIdOfToken = useCallback(
+    (tokenId: number, projects: Project[]) => {
+      const project = projects.find(
+        (project) =>
+          tokenId >= Number(project.startId) && tokenId <= Number(project.endId)
+      );
+      if (project) {
+        return project.id;
+      } else {
+        return null;
+      }
+    },
+    []
+  );
+
+  // returns null when a tokenId is valid but not in an edition yet
+  const getEditionAndIdOfToken = useCallback(
+    (tokenId: number, projects: Project[]) => {
+      const projectId = Number(getProjectIdOfToken(tokenId, projects));
+      if (projects?.length > 0 && projectId) {
+        const project = projects.find(
+          (project) => Number(project.id) === projectId
+        );
+        if (!project) return undefined;
+        const edition = project.editions?.find(
+          (ed) => tokenId >= Number(ed.startId) && tokenId <= Number(ed.endId)
+        );
+        if (!edition) return null;
+        return { tokenId, projectId, edition: Number(edition.edition) };
+      } else {
+        return null;
+      }
+    },
+    [getProjectIdOfToken]
+  );
 
   const fetchBalance = useCallback(async () => {
     try {
@@ -26,11 +66,18 @@ const useGetAllNftsOfUser = () => {
       setBalance(fetchedBalance);
       setNfts(tokens);
       setLoading(false);
+      const nftsWithIdAndEdition = tokens.map((token) =>
+        getEditionAndIdOfToken(token, allProjects)
+      );
+      const sortedByProjectId = nftsWithIdAndEdition?.sort(
+        (a, b) => a.projectId - b.projectId
+      );
+      console.log({ sortedByProjectId });
     } catch (e: unknown) {
       setLoading(false);
       console.log({ e });
     }
-  }, [account, collection]);
+  }, [account, allProjects, collection, getEditionAndIdOfToken]);
 
   useEffect(() => {
     if (account) {
