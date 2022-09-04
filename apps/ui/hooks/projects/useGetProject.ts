@@ -1,8 +1,10 @@
 import { useMemo } from 'react';
 import { gql, useQuery } from '@apollo/client';
 import { BigNumber } from 'ethers';
-import { ProjectVars } from './project.types';
-import { ProjectResult } from '../../state/projects/types';
+import {
+  ProjectResult,
+  ProjectVars,
+} from '../../providers/projects-provider/projects-provider.types';
 
 export const GET_ONE_PROJECT = gql`
   query oneProjectQuery($id: String!) {
@@ -76,5 +78,13 @@ export function useGetProject(projectId: string) {
     };
   }, [data]);
 
-  return { isLoading: loading, error, project: formattedData, refetch };
+  return useMemo(
+    () => ({
+      isLoading: loading,
+      error,
+      project: formattedData,
+      refetch,
+    }),
+    [loading, error, formattedData, refetch]
+  );
 }

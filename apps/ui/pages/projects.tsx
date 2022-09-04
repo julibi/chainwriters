@@ -2,7 +2,6 @@ import React, {
   ChangeEvent,
   KeyboardEvent,
   useCallback,
-  useEffect,
   useState,
 } from 'react';
 import Image from 'next/image';
@@ -12,11 +11,7 @@ import {
   SectionTitle,
 } from '../components/HomePage/ProjectSection';
 import { ProjectItem } from '../components/ProjectItem';
-import {
-  useFetchAllProjects,
-  useFetchAllProjectsDesc,
-  useFetchAllProjectsOldAsc,
-} from '../state/projects/hooks';
+import { useProjects } from '../hooks/projects';
 import Dropdown from '../components/Dropdown';
 import {
   BaseButton,
@@ -148,14 +143,14 @@ interface Project {
 }
 
 const Projects = () => {
-  const [projects, setProjects] = useState<Project[] | null>(null);
   const [searchedDaos, setSearchedDaos] = useState<Project[] | null>(null);
   const [searchInput, setSearchInput] = useState<string>('');
   const [hasSearched, setHasSearched] = useState<boolean>(false);
-  const fetchAllDesc = useFetchAllProjectsDesc();
-  const fetchAllAsc = useFetchAllProjectsOldAsc();
-  const fetchProjects = useFetchAllProjects();
-  const { data, loading } = fetchProjects();
+  const {
+    allProjects: projects,
+    refetchAllProjects,
+    areAllProjectsLoading,
+  } = useProjects();
 
   const search = useCallback(
     (filtered?: Project[]) => {
@@ -186,12 +181,6 @@ const Projects = () => {
     setSearchedDaos(null);
     setHasSearched(false);
   };
-
-  useEffect(() => {
-    if (data) {
-      setProjects(data.projects);
-    }
-  }, [data]);
 
   return (
     <Root>
@@ -236,7 +225,7 @@ const Projects = () => {
               Reset
             </ResetButton>
           </Search>
-          <Dropdown
+          {/* <Dropdown
             options={[
               {
                 id: 1,
@@ -247,7 +236,7 @@ const Projects = () => {
                     if (searchInput.length > 0 && hasSearched) {
                       search(data.daos);
                     } else {
-                      setProjects(data.daos);
+                      refetchAllProjects();
                     }
                   }
                 },
@@ -261,7 +250,7 @@ const Projects = () => {
                     if (searchInput.length > 0 && hasSearched) {
                       search(data.daos);
                     } else {
-                      setProjects(data.daos);
+                      refetchAllProjects();
                     }
                   }
                 },
@@ -276,15 +265,15 @@ const Projects = () => {
                     if (searchInput.length > 0 && hasSearched) {
                       search(data.daos);
                     } else {
-                      setProjects(data.daos);
+                      refetchAllProjects();
                     }
                   }
                 },
               },
             ]}
-          />
+          /> */}
         </Filtering>
-        {loading && !projects && <Loading height={530} />}
+        {areAllProjectsLoading && !projects && <Loading height={530} />}
         <ProjectItems>
           {hasSearched && !searchedDaos && (
             <NoResultsWrapper>

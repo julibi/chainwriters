@@ -5,11 +5,11 @@ import React, {
   useMemo,
   useState,
 } from 'react';
+import { useRouter } from 'next/router';
 import { toast } from 'react-toastify';
 import { formatEther } from '@ethersproject/units';
 import { useWeb3React } from '@web3-react/core';
 import Image from 'next/image';
-import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import { BLURB_FETCH_ERROR } from '../../constants';
 import BaseModal from '../../components/BaseModal';
@@ -35,7 +35,9 @@ import AuctionSection from '../../components/ProjectDetails/AuctionSection';
 import useMoonpageCollection from '../../hooks/useMoonpageCollection';
 import useAuctionsManager from '../../hooks/useAuctionsManager';
 import Checkbox from '../../components/Checkbox';
-import { useProjects } from '../../hooks/useProjects';
+import { useGetProject } from '../../hooks/projects/useGetProject';
+import { useGetProjectId } from '../../hooks/projects/useGetProjectId';
+
 import { BigNumber } from 'ethers';
 
 const Root = styled.div`
@@ -323,12 +325,14 @@ export const MintButton = styled(BaseButton)<MintButtonProps>`
 `;
 
 const ProjectDetailView = () => {
-  const { account, chainId } = useWeb3React();
   const router = useRouter();
-  const projectId: string = Array.isArray(router.query.projectId)
-    ? router.query.projectId[0]
-    : router.query.projectId;
-  const { data, refetch, isLoading: isProjectLoading } = useProjects();
+  const { account, chainId } = useWeb3React();
+  const projectId = useGetProjectId();
+  const {
+    project,
+    refetch,
+    isLoading: isProjectLoading,
+  } = useGetProject(projectId);
   const collection = useMoonpageCollection();
   const auctionsManager = useAuctionsManager();
   const { allowedToRead } = useShowText(projectId);
@@ -339,18 +343,17 @@ const ProjectDetailView = () => {
   const [currentPrice, setCurrentPrice] = useState(null);
   const [blurb, setBlurb] = useState<null | string>(null);
   const [agreed, setAgreed] = useState<boolean>(false);
-  console.log({ data });
   useEffect(() => {
-    if (data?.imgIpfsHash) {
-      setCoverImgLink(`https://ipfs.io/ipfs/${data.imgIpfsHash}`);
+    if (project?.imgIpfsHash) {
+      setCoverImgLink(`https://ipfs.io/ipfs/${project.imgIpfsHash}`);
     }
-  }, [data]);
+  }, [project]);
 
   const fetchBlurb = useCallback(async () => {
-    if (data?.blurbIpfsHash) {
+    if (project?.blurbIpfsHash) {
       try {
         const response = await fetch(
-          `https://ipfs.io/ipfs/${data.blurbIpfsHash}`
+          `https://ipfs.io/ipfs/${project.blurbIpfsHash}`
         );
         if (response.ok) {
           const fetchedBlurb = await response.text();
@@ -365,46 +368,46 @@ const ProjectDetailView = () => {
     } else {
       setBlurb(BLURB_FETCH_ERROR);
     }
-  }, [data]);
+  }, [project]);
 
   const isAuthor = useMemo(() => {
     if (
-      data &&
+      project &&
       account &&
-      account.toLowerCase() === data.creator?.toLowerCase()
+      account.toLowerCase() === project.creator?.toLowerCase()
     ) {
       return true;
     }
     return false;
-  }, [data, account]);
+  }, [project, account]);
 
   const authorShare = useMemo(() => {
     let result = 85;
-    if (data && data.contributors?.length > 0) {
-      const contributorsShareTotal = data.contributors?.reduce(
+    if (project && project.contributors?.length > 0) {
+      const contributorsShareTotal = project.contributors?.reduce(
         (partialSum, a) => partialSum + Number(a.sharePercentage),
         0
       );
       result = result - contributorsShareTotal;
     }
     return result;
-  }, [data]);
+  }, [project]);
 
   const currentEdition = useMemo(
-    () => (data && data.editions ? data.editions[0] : undefined),
-    [data]
+    () => (project && project.editions ? project.editions[0] : undefined),
+    [project]
   );
 
   const isLastNFT = useMemo(
-    () => Number(data?.currentId) === Number(currentEdition?.endId),
-    [data, currentEdition]
+    () => Number(project?.currentId) === Number(currentEdition?.endId),
+    [project, currentEdition]
   );
 
   useEffect(() => {
-    if (data) {
+    if (project) {
       fetchBlurb();
     }
-  }, [data, fetchBlurb]);
+  }, [project, fetchBlurb]);
 
   const mint = useCallback(async () => {
     setMintPending(true);
@@ -443,7 +446,7 @@ const ProjectDetailView = () => {
     setLoading(true);
     const price = await auctionsManager.getPrice(
       projectId,
-      data?.initialMintPrice
+      project?.initialMintPrice
     );
 
     setCurrentPrice(price);
@@ -484,15 +487,15 @@ const ProjectDetailView = () => {
 
   return (
     <Root>
-      {!data && isProjectLoading ? (
+      {!project && isProjectLoading ? (
         <Loading height={530} />
       ) : (
         <>
           <MainInfoWrapper>
             <InfoLeft>
               <Title>
-                {data.title}
-                {data.subtitle && <Subtitle>{data.subtitle}</Subtitle>}
+                {project.title}
+                {project.subtitle && <Subtitle>{project.subtitle}</Subtitle>}
               </Title>
               <ImageWrapper>
                 {allowedToRead && (
@@ -510,19 +513,19 @@ const ProjectDetailView = () => {
               </ImageWrapper>
               <Author>
                 <Key>{'Author '}</Key>
-                <Val>{truncateAddress(data.creator)}</Val>
+                <Val>{truncateAddress(project.creator)}</Val>
               </Author>
               <Genre>
                 <Key>{'Genre '}</Key>
-                <Val>{data.genre ?? 'Unknown'}</Val>
+                <Val>{project.genre ?? 'Unknown'}</Val>
               </Genre>
             </InfoLeft>
             <InfoRight>
-              {data.editions?.length > 1 && (
+              {project.editions?.length > 1 && (
                 <MintSection
                   projectId={projectId}
-                  currentEdition={data.editions.length}
-                  totalSupply={data.currentId.sub(currentEdition?.startId)}
+                  currentEdition={project.editions.length}
+                  totalSupply={project.currentId.sub(currentEdition?.startId)}
                   maxSupply={currentEdition?.endId
                     .sub(currentEdition?.startId)
                     .add(BigNumber.from('1'))}
@@ -530,15 +533,15 @@ const ProjectDetailView = () => {
                   refetch={refetch}
                 />
               )}
-              {data.editions?.length === 1 && (
+              {project.editions?.length === 1 && (
                 <AuctionSection
-                  projectData={data}
+                  projectData={project}
                   loading={loading}
-                  totalSupply={data.mintCount}
+                  totalSupply={project.mintCount}
                   maxSupply={currentEdition?.endId
                     .sub(currentEdition?.startId)
                     .add(BigNumber.from('1'))}
-                  startingPrice={data.initialMintPrice}
+                  startingPrice={project.initialMintPrice}
                   onFetchCurrentPrice={fetchCurrentPrice}
                   onRetriggerAuction={retriggerAuction}
                 />
@@ -556,10 +559,10 @@ const ProjectDetailView = () => {
             <Shares>
               <Share>
                 <ShareTitle>Author</ShareTitle>
-                <ShareAddress>{truncateAddress(data?.creator)}</ShareAddress>
+                <ShareAddress>{truncateAddress(project?.creator)}</ShareAddress>
                 <SharePercentage>{`${authorShare} %`}</SharePercentage>
               </Share>
-              {data.contributors?.map((cntrb, i) => (
+              {project.contributors?.map((cntrb, i) => (
                 <Share key={i}>
                   <ShareTitle>
                     {cntrb.role.length ? cntrb.role : 'Unknown role'}
@@ -572,7 +575,7 @@ const ProjectDetailView = () => {
                 <ShareTitle>Moonpage</ShareTitle>
                 <ShareAddress>
                   {/* TODO */}
-                  {/* {truncateAddress(data.factory)} */}
+                  {/* {truncateAddress(project.factory)} */}
                   replace me
                 </ShareAddress>
                 <SharePercentage>15 %</SharePercentage>
@@ -585,7 +588,7 @@ const ProjectDetailView = () => {
             <AuthorSection
               blurb={blurb}
               projectId={projectId}
-              projectData={data}
+              projectData={project}
               onConfigure={refetch}
               onAddContributors={refetch}
               refetch={refetch}

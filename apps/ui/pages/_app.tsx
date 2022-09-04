@@ -14,6 +14,7 @@ import ToastContainer from '../components/ToastContainer';
 import client from '../apolloclient';
 import { ApolloProvider } from '@apollo/client';
 import { ProjectsProvider } from '../providers';
+import { useGetProjectId } from '../hooks/projects';
 
 const GlobalStyle = createGlobalStyle`
 html{
