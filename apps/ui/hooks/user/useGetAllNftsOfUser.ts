@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useWeb3React } from '@web3-react/core';
-import useMoonpageCollection from '../../hooks/useMoonpageCollection';
-import { useProjects } from '../../hooks/projects';
-import { Project } from '../projects-provider/projects-provider.types';
+import useMoonpageCollection from '../useMoonpageCollection';
+import { useProjects } from '../projects';
+import { Project } from '../../providers/projects-provider/projects-provider.types';
+import { NftWithTechData } from '../../providers/user-provider/user-provider.types';
 
+// TODO: make this hook accept address parameter -> could be used in the future for "profile page"
 const useGetAllNftsOfUser = () => {
   const { account } = useWeb3React();
   const collection = useMoonpageCollection();
@@ -11,7 +13,10 @@ const useGetAllNftsOfUser = () => {
     useProjects();
   const [balance, setBalance] = useState<number>(0);
   const [nfts, setNfts] = useState<number[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setIsLoading] = useState<boolean>(false);
+  const [groupedNfts, setGroupedNfts] = useState<NftWithTechData[][] | null>(
+    null
+  );
 
   const getProjectIdOfToken = useCallback(
     (tokenId: number, projects: Project[]) => {
@@ -41,7 +46,13 @@ const useGetAllNftsOfUser = () => {
           (ed) => tokenId >= Number(ed.startId) && tokenId <= Number(ed.endId)
         );
         if (!edition) return null;
-        return { tokenId, projectId, edition: Number(edition.edition) };
+        return {
+          tokenId,
+          projectId,
+          edition: Number(edition.edition),
+          title: project.title,
+          creator: project.creator,
+        };
       } else {
         return null;
       }
@@ -51,7 +62,7 @@ const useGetAllNftsOfUser = () => {
 
   const fetchBalance = useCallback(async () => {
     try {
-      setLoading(true);
+      setIsLoading(true);
       const fetchedBalanceBig = await collection.balanceOf(account);
       const fetchedBalance = Number(fetchedBalanceBig);
       const tokens = [];
@@ -65,33 +76,42 @@ const useGetAllNftsOfUser = () => {
 
       setBalance(fetchedBalance);
       setNfts(tokens);
-      setLoading(false);
+      setIsLoading(false);
       const nftsWithIdAndEdition = tokens.map((token) =>
         getEditionAndIdOfToken(token, allProjects)
       );
-      const sortedByProjectId = nftsWithIdAndEdition?.sort(
-        (a, b) => a.projectId - b.projectId
-      );
-      console.log({ sortedByProjectId });
+      const groupByProjectId = nftsWithIdAndEdition.reduce((group, product) => {
+        const { projectId } = product;
+        group[projectId] = group[projectId] ?? [];
+        group[projectId].push(product);
+        return group;
+      }, {});
+      const groupedInArray = [];
+      for (const [key, value] of Object.entries(groupByProjectId)) {
+        groupedInArray.push(value);
+      }
+      setGroupedNfts(groupedInArray);
+      setIsLoading(false);
     } catch (e: unknown) {
-      setLoading(false);
+      setIsLoading(false);
       console.log({ e });
     }
   }, [account, allProjects, collection, getEditionAndIdOfToken]);
 
   useEffect(() => {
-    if (account) {
+    if (account && !areAllProjectsLoading && !allProjectsFetchError) {
       fetchBalance();
     }
-  }, [account, fetchBalance]);
+  }, [account, allProjectsFetchError, areAllProjectsLoading, fetchBalance]);
 
   return useMemo(
     () => ({
       balance,
       nfts,
       loading,
+      groupedNfts,
     }),
-    [balance, nfts, loading]
+    [balance, nfts, loading, groupedNfts]
   );
 };
 

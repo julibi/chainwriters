@@ -14,7 +14,7 @@ import {
   INTER_BOLD,
 } from '../themes';
 import Loading from '../components/Loading';
-import useGetAllNftsOfUser from '../providers/user-provider/useGetAllNftsOfUser';
+import useGetAllNftsOfUser from '../hooks/user/useGetAllNftsOfUser';
 
 const Root = styled.div`
   display: flex;
@@ -104,8 +104,13 @@ const ReadButton = styled(BaseButton)`
 const MyBookShelf = () => {
   const router = useRouter();
   const { account, chainId } = useWeb3React();
-  const { balance, nfts, loading } = useGetAllNftsOfUser();
-  console.log({ balance, nfts, loading });
+  const {
+    balance,
+    nfts,
+    groupedNfts,
+    loading: ownedNftsLoading,
+  } = useGetAllNftsOfUser();
+
   // TODO continue here
 
   // const {
@@ -134,7 +139,7 @@ const MyBookShelf = () => {
     },
     [router]
   );
-
+  console.log('this is the bookshelf', { groupedNfts });
   return (
     <Root>
       <SectionTitleWrapper>
@@ -145,7 +150,32 @@ const MyBookShelf = () => {
           <NoWalletText>Looks like you're not connected.</NoWalletText>
         </NoWallet>
       )}
-      {loading && <Loading height={560} />}
+      {ownedNftsLoading && <Loading height={560} />}
+      {!ownedNftsLoading &&
+        groupedNfts?.map((group, idx) => (
+          <Item key={idx}>
+            <Title>{group[0].title}</Title>
+            <Edition>
+              {/* {Number(project.id.tokenId) === 1
+              ? 'Genesis Edition'
+              : `Edition ${Number(project.id.tokenId)}`}
+            {` x ${project.balance}`} */}
+            </Edition>
+            <ButtonsWrapper>
+              <DetailsButton
+              // onClick={(e) => handleClickDetails(e, project.contract.address)}
+              >
+                View Details
+              </DetailsButton>
+              <ReadButton
+              // onClick={(e) => handleClickRead(e, project.contract.address)}
+              >
+                Read
+              </ReadButton>
+            </ButtonsWrapper>
+          </Item>
+        ))}
+
       {/* {!loading && !createdLoading && !createdError && created.daos.length > 0 && (
         <Section>
           <SubHeader>My Projects</SubHeader>
@@ -167,8 +197,8 @@ const MyBookShelf = () => {
             </Item>
           ))}
         </Section>
-      )} */}
-      {/* {!loading &&
+      )}
+      {!loading &&
         !contributedLoading &&
         !contributedError &&
         contributed.contributions.length > 0 && (
@@ -189,39 +219,7 @@ const MyBookShelf = () => {
               </Item>
             ))}
           </Section>
-        )}
-      {allNftsOfUser && !loading && (
-        <Section>
-          <SubHeader>My NFTs</SubHeader>
-          {allNftsOfUser.length < 1 && (
-            <BlockSpan>You do not own any Text NFTs.</BlockSpan>
-          )}
-          {allNftsOfUser.length > 0 &&
-            allNftsOfUser.map((nft, idx) => (
-              <Item key={idx}>
-                <Title>{nft.title}</Title>
-                <Edition>
-                  {Number(nft.id.tokenId) === 1
-                    ? 'Genesis Edition'
-                    : `Edition ${Number(nft.id.tokenId)}`}
-                  {` x ${nft.balance}`}
-                </Edition>
-                <ButtonsWrapper>
-                  <DetailsButton
-                    onClick={(e) => handleClickDetails(e, nft.contract.address)}
-                  >
-                    View Details
-                  </DetailsButton>
-                  <ReadButton
-                    onClick={(e) => handleClickRead(e, nft.contract.address)}
-                  >
-                    Read
-                  </ReadButton>
-                </ButtonsWrapper>
-              </Item>
-            ))}
-        </Section>
-      )} */}
+        )} */}
     </Root>
   );
 };
