@@ -2,7 +2,6 @@ import React, { useCallback } from 'react';
 import { useWeb3React } from '@web3-react/core';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
-import useAllNftsOfUser from '../hooks/useAllNftsOfUser';
 import {
   SectionTitle,
   SectionTitleWrapper,
@@ -15,10 +14,7 @@ import {
   INTER_BOLD,
 } from '../themes';
 import Loading from '../components/Loading';
-import {
-  useFetchContributedDaos,
-  useFetchCreatedDaos,
-} from '../state/mybookshelf/hooks';
+import useGetAllNftsOfUser from '../providers/user-provider/useGetAllNftsOfUser';
 
 const Root = styled.div`
   display: flex;
@@ -106,19 +102,22 @@ const ReadButton = styled(BaseButton)`
 `;
 
 const MyBookShelf = () => {
-  const { account, chainId } = useWeb3React();
-  const { allNftsOfUser, loading } = useAllNftsOfUser();
   const router = useRouter();
-  const {
-    data: created,
-    loading: createdLoading,
-    error: createdError,
-  } = useFetchCreatedDaos();
-  const {
-    data: contributed,
-    loading: contributedLoading,
-    error: contributedError,
-  } = useFetchContributedDaos();
+  const { account, chainId } = useWeb3React();
+  const { balance, nfts, loading } = useGetAllNftsOfUser();
+  console.log({ balance, nfts, loading });
+  // TODO continue here
+
+  // const {
+  //   data: created,
+  //   loading: createdLoading,
+  //   error: createdError,
+  // } = useFetchCreatedDaos();
+  // const {
+  //   data: contributed,
+  //   loading: contributedLoading,
+  //   error: contributedError,
+  // } = useFetchContributedDaos();
 
   const handleClickRead = useCallback(
     (e, address) => {
@@ -147,7 +146,7 @@ const MyBookShelf = () => {
         </NoWallet>
       )}
       {loading && <Loading height={560} />}
-      {!loading && !createdLoading && !createdError && created.daos.length > 0 && (
+      {/* {!loading && !createdLoading && !createdError && created.daos.length > 0 && (
         <Section>
           <SubHeader>My Projects</SubHeader>
           {created.daos.map((project, idx) => (
@@ -168,8 +167,8 @@ const MyBookShelf = () => {
             </Item>
           ))}
         </Section>
-      )}
-      {!loading &&
+      )} */}
+      {/* {!loading &&
         !contributedLoading &&
         !contributedError &&
         contributed.contributions.length > 0 && (
@@ -222,7 +221,7 @@ const MyBookShelf = () => {
               </Item>
             ))}
         </Section>
-      )}
+      )} */}
     </Root>
   );
 };
