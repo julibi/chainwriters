@@ -5,8 +5,9 @@ import React, {
   useMemo,
   useState,
 } from 'react';
-import { useRouter } from 'next/router';
 import { toast } from 'react-toastify';
+import { useRouter } from 'next/router';
+import { BigNumber } from 'ethers';
 import { formatEther } from '@ethersproject/units';
 import { useWeb3React } from '@web3-react/core';
 import Image from 'next/image';
@@ -37,8 +38,6 @@ import useAuctionsManager from '../../hooks/useAuctionsManager';
 import Checkbox from '../../components/Checkbox';
 import { useGetProject } from '../../hooks/projects/useGetProject';
 import { useGetProjectId } from '../../hooks/projects/useGetProjectId';
-
-import { BigNumber } from 'ethers';
 
 const Root = styled.div`
   display: flex;
@@ -344,6 +343,7 @@ const ProjectDetailView = () => {
   const [currentPrice, setCurrentPrice] = useState(null);
   const [blurb, setBlurb] = useState<null | string>(null);
   const [agreed, setAgreed] = useState<boolean>(false);
+
   useEffect(() => {
     if (project?.imgIpfsHash) {
       setCoverImgLink(`https://ipfs.io/ipfs/${project.imgIpfsHash}`);
