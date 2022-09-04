@@ -2,8 +2,6 @@ import { useCallback, useEffect, useState } from 'react';
 import { useWeb3React } from '@web3-react/core';
 import useMoonpageCollection from './useMoonpageCollection';
 import useMoonpageManager from './useMoonpageManager';
-import { GET_ONE_PROJECT } from '../state/projects/hooks';
-import client from '../apolloclient';
 
 export interface ReadData {
   creator: string;

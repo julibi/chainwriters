@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useFetchTopProjects } from '../../state/projects/hooks';
+import { useProjects } from '../../hooks/projects';
 import { INTER_BLACK } from '../../themes';
 import Loading from '../Loading';
 import { ProjectItem } from '../ProjectItem';
@@ -32,7 +32,7 @@ const ProjectList = styled.section`
 `;
 
 const ProjectSection = () => {
-  const { loading, error, data } = useFetchTopProjects();
+  const { topProjects: data, areTopProjectsLoading: loading } = useProjects();
   return (
     <>
       <SectionTitleWrapper>
@@ -41,17 +41,13 @@ const ProjectSection = () => {
       </SectionTitleWrapper>
       {loading && !data && <Loading height={530} />}
       <ProjectList>
-        {data?.daos.map(
-          (
-            { id, title, author, address, imgIpfsHash, subtitle, genre },
-            idx
-          ) => (
+        {data?.map(
+          ({ id, title, creator, imgIpfsHash, subtitle, genre }, idx) => (
             <ProjectItem
               key={idx}
               id={id}
-              address={address}
+              creator={creator}
               title={title}
-              author={author}
               imgIpfsHash={imgIpfsHash}
               subtitle={subtitle}
               genre={genre}

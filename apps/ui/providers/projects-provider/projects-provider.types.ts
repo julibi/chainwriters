@@ -15,6 +15,10 @@ export type ProjectsApi = {
   areAllProjectsLoading: boolean;
   allProjectsFetchError: ApolloError;
   refetchAllProjects: () => Promise<ApolloQueryResult<ProjectsResult>>;
+  topProjects: undefined | Project[];
+  areTopProjectsLoading: boolean;
+  topProjectsFetchError: ApolloError;
+  refetchTopProjects: () => Promise<ApolloQueryResult<ProjectsResult>>;
 };
 
 export interface Contributor {
