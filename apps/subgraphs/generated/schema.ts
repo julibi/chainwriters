@@ -579,6 +579,23 @@ export class Project extends Entity {
     this.set("mintCount", Value.fromBigInt(value));
   }
 
+  get currentAuctionExpiresAt(): BigInt | null {
+    let value = this.get("currentAuctionExpiresAt");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set currentAuctionExpiresAt(value: BigInt | null) {
+    if (!value) {
+      this.unset("currentAuctionExpiresAt");
+    } else {
+      this.set("currentAuctionExpiresAt", Value.fromBigInt(<BigInt>value));
+    }
+  }
+
   get minted(): Array<string> | null {
     let value = this.get("minted");
     if (!value || value.kind == ValueKind.NULL) {

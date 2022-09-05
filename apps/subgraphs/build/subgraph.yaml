@@ -94,4 +94,6 @@ dataSources:
           handler: handleAuctionsStarted
         - event: AuctionsEnded(uint256,uint256)
           handler: handleAuctionsEnded
+        - event: ExpirationSet(uint256,uint256)
+          handler: handleExpirationSet
       file: MoonpageManager/MoonpageManager.wasm

@@ -57,6 +57,7 @@ describe("Project", function () {
 
   const title = "My little Phony";
   const textIpfsHash = "QmTw3pWBQinwuHS57FcWyUGBpvGqLHQZkn1eKjp89XXyFg";
+  const imgIpfsHash = "QmRw1gCNEVNRo5Btw6pDnUo4y25Gg1j6g6rZMrF8mcDY1c";
   const originalLanguage = "ENG";
   const myMintPrice = ethers.utils.parseUnits("0.1", 18);
   const secondEdPrice = ethers.utils.parseUnits("1.5", 18);

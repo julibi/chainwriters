@@ -20,6 +20,7 @@ export const GET_ONE_PROJECT = gql`
       }
       createdAt
       creator
+      currentAuctionExpiresAt
       currentId
       editions {
         id

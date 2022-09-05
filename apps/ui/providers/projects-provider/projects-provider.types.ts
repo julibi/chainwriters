@@ -44,6 +44,7 @@ export interface Project {
   contributors: Contributor[] | null;
   createdAt: string;
   creator: string;
+  currentAuctionExpiresAt: BigNumber | null;
   currentId: BigNumber;
   editions: Edition[];
   endId: BigNumber;

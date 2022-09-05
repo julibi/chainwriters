@@ -25,6 +25,7 @@ export const GET_SEARCHED_PROJECTS = gql`
       mintCount
       startId
       endId
+      currentAuctionExpiresAt
       currentId
       initialMintPrice
       premintedByAuthor

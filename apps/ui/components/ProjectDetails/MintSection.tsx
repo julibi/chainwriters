@@ -11,6 +11,7 @@ import ToastLink from '../ToastLink';
 import { useWeb3React } from '@web3-react/core';
 import Loading from '../Loading';
 import useMoonpageCollection from '../../hooks/useMoonpageCollection';
+import { Project } from '../../providers/projects-provider/projects-provider.types';
 
 const Root = styled.div`
   flex: 1;
@@ -44,32 +45,43 @@ const StyledFakeInput = styled.span`
 `;
 
 interface MintSectionProps {
-  projectId: string;
-  currentEdition: number;
-  maxSupply: BigNumber;
-  totalSupply: BigNumber;
-  mintPrice: BigNumber;
+  project: Project;
   refetch: VoidFunction;
 }
 
-const MintSection = ({
-  projectId,
-  currentEdition,
-  totalSupply,
-  maxSupply,
-  mintPrice,
-  refetch,
-}: MintSectionProps) => {
+const MintSection = ({ project, refetch }: MintSectionProps) => {
   const [amount, setAmount] = useState<number>(1);
   const [mintPending, setMintPending] = useState<boolean>(false);
   const { account, chainId } = useWeb3React();
   const collection = useMoonpageCollection();
 
-  const price = useMemo(() => {
-    if (mintPrice) {
-      return mintPrice.mul(amount);
+  const currentEdition = useMemo(() => {
+    const bla = project.editions.find(
+      (edition) => Number(edition.edition) === project.editions.length
+    );
+    return bla;
+  }, [project]);
+
+  const totalSupply = useMemo(() => {
+    return project.currentId.sub(currentEdition?.startId);
+  }, [project, currentEdition]);
+
+  const maxSupply = useMemo(() => {
+    if (currentEdition) {
+      const totalOfThisEdition = currentEdition?.endId
+        .sub(currentEdition?.startId)
+        .add(BigNumber.from('1'));
+      return totalOfThisEdition;
     }
-  }, [mintPrice, amount]);
+    return undefined;
+  }, [currentEdition]);
+
+  console.log(currentEdition, Number(totalSupply), Number(maxSupply));
+  const price = useMemo(() => {
+    if (currentEdition.mintPrice) {
+      return currentEdition.mintPrice.mul(amount);
+    }
+  }, [currentEdition, amount]);
 
   const handleIncrement = useCallback(() => {
     setAmount(amount + 1);
@@ -83,7 +95,7 @@ const MintSection = ({
     if (account && collection) {
       try {
         setMintPending(true);
-        const tx = await collection.publicMint(projectId, amount, {
+        const tx = await collection.publicMint(project.id, amount, {
           value: price,
         });
         const { hash } = tx;
@@ -109,11 +121,11 @@ const MintSection = ({
         setMintPending(false);
       }
     }
-  }, [account, amount, chainId, price, collection, refetch]);
+  }, [account, collection, project.id, amount, price, chainId, refetch]);
 
   return (
     <Root>
-      <Title>{`MINT - EDITION ${currentEdition}`}</Title>
+      <Title>{`MINT - EDITION ${Number(currentEdition.edition)}`}</Title>
       <Price>{`Price ${price ? formatEther(price) : 0} MATIC`}</Price>
       <PieChart part={Number(totalSupply) ?? 0} whole={Number(maxSupply)} />
       <ControlWrapper>

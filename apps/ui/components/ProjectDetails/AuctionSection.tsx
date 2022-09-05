@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import styled from 'styled-components';
 import { formatEther } from '@ethersproject/units';
 import {
@@ -15,8 +15,8 @@ import {
   Val,
   StyledPrimaryButton,
 } from '../../pages/projects/[projectId]';
+import { Project } from '../../providers/projects-provider/projects-provider.types';
 import { BigNumber } from 'ethers';
-import { ProjectData } from '../../state/projects/types';
 
 const AuctionTitle = styled.h2`
   text-align: center;
@@ -60,34 +60,44 @@ const PieChartWrapper = styled.div`
 `;
 
 interface AuctionSectionProps {
-  projectData: ProjectData;
+  project: Project;
   loading: boolean;
   onRetriggerAuction: VoidFunction;
   onFetchCurrentPrice: VoidFunction;
-  totalSupply: BigNumber;
-  maxSupply: BigNumber;
-  startingPrice: BigNumber;
 }
 
 const AuctionSection = ({
-  projectData,
+  project,
   loading,
   onFetchCurrentPrice,
   onRetriggerAuction,
-  totalSupply,
-  maxSupply,
-  startingPrice,
 }: AuctionSectionProps) => {
+  const totalSupply = useMemo(() => {
+    if (project) {
+      return project.mintCount;
+    } else {
+      return BigNumber.from('0');
+    }
+  }, [project]);
+
+  const maxSupply = useMemo(() => {
+    if (project && project.editions) {
+      const edition = project.editions ? project.editions[0] : undefined;
+      return edition?.endId.sub(edition?.startId).add(BigNumber.from('1'));
+    }
+    return undefined;
+  }, [project]);
+
   const showsAuctionText = useCallback(() => {
     const now = Math.round(new Date().getTime() / 1000);
 
-    if (!projectData) return;
-    const { auctionsStarted, auctionsEnded, expiresAt } = projectData;
+    if (!project) return;
+    const { auctionsStarted, auctionsEnded, currentAuctionExpiresAt } = project;
     if (auctionsEnded) {
       return <Key style={{ textAlign: 'center' }}>{'Auctions finished'}</Key>;
     }
     if (auctionsStarted) {
-      if (expiresAt > now) {
+      if (Number(currentAuctionExpiresAt) > now) {
         return (
           <>
             <Key>{'Auction ends in'}</Key>
@@ -98,7 +108,7 @@ const AuctionSection = ({
                 fontFamily: 'Inter Bold',
               }}
             >
-              <Countdown end={expiresAt} />
+              <Countdown end={Number(currentAuctionExpiresAt)} />
             </Val>
           </>
         );
@@ -109,7 +119,7 @@ const AuctionSection = ({
     return (
       <Key style={{ textAlign: 'center' }}>{'Auction Has Not Started Yet'}</Key>
     );
-  }, [projectData]);
+  }, [project]);
 
   return (
     <>
@@ -118,15 +128,15 @@ const AuctionSection = ({
         <InfoBlock>{showsAuctionText()}</InfoBlock>
         <InfoBlock>
           <Key>{'Starting Price'}</Key>
-          {projectData && (
+          {project && (
             <Val>{`${formatEther(
-              parseInt(projectData.editions[0].mintPrice._hex, 16).toString()
+              parseInt(project.editions[0].mintPrice._hex, 16).toString()
             )} MATIC`}</Val>
           )}
         </InfoBlock>
       </FlexWrapper>
       <PieChartWrapper>
-        <PieChart part={Number(totalSupply)} whole={Number(maxSupply)} />
+        <PieChart part={Number(project.mintCount)} whole={Number(maxSupply)} />
       </PieChartWrapper>
       <FlexWrapper style={{ marginBlockEnd: '0' }}>
         <InfoBlock>
@@ -137,12 +147,13 @@ const AuctionSection = ({
               fontFamily: 'Inter Bold',
             }}
           >
-            {totalSupply}
+            {Number(totalSupply)}
           </Val>
         </InfoBlock>
-        {projectData.auctionsStarted && !projectData.auctionsEnded && (
+        {project.auctionsStarted && !project.auctionsEnded && (
           <>
-            {Math.floor(Date.now() / 1000) > projectData.expiresAt ? (
+            {Math.floor(Date.now() / 1000) >
+            Number(project.currentAuctionExpiresAt) ? (
               <StyledPrimaryButton
                 onClick={onRetriggerAuction}
                 disabled={loading}
@@ -167,7 +178,7 @@ const AuctionSection = ({
             )}
           </>
         )}
-        {(!projectData.auctionsStarted || projectData.auctionsEnded) && (
+        {(!project.auctionsStarted || project.auctionsEnded) && (
           <StyledPrimaryButton disabled>Get Current Price</StyledPrimaryButton>
         )}
       </FlexWrapper>

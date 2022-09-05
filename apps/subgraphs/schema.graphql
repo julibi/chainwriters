@@ -49,6 +49,7 @@ type Project @entity {
   isPaused: Boolean
   premintedByAuthor: BigInt
   mintCount: BigInt!
+  currentAuctionExpiresAt: BigInt
   minted: [Mint!] @derivedFrom(field: "project")
   contributors: [Contributor!] @derivedFrom(field: "project")
   editions: [Edition!] @derivedFrom(field: "project")

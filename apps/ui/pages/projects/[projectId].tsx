@@ -241,6 +241,7 @@ const Share = styled.div`
 
 const ShareTitle = styled.h5`
   margin-block-end: 1rem;
+  text-transform: capitalize;
 `;
 
 const ShareAddress = styled.span`
@@ -523,26 +524,12 @@ const ProjectDetailView = () => {
             </InfoLeft>
             <InfoRight>
               {project.editions?.length > 1 && (
-                <MintSection
-                  projectId={projectId}
-                  currentEdition={project.editions.length}
-                  totalSupply={project.currentId.sub(currentEdition?.startId)}
-                  maxSupply={currentEdition?.endId
-                    .sub(currentEdition?.startId)
-                    .add(BigNumber.from('1'))}
-                  mintPrice={currentEdition.mintPrice}
-                  refetch={refetch}
-                />
+                <MintSection project={project} refetch={refetch} />
               )}
               {project.editions?.length === 1 && (
                 <AuctionSection
-                  projectData={project}
+                  project={project}
                   loading={loading}
-                  totalSupply={project.mintCount}
-                  maxSupply={currentEdition?.endId
-                    .sub(currentEdition?.startId)
-                    .add(BigNumber.from('1'))}
-                  startingPrice={project.initialMintPrice}
                   onFetchCurrentPrice={fetchCurrentPrice}
                   onRetriggerAuction={retriggerAuction}
                 />
@@ -559,7 +546,7 @@ const ProjectDetailView = () => {
             <Title>Contributors</Title>
             <Shares>
               <Share>
-                <ShareTitle>Author</ShareTitle>
+                <ShareTitle>Creator</ShareTitle>
                 <ShareAddress>{truncateAddress(project?.creator)}</ShareAddress>
                 <SharePercentage>{`${authorShare} %`}</SharePercentage>
               </Share>
@@ -582,8 +569,6 @@ const ProjectDetailView = () => {
                 <SharePercentage>15 %</SharePercentage>
               </Share>
             </Shares>
-            {/* Pie Chart for Contributions Section - also for Create Flow */}
-            {/* <PieChart part={Number(30)} whole={Number(90)} /> */}
           </ShareSection>
           {isAuthor && (
             <AuthorSection
@@ -611,7 +596,6 @@ const ProjectDetailView = () => {
               onChange={toggleChecked}
               check={agreed}
               readonly={false}
-              // TODO
               label={'Legal text'}
             />
             <MintButton disabled={mintPending || !agreed} onClick={mint}>

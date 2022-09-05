@@ -21,6 +21,7 @@ import { Minted } from '../generated/MoonpageCollection/MoonpageCollection';
 import {
   AuctionsStarted,
   AuctionsEnded,
+  ExpirationSet,
 } from '../generated/AuctionsManager/AuctionsManager';
 import { Contributor, Edition, Mint, Project } from '../generated/schema';
 
@@ -255,5 +256,16 @@ export function handleAuctionsEnded(event: AuctionsEnded): void {
     throw new Error(`Could not find project with ID`);
   }
   project.auctionsEnded = true;
+  project.save();
+}
+
+export function handleExpirationSet(event: ExpirationSet): void {
+  let projectId = event.params.projectId.toString();
+  let expiration = event.params.expirationTime;
+  let project = Project.load(projectId);
+  if (!project) {
+    throw new Error(`Could not find project with ID`);
+  }
+  project.currentAuctionExpiresAt = expiration;
   project.save();
 }
