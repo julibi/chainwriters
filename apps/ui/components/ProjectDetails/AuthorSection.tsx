@@ -362,8 +362,7 @@ const AuthorSection = ({
           <>
             <p>
               Save more information about this work in the contract, to make
-              your project more appealing and trustworthy. This action can only
-              be done before triggering the auctions.
+              your project more appealing and trustworthy.
             </p>
             {configured || projectData.auctionsStarted ? (
               <DoneAction>{'Configure Project'}</DoneAction>

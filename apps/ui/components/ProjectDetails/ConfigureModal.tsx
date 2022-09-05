@@ -15,6 +15,7 @@ import {
   shortenImageName,
 } from '../Create/CoverImageForm';
 import { toast } from 'react-toastify';
+import { useManager } from '../../hooks/manager';
 
 const ContentWrapper = styled.div`
   margin: 2rem;
@@ -96,7 +97,16 @@ const ConfigureModal = ({
   const [blurb, setBlurb] = useState<string>('');
   const [genre, setGenre] = useState('');
   const [subtitle, setSubtitle] = useState<string>('');
-
+  const { configureProject, configureStatus } = useManager();
+  // args for configureProject
+  // projectId,
+  // imgHash,
+  // animationHash,
+  // blurbHash,
+  // genre,
+  // subtitle,
+  // onError,
+  // onSuccess,
   const captureFile = (file: any) => {
     const reader = new window.FileReader();
     reader.readAsArrayBuffer(file);
