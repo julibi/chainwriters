@@ -335,8 +335,8 @@ const ProjectDetailView = () => {
   } = useGetProject(projectId);
   const collection = useMoonpageCollection();
   const auctionsManager = useAuctionsManager();
-  // const { allowedToRead } = useShowText(projectId);
-  const allowedToRead = false;
+  const { allowedToRead } = useShowText(projectId);
+  console.log({ allowedToRead });
   const [coverImgLink, setCoverImgLink] = useState<string>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [showBuyModal, setShowBuyModal] = useState<boolean>(false);

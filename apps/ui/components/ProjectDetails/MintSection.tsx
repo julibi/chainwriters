@@ -76,7 +76,6 @@ const MintSection = ({ project, refetch }: MintSectionProps) => {
     return undefined;
   }, [currentEdition]);
 
-  console.log(currentEdition, Number(totalSupply), Number(maxSupply));
   const price = useMemo(() => {
     if (currentEdition.mintPrice) {
       return currentEdition.mintPrice.mul(amount);

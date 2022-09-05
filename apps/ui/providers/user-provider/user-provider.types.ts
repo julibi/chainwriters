@@ -1,3 +1,5 @@
+import { ReactChild, ReactChildren } from 'react';
+
 export type NftWithTechData = {
   projectId: number;
   editions: number;
@@ -18,4 +20,16 @@ export type OwnedUserNft = {
 
 export type AccountQueryVar = {
   account: string;
+};
+
+export type UserApi = {
+  balance: number;
+  nfts: number[];
+  isLoading: boolean;
+  groupedNfts: OwnedUserNft[][];
+  detailedNfts: OwnedUserNft[];
+};
+
+export type UserProviderProps = {
+  children: ReactChild;
 };

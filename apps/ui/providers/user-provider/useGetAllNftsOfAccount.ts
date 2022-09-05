@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useWeb3React } from '@web3-react/core';
-import useMoonpageCollection from '../useMoonpageCollection';
-import { useProjects } from '../projects';
-import { Project } from '../../providers/projects-provider/projects-provider.types';
-import { OwnedUserNft } from '../../providers/user-provider/user-provider.types';
+import useMoonpageCollection from '../../hooks/useMoonpageCollection';
+import { useProjects } from '../../hooks/projects';
+import { Project } from '../projects-provider/projects-provider.types';
+import { OwnedUserNft } from './user-provider.types';
 
-// TODO: make this hook accept address parameter -> could be used in the future for "profile page"
+// make this hook accept address parameter ?-> could be used in the future for "profile page"
 const useGetAllNftsOfAccount = () => {
   const { account } = useWeb3React();
   const collection = useMoonpageCollection();
@@ -14,6 +14,7 @@ const useGetAllNftsOfAccount = () => {
   const [balance, setBalance] = useState<number>(0);
   const [nfts, setNfts] = useState<number[]>([]);
   const [loading, setIsLoading] = useState<boolean>(false);
+  const [detailedNfts, setDetailedNfts] = useState<OwnedUserNft[] | null>(null);
   const [groupedNfts, setGroupedNfts] = useState<OwnedUserNft[][] | null>(null);
 
   const getProjectIdOfToken = useCallback(
@@ -88,6 +89,7 @@ const useGetAllNftsOfAccount = () => {
       for (const [key, value] of Object.entries(groupByProjectId)) {
         groupedInArray.push(value);
       }
+      setDetailedNfts(nftsWithIdAndEdition);
       setGroupedNfts(groupedInArray);
       setIsLoading(false);
     } catch (e: unknown) {
@@ -107,9 +109,10 @@ const useGetAllNftsOfAccount = () => {
       balance,
       nfts,
       isLoading: loading,
+      detailedNfts,
       groupedNfts,
     }),
-    [balance, nfts, loading, groupedNfts]
+    [balance, nfts, loading, detailedNfts, groupedNfts]
   );
 };
 

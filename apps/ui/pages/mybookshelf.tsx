@@ -8,10 +8,10 @@ import {
 } from '../components/HomePage/ProjectSection';
 import { BASE_BORDER_RADIUS, BASE_BOX_SHADOW, INTER_BOLD } from '../themes';
 import Loading from '../components/Loading';
-import useGetAllNftsOfAccount from '../hooks/user/useGetAllNftsOfAccount';
 import { useGetProjectsOfAccount } from '../hooks/user/useGetProjectsOfAccount';
 import BookshelfItem from '../components/Bookshelf/BookshelfItem';
 import { useGetContributionsOfAccount } from '../hooks/user/useGetContributionsOfAccount';
+import { useUser } from '../hooks/user/useUser';
 
 const Root = styled.div`
   display: flex;
@@ -63,7 +63,7 @@ const BlockSpan = styled.span`
 const MyBookShelf = () => {
   const router = useRouter();
   const { account } = useWeb3React();
-  const { groupedNfts, isLoading: ownedNftsLoading } = useGetAllNftsOfAccount();
+  const { groupedNfts, isLoading: ownedNftsLoading } = useUser();
   const { projects: ownProjects, isLoading: ownProjectsLoading } =
     useGetProjectsOfAccount();
   const { contributions, isLoading: contributionsLoading } =

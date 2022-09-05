@@ -1,8 +1,9 @@
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback } from 'react';
 import { truncateAddress } from '../../../components/WalletIndicator';
 import useShowText from '../../../hooks/useShowText';
+import { useGetProjectId } from '../../../hooks/projects';
 import Loading from '../../../components/Loading';
 import TypeWriter from '../../../components/TypeWriter';
 import {
@@ -78,7 +79,11 @@ const FlexWrapper = styled.div`
   }
 `;
 
-const Title = styled.h1``;
+const Title = styled.h1`
+  font-family: 'Inter';
+  margin-block-start: 3rem;
+  text-align: center;
+`;
 
 const Wrapper = styled.div`
   padding-inline: 2rem;
@@ -105,54 +110,20 @@ const TextWrapper = styled.div`
 
 const Text = styled.p``;
 
-interface ReadData {
-  author: string;
-  title: string;
-  subtitle?: string;
-  genre?: string;
-  textIpfsHash: string;
-  createdAt: string;
-}
-
 const Read = () => {
   const router = useRouter();
-  let projectAddress = router.query.projectAddress;
-  projectAddress = Array.isArray(projectAddress)
-    ? projectAddress[0]
-    : projectAddress;
-  const getShowText = useShowText(projectAddress as string);
-  const [isNFTOwner, setIsNFTOwner] = useState<boolean>(false);
-  const [data, setData] = useState<ReadData | null>(null);
-  const [mainText, setMainText] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
+  const projectId = useGetProjectId();
+  const { allowedToRead, project, text, isLoading } = useShowText(projectId);
 
   const handleClickGoBack = useCallback(
     (e) => {
       e.preventDefault();
-      router.push(`/projects/${projectAddress}`);
+      router.push(`/projects/${project.id}`);
     },
-    [projectAddress, router]
+    [project, router]
   );
 
-  const fetchIsAllowed = useCallback(async () => {
-    setLoading(true);
-    const context = await getShowText();
-    if (context) {
-      const { allowed, text, readingData } = context;
-      setIsNFTOwner(allowed);
-      setData(readingData);
-      setMainText(text);
-      setLoading(false);
-      return;
-    }
-    setLoading(false);
-  }, [getShowText]);
-
-  useEffect(() => {
-    fetchIsAllowed();
-  }, [fetchIsAllowed]);
-
-  if (loading && !data) {
+  if (isLoading && !project) {
     return (
       <Root>
         <Loading height={530} />
@@ -160,7 +131,7 @@ const Read = () => {
     );
   }
 
-  if (!isNFTOwner && !loading) {
+  if (!allowedToRead && !isLoading) {
     return (
       <Root>
         <Title>Sorry, you need to own an NFT to read this.</Title>
@@ -175,7 +146,7 @@ const Read = () => {
             cursor={false}
             shouldErase={false}
             shouldLoop={false}
-            text={data.title}
+            text={project.title}
           />
         </TitleWrapper>
         <BackArrow onClick={handleClickGoBack}>
@@ -184,17 +155,17 @@ const Read = () => {
         </BackArrow>
       </TopRow>
       <FlexWrapper>
-        {data.subtitle && (
+        {project.subtitle && (
           <Wrapper>
-            <SubTitle>{data.subtitle}</SubTitle>
+            <SubTitle>{project.subtitle}</SubTitle>
           </Wrapper>
         )}
         <Wrapper>
-          <Author>{`By ${truncateAddress(data.author)}`}</Author>
+          <Author>{`By ${truncateAddress(project.creator)}`}</Author>
         </Wrapper>
       </FlexWrapper>
       <TextWrapper>
-        <Text>{mainText}</Text>
+        <Text>{text}</Text>
       </TextWrapper>
     </Root>
   );
