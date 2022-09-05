@@ -23,9 +23,9 @@ const Root = styled.div`
   border-radius: ${BASE_BORDER_RADIUS};
   box-shadow: ${BASE_BOX_SHADOW};
 
-  // :hover {
-  //   cursor: pointer;
-  // }
+  :hover {
+    cursor: pointer;
+  }
 `;
 
 const ImageWrapper = styled.div`

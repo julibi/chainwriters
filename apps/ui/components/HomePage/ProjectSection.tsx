@@ -37,7 +37,6 @@ const ProjectSection = () => {
     <>
       <SectionTitleWrapper>
         <SectionTitle>Top Projects</SectionTitle>
-        <span>(These projects are mockups)</span>
       </SectionTitleWrapper>
       {loading && !data && <Loading height={530} />}
       <ProjectList>
