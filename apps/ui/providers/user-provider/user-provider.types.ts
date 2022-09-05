@@ -12,8 +12,10 @@ export type OwnedUserNft = {
   edition?: number;
   title: string;
   creator?: string;
+  contributionRole?: string;
+  contributionSharePercentage?: number;
 };
 
-export type GetAccountProjectsVars = {
+export type AccountQueryVar = {
   account: string;
 };
