@@ -13,6 +13,7 @@ import CSS from 'csstype';
 const Root = styled.div`
   width: 100%;
   max-width: 1200px;
+  margin-bottom: 1rem;
   padding: 1rem;
   box-shadow: ${BASE_BOX_SHADOW};
   border-radius: ${BASE_BORDER_RADIUS};
@@ -79,7 +80,7 @@ interface ArrowProps {
   up: boolean;
 }
 
-const Arrow = styled.i<ArrowProps>`
+export const Arrow = styled.i<ArrowProps>`
   border: solid ${PLAIN_WHITE};
   border-width: 0 4px 4px 0;
   display: inline-block;

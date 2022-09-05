@@ -6,15 +6,12 @@ import {
   SectionTitle,
   SectionTitleWrapper,
 } from '../components/HomePage/ProjectSection';
-import {
-  BaseButton,
-  BASE_BORDER_RADIUS,
-  BASE_BOX_SHADOW,
-  PINK,
-  INTER_BOLD,
-} from '../themes';
+import { BASE_BORDER_RADIUS, BASE_BOX_SHADOW, INTER_BOLD } from '../themes';
 import Loading from '../components/Loading';
-import useGetAllNftsOfUser from '../hooks/user/useGetAllNftsOfUser';
+import useGetAllNftsOfAccount from '../hooks/user/useGetAllNftsOfAccount';
+import { useGetProjectsOfAccount } from '../hooks/user/useGetProjectsOfAccount';
+import BookshelfItem from '../components/Bookshelf/BookshelfItem';
+import { useGetContributionsOfAccount } from '../hooks/user/useGetContributionsOfAccount';
 
 const Root = styled.div`
   display: flex;
@@ -26,14 +23,14 @@ const Root = styled.div`
   }
 `;
 
-const NoWallet = styled.div`
-  min-height: 500px;
+const NotExist = styled.div`
+  min-height: 300px;
   display: flex;
   justify-content: center;
   align-items: center;
 `;
 
-const NoWalletText = styled.span`
+const NotExistText = styled.span`
   display: inline-block;
 `;
 
@@ -59,167 +56,119 @@ const SubHeader = styled.h3`
   width: fit-content;
 `;
 
-const Item = styled.div`
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-radius: ${BASE_BORDER_RADIUS};
-  box-shadow: ${BASE_BOX_SHADOW};
-  padding: 1rem;
-  margin-block-end: 1rem;
-`;
-
 const BlockSpan = styled.span`
   display: inline-block;
 `;
 
-const Title = styled(BlockSpan)`
-  width: 30%;
-`;
-
-const Edition = styled(BlockSpan)`
-  @media (max-width: 900px) {
-    display: none;
-  }
-`;
-
-const ButtonsWrapper = styled.div`
-  display: flex;
-`;
-
-const DetailsButton = styled(BaseButton)`
-  margin-inline-start: 1rem;
-`;
-
-const ReadButton = styled(BaseButton)`
-  margin-inline-start: 1rem;
-  background-color: ${PINK};
-
-  @media (max-width: 900px) {
-    display: none;
-  }
-`;
-
 const MyBookShelf = () => {
   const router = useRouter();
-  const { account, chainId } = useWeb3React();
-  const {
-    balance,
-    nfts,
-    groupedNfts,
-    loading: ownedNftsLoading,
-  } = useGetAllNftsOfUser();
-
-  // TODO continue here
-
-  // const {
-  //   data: created,
-  //   loading: createdLoading,
-  //   error: createdError,
-  // } = useFetchCreatedDaos();
-  // const {
-  //   data: contributed,
-  //   loading: contributedLoading,
-  //   error: contributedError,
-  // } = useFetchContributedDaos();
+  const { account } = useWeb3React();
+  const { groupedNfts, isLoading: ownedNftsLoading } = useGetAllNftsOfAccount();
+  const { projects: ownProjects, isLoading: ownProjectsLoading } =
+    useGetProjectsOfAccount();
+  const { contributions, isLoading: contributionsLoading } =
+    useGetContributionsOfAccount();
+  console.log({ contributions, contributionsLoading });
 
   const handleClickRead = useCallback(
-    (e, address) => {
+    (e, projectId) => {
       e.preventDefault();
-      router.push(`/projects/${address}/read`);
+      router.push(`/projects/${projectId}/read`);
     },
     [router]
   );
 
   const handleClickDetails = useCallback(
-    (e, address) => {
+    (e, projectId) => {
       e.preventDefault();
-      router.push(`/projects/${address}`);
+      router.push(`/projects/${projectId}`);
     },
     [router]
   );
-  console.log('this is the bookshelf', { groupedNfts });
+
   return (
     <Root>
       <SectionTitleWrapper>
         <SectionTitle>My Bookshelf</SectionTitle>
       </SectionTitleWrapper>
-      {!account && (
-        <NoWallet>
-          <NoWalletText>Looks like you're not connected.</NoWalletText>
-        </NoWallet>
-      )}
-      {ownedNftsLoading && <Loading height={560} />}
-      {!ownedNftsLoading &&
-        groupedNfts?.map((group, idx) => (
-          <Item key={idx}>
-            <Title>{group[0].title}</Title>
-            <Edition>
-              {/* {Number(project.id.tokenId) === 1
-              ? 'Genesis Edition'
-              : `Edition ${Number(project.id.tokenId)}`}
-            {` x ${project.balance}`} */}
-            </Edition>
-            <ButtonsWrapper>
-              <DetailsButton
-              // onClick={(e) => handleClickDetails(e, project.contract.address)}
-              >
-                View Details
-              </DetailsButton>
-              <ReadButton
-              // onClick={(e) => handleClickRead(e, project.contract.address)}
-              >
-                Read
-              </ReadButton>
-            </ButtonsWrapper>
-          </Item>
-        ))}
-
-      {/* {!loading && !createdLoading && !createdError && created.daos.length > 0 && (
-        <Section>
-          <SubHeader>My Projects</SubHeader>
-          {created.daos.map((project, idx) => (
-            <Item key={idx}>
-              <Title>{project.title}</Title>
-              <ButtonsWrapper>
-                <DetailsButton
-                  onClick={(e) => handleClickDetails(e, project.address)}
-                >
-                  View Details
-                </DetailsButton>
-                <ReadButton
-                  onClick={(e) => handleClickRead(e, project.address)}
-                >
-                  Read
-                </ReadButton>
-              </ButtonsWrapper>
-            </Item>
-          ))}
-        </Section>
-      )}
-      {!loading &&
-        !contributedLoading &&
-        !contributedError &&
-        contributed.contributions.length > 0 && (
+      {!account ? (
+        <NotExist>
+          <NotExistText>{`Looks like you're not connected.`}</NotExistText>
+        </NotExist>
+      ) : (
+        <>
+          <Section>
+            <SubHeader>My NFTs</SubHeader>
+            {ownedNftsLoading && <Loading height={300} />}
+            {!ownedNftsLoading && !groupedNfts && (
+              <NotExist>
+                <NotExistText>{`You do not own any Moonpage NFTs :(`}</NotExistText>
+              </NotExist>
+            )}
+            {!ownedNftsLoading &&
+              groupedNfts?.map((group, idx) => (
+                <BookshelfItem
+                  key={idx}
+                  group={group}
+                  onClickDetails={(e) =>
+                    handleClickDetails(e, group[0].projectId)
+                  }
+                  onClickRead={(e) => handleClickRead(e, group[0].projectId)}
+                />
+              ))}
+          </Section>
+          <Section>
+            <SubHeader>My Projects</SubHeader>
+            {ownProjectsLoading && <Loading height={300} />}
+            {!ownProjectsLoading && !ownProjects.length && (
+              <NotExist>
+                <NotExistText>{`You have not created any Moonpage subcollections.`}</NotExistText>
+              </NotExist>
+            )}
+            {!ownProjectsLoading &&
+              ownProjects?.map((project, idx) => (
+                <BookshelfItem
+                  key={idx}
+                  group={[
+                    { title: project.title, projectId: Number(project.id) },
+                  ]}
+                  onClickDetails={(e) => handleClickDetails(e, project.id)}
+                  onClickRead={(e) => handleClickRead(e, project.id)}
+                />
+              ))}
+          </Section>
           <Section>
             <SubHeader>My Contributions</SubHeader>
-            {contributed.contributions.map((project, idx) => (
-              <Item key={idx}>
-                <Title>{project.dao.title}</Title>
-                <BlockSpan>{project.role}</BlockSpan>
-                <BlockSpan>{`${project.share} %`}</BlockSpan>
-                <ButtonsWrapper>
-                  <DetailsButton
-                    onClick={(e) => handleClickDetails(e, project.address)}
-                  >
-                    View Details
-                  </DetailsButton>
-                </ButtonsWrapper>
-              </Item>
-            ))}
+            {contributionsLoading && <Loading height={300} />}
+            {!contributionsLoading && !contributions.length && (
+              <NotExist>
+                <NotExistText>{`You have not created any Moonpage subcollections.`}</NotExistText>
+              </NotExist>
+            )}
+            {!contributionsLoading &&
+              contributions?.map((contrib, idx) => (
+                <BookshelfItem
+                  key={idx}
+                  group={[
+                    {
+                      creator: contrib.project.creator,
+                      title: contrib.project.title,
+                      projectId: Number(contrib.project.id),
+                      contributionRole: contrib.role,
+                      contributionSharePercentage: Number(
+                        contrib.sharePercentage
+                      ),
+                    },
+                  ]}
+                  onClickDetails={(e) =>
+                    handleClickDetails(e, contrib.project.id)
+                  }
+                  onClickRead={(e) => handleClickRead(e, contrib.project.id)}
+                />
+              ))}
           </Section>
-        )} */}
+        </>
+      )}
     </Root>
   );
 };

@@ -26,6 +26,7 @@ export interface Contributor {
   address: string;
   role: string;
   sharePercentage: BigNumber;
+  project: Project;
 }
 
 export interface Edition {

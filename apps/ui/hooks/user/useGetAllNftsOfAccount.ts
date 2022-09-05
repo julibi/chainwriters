@@ -3,10 +3,10 @@ import { useWeb3React } from '@web3-react/core';
 import useMoonpageCollection from '../useMoonpageCollection';
 import { useProjects } from '../projects';
 import { Project } from '../../providers/projects-provider/projects-provider.types';
-import { NftWithTechData } from '../../providers/user-provider/user-provider.types';
+import { OwnedUserNft } from '../../providers/user-provider/user-provider.types';
 
 // TODO: make this hook accept address parameter -> could be used in the future for "profile page"
-const useGetAllNftsOfUser = () => {
+const useGetAllNftsOfAccount = () => {
   const { account } = useWeb3React();
   const collection = useMoonpageCollection();
   const { allProjects, areAllProjectsLoading, allProjectsFetchError } =
@@ -14,9 +14,7 @@ const useGetAllNftsOfUser = () => {
   const [balance, setBalance] = useState<number>(0);
   const [nfts, setNfts] = useState<number[]>([]);
   const [loading, setIsLoading] = useState<boolean>(false);
-  const [groupedNfts, setGroupedNfts] = useState<NftWithTechData[][] | null>(
-    null
-  );
+  const [groupedNfts, setGroupedNfts] = useState<OwnedUserNft[][] | null>(null);
 
   const getProjectIdOfToken = useCallback(
     (tokenId: number, projects: Project[]) => {
@@ -108,14 +106,14 @@ const useGetAllNftsOfUser = () => {
     () => ({
       balance,
       nfts,
-      loading,
+      isLoading: loading,
       groupedNfts,
     }),
     [balance, nfts, loading, groupedNfts]
   );
 };
 
-export default useGetAllNftsOfUser;
+export default useGetAllNftsOfAccount;
 
 // const provider = new JsonRpcProvider(RPC_URLS[80001], 80001);
 // const multicall = new Multicall({
