@@ -4,9 +4,13 @@ export interface ManagerProviderProps {
   children: ReactNode;
 }
 
-export type ManagerApi = {};
+export type WriteActionStatus = 'idle' | 'confirming' | 'waiting' | 'success' | 'error';
 
-export type WriteActionStatus = 'idle' | 'pending' | 'success' | 'error';
+export type ManagerApi = {
+  configureStatus: WriteActionStatus,
+  configureProject: (x: ConfigureProjectArgs) => Promise<void>,
+};
+
 export type NewConfiguration = {
   imgHash: string;
   animationHash: string;
@@ -14,6 +18,7 @@ export type NewConfiguration = {
   genre: string;
   subtitle: string;
 };
+
 export interface ConfigureProjectArgs extends NewConfiguration {
   projectId: string;
   onSuccess?: (

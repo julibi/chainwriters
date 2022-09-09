@@ -8,14 +8,8 @@ import {
 } from './manager-provider.types';
 
 const defaultContext: ManagerApi = {
-  allProjects: [],
-  areAllProjectsLoading: false,
-  allProjectsFetchError: undefined,
-  refetchAllProjects: async () => undefined,
-  topProjects: [],
-  areTopProjectsLoading: false,
-  topProjectsFetchError: undefined,
-  refetchTopProjects: async () => undefined,
+  configureStatus: 'idle',
+  configureProject: async () => undefined,
 };
 
 export const ManagerContext = createContext(defaultContext);
@@ -35,8 +29,16 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
       onError,
       onSuccess,
     }: ConfigureProjectArgs) => {
+      console.log({ projectId,
+        imgHash,
+        animationHash,
+        blurbHash,
+        genre,
+        subtitle,
+        onError,
+        onSuccess });
       try {
-        setConfigureStatus('pending');
+        setConfigureStatus('confirming');
         const Tx = await mpManager.configureProjectDetails(
           projectId,
           imgHash,
@@ -45,8 +47,9 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
           genre,
           subtitle
         );
+        console.log({ Tx });
         const { hash } = Tx;
-
+        setConfigureStatus('waiting');
         mpManager.provider.once(hash, async (transaction) => {
           setConfigureStatus('success');
           onSuccess(genre, subtitle, imgHash, blurbHash, animationHash);

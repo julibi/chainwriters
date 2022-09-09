@@ -8,8 +8,8 @@ export const Link = styled.a`
 `;
 
 export interface ToastLinkTypes {
-  hash: string;
-  chainId: number | undefined;
+  hash?: string;
+  chainId?: number | undefined;
   message: string;
   linkText?: string
 }
@@ -18,13 +18,13 @@ const ToastLink = ({hash, chainId, message, linkText}: ToastLinkTypes) => {
   return (
     <>
       <p>{`${message}`}</p>
-      <Link
+      {hash && chainId &&<Link
         rel="noreferrer"
         target="_blank"
         href={getPolygonScanLink(hash, chainId)}
       >
        { !linkText && 'View on Polygonscan ↗' } 
-      </Link>
+      </Link>}
   </>
   )
 }

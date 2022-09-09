@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useCallback, useMemo, useState } from 'react';
+import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
 import styled from 'styled-components';
 import { BigNumber } from '@ethersproject/bignumber';
@@ -19,7 +19,6 @@ import {
 import { SectionTitle } from '../HomePage/ProjectSection';
 import Emoji from '../Emojis';
 import Checkmark from '../Checkmark';
-import Loading from '../Loading';
 import MoreDetails from '../../components/MoreDetails';
 import ProgressBar from '../ProgressBar';
 import ConfigureModal from './ConfigureModal';
@@ -31,12 +30,13 @@ import {
   ContentWrapper,
   ModalHeader,
   ModalText,
-  CTAWrapper,
-  MintButton,
+  CTAWrapper
 } from '../../pages/projects/[projectId]';
 import useMoonpageCollection from '../../hooks/useMoonpageCollection';
 import useMoonpageManager from '../../hooks/useMoonpageManager';
 import { Contributor, ProjectData } from '../../state/projects/types';
+import { useManager } from '../../hooks/manager'; 
+import ActionButton from '../ActionButton';
 
 const Root = styled.section`
   display: flex;
@@ -148,6 +148,7 @@ const AuthorSection = ({
   const client = create('https://ipfs.infura.io:5001/api/v0');
   const collection = useMoonpageCollection();
   const mpManager = useMoonpageManager();
+  const { configureProject, configureStatus } = useManager();
   const [showConfigureModal, setShowConfigureModal] = useState<boolean>(false);
   const [configurePending, setConfigurePending] = useState<boolean>(false);
   const [showContributorsModal, setShowContributorsModal] =
@@ -165,39 +166,22 @@ const AuthorSection = ({
   const [unlockEditionPending, setUnlockEditionPending] =
     useState<boolean>(false);
 
-  const configure = useCallback(
-    async (
-      imgHash: string,
-      blurbHash: string,
-      genre: string,
-      subtitle: string
-    ) => {
-      try {
-        setConfigurePending(true);
-        const Tx = await collection.configureProjectDetails(
-          imgHash,
-          blurbHash,
-          genre,
-          subtitle
-        );
-        const { hash } = Tx;
-        toast.info(
-          <ToastLink hash={hash} chainId={chainId} message={'Configuring...'} />
-        );
-        collection.provider.once(hash, async (transaction) => {
-          setConfigurePending(false);
-          setShowConfigureModal(false);
-          onConfigure(genre, subtitle, imgHash, blurbHash);
-        });
-      } catch (e: unknown) {
-        // @ts-ignore
-        toast.error(e.reason ?? 'Something went wrong.');
-        setConfigurePending(false);
-        setShowConfigureModal(false);
-      }
-    },
-    [collection, chainId, onConfigure]
-  );
+  console.log({configureStatus})
+ 
+  useEffect(() => {
+    switch (configureStatus) {
+      case 'confirming': 
+      toast.info(<ToastLink message={'Please confirm the transaction'} />);
+      break;
+      case 'waiting':
+      toast.info(<ToastLink message={'Configuring...'} />);
+      break;
+      case 'success':
+      toast.info(<ToastLink message={'Success!'} />);
+      break;
+    }
+  }, [configureStatus])
+  
 
   const startAuctions = useCallback(async () => {
     if (
@@ -364,20 +348,12 @@ const AuthorSection = ({
               Save more information about this work in the contract, to make
               your project more appealing and trustworthy.
             </p>
-            {configured || projectData.auctionsStarted ? (
-              <DoneAction>{'Configure Project'}</DoneAction>
-            ) : (
-              <TriggerButton
-                onClick={() => setShowConfigureModal(true)}
-                disabled={configurePending}
-              >
-                {configurePending ? (
-                  <Loading height={20} dotHeight={20} />
-                ) : (
-                  'Configure Your Project'
-                )}
-              </TriggerButton>
-            )}
+            <ActionButton
+              disabled={configured || projectData.auctionsStarted}
+              text='Configure Your Project'
+              loading={configurePending}
+              onClick={() => setShowConfigureModal(true)}
+            />
           </>
         </MoreDetails>
         <MoreDetails
@@ -400,23 +376,12 @@ const AuthorSection = ({
               contributors to your project will receive. This action can only be
               done before triggering the auctions.
             </p>
-            {projectData.auctionsStarted ||
-            projectData.contributors?.length > 0 ? (
-              <DoneAction>{'Add Contributors'}</DoneAction>
-            ) : (
-              <TriggerButton
-                onClick={() => {
-                  setShowContributorsModal(true);
-                }}
-                disabled={contributorsPending}
-              >
-                {contributorsPending ? (
-                  <Loading height={20} dotHeight={20} />
-                ) : (
-                  'Add Contributors'
-                )}
-              </TriggerButton>
-            )}
+            <ActionButton
+              disabled={contributorsPending || projectData.auctionsStarted || !!projectData.contributors?.length}
+              text='Add Contributors'
+              loading={contributorsPending}
+              onClick={() => setShowContributorsModal(true)}
+            />
           </>
         </MoreDetails>
         <MoreDetails
@@ -440,18 +405,12 @@ const AuthorSection = ({
               Start the auctions for your Genesis Edition. Make sure to claim an
               amount of NFTs for yourself. At least 1 and max 4.
             </p>
-            {projectData.premintedByAuthor > 0 &&
-            !projectData.auctionsStarted ? (
-              <TriggerButton onClick={startAuctions} disabled={triggerPending}>
-                {triggerPending ? (
-                  <Loading height={20} dotHeight={20} />
-                ) : (
-                  'Trigger Auctions'
-                )}
-              </TriggerButton>
-            ) : (
-              <DoneAction>{'Trigger Auctions'}</DoneAction>
-            )}
+            <ActionButton
+              disabled={triggerPending || projectData.auctionsStarted || !!projectData.premintedByAuthor}
+              text='Start Auctions'
+              loading={triggerPending}
+              onClick={startAuctions}
+            />
           </>
         </MoreDetails>
       </ActionItems>
@@ -467,27 +426,24 @@ const AuthorSection = ({
               When all NFTs of the last editions have sold out, you can start
               the next one!
             </p>
-            {!canTriggerNextEdition ? (
-              <DoneAction>{'Unlock Next Edition'}</DoneAction>
-            ) : (
-              <TriggerButton
-                onClick={() => setShowUnlockEditionModal(true)}
-                disabled={unlockEditionPending}
-              >
-                {unlockEditionPending ? (
-                  <Loading height={20} dotHeight={20} />
-                ) : (
-                  'Unlock'
-                )}
-              </TriggerButton>
-            )}
+            <ActionButton
+              disabled={!canTriggerNextEdition || unlockEditionPending}
+              text='Unlock Next Edition'
+              loading={unlockEditionPending}
+              onClick={() => setShowUnlockEditionModal(true)}
+            />
           </>
         </MoreDetails>
       </ActionItems>
       {showConfigureModal && (
         <ConfigureModal
           onClose={() => setShowConfigureModal(false)}
-          onConfigure={configure}
+          onConfigure={async({
+            imgHash,
+            animationHash,
+            blurbHash,
+            genre,
+            subtitle}) => await configureProject({ projectId, imgHash, animationHash, blurbHash, genre, subtitle })}
           pending={configurePending}
         />
       )}
@@ -531,20 +487,14 @@ const AuthorSection = ({
                   'Incorrect amount.'
                 }
               />
-              <MintButton
-                disabled={
-                  authorMintPending ||
+              <ActionButton
+                disabled={ authorMintPending ||
                   Number(authorMintInput) < 1 ||
-                  Number(authorMintInput) > projectData.currentEditionMaxSupply
-                }
+                  Number(authorMintInput) > projectData.currentEditionMaxSupply}
+                text='MINT'
+                loading={authorMintPending}
                 onClick={authorMint}
-              >
-                {authorMintPending ? (
-                  <Loading height={20} dotHeight={20} />
-                ) : (
-                  'MINT'
-                )}
-              </MintButton>
+              />
             </CTAWrapper>
           </ContentWrapper>
         </BaseModal>
@@ -585,26 +535,19 @@ const AuthorSection = ({
                 // TODO: read this from contract -  min price is 1ETH
                 error={Number(nextEditionMintPrice) < 1 && 'Price too low.'}
               />
-              <MintButton
-                disabled={
-                  unlockEditionPending ||
+               <ActionButton
+                disabled={ unlockEditionPending ||
                   Number(nextEditionMaxAmount) < 1 ||
                   Number(nextEditionMaxAmount) > 10000 ||
-                  Number(nextEditionMintPrice) < 0.01
-                }
+                  Number(nextEditionMintPrice) < 0.01}
+                text='UNLOCK'
+                loading={unlockEditionPending}
                 onClick={async () =>
                   await unlockNextEdition(
                     nextEditionMaxAmount,
                     nextEditionMintPrice
-                  )
-                }
-              >
-                {unlockEditionPending ? (
-                  <Loading height={20} dotHeight={20} />
-                ) : (
-                  'UNLOCK'
                 )}
-              </MintButton>
+              />
             </CTAWrapper>
           </ContentWrapper>
         </BaseModal>

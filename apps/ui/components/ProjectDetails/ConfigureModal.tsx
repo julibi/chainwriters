@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState } from 'react';
+import React, { ChangeEvent, useCallback, useState } from 'react';
 import { create } from 'ipfs-http-client';
 import Image from 'next/image';
 import styled from 'styled-components';
@@ -15,7 +15,7 @@ import {
   shortenImageName,
 } from '../Create/CoverImageForm';
 import { toast } from 'react-toastify';
-import { useManager } from '../../hooks/manager';
+import { ConfigureProjectArgs } from '../../providers/manager-provider/manager-provider.types';
 
 const ContentWrapper = styled.div`
   margin: 2rem;
@@ -76,12 +76,13 @@ const MintButton = styled(BaseButton)<MintButtonProps>`
 
 interface ConfigureModalProps {
   onClose: () => void;
-  onConfigure: (
-    imgHash: string,
-    blurbHash: string,
-    genre: string,
-    subtitle: string
-  ) => void;
+  onConfigure: ({
+    imgHash,
+    animationHash,
+    blurbHash,
+    genre,
+    subtitle
+  }) => void;
   pending: boolean;
 }
 
@@ -97,16 +98,7 @@ const ConfigureModal = ({
   const [blurb, setBlurb] = useState<string>('');
   const [genre, setGenre] = useState('');
   const [subtitle, setSubtitle] = useState<string>('');
-  const { configureProject, configureStatus } = useManager();
-  // args for configureProject
-  // projectId,
-  // imgHash,
-  // animationHash,
-  // blurbHash,
-  // genre,
-  // subtitle,
-  // onError,
-  // onSuccess,
+
   const captureFile = (file: any) => {
     const reader = new window.FileReader();
     reader.readAsArrayBuffer(file);
@@ -117,6 +109,27 @@ const ConfigureModal = ({
       setImgBuffer(buffer);
     };
   };
+
+  const handleClick = useCallback(async() => {
+    try {
+      let blurbCID = '';
+      let coverImgCID = '';
+      console.log({imgBuffer, blurb})
+      // TODO: continue debuggin why we get into the catch statement
+      if (imgBuffer) {
+        coverImgCID = (await client.add(imgBuffer)).path;
+      }
+      if (blurb) {
+        blurbCID = (await client.add(blurb)).path;
+      }
+      console.log({coverImgCID,  blurbHash: blurbCID, genre, subtitle})
+      onConfigure({imgHash: coverImgCID, animationHash: "", blurbHash: blurbCID, genre, subtitle});
+    } catch (e: unknown) {
+      toast.error(
+        'Something went wrong while trying to uplod your data to IPFS.'
+      );
+    }
+  }, [blurb, client, genre, imgBuffer, onConfigure, subtitle]);
 
   return (
     <BaseModal onClose={onClose}>
@@ -194,23 +207,7 @@ const ConfigureModal = ({
           <MintButton
             style={{ margin: '1rem auto' }}
             disabled={pending}
-            onClick={async () => {
-              try {
-                let blurbCID = '';
-                let coverImgCID = '';
-                if (imgBuffer) {
-                  coverImgCID = (await client.add(imgBuffer)).path;
-                }
-                if (blurb) {
-                  blurbCID = (await client.add(blurb)).path;
-                }
-                onConfigure(coverImgCID, blurbCID, genre, subtitle);
-              } catch (e: unknown) {
-                toast.error(
-                  'Something went wrong while trying to uplod your data to IPFS.'
-                );
-              }
-            }}
+            onClick={handleClick}
           >
             {pending ? <Loading height={20} dotHeight={20} /> : 'Configure'}
           </MintButton>
