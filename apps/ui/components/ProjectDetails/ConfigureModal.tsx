@@ -79,7 +79,6 @@ const MintButton = styled(BaseButton)<MintButtonProps>`
 `;
 
 interface ConfigureModalProps {
-  error?: string;
   onClose: () => void;
   onConfigure: ({
     imgHash,
@@ -92,7 +91,6 @@ interface ConfigureModalProps {
 }
 
 const ConfigureModal = ({
-  error,
   onConfigure,
   onClose,
   pending,
@@ -198,6 +196,7 @@ const ConfigureModal = ({
                 {imgFile ? shortenImageName(imgFile.name) : ''}
               </FileName>
               <StyledFileInput
+                disabled={pending}
                 type="file"
                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
                   e.preventDefault();
@@ -207,7 +206,6 @@ const ConfigureModal = ({
               />
             </FlexColumn>
           </StyledImageForm>
-          {error && <Error>{error}</Error>}
           <ActionButton
             disabled={pending}
             onClick={handleClick}

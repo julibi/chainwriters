@@ -113,24 +113,7 @@ const AuthorSection = ({
   const [nextEditionMintPrice, setMextEditionMintPrice] = useState<string>('0');
   const [unlockEditionPending, setUnlockEditionPending] =
     useState<boolean>(false);
-
-  console.log({configureStatus})
- 
-  useEffect(() => {
-    switch (configureStatus) {
-      case 'confirming': 
-      toast.info(<ToastLink message={'Please confirm the transaction'} />);
-      break;
-      case 'waiting':
-      toast.info(<ToastLink message={'Configuring...'} />);
-      break;
-      case 'success':
-      toast.info(<ToastLink message={'Success!'} />);
-      break;
-    }
-  }, [configureStatus])
   
-
   const startAuctions = useCallback(async () => {
     if (
       projectData &&
@@ -265,6 +248,21 @@ const AuthorSection = ({
     return text;
   }, [calculatedProgress]);
 
+  const handleConfigure = useCallback(async(args) => 
+    await configureProject({
+      projectId,
+      imgHash: args.imgHash,
+      animationHash: args.animationHash,
+      blurbHash: args.blurbHash,
+      genre: args.genre,
+      subtitle: args.subtitle,
+      onError: undefined,
+      onSuccess: () => {
+        setShowConfigureModal(false);
+        refetch();
+      }}
+    ), [projectId, refetch, configureProject]);
+
   return (
     <Root>
       <Title style={{ maxWidth: '300px' }}>Control Settings for Author</Title>
@@ -385,27 +383,8 @@ const AuthorSection = ({
       </ActionItems>
       {showConfigureModal && (
         <ConfigureModal
-          error={configureError}
           onClose={() => setShowConfigureModal(false)}
-          onConfigure={
-            async(args) => 
-              await configureProject({
-                projectId,
-                imgHash: args.imgHash,
-                animationHash: args.animationHash,
-                blurbHash: args.blurbHash,
-                genre: args.genre,
-                subtitle: args.subtitle,
-                onError: (e: unknown) => { 
-                  console.log({e})
-                  setConfigureError('Something went wrong!')
-                },
-                onSuccess: () => {
-                  setShowConfigureModal(false);
-                  refetch()
-                }
-              })
-          }
+          onConfigure={handleConfigure}
           pending={configureStatus == 'confirming' || configureStatus == 'waiting'}
         />
       )}

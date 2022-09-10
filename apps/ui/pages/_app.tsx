@@ -98,11 +98,11 @@ function CustomApp({ Component, pageProps }: AppProps) {
       <GlobalStyle />
       <Web3ReactProvider getLibrary={getLibrary}>
         <ApolloProvider client={client}>
+          <ToastContainer />
           <ProjectsProvider>
             <UserProvider>
               <ManagerProvider>
                 <main className="app">
-                  <ToastContainer />
                   <Layout>
                     <Component {...pageProps} />
                   </Layout>

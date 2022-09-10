@@ -6,6 +6,8 @@ import {
   ManagerProviderProps,
   WriteActionStatus,
 } from './manager-provider.types';
+import { toast } from 'react-toastify';
+import ToastLink from '../../components/ToastLink';
 
 const defaultContext: ManagerApi = {
   configureStatus: 'idle',
@@ -49,12 +51,18 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
         );
         const { hash } = Tx;
         setConfigureStatus('waiting');
+        toast.info(<ToastLink message={'Configuring...'} />);
         mpManager.provider.once(hash, async (transaction) => {
-          setConfigureStatus('success');
-          onSuccess?.();
+          // we need a time, because the graph needs some time
+          setTimeout(() => {
+            setConfigureStatus('success');
+            toast.info(<ToastLink message={'Success!'} />);
+            onSuccess?.();
+          }, 10000);
         });
       } catch (e) {
         setConfigureStatus('error');
+        toast.error(<ToastLink message={'Something went wrong!'} />);
         onError?.(e);
       }
     },
