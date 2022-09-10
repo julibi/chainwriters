@@ -444,6 +444,7 @@ const AuthorSection = ({
         </BaseModal>
       )}
       {/* TODO: continue here, put it into its own modal */}
+      {/* TODO: test adding multiple contributors first - no null values - could mess up contribution process */}
       {showUnlockEditionModal && (
         <BaseModal onClose={() => setShowUnlockEditionModal(false)}>
           <ContentWrapper>
