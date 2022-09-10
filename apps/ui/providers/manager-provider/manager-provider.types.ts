@@ -21,12 +21,6 @@ export type NewConfiguration = {
 
 export interface ConfigureProjectArgs extends NewConfiguration {
   projectId: string;
-  onSuccess?: (
-    genre: string,
-    subtitle: string,
-    imgHash: string,
-    blurbHash: string,
-    animationHash: string
-  ) => void;
+  onSuccess?: () => void;
   onError?: (e: any) => void;
 }

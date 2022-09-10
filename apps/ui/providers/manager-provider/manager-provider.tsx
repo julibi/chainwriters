@@ -47,16 +47,15 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
           genre,
           subtitle
         );
-        console.log({ Tx });
         const { hash } = Tx;
         setConfigureStatus('waiting');
         mpManager.provider.once(hash, async (transaction) => {
           setConfigureStatus('success');
-          onSuccess?.(genre, subtitle, imgHash, blurbHash, animationHash);
+          onSuccess?.();
         });
       } catch (e) {
-        setConfigureStatus('success');
-        onError(e);
+        setConfigureStatus('error');
+        onError?.(e);
       }
     },
     [mpManager]

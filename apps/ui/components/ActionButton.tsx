@@ -8,17 +8,19 @@ interface ActionButtonTypes {
     loading: boolean;
     onClick?: () => void;
     text: string;
+    width?: string;
 }
 
 interface ButtonTypes {
   disabled: boolean;
+  width?: string;
 }
   
   const RootButton = styled(BaseButton)<ButtonTypes>`
     background-color: ${BG_NORMAL};
     color: ${({ disabled }) => (disabled ? DISABLED_WHITE : PINK)};
     font-family: ${INTER_BOLD};
-    width: 230px;
+    width: ${({ width }) => ( width ?? '230px' )};
     margin: 1rem 1rem 0 0;
     padding: 1rem;
   
@@ -27,11 +29,12 @@ interface ButtonTypes {
     }
   `;
 
-const ActionButton = ({ disabled = false, onClick, loading = false, text }: ActionButtonTypes) => {
+const ActionButton = ({ disabled = false, onClick, loading = false, text, width }: ActionButtonTypes) => {
   return (
     <RootButton
       onClick={onClick}
       disabled={disabled}
+      width={width}
     >
       {loading ? 
         <Loading height={20} dotHeight={20} />

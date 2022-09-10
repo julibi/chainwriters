@@ -574,8 +574,6 @@ const ProjectDetailView = () => {
               blurb={blurb}
               projectId={projectId}
               projectData={project}
-              onConfigure={refetch}
-              onAddContributors={refetch}
               refetch={refetch}
             />
           )}

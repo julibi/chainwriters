@@ -4,7 +4,6 @@ import Image from 'next/image';
 import styled from 'styled-components';
 import { toast } from 'react-toastify';
 import BaseModal from '../BaseModal';
-import Loading from '../Loading';
 import InputField from '../InputField';
 import { BaseButton, DISABLED_WHITE, PINK, INTER_BOLD } from '../../themes';
 import { TextInput } from '../../pages/create';
@@ -16,6 +15,7 @@ import {
   shortenImageName,
 } from '../Create/CoverImageForm';
 import { useIpfsClient } from '../../hooks/useIpfsClient';
+import ActionButton from '../ActionButton';
 
 const ContentWrapper = styled.div`
   margin: 2rem;
@@ -25,6 +25,10 @@ const ContentWrapper = styled.div`
   align-items: center;
   overflow: scroll;
   height: 600px;
+`;
+
+const Error = styled.span`
+  color: ${PINK};
 `;
 
 const ModalHeader = styled.h2`
@@ -75,6 +79,7 @@ const MintButton = styled(BaseButton)<MintButtonProps>`
 `;
 
 interface ConfigureModalProps {
+  error?: string;
   onClose: () => void;
   onConfigure: ({
     imgHash,
@@ -87,6 +92,7 @@ interface ConfigureModalProps {
 }
 
 const ConfigureModal = ({
+  error,
   onConfigure,
   onClose,
   pending,
@@ -97,13 +103,13 @@ const ConfigureModal = ({
   const [blurb, setBlurb] = useState<string>('');
   const [genre, setGenre] = useState('');
   const [subtitle, setSubtitle] = useState<string>('');
+  const [uploadPending, setUploadPending] = useState<boolean>(false);
 
-  const captureFile = (file: any) => {
+  const captureFile = (file) => {
     const reader = new window.FileReader();
     reader.readAsArrayBuffer(file);
     reader.onloadend = () => {
-      // @ts-ignore
-      const buffer = Buffer.from(reader.result);
+      const buffer = Buffer.from(reader.result as ArrayBuffer);
       setImgFile(file);
       setImgBuffer(buffer);
     };
@@ -111,6 +117,7 @@ const ConfigureModal = ({
 
   const handleClick = useCallback(async() => {
     try {
+      setUploadPending(true);
       let blurbCID = '';
       let coverImgCID = '';
       if (imgBuffer) {
@@ -121,7 +128,9 @@ const ConfigureModal = ({
       }
 
       onConfigure({imgHash: coverImgCID, animationHash: "", blurbHash: blurbCID, genre, subtitle});
+      setUploadPending(false);
     } catch (e: unknown) {
+      setUploadPending(false);
       toast.error(
         'Something went wrong while trying to uplod your data to IPFS.'
       );
@@ -188,26 +197,24 @@ const ConfigureModal = ({
               <FileName>
                 {imgFile ? shortenImageName(imgFile.name) : ''}
               </FileName>
-              <FlexRow>
-                <StyledFileInput
-                  style={{ maxWidth: '200px' }}
-                  type="file"
-                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                    e.preventDefault();
-                    const file = e.target.files[0];
-                    captureFile(file);
-                  }}
-                />
-              </FlexRow>
+              <StyledFileInput
+                type="file"
+                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                  e.preventDefault();
+                  const file = e.target.files[0];
+                  captureFile(file);
+                }}
+              />
             </FlexColumn>
           </StyledImageForm>
-          <MintButton
-            style={{ margin: '1rem auto' }}
+          {error && <Error>{error}</Error>}
+          <ActionButton
             disabled={pending}
             onClick={handleClick}
-          >
-            {pending ? <Loading height={20} dotHeight={20} /> : 'Configure'}
-          </MintButton>
+            loading={ uploadPending || pending}
+            width='100%'
+            text='Configure'
+          /> 
         </FlexColumn>
       </ContentWrapper>
     </BaseModal>

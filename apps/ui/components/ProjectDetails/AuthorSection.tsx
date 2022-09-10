@@ -84,22 +84,12 @@ const Flex = styled.div`
 interface AuthorSectionProps {
   blurb: string;
   projectData: Project;
-  onConfigure: (
-    genre: string,
-    subtitle: string,
-    imgHash: string,
-    blurbHash: string
-  ) => void;
-  onAddContributors: (contribs: Contributor[]) => void;
   projectId: string;
   refetch: VoidFunction;
 }
 
 const AuthorSection = ({
-  blurb,
   projectData,
-  onConfigure,
-  onAddContributors,
   projectId,
   refetch,
 }: AuthorSectionProps) => {
@@ -108,7 +98,7 @@ const AuthorSection = ({
   const mpManager = useMoonpageManager();
   const { configureProject, configureStatus } = useManager();
   const [showConfigureModal, setShowConfigureModal] = useState<boolean>(false);
-  const [configurePending, setConfigurePending] = useState<boolean>(false);
+  const [configureError, setConfigureError] = useState<string | undefined>();
   const [showContributorsModal, setShowContributorsModal] =
     useState<boolean>(false);
   const [contributorsPending, setContributorsPending] =
@@ -246,7 +236,7 @@ const AuthorSection = ({
     if (configured) {
       percentage = 33;
     }
-    if (projectData.premintedByAuthor > 0) {
+    if (Number(projectData.premintedByAuthor) > 0) {
       percentage = 66;
     }
     if (projectData.auctionsStarted) {
@@ -309,7 +299,7 @@ const AuthorSection = ({
             <ActionButton
               disabled={configured || projectData.auctionsStarted}
               text='Configure Your Project'
-              loading={configurePending}
+              loading={configureStatus == 'confirming' || configureStatus == 'waiting'}
               onClick={() => setShowConfigureModal(true)}
             />
           </>
@@ -344,7 +334,7 @@ const AuthorSection = ({
         </MoreDetails>
         <MoreDetails
           open={
-            projectData.premintedByAuthor > 0 && !projectData.auctionsStarted
+            Number(projectData.premintedByAuthor) > 0 && !projectData.auctionsStarted
           }
           title={
             projectData.auctionsStarted ? (
@@ -395,19 +385,28 @@ const AuthorSection = ({
       </ActionItems>
       {showConfigureModal && (
         <ConfigureModal
+          error={configureError}
           onClose={() => setShowConfigureModal(false)}
           onConfigure={
-            async({
-            imgHash,
-            animationHash,
-            blurbHash,
-            genre,
-            subtitle}) => {
-              console.log('getting here?');
-              await configureProject({ projectId, imgHash, animationHash, blurbHash, genre, subtitle })
-            }
+            async(args) => 
+              await configureProject({
+                projectId,
+                imgHash: args.imgHash,
+                animationHash: args.animationHash,
+                blurbHash: args.blurbHash,
+                genre: args.genre,
+                subtitle: args.subtitle,
+                onError: (e: unknown) => { 
+                  console.log({e})
+                  setConfigureError('Something went wrong!')
+                },
+                onSuccess: () => {
+                  setShowConfigureModal(false);
+                  refetch()
+                }
+              })
           }
-          pending={configurePending}
+          pending={configureStatus == 'confirming' || configureStatus == 'waiting'}
         />
       )}
       {showContributorsModal && (
