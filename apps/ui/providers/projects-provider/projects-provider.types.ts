@@ -22,11 +22,12 @@ export type ProjectsApi = {
 };
 
 export interface Contributor {
-  id: string;
+  id?: string;
   address: string;
   role: string;
-  sharePercentage: BigNumber;
-  project: Project;
+  share?: BigNumber | number;
+  sharePercentage?: BigNumber;
+  project?: Project;
 }
 
 export interface Edition {

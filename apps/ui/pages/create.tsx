@@ -22,12 +22,6 @@ import {
   PLAIN_WHITE,
   INTER_BOLD,
 } from '../themes';
-import useDaoContract from '../state/useDaoContract';
-import {
-  useCreateAuthorMint,
-  useCreateSetContributors,
-  useCreateSetConfiguration,
-} from '../state/projects/create/hooks';
 import SuccessToast from '../components/SuccessToast';
 import PendingToast from '../components/PendingToast';
 import NameForm from '../components/Create/NameForm';
@@ -431,7 +425,7 @@ const Create = () => {
           <ProgressBar completed={currentStep ? (currentStep / 12) * 100 : 0} />
         </ProgressBarWrapper>
         <FormWrapper>
-          <Form>
+          {/* <Form>
             {currentStep === 0 && !creatingDao && (
               <NameForm
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
@@ -561,7 +555,7 @@ const Create = () => {
             {currentStep === 13 && !creatingDao && (
               <Finished daoAddress={daoAddress} />
             )}
-          </Form>
+          </Form> */}
         </FormWrapper>
       </Content>
     </Root>

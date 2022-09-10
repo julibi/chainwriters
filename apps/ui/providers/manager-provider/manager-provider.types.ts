@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { Contributor } from '../projects-provider/projects-provider.types';
 
 export interface ManagerProviderProps {
   children: ReactNode;
@@ -9,6 +10,8 @@ export type WriteActionStatus = 'idle' | 'confirming' | 'waiting' | 'success' | 
 export type ManagerApi = {
   configureStatus: WriteActionStatus,
   configureProject: (x: ConfigureProjectArgs) => Promise<void>,
+  setContributors: (x: SetContributorsArgs) => Promise<void>,
+  setContributorsStatus: WriteActionStatus,
 };
 
 export type NewConfiguration = {
@@ -21,6 +24,13 @@ export type NewConfiguration = {
 
 export interface ConfigureProjectArgs extends NewConfiguration {
   projectId: string;
+  onSuccess?: () => void;
+  onError?: (e: any) => void;
+}
+
+export interface SetContributorsArgs {
+  projectId: string;
+  contributorsList: Contributor[];
   onSuccess?: () => void;
   onError?: (e: any) => void;
 }

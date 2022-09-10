@@ -27,10 +27,6 @@ const ContentWrapper = styled.div`
   height: 600px;
 `;
 
-const Error = styled.span`
-  color: ${PINK};
-`;
-
 const ModalHeader = styled.h2`
   display: inline-block;
 `;

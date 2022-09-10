@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { ChangeEvent, useCallback, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
 import styled from 'styled-components';
 import { BigNumber } from '@ethersproject/bignumber';
@@ -27,7 +27,7 @@ import {
 } from '../../pages/projects/[projectId]';
 import useMoonpageCollection from '../../hooks/useMoonpageCollection';
 import useMoonpageManager from '../../hooks/useMoonpageManager';
-import { Contributor, Project } from '../../providers/projects-provider/projects-provider.types';
+import { Project } from '../../providers/projects-provider/projects-provider.types';
 import { useManager } from '../../hooks/manager'; 
 import ActionButton from '../ActionButton';
 
@@ -96,12 +96,9 @@ const AuthorSection = ({
   const { account, chainId } = useWeb3React();
   const collection = useMoonpageCollection();
   const mpManager = useMoonpageManager();
-  const { configureProject, configureStatus } = useManager();
+  const { configureProject, configureStatus, setContributors, setContributorsStatus } = useManager();
   const [showConfigureModal, setShowConfigureModal] = useState<boolean>(false);
-  const [configureError, setConfigureError] = useState<string | undefined>();
   const [showContributorsModal, setShowContributorsModal] =
-    useState<boolean>(false);
-  const [contributorsPending, setContributorsPending] =
     useState<boolean>(false);
   const [showAuthorMintModal, setShowAuthorMintModal] =
     useState<boolean>(false);
@@ -233,7 +230,7 @@ const AuthorSection = ({
 
     switch (calculatedProgress) {
       case 33:
-        text = 'Next: Premint';
+        text = 'Next: Start Auctions';
         break;
       case 66:
         text = 'Next: Start Auctions';
@@ -262,6 +259,17 @@ const AuthorSection = ({
         refetch();
       }}
     ), [projectId, refetch, configureProject]);
+
+    const handleSetContributors = useCallback(async(contributorsList) => 
+      await setContributors({
+        projectId,
+        contributorsList,
+        onError: undefined,
+        onSuccess: () => {
+          setShowContributorsModal(false);
+          refetch();
+        }}
+    ), [projectId, refetch, setContributors]);
 
   return (
     <Root>
@@ -323,9 +331,9 @@ const AuthorSection = ({
               done before triggering the auctions.
             </p>
             <ActionButton
-              disabled={contributorsPending || projectData.auctionsStarted || !!projectData.contributors?.length}
+              disabled={setContributorsStatus === 'confirming' || setContributorsStatus === 'waiting' || projectData.auctionsStarted || !!projectData.contributors?.length}
               text='Add Contributors'
-              loading={contributorsPending}
+              loading={setContributorsStatus === 'confirming' || setContributorsStatus === 'waiting'}
               onClick={() => setShowContributorsModal(true)}
             />
           </>
@@ -341,7 +349,7 @@ const AuthorSection = ({
                 <Checkmark />
               </Flex>
             ) : (
-              '4) Trigger Auctions'
+              '3) Start Auctions'
             )
           }
           styles={{ marginBlockEnd: '1rem' }}
@@ -390,14 +398,9 @@ const AuthorSection = ({
       )}
       {showContributorsModal && (
         <ContributorsModal
-          projectId={projectId}
           onClose={() => setShowContributorsModal(false)}
-          onFailure={() => setContributorsPending(false)}
-          onPending={() => setContributorsPending(true)}
-          onSuccess={(contributorList: Contributor[]) => {
-            setContributorsPending(false);
-            onAddContributors(contributorList);
-          }}
+          onSetContributors={handleSetContributors}
+          pending={setContributorsStatus === 'confirming' || setContributorsStatus === 'waiting'}
         />
       )}
       {showAuthorMintModal && (
@@ -440,6 +443,7 @@ const AuthorSection = ({
           </ContentWrapper>
         </BaseModal>
       )}
+      {/* TODO: continue here, put it into its own modal */}
       {showUnlockEditionModal && (
         <BaseModal onClose={() => setShowUnlockEditionModal(false)}>
           <ContentWrapper>
