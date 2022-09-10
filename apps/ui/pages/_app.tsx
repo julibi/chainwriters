@@ -13,7 +13,7 @@ import './styles.css';
 import ToastContainer from '../components/ToastContainer';
 import client from '../apolloclient';
 import { ApolloProvider } from '@apollo/client';
-import { ProjectsProvider, UserProvider } from '../providers';
+import { ManagerProvider, ProjectsProvider, UserProvider } from '../providers';
 import { useGetProjectId } from '../hooks/projects';
 
 const GlobalStyle = createGlobalStyle`
@@ -100,12 +100,14 @@ function CustomApp({ Component, pageProps }: AppProps) {
         <ApolloProvider client={client}>
           <ProjectsProvider>
             <UserProvider>
-              <main className="app">
-                <ToastContainer />
-                <Layout>
-                  <Component {...pageProps} />
-                </Layout>
-              </main>
+              <ManagerProvider>
+                <main className="app">
+                  <ToastContainer />
+                  <Layout>
+                    <Component {...pageProps} />
+                  </Layout>
+                </main>
+              </ManagerProvider>
             </UserProvider>
           </ProjectsProvider>
         </ApolloProvider>

@@ -52,7 +52,7 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
         setConfigureStatus('waiting');
         mpManager.provider.once(hash, async (transaction) => {
           setConfigureStatus('success');
-          onSuccess(genre, subtitle, imgHash, blurbHash, animationHash);
+          onSuccess?.(genre, subtitle, imgHash, blurbHash, animationHash);
         });
       } catch (e) {
         setConfigureStatus('success');

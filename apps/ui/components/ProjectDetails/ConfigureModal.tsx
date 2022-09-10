@@ -1,7 +1,8 @@
 import React, { ChangeEvent, useCallback, useState } from 'react';
-import { create } from 'ipfs-http-client';
+
 import Image from 'next/image';
 import styled from 'styled-components';
+import { toast } from 'react-toastify';
 import BaseModal from '../BaseModal';
 import Loading from '../Loading';
 import InputField from '../InputField';
@@ -14,8 +15,7 @@ import {
   FileName,
   shortenImageName,
 } from '../Create/CoverImageForm';
-import { toast } from 'react-toastify';
-import { ConfigureProjectArgs } from '../../providers/manager-provider/manager-provider.types';
+import { useIpfsClient } from '../../hooks/useIpfsClient';
 
 const ContentWrapper = styled.div`
   margin: 2rem;
@@ -91,8 +91,7 @@ const ConfigureModal = ({
   onClose,
   pending,
 }: ConfigureModalProps) => {
-  // @ts-ignore
-  const client = create('https://ipfs.infura.io:5001/api/v0');
+  const client = useIpfsClient();
   const [imgBuffer, setImgBuffer] = useState<null | Buffer>(null);
   const [imgFile, setImgFile] = useState(null);
   const [blurb, setBlurb] = useState<string>('');
@@ -114,15 +113,13 @@ const ConfigureModal = ({
     try {
       let blurbCID = '';
       let coverImgCID = '';
-      console.log({imgBuffer, blurb})
-      // TODO: continue debuggin why we get into the catch statement
       if (imgBuffer) {
         coverImgCID = (await client.add(imgBuffer)).path;
       }
       if (blurb) {
         blurbCID = (await client.add(blurb)).path;
       }
-      console.log({coverImgCID,  blurbHash: blurbCID, genre, subtitle})
+
       onConfigure({imgHash: coverImgCID, animationHash: "", blurbHash: blurbCID, genre, subtitle});
     } catch (e: unknown) {
       toast.error(

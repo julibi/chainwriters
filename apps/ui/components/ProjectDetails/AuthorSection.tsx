@@ -3,17 +3,10 @@ import { toast } from 'react-toastify';
 import styled from 'styled-components';
 import { BigNumber } from '@ethersproject/bignumber';
 import { useWeb3React } from '@web3-react/core';
-import { create } from 'ipfs-http-client';
 import {
   PLAIN_WHITE,
   BASE_BORDER_RADIUS,
-  BASE_BOX_SHADOW,
-  BG_NORMAL,
-  DISABLED_WHITE,
-  INSET_BASE_BOX_SHADOW,
-  BaseButton,
-  PINK,
-  INTER_BOLD,
+  BASE_BOX_SHADOW
 } from '../../themes';
 
 import { SectionTitle } from '../HomePage/ProjectSection';
@@ -34,7 +27,7 @@ import {
 } from '../../pages/projects/[projectId]';
 import useMoonpageCollection from '../../hooks/useMoonpageCollection';
 import useMoonpageManager from '../../hooks/useMoonpageManager';
-import { Contributor, ProjectData } from '../../state/projects/types';
+import { Contributor, Project } from '../../providers/projects-provider/projects-provider.types';
 import { useManager } from '../../hooks/manager'; 
 import ActionButton from '../ActionButton';
 
@@ -58,22 +51,6 @@ const Title = styled(SectionTitle)`
   flex-direction: column;
 `;
 
-interface TriggerButtonTypes {
-  disabled: boolean;
-}
-
-const TriggerButton = styled(BaseButton)<TriggerButtonTypes>`
-  background-color: ${BG_NORMAL};
-  color: ${({ disabled }) => (disabled ? DISABLED_WHITE : PINK)};
-  font-family: ${INTER_BOLD};
-  width: 230px;
-  margin: 1rem 1rem 0 0;
-  padding: 1rem;
-
-  @media (max-width: 900px) {
-    width: 100%;
-  }
-`;
 
 const ProgressBarWrapper = styled.div`
   width: 100%;
@@ -104,26 +81,9 @@ const Flex = styled.div`
   align-items: center;
 `;
 
-const DoneAction = styled.div`
-  background-color: ${BG_NORMAL};
-  color: ${DISABLED_WHITE};
-  border-radius: ${BASE_BORDER_RADIUS};
-  box-shadow: ${INSET_BASE_BOX_SHADOW};
-  font-family: ${INTER_BOLD};
-  font-size: 13px;
-  text-align: center;
-  margin-block-start: 1rem;
-  padding: 1rem;
-  width: 230px;
-
-  @media (max-width: 900px) {
-    width: 100%;
-  }
-`;
-
 interface AuthorSectionProps {
   blurb: string;
-  projectData: ProjectData;
+  projectData: Project;
   onConfigure: (
     genre: string,
     subtitle: string,
@@ -144,8 +104,6 @@ const AuthorSection = ({
   refetch,
 }: AuthorSectionProps) => {
   const { account, chainId } = useWeb3React();
-  // @ts-ignore
-  const client = create('https://ipfs.infura.io:5001/api/v0');
   const collection = useMoonpageCollection();
   const mpManager = useMoonpageManager();
   const { configureProject, configureStatus } = useManager();
@@ -438,12 +396,17 @@ const AuthorSection = ({
       {showConfigureModal && (
         <ConfigureModal
           onClose={() => setShowConfigureModal(false)}
-          onConfigure={async({
+          onConfigure={
+            async({
             imgHash,
             animationHash,
             blurbHash,
             genre,
-            subtitle}) => await configureProject({ projectId, imgHash, animationHash, blurbHash, genre, subtitle })}
+            subtitle}) => {
+              console.log('getting here?');
+              await configureProject({ projectId, imgHash, animationHash, blurbHash, genre, subtitle })
+            }
+          }
           pending={configurePending}
         />
       )}
