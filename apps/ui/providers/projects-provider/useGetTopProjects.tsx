@@ -5,7 +5,7 @@ import { ProjectsResult } from '../../providers/projects-provider/projects-provi
 
 export const GET_TOP_PROJECTS = gql`
   query topProjectsQuery {
-    projects(orderBy: mintCount, orderDirection: desc) {
+    projects(first: 3, orderBy: mintCount, orderDirection: desc) {
       auctionsEnded
       auctionsStarted
       createdAt

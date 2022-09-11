@@ -227,7 +227,7 @@ const ContributorsForm = ({
               onClick={onSubmit}
               disabled={
                 loading ||
-                contributorsList.length >= 3 ||
+                contributorsList.length > 3 ||
                 contributorsList.length < 1 ||
                 shareSelf < 1
               }
