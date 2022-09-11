@@ -10,7 +10,6 @@ import {
 import { toast } from 'react-toastify';
 import ToastLink from '../../components/ToastLink';
 import { Contributor } from '../projects-provider/projects-provider.types';
-import { BigNumber } from 'ethers';
 
 const defaultContext: ManagerApi = {
   configureStatus: 'idle',
