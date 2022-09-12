@@ -235,7 +235,7 @@ const AuthorSection = ({
         }}
     ), [projectId, refetch, setContributors]);
 
-    const handleStartAuctions = useCallback(async(amountForCreator: number) => {
+    const handleStartAuctions = useCallback(async(amountForCreator: number) => 
       await startAuctions({
         projectId,
         amountForCreator,
@@ -244,8 +244,7 @@ const AuthorSection = ({
           setShowAuthorMintModal(false);
           refetch();
         }
-    });
-    }, [projectData.initialMintPrice, projectId, refetch, startAuctions]);
+    }), [projectData.initialMintPrice, projectId, refetch, startAuctions]);
 
   return (
     <Root>

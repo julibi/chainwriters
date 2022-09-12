@@ -57,7 +57,7 @@ const [authorMintInput, setAuthorMintInput] = useState<string>('');
             Number(authorMintInput) > MAX_MINTABLE_BY_CREATOR
           }
           text='MINT'
-          loading={false}
+          loading={pending}
           margin='0'
           onClick={(e) => {
             e.preventDefault();
