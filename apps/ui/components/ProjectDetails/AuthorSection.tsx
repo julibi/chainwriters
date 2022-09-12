@@ -30,6 +30,8 @@ import useMoonpageManager from '../../hooks/useMoonpageManager';
 import { Project } from '../../providers/projects-provider/projects-provider.types';
 import { useManager } from '../../hooks/manager'; 
 import ActionButton from '../ActionButton';
+import StartAuctionsModal from './StartAuctionsModal';
+import { useCollection } from '../../hooks/collection';
 
 const Root = styled.section`
   display: flex;
@@ -97,56 +99,18 @@ const AuthorSection = ({
   const collection = useMoonpageCollection();
   const mpManager = useMoonpageManager();
   const { configureProject, configureStatus, setContributors, setContributorsStatus } = useManager();
+  const { startAuctions, startAuctionsStatus } = useCollection();
   const [showConfigureModal, setShowConfigureModal] = useState<boolean>(false);
   const [showContributorsModal, setShowContributorsModal] =
     useState<boolean>(false);
   const [showAuthorMintModal, setShowAuthorMintModal] =
     useState<boolean>(false);
-  const [authorMintInput, setAuthorMintInput] = useState<string>('');
-  const [authorMintPending, setAuthorMintPending] = useState<boolean>(false);
-  const [triggerPending, setTriggerPending] = useState(false);
+
   const [showUnlockEditionModal, setShowUnlockEditionModal] = useState(false);
   const [nextEditionMaxAmount, setNextEditionMaxAmount] = useState<number>(0);
   const [nextEditionMintPrice, setMextEditionMintPrice] = useState<string>('0');
   const [unlockEditionPending, setUnlockEditionPending] =
     useState<boolean>(false);
-  
-  const startAuctions = useCallback(async () => {
-    if (
-      projectData &&
-      account &&
-      account.toLowerCase() === projectData.creator.toLowerCase()
-    ) {
-      try {
-        setTriggerPending(true);
-        const discountRateBig = projectData.initialMintPrice.div(60 * 60 * 24);
-        const discountRate = parseInt(discountRateBig._hex, 16);
-        const Tx = await collection.startAuctions(
-          projectId,
-          Number(authorMintInput),
-          discountRate
-        );
-        const { hash } = Tx;
-        toast.info(
-          <ToastLink
-            hash={hash}
-            chainId={chainId}
-            message={'Triggering auctions...'}
-          />
-        );
-        collection.provider.once(hash, async (transaction) => {
-          refetch();
-          setTriggerPending(false);
-          toast.success('Auctions have started!');
-        });
-      } catch (e: unknown) {
-        // @ts-ignore
-        toast.error(e.reason ?? 'Something went wrong.');
-        console.log({ e });
-        setTriggerPending(false);
-      }
-    }
-  }, [projectData, account, collection, chainId, refetch]);
 
   const unlockNextEdition = useCallback(
     async (amount: number, price: string) => {
@@ -271,6 +235,18 @@ const AuthorSection = ({
         }}
     ), [projectId, refetch, setContributors]);
 
+    const handleStartAuctions = useCallback(async(amountForCreator: number) => {
+      await startAuctions({
+        projectId,
+        amountForCreator,
+        initialMintPrice: projectData.initialMintPrice,
+        onSuccess: () => {
+          setShowAuthorMintModal(false);
+          refetch();
+        }
+    });
+    }, [projectData.initialMintPrice, projectId, refetch, startAuctions]);
+
   return (
     <Root>
       <Title style={{ maxWidth: '300px' }}>Control Settings for Author</Title>
@@ -360,10 +336,10 @@ const AuthorSection = ({
               amount of NFTs for yourself. At least 1 and max 4.
             </p>
             <ActionButton
-              disabled={triggerPending || projectData.auctionsStarted || !!projectData.premintedByAuthor}
+              disabled={startAuctionsStatus === 'confirming' || startAuctionsStatus === 'waiting' || projectData.auctionsStarted || !!Number(projectData.premintedByAuthor)}
               text='Start Auctions'
-              loading={triggerPending}
-              onClick={startAuctions}
+              loading={startAuctionsStatus === 'confirming' || startAuctionsStatus === 'waiting'}
+              onClick={() => setShowAuthorMintModal(true)}
             />
           </>
         </MoreDetails>
@@ -403,48 +379,16 @@ const AuthorSection = ({
           pending={setContributorsStatus === 'confirming' || setContributorsStatus === 'waiting'}
         />
       )}
+      
       {showAuthorMintModal && (
-        <BaseModal onClose={() => setShowAuthorMintModal(false)}>
-          <ContentWrapper>
-            <ModalHeader>Claim Your Copies</ModalHeader>
-            <ModalText>
-              {`You as an author can mint an amount of your project's Genesis
-              Edition NFTs for yourself. Only after minting this amount, can you
-              trigger the public auctions for your first edition. MAX: 4`}
-            </ModalText>
-            <CTAWrapper>
-              <InputField
-                value={authorMintInput}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                  const onlyNumbers = /^[0-9\b]+$/;
-                  if (
-                    e.target.value === '' ||
-                    onlyNumbers.test(e.target.value)
-                  ) {
-                    setAuthorMintInput(e.target.value);
-                  }
-                }}
-                error={
-                  (Number(authorMintInput) < 1 ||
-                    Number(authorMintInput) >
-                      projectData.currentEditionMaxSupply) &&
-                  'Incorrect amount.'
-                }
-              />
-              <ActionButton
-                disabled={ authorMintPending ||
-                  Number(authorMintInput) < 1 ||
-                  Number(authorMintInput) > projectData.currentEditionMaxSupply}
-                text='MINT'
-                loading={authorMintPending}
-                onClick={authorMint}
-              />
-            </CTAWrapper>
-          </ContentWrapper>
-        </BaseModal>
+        <StartAuctionsModal
+          onClose={() => setShowAuthorMintModal(false)}
+          onStartAuctions={handleStartAuctions}
+          pending={startAuctionsStatus === 'confirming' || startAuctionsStatus === 'waiting'}
+          project={projectData}
+        />
       )}
       {/* TODO: continue here, put it into its own modal */}
-      {/* TODO: test adding multiple contributors first - no null values - could mess up contribution process */}
       {showUnlockEditionModal && (
         <BaseModal onClose={() => setShowUnlockEditionModal(false)}>
           <ContentWrapper>

@@ -21,11 +21,12 @@ export function CollectionProvider({ children }: CollectionProviderProps) {
     async ({
         projectId,
         amountForCreator,
-        discountRate,
+        initialMintPrice,
         onSuccess,
         onError
     }: StartAuctionsArgs) => {
-      try {
+      try { 
+        const discountRate = Number(initialMintPrice.div(60 * 60 * 24));
         setStartAuctionsStatus('confirming');
         const Tx = await collection.startAuctions(
             projectId,

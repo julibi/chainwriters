@@ -1,8 +1,9 @@
+import { BigNumber } from "ethers";
 import { ReactChild } from "react";
 import { WriteActionStatus } from "../manager-provider/manager-provider.types";
 
 export type CollectionApi = {
-    startAuctions: () => Promise<void>;
+    startAuctions: (x: StartAuctionsArgs) => Promise<void>;
     startAuctionsStatus: WriteActionStatus;
 };
 
@@ -13,7 +14,7 @@ export type CollectionProviderProps = {
 export type StartAuctionsArgs = {
     projectId: string;
     amountForCreator: number;
-    discountRate: number;
+    initialMintPrice: BigNumber;
     onSuccess?: () => void;
     onError?: (e: any) => void;
 };

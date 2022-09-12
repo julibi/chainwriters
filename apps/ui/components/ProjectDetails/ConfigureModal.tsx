@@ -5,7 +5,6 @@ import styled from 'styled-components';
 import { toast } from 'react-toastify';
 import BaseModal from '../BaseModal';
 import InputField from '../InputField';
-import { BaseButton, DISABLED_WHITE, PINK, INTER_BOLD } from '../../themes';
 import { TextInput } from '../../pages/create';
 import {
   StyledImageForm,
@@ -51,27 +50,6 @@ const FlexColumn = styled.div`
 const Label = styled.label`
   display: inline-block;
   margin-block-end: 0.5rem;
-`;
-
-interface MintButtonProps {
-  disabled: boolean;
-}
-
-const MintButton = styled(BaseButton)<MintButtonProps>`
-  font-family: ${INTER_BOLD};
-  padding: 1rem;
-  width: 209px;
-  color: ${({ disabled }) => (disabled ? DISABLED_WHITE : PINK)};
-
-  :disabled {
-    :hover {
-      pointer-events: none;
-    }
-  }
-
-  @media (max-width: 900px) {
-    width: 100%;
-  }
 `;
 
 interface ConfigureModalProps {
