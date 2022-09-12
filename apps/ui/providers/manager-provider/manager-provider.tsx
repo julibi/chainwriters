@@ -2,6 +2,7 @@ import useMoonpageManager from '../../hooks/useMoonpageManager';
 import { createContext, useCallback, useMemo, useState } from 'react';
 import {
   ConfigureProjectArgs,
+  EnableNextEditionArgs,
   ManagerApi,
   ManagerProviderProps,
   SetContributorsArgs,
@@ -10,12 +11,15 @@ import {
 import { toast } from 'react-toastify';
 import ToastLink from '../../components/ToastLink';
 import { Contributor } from '../projects-provider/projects-provider.types';
+import { BigNumber } from 'ethers';
 
 const defaultContext: ManagerApi = {
-  configureStatus: 'idle',
   configureProject: async () => undefined,
+  configureStatus: 'idle',
   setContributors: async () => undefined,
-  setContributorsStatus: 'idle'
+  setContributorsStatus: 'idle',
+  enableNextEdition: async () => undefined,
+  enableNextEditionStatus: 'idle'
 };
 
 export const ManagerContext = createContext(defaultContext);
@@ -24,7 +28,8 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
   const mpManager = useMoonpageManager();
   const [configureStatus, setConfigureStatus] = useState<WriteActionStatus>();
   const [setContributorsStatus, setSetContributorsStatus] = useState<WriteActionStatus>();
-
+  const [enableNextEditionStatus, setEnableNextEditionStatus] = useState<WriteActionStatus>();
+  
   const configureProject = useCallback(
     async ({
       projectId,
@@ -75,7 +80,7 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
      const addressesArray = [];
      const sharesArray = [];
      const rolesArray = [];
-     console.log({projectId, contributorsList, onError})
+
      contributorsList?.forEach((contrib: Contributor) => {
       addressesArray.push(contrib.address);
       sharesArray.push(contrib.share);
@@ -97,26 +102,63 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
           // we need a time, because the graph needs some time
           setTimeout(() => {
             setSetContributorsStatus('success');
-            toast.info(<ToastLink message={'Success!'} />);
+            toast.success(<ToastLink message={'Success!'} />);
             onSuccess?.();
           }, 10000);
         });
       } catch (e) {
-        console.log({e})
         setSetContributorsStatus('error');
         toast.error(<ToastLink message={'Something went wrong!'} />);
         onError?.(e);
       }
   }, [mpManager]);
+
+  const enableNextEdition = useCallback(
+    async({
+      projectId,
+      price,
+      amount,
+      onError,
+      onSuccess
+    } : EnableNextEditionArgs) => {
+      const formattedPrice = BigNumber.from((Number(price) * 1e18).toString());
+
+      try {
+        setEnableNextEditionStatus('confirming');
+        const Tx = await mpManager.enableNextEdition(
+          projectId,
+          amount,
+          price
+        );
+        const { hash } = Tx;
+        setEnableNextEditionStatus('waiting');
+        toast.info(<ToastLink message={'Unlocking next edition...'} />);
+        mpManager.provider.once(hash, (transaction) => {
+          // we need a time, because the graph needs some time
+          setTimeout(() => {
+            setEnableNextEditionStatus('success');
+            toast.success(<ToastLink message={'Success!'} />);
+          }, 10000);
+        });
+      } catch (e: unknown) {
+        setEnableNextEditionStatus('error');
+        toast.error(<ToastLink message={'Something went wrong!'} />);
+        onError?.(e);
+      }
+    },
+    [mpManager]
+  );
   
   const api = useMemo(
     () => ({
       configureProject,
       configureStatus,
       setContributors,
-      setContributorsStatus
+      setContributorsStatus,
+      enableNextEdition,
+      enableNextEditionStatus
     }),
-    [configureProject, configureStatus, setContributors, setContributorsStatus]
+    [configureProject, configureStatus, enableNextEdition, enableNextEditionStatus, setContributors, setContributorsStatus]
   );
 
   return (

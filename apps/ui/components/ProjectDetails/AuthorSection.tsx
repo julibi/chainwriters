@@ -1,7 +1,5 @@
-import React, { ChangeEvent, useCallback, useMemo, useState } from 'react';
-import { toast } from 'react-toastify';
+import React, { useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { BigNumber } from '@ethersproject/bignumber';
 import { useWeb3React } from '@web3-react/core';
 import {
   PLAIN_WHITE,
@@ -15,23 +13,13 @@ import Checkmark from '../Checkmark';
 import MoreDetails from '../../components/MoreDetails';
 import ProgressBar from '../ProgressBar';
 import ConfigureModal from './ConfigureModal';
-import ToastLink from '../ToastLink';
 import ContributorsModal from './ContributorsModal';
-import BaseModal from '../BaseModal';
-import InputField from '../InputField';
-import {
-  ContentWrapper,
-  ModalHeader,
-  ModalText,
-  CTAWrapper
-} from '../../pages/projects/[projectId]';
-import useMoonpageCollection from '../../hooks/useMoonpageCollection';
-import useMoonpageManager from '../../hooks/useMoonpageManager';
 import { Project } from '../../providers/projects-provider/projects-provider.types';
 import { useManager } from '../../hooks/manager'; 
 import ActionButton from '../ActionButton';
 import StartAuctionsModal from './StartAuctionsModal';
 import { useCollection } from '../../hooks/collection';
+import EnableNextEditionModal from './EnableNextEditionModal';
 
 const Root = styled.section`
   display: flex;
@@ -96,56 +84,14 @@ const AuthorSection = ({
   refetch,
 }: AuthorSectionProps) => {
   const { account, chainId } = useWeb3React();
-  const collection = useMoonpageCollection();
-  const mpManager = useMoonpageManager();
-  const { configureProject, configureStatus, setContributors, setContributorsStatus } = useManager();
+  const { configureProject, configureStatus, setContributors, setContributorsStatus, enableNextEdition, enableNextEditionStatus } = useManager();
   const { startAuctions, startAuctionsStatus } = useCollection();
   const [showConfigureModal, setShowConfigureModal] = useState<boolean>(false);
   const [showContributorsModal, setShowContributorsModal] =
     useState<boolean>(false);
   const [showAuthorMintModal, setShowAuthorMintModal] =
     useState<boolean>(false);
-
-  const [showUnlockEditionModal, setShowUnlockEditionModal] = useState(false);
-  const [nextEditionMaxAmount, setNextEditionMaxAmount] = useState<number>(0);
-  const [nextEditionMintPrice, setMextEditionMintPrice] = useState<string>('0');
-  const [unlockEditionPending, setUnlockEditionPending] =
-    useState<boolean>(false);
-
-  const unlockNextEdition = useCallback(
-    async (amount: number, price: string) => {
-      const formattedPrice = BigNumber.from((Number(price) * 1e18).toString());
-
-      try {
-        setUnlockEditionPending(true);
-        const Tx = await mpManager.enableNextEdition(
-          projectId,
-          amount,
-          formattedPrice
-        );
-        const { hash } = Tx;
-        toast.info(
-          <ToastLink
-            hash={hash}
-            chainId={chainId}
-            message={'Unlocking next edition...'}
-          />
-        );
-        collection.provider.once(hash, (transaction) => {
-          refetch();
-          setUnlockEditionPending(false);
-          setShowUnlockEditionModal(false);
-          toast.success('New Edition unlocked!');
-        });
-      } catch (e: unknown) {
-        // @ts-ignore
-        toast.error(e.reason ?? 'Something went wrong.');
-        setUnlockEditionPending(false);
-        setShowUnlockEditionModal(false);
-      }
-    },
-    [collection, chainId, refetch]
-  );
+  const [showEnableNextEditionModal, setShowEnableNextEditionModal] = useState(false);
 
   const configured = useMemo(() => {
     let hasConfigured = false;
@@ -245,6 +191,17 @@ const AuthorSection = ({
           refetch();
         }
     }), [projectData.initialMintPrice, projectId, refetch, startAuctions]);
+
+    const handleEnableNextEdition = useCallback(async(price: string, amount: number) => 
+      await enableNextEdition({
+        projectId,
+        amount,
+        price,
+        onSuccess: () => {
+          setShowEnableNextEditionModal(false);
+          refetch();
+        }
+    }), [enableNextEdition, projectId, refetch]);
 
   return (
     <Root>
@@ -356,10 +313,10 @@ const AuthorSection = ({
               the next one!
             </p>
             <ActionButton
-              disabled={!canTriggerNextEdition || unlockEditionPending}
+              disabled={!canTriggerNextEdition || enableNextEditionStatus === 'confirming' || enableNextEditionStatus === 'waiting'}
               text='Unlock Next Edition'
-              loading={unlockEditionPending}
-              onClick={() => setShowUnlockEditionModal(true)}
+              loading={enableNextEditionStatus === 'confirming' || enableNextEditionStatus === 'waiting'}
+              onClick={() => setShowEnableNextEditionModal(true)}
             />
           </>
         </MoreDetails>
@@ -387,59 +344,13 @@ const AuthorSection = ({
           project={projectData}
         />
       )}
-      {/* TODO: continue here, put it into its own modal */}
-      {showUnlockEditionModal && (
-        <BaseModal onClose={() => setShowUnlockEditionModal(false)}>
-          <ContentWrapper>
-            <ModalHeader>{'Unlock Next Edition'}</ModalHeader>
-            <ModalText>Specify the max amount and price per mint.</ModalText>
-            <CTAWrapper>
-              <InputField
-                label={'Max Amount'}
-                value={nextEditionMaxAmount}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                  const onlyNumbers = /^[0-9\b]+$/;
-                  if (
-                    e.target.value === '' ||
-                    onlyNumbers.test(e.target.value)
-                  ) {
-                    setNextEditionMaxAmount(Number(e.target.value));
-                  }
-                }}
-                error={
-                  (Number(nextEditionMaxAmount) < 1 ||
-                    Number(nextEditionMaxAmount) >
-                      projectData.endId - projectData.currentId) &&
-                  `Must be between 1 and ${
-                    projectData.endId - projectData.currentId
-                  }.`
-                }
-              />
-              <InputField
-                label={'Mint Price'}
-                value={nextEditionMintPrice}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                  setMextEditionMintPrice(e.target.value);
-                }}
-                // TODO: read this from contract -  min price is 1ETH
-                error={Number(nextEditionMintPrice) < 1 && 'Price too low.'}
-              />
-               <ActionButton
-                disabled={ unlockEditionPending ||
-                  Number(nextEditionMaxAmount) < 1 ||
-                  Number(nextEditionMaxAmount) > 10000 ||
-                  Number(nextEditionMintPrice) < 0.01}
-                text='UNLOCK'
-                loading={unlockEditionPending}
-                onClick={async () =>
-                  await unlockNextEdition(
-                    nextEditionMaxAmount,
-                    nextEditionMintPrice
-                )}
-              />
-            </CTAWrapper>
-          </ContentWrapper>
-        </BaseModal>
+      {showEnableNextEditionModal && (
+        <EnableNextEditionModal
+          onClose={() => setShowEnableNextEditionModal(false)}
+          onEnableNextEdition={handleEnableNextEdition}
+          pending={enableNextEditionStatus === 'confirming' || enableNextEditionStatus === 'waiting'}
+          project={projectData}
+        />
       )}
     </Root>
   );

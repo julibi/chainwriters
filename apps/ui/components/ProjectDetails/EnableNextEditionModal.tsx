@@ -1,0 +1,75 @@
+import { ContentWrapper, CTAWrapper, ModalHeader, ModalText } from '../../pages/projects/[projectId]';
+import React, { ChangeEvent, useState } from 'react'
+import ActionButton from '../ActionButton';
+import BaseModal from '../BaseModal';
+import InputField from '../InputField';
+import { Project } from '../../providers/projects-provider/projects-provider.types';
+
+interface EnableNextEditionModalProps {
+    onClose: () => void;
+    onEnableNextEdition: (
+      price: string,
+      amount: number,
+    ) => void;
+    pending: boolean;
+    project: Project;
+  }
+
+const EnableNextEditionModal = ({ onClose, onEnableNextEdition, pending, project }: EnableNextEditionModalProps) => {
+  const [nextEditionMaxAmount, setNextEditionMaxAmount] = useState<number>(0); 
+  const [nextEditionMintPrice, setMextEditionMintPrice] = useState<string>('0');
+
+  return (
+    <BaseModal onClose={onClose}>
+      <ContentWrapper>
+        <ModalHeader>{'Unlock Next Edition'}</ModalHeader>
+        <ModalText>Specify the max amount and price per mint.</ModalText>
+        <CTAWrapper>
+          <InputField
+            label={'Max Amount'}
+            value={nextEditionMaxAmount}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+              const onlyNumbers = /^[0-9\b]+$/;
+              if (e.target.value === '' || onlyNumbers.test(e.target.value)) {
+                setNextEditionMaxAmount(Number(e.target.value));
+              }
+            }}
+            error={
+              (Number(nextEditionMaxAmount) < 1 ||
+               Number(nextEditionMaxAmount) >
+                project.endId - project.currentId) &&
+              `Must be between 1 and ${
+              project.endId - project.currentId
+              }.`
+            }
+          />
+          <InputField
+            label={'Mint Price'}
+            value={nextEditionMintPrice}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+              setMextEditionMintPrice(e.target.value);
+            }}
+            // TODO: read this from contract -  min price is 1ETH
+            error={Number(nextEditionMintPrice) < 1 && 'Price too low.'}
+          />
+          <ActionButton
+            disabled={
+                pending ||
+              Number(nextEditionMaxAmount) < 1 ||
+              Number(nextEditionMaxAmount) > 10000 ||
+              Number(nextEditionMintPrice) < 0.01
+            }
+            text='UNLOCK'
+            loading={pending}
+            onClick={(e) => {
+                e.preventDefault();
+                onEnableNextEdition(nextEditionMintPrice, nextEditionMaxAmount);
+              }}
+          />
+        </CTAWrapper>
+      </ContentWrapper>
+    </BaseModal>
+  )
+}
+
+export default EnableNextEditionModal

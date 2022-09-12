@@ -12,6 +12,8 @@ export type ManagerApi = {
   configureProject: (x: ConfigureProjectArgs) => Promise<void>,
   setContributors: (x: SetContributorsArgs) => Promise<void>,
   setContributorsStatus: WriteActionStatus,
+  enableNextEdition: (x: EnableNextEditionArgs) => Promise<void>,
+  enableNextEditionStatus: WriteActionStatus,
 };
 
 export type NewConfiguration = {
@@ -31,6 +33,14 @@ export interface ConfigureProjectArgs extends NewConfiguration {
 export interface SetContributorsArgs {
   projectId: string;
   contributorsList: Contributor[];
+  onSuccess?: () => void;
+  onError?: (e: any) => void;
+}
+
+export interface EnableNextEditionArgs {
+  projectId: string;
+  amount: number;
+  price: string;
   onSuccess?: () => void;
   onError?: (e: any) => void;
 }
