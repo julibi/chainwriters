@@ -32,11 +32,12 @@ import {
 import useShowText from '../../hooks/useShowText';
 import AuthorSection from '../../components/ProjectDetails/AuthorSection';
 import AuctionSection from '../../components/ProjectDetails/AuctionSection';
-import useMoonpageCollection from '../../hooks/useMoonpageCollection';
+import { useCollection } from '../../hooks/collection';
 import useAuctionsManager from '../../hooks/useAuctionsManager';
 import Checkbox from '../../components/Checkbox';
 import { useGetProject } from '../../hooks/projects/useGetProject';
 import { useGetProjectId } from '../../hooks/projects/useGetProjectId';
+import ActionButton from 'apps/ui/components/ActionButton';
 
 const Root = styled.div`
   display: flex;
@@ -306,23 +307,6 @@ export const CTAWrapper = styled.div`
   flex-direction: column;
 `;
 
-export interface MintButtonProps {
-  disabled: boolean;
-  onClick: MouseEventHandler<HTMLButtonElement> &
-    ((amount: number, price: string) => Promise<void>);
-}
-
-export const MintButton = styled(BaseButton)<MintButtonProps>`
-  font-family: ${INTER_BOLD};
-  padding: 1rem;
-  width: 209px;
-  color: ${({ disabled }) => (disabled ? DISABLED_WHITE : PINK)};
-
-  @media (max-width: 900px) {
-    width: 100%;
-  }
-`;
-
 const ProjectDetailView = () => {
   const router = useRouter();
   const { account, chainId } = useWeb3React();
@@ -332,13 +316,13 @@ const ProjectDetailView = () => {
     refetch,
     isLoading: isProjectLoading,
   } = useGetProject(projectId);
-  const collection = useMoonpageCollection();
+  const { buy, buyStatus } = useCollection();
   const auctionsManager = useAuctionsManager();
+  const { retriggerAuction, retriggerAuctionStatus } = useAuctionsManager();
   const { allowedToRead } = useShowText(projectId);
   const [coverImgLink, setCoverImgLink] = useState<string>(null);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [isGettingCurrentPrice, setIsGettingCurentPrice] = useState<boolean>(false);
   const [showBuyModal, setShowBuyModal] = useState<boolean>(false);
-  const [mintPending, setMintPending] = useState<boolean>(false);
   const [currentPrice, setCurrentPrice] = useState(null);
   const [blurb, setBlurb] = useState<null | string>(null);
   const [agreed, setAgreed] = useState<boolean>(false);
@@ -409,70 +393,6 @@ const ProjectDetailView = () => {
     }
   }, [project, fetchBlurb]);
 
-  const mint = useCallback(async () => {
-    setMintPending(true);
-    collection
-      .buy(projectId, { value: currentPrice })
-      .then((mintTx) => {
-        const { hash } = mintTx;
-        toast.info(
-          <ToastLink
-            hash={hash}
-            chainId={chainId}
-            message={'Mint pending...'}
-          />
-        );
-        collection.provider.once(hash, (transaction) => {
-          toast.success(
-            <ToastLink
-              hash={hash}
-              chainId={chainId}
-              message={'Successfyull Minted!'}
-            />
-          );
-          setMintPending(false);
-          setShowBuyModal(false);
-          refetch();
-        });
-      })
-      .catch((e: unknown) => {
-        console.log({ e });
-        toast.error('Sorry, something went wrong...');
-        setMintPending(false);
-      });
-  }, [collection, projectId, currentPrice, chainId, refetch]);
-
-  const fetchCurrentPrice = async () => {
-    setLoading(true);
-    const price = await auctionsManager.getPrice(
-      projectId,
-      project?.initialMintPrice
-    );
-
-    setCurrentPrice(price);
-    setLoading(false);
-    setShowBuyModal(true);
-  };
-
-  const retriggerAuction = useCallback(async () => {
-    try {
-      setLoading(true);
-      const Tx = await auctionsManager.retriggerAuction(projectId);
-      const { hash } = Tx;
-      toast.info(
-        <ToastLink hash={hash} chainId={chainId} message={'Retriggering...'} />
-      );
-      auctionsManager.provider.once(hash, (transaction) => {
-        refetch();
-        setLoading(false);
-      });
-    } catch (e: unknown) {
-      // @ts-ignore
-      toast.error(e.reason ?? 'Something went wrong.');
-      setLoading(false);
-    }
-  }, [auctionsManager, chainId, projectId, refetch]);
-
   const handleClickRead = useCallback(
     (e) => {
       e.preventDefault();
@@ -485,6 +405,41 @@ const ProjectDetailView = () => {
     setAgreed(!agreed);
   }, [agreed]);
 
+  const fetchCurrentPrice = async () => {
+    setIsGettingCurentPrice(true);
+    const price = await auctionsManager.getPrice(
+      projectId,
+      project?.initialMintPrice
+    );
+
+    setCurrentPrice(price);
+    setIsGettingCurentPrice(false);
+    setShowBuyModal(true);
+  };
+
+  const handleClickBuy = useCallback(async() => {
+    if (!project?.initialMintPrice) return
+    await buy({
+      projectId,
+      initialMintPrice: project.initialMintPrice,
+      onError: undefined,
+      onSuccess: () => {
+        setShowBuyModal(false);
+        refetch();
+      }
+    });
+  }, [buy, project, projectId, refetch]);
+
+  const handleRetriggerAuction = useCallback(async() => {
+    await retriggerAuction({
+      projectId,
+      onError: undefined,
+      onSuccess: () => {
+        refetch();
+      }
+    });
+  }, [retriggerAuction, projectId, refetch]);
+  
   return (
     <Root>
       {!project && isProjectLoading ? (
@@ -527,9 +482,9 @@ const ProjectDetailView = () => {
               {project.editions?.length === 1 && (
                 <AuctionSection
                   project={project}
-                  loading={loading}
+                  loading={isGettingCurrentPrice || retriggerAuctionStatus === 'confirming' || retriggerAuctionStatus === 'waiting' }
                   onFetchCurrentPrice={fetchCurrentPrice}
-                  onRetriggerAuction={retriggerAuction}
+                  onRetriggerAuction={handleRetriggerAuction}
                 />
               )}
             </InfoRight>
@@ -594,9 +549,12 @@ const ProjectDetailView = () => {
               readonly={false}
               label={'Legal text'}
             />
-            <MintButton disabled={mintPending || !agreed} onClick={mint}>
-              {mintPending ? <Loading height={20} dotHeight={20} /> : 'MINT'}
-            </MintButton>
+            <ActionButton
+              disabled={buyStatus === 'confirming' || buyStatus === 'waiting' || !agreed}
+              loading={buyStatus === 'confirming' || buyStatus === 'waiting'}
+              onClick={handleClickBuy}
+              text='MINT'
+            />
           </ContentWrapper>
         </BaseModal>
       )}

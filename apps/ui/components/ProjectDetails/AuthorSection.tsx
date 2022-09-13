@@ -344,6 +344,7 @@ const AuthorSection = ({
           project={projectData}
         />
       )}
+      {/* TODO: test this */}
       {showEnableNextEditionModal && (
         <EnableNextEditionModal
           onClose={() => setShowEnableNextEditionModal(false)}

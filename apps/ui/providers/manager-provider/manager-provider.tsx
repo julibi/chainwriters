@@ -121,14 +121,14 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
       onError,
       onSuccess
     } : EnableNextEditionArgs) => {
-      const formattedPrice = BigNumber.from((Number(price) * 1e18).toString());
-
+      
       try {
         setEnableNextEditionStatus('confirming');
+        const formattedPrice = BigNumber.from((Number(price) * 1e18).toString());
         const Tx = await mpManager.enableNextEdition(
           projectId,
           amount,
-          price
+          formattedPrice
         );
         const { hash } = Tx;
         setEnableNextEditionStatus('waiting');

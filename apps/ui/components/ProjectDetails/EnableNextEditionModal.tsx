@@ -1,5 +1,5 @@
 import { ContentWrapper, CTAWrapper, ModalHeader, ModalText } from '../../pages/projects/[projectId]';
-import React, { ChangeEvent, useState } from 'react'
+import React, { ChangeEvent, useMemo, useState } from 'react'
 import ActionButton from '../ActionButton';
 import BaseModal from '../BaseModal';
 import InputField from '../InputField';
@@ -18,6 +18,12 @@ interface EnableNextEditionModalProps {
 const EnableNextEditionModal = ({ onClose, onEnableNextEdition, pending, project }: EnableNextEditionModalProps) => {
   const [nextEditionMaxAmount, setNextEditionMaxAmount] = useState<number>(0); 
   const [nextEditionMintPrice, setMextEditionMintPrice] = useState<string>('0');
+  const maxPossibleAmount = useMemo(() => {
+    if (project.endId && project.currentId) {
+        return Number(project.endId.sub(project.currentId));
+    }
+    return 0;
+  }, [project.endId, project.currentId]);
 
   return (
     <BaseModal onClose={onClose}>
@@ -36,11 +42,8 @@ const EnableNextEditionModal = ({ onClose, onEnableNextEdition, pending, project
             }}
             error={
               (Number(nextEditionMaxAmount) < 1 ||
-               Number(nextEditionMaxAmount) >
-                project.endId - project.currentId) &&
-              `Must be between 1 and ${
-              project.endId - project.currentId
-              }.`
+               Number(nextEditionMaxAmount) > maxPossibleAmount) &&
+              `Must be between 1 and ${maxPossibleAmount}.`
             }
           />
           <InputField
@@ -56,7 +59,7 @@ const EnableNextEditionModal = ({ onClose, onEnableNextEdition, pending, project
             disabled={
                 pending ||
               Number(nextEditionMaxAmount) < 1 ||
-              Number(nextEditionMaxAmount) > 10000 ||
+              Number(nextEditionMaxAmount) > maxPossibleAmount ||
               Number(nextEditionMintPrice) < 0.01
             }
             text='UNLOCK'
