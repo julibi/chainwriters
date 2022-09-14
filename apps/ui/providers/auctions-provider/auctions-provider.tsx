@@ -4,6 +4,7 @@ import ToastLink from '../../components/ToastLink';
 import { WriteActionStatus } from '../manager-provider/manager-provider.types';
 import useAuctionsManager from '../../hooks/useAuctionsManager';
 import { AuctionsApi, AuctionsProviderProps, RetriggerAuctionArgs } from './auctions-provider.types';
+import { BigNumber } from 'ethers';
 
 const defaultContext: AuctionsApi = {
   retriggerAuction: async () => undefined,
@@ -19,7 +20,7 @@ export function AuctionsProvider({ children }: AuctionsProviderProps) {
   const retriggerAuction = useCallback(async ({ projectId, onSuccess, onError }: RetriggerAuctionArgs) => {
     try {
       setRetriggerAuctionStatus('confirming');
-      const Tx = await auctionsManager.retriggerAuction(projectId);
+      const Tx = await auctionsManager.retriggerAuction(BigNumber.from(projectId));
       const { hash } = Tx;
       setRetriggerAuctionStatus('waiting');
       toast.info(<ToastLink message={'Retriggering...'} />);

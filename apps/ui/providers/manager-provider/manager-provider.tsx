@@ -138,6 +138,7 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
           setTimeout(() => {
             setEnableNextEditionStatus('success');
             toast.success(<ToastLink message={'Success!'} />);
+            onSuccess?.();
           }, 10000);
         });
       } catch (e: unknown) {

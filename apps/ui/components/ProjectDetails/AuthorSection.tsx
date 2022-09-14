@@ -1,6 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { useWeb3React } from '@web3-react/core';
 import {
   PLAIN_WHITE,
   BASE_BORDER_RADIUS,
@@ -14,7 +13,7 @@ import MoreDetails from '../../components/MoreDetails';
 import ProgressBar from '../ProgressBar';
 import ConfigureModal from './ConfigureModal';
 import ContributorsModal from './ContributorsModal';
-import { Project } from '../../providers/projects-provider/projects-provider.types';
+import { Edition, Project } from '../../providers/projects-provider/projects-provider.types';
 import { useManager } from '../../hooks/manager'; 
 import ActionButton from '../ActionButton';
 import StartAuctionsModal from './StartAuctionsModal';
@@ -73,17 +72,18 @@ const Flex = styled.div`
 
 interface AuthorSectionProps {
   blurb: string;
+  currentEdition?: Edition;
   projectData: Project;
   projectId: string;
   refetch: VoidFunction;
 }
 
 const AuthorSection = ({
+  currentEdition,
   projectData,
   projectId,
   refetch,
 }: AuthorSectionProps) => {
-  const { account, chainId } = useWeb3React();
   const { configureProject, configureStatus, setContributors, setContributorsStatus, enableNextEdition, enableNextEditionStatus } = useManager();
   const { startAuctions, startAuctionsStatus } = useCollection();
   const [showConfigureModal, setShowConfigureModal] = useState<boolean>(false);
@@ -108,17 +108,9 @@ const AuthorSection = ({
     return hasConfigured;
   }, [projectData]);
 
-  const currentEdition = useMemo(
-    () => (projectData ? projectData.editions[0] : undefined),
-    [projectData]
-  );
+  const currentEndId = useMemo(() => currentEdition ? Number(currentEdition.endId) : 0, [currentEdition]);
 
-  const canTriggerNextEdition = useMemo(() => {
-    if (Number(projectData.currentId) - 1 == Number(currentEdition.endId)) {
-      return true;
-    }
-    return false;
-  }, [currentEdition, projectData]);
+  const canTriggerNextEdition = useMemo(() => Number(projectData.currentId) > currentEndId, [currentEndId, projectData.currentId]);
 
   const calculatedProgress = useMemo((): number => {
     let percentage = 0;
@@ -344,7 +336,6 @@ const AuthorSection = ({
           project={projectData}
         />
       )}
-      {/* TODO: test this */}
       {showEnableNextEditionModal && (
         <EnableNextEditionModal
           onClose={() => setShowEnableNextEditionModal(false)}

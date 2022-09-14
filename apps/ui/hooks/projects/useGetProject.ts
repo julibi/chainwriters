@@ -70,7 +70,7 @@ export function useGetProject(projectId: string) {
       ...data.project,
       mintCount: BigNumber.from(project.mintCount),
       startId: BigNumber.from(project.startId),
-      endId: BigNumber.from(project.currentId),
+      endId: BigNumber.from(project.endId),
       currentId: BigNumber.from(project.currentId),
       initialMintPrice: BigNumber.from(project.initialMintPrice),
       premintedByAuthor: BigNumber.from(project.premintedByAuthor),

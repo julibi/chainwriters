@@ -19,8 +19,8 @@ const EnableNextEditionModal = ({ onClose, onEnableNextEdition, pending, project
   const [nextEditionMaxAmount, setNextEditionMaxAmount] = useState<number>(0); 
   const [nextEditionMintPrice, setMextEditionMintPrice] = useState<string>('0');
   const maxPossibleAmount = useMemo(() => {
-    if (project.endId && project.currentId) {
-        return Number(project.endId.sub(project.currentId));
+    if (project.endId && project.currentId) { 
+      return Number(project.endId.sub(project.currentId));
     }
     return 0;
   }, [project.endId, project.currentId]);

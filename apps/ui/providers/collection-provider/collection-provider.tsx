@@ -72,7 +72,7 @@ export function CollectionProvider({ children }: CollectionProviderProps) {
             setBuyStatus('success');
             toast.success(<ToastLink message={'Success!'} /> );
             onSuccess?.();
-          });
+          }, 10000);
         });
     } catch(e: unknown) {     
       setBuyStatus('error');

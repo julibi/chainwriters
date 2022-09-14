@@ -1,13 +1,10 @@
 import React, {
-  MouseEventHandler,
   useCallback,
   useEffect,
   useMemo,
   useState,
 } from 'react';
-import { toast } from 'react-toastify';
 import { useRouter } from 'next/router';
-import { formatEther } from '@ethersproject/units';
 import { useWeb3React } from '@web3-react/core';
 import Image from 'next/image';
 import styled from 'styled-components';
@@ -15,7 +12,6 @@ import { BLURB_FETCH_ERROR } from '../../constants';
 import BaseModal from '../../components/BaseModal';
 import Loading from '../../components/Loading';
 import MintSection from '../../components/ProjectDetails/MintSection';
-import ToastLink from '../../components/ToastLink';
 import { SectionTitle } from '../../components/HomePage/ProjectSection';
 import { truncateAddress } from '../../components/WalletIndicator';
 import {
@@ -33,11 +29,13 @@ import useShowText from '../../hooks/useShowText';
 import AuthorSection from '../../components/ProjectDetails/AuthorSection';
 import AuctionSection from '../../components/ProjectDetails/AuctionSection';
 import { useCollection } from '../../hooks/collection';
-import useAuctionsManager from '../../hooks/useAuctionsManager';
+import { useAuctions } from '../../hooks/auctions';
 import Checkbox from '../../components/Checkbox';
 import { useGetProject } from '../../hooks/projects/useGetProject';
 import { useGetProjectId } from '../../hooks/projects/useGetProjectId';
-import ActionButton from 'apps/ui/components/ActionButton';
+import  useAuctionsManager from '../../hooks/useAuctionsManager';
+import ActionButton from '../../components/ActionButton';
+import { formatNumber } from '../../utils/formatNumber';
 
 const Root = styled.div`
   display: flex;
@@ -258,6 +256,7 @@ const DescriptionSection = styled.section`
   flex-direction: column;
   align-items: center;
   width: 90%;
+  line-break: anywhere;
   max-width: 1200px;
   color: ${PLAIN_WHITE};
   margin-block-end: 2rem;
@@ -318,7 +317,7 @@ const ProjectDetailView = () => {
   } = useGetProject(projectId);
   const { buy, buyStatus } = useCollection();
   const auctionsManager = useAuctionsManager();
-  const { retriggerAuction, retriggerAuctionStatus } = useAuctionsManager();
+  const { retriggerAuction, retriggerAuctionStatus } = useAuctions();
   const { allowedToRead } = useShowText(projectId);
   const [coverImgLink, setCoverImgLink] = useState<string>(null);
   const [isGettingCurrentPrice, setIsGettingCurentPrice] = useState<boolean>(false);
@@ -378,7 +377,7 @@ const ProjectDetailView = () => {
   }, [project]);
 
   const currentEdition = useMemo(
-    () => (project && project.editions ? project.editions[0] : undefined),
+    () => project ? project.editions.find(edition => Number(edition.edition) === project.editions.length) : undefined,
     [project]
   );
 
@@ -526,6 +525,7 @@ const ProjectDetailView = () => {
           {isAuthor && (
             <AuthorSection
               blurb={blurb}
+              currentEdition={currentEdition}
               projectId={projectId}
               projectData={project}
               refetch={refetch}
@@ -536,9 +536,7 @@ const ProjectDetailView = () => {
       {showBuyModal && (
         <BaseModal onClose={() => setShowBuyModal(false)}>
           <ContentWrapper>
-            <ModalHeader>{`Current Price: ${formatEther(
-              parseInt(currentPrice._hex, 16).toString()
-            )} MATIC`}</ModalHeader>
+            <ModalHeader>{`Current Price: ${formatNumber(currentPrice)} MATIC`}</ModalHeader>
             <ModalText>
               {`In a dutch auction the price keeps going down. Don't miss the
               chance and mint now!`}
