@@ -7,6 +7,8 @@ export type CollectionApi = {
     startAuctionsStatus: WriteActionStatus;
     buy: (x: BuyArgs) => Promise<void>;
     buyStatus: WriteActionStatus;
+    mint: (x: MintArgs) => Promise<void>;
+    mintStatus: WriteActionStatus;
 };
 
 export type CollectionProviderProps = {
@@ -26,4 +28,13 @@ export type BuyArgs = {
     initialMintPrice: BigNumber;
     onSuccess?: () => void;
     onError?: (e: any) => void;
+};
+
+export type MintArgs = {
+    projectId: string;
+    amount: number;
+    price: BigNumber;
+    onSuccess?: () => void;
+    onError?: (e: any) => void;
+
 };

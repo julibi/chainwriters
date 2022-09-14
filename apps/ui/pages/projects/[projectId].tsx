@@ -308,7 +308,7 @@ export const CTAWrapper = styled.div`
 
 const ProjectDetailView = () => {
   const router = useRouter();
-  const { account, chainId } = useWeb3React();
+  const { account } = useWeb3React();
   const projectId = useGetProjectId();
   const {
     project,
@@ -379,11 +379,6 @@ const ProjectDetailView = () => {
   const currentEdition = useMemo(
     () => project ? project.editions.find(edition => Number(edition.edition) === project.editions.length) : undefined,
     [project]
-  );
-
-  const isLastNFT = useMemo(
-    () => Number(project?.currentId) === Number(currentEdition?.endId),
-    [project, currentEdition]
   );
 
   useEffect(() => {
@@ -476,7 +471,11 @@ const ProjectDetailView = () => {
             </InfoLeft>
             <InfoRight>
               {project.editions?.length > 1 && (
-                <MintSection project={project} refetch={refetch} />
+                <MintSection
+                  currentEdition={currentEdition}
+                  project={project}
+                  refetch={refetch}
+                />
               )}
               {project.editions?.length === 1 && (
                 <AuctionSection

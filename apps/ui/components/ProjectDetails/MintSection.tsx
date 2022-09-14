@@ -2,16 +2,13 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { BigNumber } from 'ethers';
 import { formatEther } from 'ethers/lib/utils';
 import styled from 'styled-components';
-import { toast } from 'react-toastify';
 import { BaseButton } from '../../themes';
 import { StyledPrimaryButton } from '../../pages/projects/[projectId]';
 import { Title } from '../../pages/projects/[projectId]';
 import PieChart from '../PieChart';
-import ToastLink from '../ToastLink';
-import { useWeb3React } from '@web3-react/core';
 import Loading from '../Loading';
-import useMoonpageCollection from '../../hooks/useMoonpageCollection';
-import { Project } from '../../providers/projects-provider/projects-provider.types';
+import { Edition, Project } from '../../providers/projects-provider/projects-provider.types';
+import { useCollection } from '../../hooks/collection';
 
 const Root = styled.div`
   flex: 1;
@@ -45,22 +42,14 @@ const StyledFakeInput = styled.span`
 `;
 
 interface MintSectionProps {
+  currentEdition: Edition;
   project: Project;
   refetch: VoidFunction;
 }
 
-const MintSection = ({ project, refetch }: MintSectionProps) => {
+const MintSection = ({ currentEdition, project, refetch }: MintSectionProps) => {
   const [amount, setAmount] = useState<number>(1);
-  const [mintPending, setMintPending] = useState<boolean>(false);
-  const { account, chainId } = useWeb3React();
-  const collection = useMoonpageCollection();
-
-  const currentEdition = useMemo(() => {
-    const bla = project.editions.find(
-      (edition) => Number(edition.edition) === project.editions.length
-    );
-    return bla;
-  }, [project]);
+  const { mint, mintStatus } = useCollection();
 
   const totalSupply = useMemo(() => {
     return project.currentId.sub(currentEdition?.startId);
@@ -90,37 +79,17 @@ const MintSection = ({ project, refetch }: MintSectionProps) => {
     setAmount(amount - 1);
   }, [amount]);
 
-  const handleMint = useCallback(async () => {
-    if (account && collection) {
-      try {
-        setMintPending(true);
-        const tx = await collection.publicMint(project.id, amount, {
-          value: price,
-        });
-        const { hash } = tx;
-        toast.info(
-          <ToastLink hash={hash} chainId={chainId} message={'Minting...'} />
-        );
-        collection.provider.once(hash, (transaction) => {
-          refetch();
-          setAmount(1);
-          setMintPending(false);
-          toast.success(
-            <ToastLink
-              hash={hash}
-              chainId={chainId}
-              message={'Successfully minted!'}
-            />
-          );
-        });
-      } catch (e: unknown) {
-        setAmount(1);
-        // @ts-ignore
-        toast.error(e.reason ?? 'Something went wrong.');
-        setMintPending(false);
+  const handleMint = useCallback(async() => {
+    await mint({
+      projectId: project.id,
+      amount,
+      price,
+      onSuccess: () => {
+        refetch();
       }
-    }
-  }, [account, collection, project.id, amount, price, chainId, refetch]);
+    });
+  }, [amount, mint, price, project.id, refetch]);
+
 
   return (
     <Root>
@@ -147,7 +116,7 @@ const MintSection = ({ project, refetch }: MintSectionProps) => {
         disabled={amount > Number(maxSupply.sub(totalSupply))}
         onClick={handleMint}
       >
-        {mintPending ? <Loading height={20} dotHeight={20} /> : 'MINT'}
+        {(mintStatus === 'confirming' || mintStatus === 'waiting') ? <Loading height={20} dotHeight={20} /> : 'MINT'}
       </StyledPrimaryButton>
     </Root>
   );
