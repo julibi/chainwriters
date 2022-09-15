@@ -1,0 +1,1 @@
+export  { useFactory } from './useFactory';

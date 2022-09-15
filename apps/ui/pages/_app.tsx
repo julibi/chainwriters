@@ -13,7 +13,7 @@ import './styles.css';
 import ToastContainer from '../components/ToastContainer';
 import client from '../apolloclient';
 import { ApolloProvider } from '@apollo/client';
-import { AuctionsProvider, CollectionProvider, ManagerProvider, ProjectsProvider, UserProvider } from '../providers';
+import { AuctionsProvider, CollectionProvider, FactoryProvider, ManagerProvider, ProjectsProvider, UserProvider } from '../providers';
 
 const GlobalStyle = createGlobalStyle`
 html{
@@ -102,12 +102,14 @@ function CustomApp({ Component, pageProps }: AppProps) {
             <UserProvider>
               <ManagerProvider>
                 <AuctionsProvider>
-                  <CollectionProvider>         
-                    <main className="app">
-                      <Layout>
-                        <Component {...pageProps} />
-                      </Layout>
-                    </main>
+                  <CollectionProvider>
+                    <FactoryProvider>
+                      <main className="app">
+                        <Layout>
+                          <Component {...pageProps} />
+                        </Layout>
+                      </main>
+                    </FactoryProvider>       
                   </CollectionProvider>
                 </AuctionsProvider>
               </ManagerProvider>

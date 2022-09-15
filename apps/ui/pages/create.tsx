@@ -45,6 +45,7 @@ import {
   SectionTitleWrapper,
 } from '../components/HomePage/ProjectSection';
 import useMoonpageManager from '../hooks/useMoonpageManager';
+import { useFactory } from '../hooks/factory';
 
 const Root = styled.div`
   display: flex;
@@ -224,6 +225,7 @@ const Create = () => {
   const [creatingDao, setCreatingDao] = useState<boolean>(false);
   const [subtitle, setSubtitle] = useState<string>('');
   const [authorMintAmount, setAuthorMintAmount] = useState<number>(0);
+  const { createProject, createProjectStatus } = useFactory();
 
   const createSetConfiguration = useCreateSetConfiguration();
   const createAuthorMint = useCreateAuthorMint();
