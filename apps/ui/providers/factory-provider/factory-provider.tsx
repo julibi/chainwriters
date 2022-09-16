@@ -41,6 +41,8 @@ export function FactoryProvider({ children }: FactoryProviderProps) {
         toast.info(<ToastLink message={'Setting up project...'} />);
         factory.provider.once(hash, async (transaction) => {
             console.log({Tx, transaction});
+            const receipt = await Tx.wait();
+            console.log({receipt})
           // we need a time, because the graph needs some time
           setTimeout(() => {
             setCreateProjectStatus('success');
