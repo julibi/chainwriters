@@ -6,12 +6,10 @@ import React, {
   useState,
 } from 'react';
 import styled from 'styled-components';
-import { create } from 'ipfs-http-client';
 import { toast } from 'react-toastify';
-import { parseEther } from 'ethers/lib/utils';
+import { formatEther, parseEther } from 'ethers/lib/utils';
 import { useWeb3React } from '@web3-react/core';
 import ProgressBar from '../components/ProgressBar';
-import useFactoryContract from '../hooks/useMoonpageFactoryContract';
 import {
   BaseButton,
   BASE_BORDER_RADIUS,
@@ -22,8 +20,6 @@ import {
   PLAIN_WHITE,
   INTER_BOLD,
 } from '../themes';
-import SuccessToast from '../components/SuccessToast';
-import PendingToast from '../components/PendingToast';
 import NameForm from '../components/Create/NameForm';
 import TextForm from '../components/Create/TextForm';
 import AmountForm from '../components/Create/AmountForm';
@@ -44,8 +40,9 @@ import {
   SectionTitle,
   SectionTitleWrapper,
 } from '../components/HomePage/ProjectSection';
-import useMoonpageManager from '../hooks/useMoonpageManager';
 import { useFactory } from '../hooks/factory';
+import { useIpfsClient } from '../hooks/useIpfsClient';
+import { BigNumber } from 'ethers';
 
 const Root = styled.div`
   display: flex;
@@ -201,19 +198,14 @@ export interface Contributor {
 
 const Create = () => {
   const { chainId } = useWeb3React();
-  const FactoryContract = useFactoryContract();
-  // TODO
-  // @ts-ignore
-  const client = create('https://ipfs.infura.io:5001/api/v0');
+  const client = useIpfsClient();
   const [currentStep, setCurrentStep] = useState(0);
   const [title, setTitle] = useState('');
   const [text, setText] = useState('');
-  // need it for state? We are returning the hash after upload...
-  const [textIPFS, setTextIPFS] = useState('');
+  const [textIPFS, setTextIPFS] = useState<null | string>(null);
   const [agreed, setAgreed] = useState(false);
   const [firstEdMintPrice, setFirstEdMintPrice] = useState<string>('0');
   const [firstEdMaxAmount, setFirstEdMaxAmount] = useState(0);
-  // TODO type for buffer
   const [imgBuffer, setImgBuffer] = useState<null | Buffer>(null);
   const [imgFile, setImgFile] = useState(null);
   const [coverImgIPFS, setCoverImgIPFS] = useState<string>('');
@@ -221,16 +213,38 @@ const Create = () => {
   const [blurbIPFS, setBlurbIPFS] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const [genre, setGenre] = useState('');
-  const [daoAddress, setDaoAddress] = useState<string>('');
-  const [creatingDao, setCreatingDao] = useState<boolean>(false);
   const [subtitle, setSubtitle] = useState<string>('');
-  const [authorMintAmount, setAuthorMintAmount] = useState<number>(0);
   const { createProject, createProjectStatus } = useFactory();
 
-  const createSetConfiguration = useCreateSetConfiguration();
-  const createAuthorMint = useCreateAuthorMint();
-  const createSetContributors = useCreateSetContributors();
-  const daoContract = useMoonpageManager();
+  const uploadText = useCallback(async () => {
+    try {
+      const added = await client.add(text);
+      // const url = `https://ipfs.infura.io/ipfs/${added.path}`;
+      // TODO what about pinning?
+      setTextIPFS(added.path);
+      return added.path;
+    } catch (e) {
+      console.log({ e });
+      toast.error('Something went wrong while uploading your text to ipfs.');
+    }
+  }, [client, text]);
+
+  const handleCreateProject = useCallback(async () => {
+    const hash = await uploadText();
+    await createProject({
+      title,
+      textIpfsHash: hash,
+      originalLanguage: 'ENG',
+      // TODO: continue here
+      initialMintPrice: BigNumber.from('20000000000000000'),
+      firstEditionAmount: BigNumber.from(firstEdMaxAmount.toString()),
+      onSuccess: () => {
+        setCurrentStep(currentStep + 1)
+      },
+      onError: undefined
+    });
+  }, [createProject, currentStep, firstEdMaxAmount, title, uploadText]);
+
   const contribInitialState = {
     1: { address: '', share: 0, role: '' },
     2: { address: '', share: 0, role: '' },
@@ -246,47 +260,6 @@ const Create = () => {
     });
     return contribsArray;
   }, [contributors]);
-
-  const uploadText = useCallback(async () => {
-    try {
-      const added = await client.add(text);
-      // const url = `https://ipfs.infura.io/ipfs/${added.path}`;
-      // TODO what about pinning?
-      setTextIPFS(added.path);
-      return added.path;
-    } catch (e) {
-      console.log({ e });
-      toast.error('Something went wrong while uploading your text to ipfs.');
-    }
-  }, [client, text]);
-
-  const createDao = async () => {
-    setCreatingDao(true);
-    const ipfsHash = await uploadText();
-    const mintPrice = parseEther(firstEdMintPrice);
-
-    try {
-      const Tx = await FactoryContract.createDao(
-        title,
-        ipfsHash,
-        mintPrice,
-        firstEdMaxAmount
-      );
-      const { hash } = Tx;
-      PendingToast(chainId, hash);
-      FactoryContract.provider.once(hash, (transaction) => {
-        const newDaoAddress = transaction.logs[0].address;
-        setDaoAddress(newDaoAddress);
-        SuccessToast(chainId, hash);
-        setCreatingDao(false);
-        setCurrentStep(currentStep + 1);
-      });
-    } catch (e) {
-      setCreatingDao(false);
-      console.log({ e });
-      toast.error(e.reason ?? 'Something went wrong.');
-    }
-  };
 
   const captureFile = (file: any) => {
     const reader = new window.FileReader();
@@ -317,105 +290,9 @@ const Create = () => {
     setCurrentStep(currentStep + 1);
   }, [blurb, client, currentStep]);
 
-  const handleSetConfiguration = useCallback(async () => {
-    createSetConfiguration(
-      daoContract,
-      coverImgIPFS,
-      blurbIPFS,
-      genre,
-      subtitle,
-      setLoading,
-      PendingToast,
-      (x, y, z) => {
-        setCurrentStep(currentStep + 1);
-        // @ts-ignore
-        return <SuccessToast chainId={x} hash={y} customMessage={z} />;
-      }
-    )
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      .then(() => {})
-      .catch((e) => {
-        console.log({ e });
-        toast.error('Something went wrong');
-      });
-  }, [
-    createSetConfiguration,
-    daoContract,
-    coverImgIPFS,
-    blurbIPFS,
-    subtitle,
-    genre,
-    currentStep,
-  ]);
-
-  const handleAuthorMint = useCallback(async () => {
-    setLoading(true);
-    let uri;
-    // first create metadata object
-    try {
-      const response = await fetch(`https://ipfs.io/ipfs/${blurbIPFS}`);
-      if (!response.ok) {
-        setBlurb(BLURB_FETCH_ERROR);
-      } else {
-        const fetchedBlurb = await response.text();
-        setBlurb(fetchedBlurb);
-      }
-      const metadataObject = {
-        name: title,
-        description:
-          blurb && blurb !== BLURB_FETCH_ERROR
-            ? `${blurb} (Created with Moonpage)`
-            : 'Created with Moonpage',
-        image: coverImgIPFS ? `ipfs://${coverImgIPFS}` : '',
-      };
-      const metadata = JSON.stringify(metadataObject, null, 2);
-      const uploadedMeta = (await client.add(metadata)).path;
-      uri = `ipfs://${uploadedMeta}`;
-    } catch (e: unknown) {
-      toast.error('Something went wrong while uploading metadata to IPFS.');
-      setLoading(false);
-      return;
-    }
-    // then call the contract
-    createAuthorMint(
-      daoContract,
-      authorMintAmount,
-      uri,
-      setLoading,
-      PendingToast,
-      (x, y, z) => {
-        setCurrentStep(currentStep + 1);
-        // @ts-ignore
-        return <SuccessToast chainId={x} hash={y} customMessage={z} />;
-      }
-    )
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      .then(() => {})
-      .catch((e) => {
-        console.log({ e });
-        toast.error('Something went wrong');
-      });
-  }, [createAuthorMint, daoContract, authorMintAmount, currentStep]);
-
-  const handleSetContributors = useCallback(async () => {
-    createSetContributors(
-      daoContract,
-      contributorList,
-      setLoading,
-      PendingToast,
-      (x, y, z) => {
-        setCurrentStep(currentStep + 1);
-        // @ts-ignore
-        return <SuccessToast chainId={x} hash={y} customMessage={z} />;
-      }
-    )
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      .then(() => {})
-      .catch((e) => {
-        console.log({ e });
-        toast.error('Something went wrong');
-      });
-  }, [createSetContributors, daoContract, contributorList, currentStep]);
+  const creatingDao = useMemo(() => {
+    return createProjectStatus === 'confirming' || createProjectStatus === 'waiting';
+  }, [createProjectStatus]);
 
   return (
     <Root>
@@ -427,8 +304,8 @@ const Create = () => {
           <ProgressBar completed={currentStep ? (currentStep / 12) * 100 : 0} />
         </ProgressBarWrapper>
         <FormWrapper>
-          {/* <Form>
-            {currentStep === 0 && !creatingDao && (
+        <Form>
+            {currentStep === 0 && (
               <NameForm
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
                   setTitle(e.target.value)
@@ -437,14 +314,15 @@ const Create = () => {
                 title={title}
               />
             )}
-            {currentStep === 1 && !creatingDao && (
+            {currentStep === 1 && (
               <TextForm
                 onKeyDown={(val: string) => setText(val)}
                 onSubmit={() => setCurrentStep(currentStep + 1)}
                 text={text}
               />
             )}
-            {currentStep === 2 && !creatingDao && (
+        
+            {currentStep === 2 && (
               <AmountForm
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
                   setFirstEdMaxAmount(Number(e.target.value))
@@ -453,7 +331,7 @@ const Create = () => {
                 firstEdMaxAmount={firstEdMaxAmount}
               />
             )}
-            {currentStep === 3 && !creatingDao && (
+            {currentStep === 3 && (
               <PriceForm
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
                   setFirstEdMintPrice(e.target.value)
@@ -462,6 +340,7 @@ const Create = () => {
                 firstEdMintPrice={firstEdMintPrice}
               />
             )}
+            {/* TODO: enable changing things here */}
             {currentStep === 4 && !creatingDao && (
               <ReviewForm
                 agreed={agreed}
@@ -470,16 +349,17 @@ const Create = () => {
                 firstEdMaxAmount={firstEdMaxAmount}
                 firstEdMintPrice={firstEdMintPrice}
                 onCheck={() => setAgreed(!agreed)}
-                createDao={createDao}
+                createDao={handleCreateProject}
+                pending={creatingDao}
               />
             )}
             {creatingDao && <Waiting />}
             {currentStep === 5 && !creatingDao && (
               <Congrats
-                daoAddress={daoAddress}
                 onSubmit={() => setCurrentStep(currentStep + 1)}
               />
             )}
+            {/* 
             {currentStep === 6 && !creatingDao && (
               <CoverImageForm
                 captureFile={captureFile}
@@ -529,17 +409,6 @@ const Create = () => {
               />
             )}
             {currentStep === 11 && !creatingDao && (
-              <AuthorClaimForm
-                loading={loading}
-                authorMintAmount={authorMintAmount}
-                firstEdMaxAmount={firstEdMaxAmount}
-                onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                  setAuthorMintAmount(Number(e.target.value))
-                }
-                onSubmit={handleAuthorMint}
-              />
-            )}
-            {currentStep === 12 && !creatingDao && (
               <ContributorsForm
                 contributors={contributors}
                 contributorList={contributorList}
@@ -554,10 +423,11 @@ const Create = () => {
                 onSubmit={handleSetContributors}
               />
             )}
-            {currentStep === 13 && !creatingDao && (
+            {currentStep === 12 && !creatingDao && (
               <Finished daoAddress={daoAddress} />
             )}
-          </Form> */}
+            */}
+          </Form> 
         </FormWrapper>
       </Content>
     </Root>

@@ -15,8 +15,8 @@ export type CreateArgs = {
     title: string;
     textIpfsHash: string;
     originalLanguage: string;
-    initialMintPrice: number;
-    firstEditionAmount: number;
+    initialMintPrice: BigNumber;
+    firstEditionAmount: BigNumber;
     onSuccess?: () => void;
     onError?: (e: any) => void;
 };

@@ -26,6 +26,14 @@ export function FactoryProvider({ children }: FactoryProviderProps) {
         onSuccess,
         onError
     }: CreateArgs) => {
+        console.log({
+            title,
+            textIpfsHash,
+            originalLanguage,
+            initialMintPrice,
+            firstEditionAmount,
+            onSuccess,
+            onError})
       try { 
         setCreateProjectStatus('confirming');
         
@@ -48,6 +56,7 @@ export function FactoryProvider({ children }: FactoryProviderProps) {
           }, 10000);
         });
       } catch (e) {
+        console.log({e})
         setCreateProjectStatus('error');
         toast.error(<ToastLink message={'Something went wrong!'} />);
         onError?.(e);

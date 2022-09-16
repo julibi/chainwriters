@@ -17,6 +17,7 @@ interface ReviewFormProps {
   firstEdMintPrice: string;
   text: string;
   title: string;
+  pending: boolean;
 }
 
 const CheckboxWrapper = styled.div`
@@ -30,7 +31,8 @@ const ReviewForm = ({
   text,
   firstEdMaxAmount,
   firstEdMintPrice,
-  onCheck
+  onCheck,
+  pending
 }: ReviewFormProps) => {
   return (
     <FadeIn>
@@ -60,7 +62,7 @@ const ReviewForm = ({
           />
         </CheckboxWrapper>
         <SubmitButton
-          disabled={!agreed}
+          disabled={!agreed || pending}
           style={{ marginBlockEnd: '0', minWidth: '182px' }}
           onClick={createDao}
         >

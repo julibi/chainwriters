@@ -34,9 +34,9 @@ const AmountForm = ({
           value={firstEdMaxAmount}
           onChange={onChange}
           placeholder={'2000'}
-          error={firstEdMaxAmount < 4 && 'At least 4.'}
+          error={(firstEdMaxAmount > 1000 || firstEdMaxAmount < 10) && 'Min 10, max 1000.'}
         />
-        <SubmitButton onClick={onSubmit} disabled={firstEdMaxAmount < 2}>
+        <SubmitButton onClick={onSubmit} disabled={firstEdMaxAmount > 1000 || firstEdMaxAmount < 10}>
           {'Continue'}
         </SubmitButton>
       </Wrapper>
