@@ -24,6 +24,7 @@ contract MoonpageFactory is
     IMoonpageManager public moonpageManager;
     IAuctionsManager public auctionsManager;
     event Received(address from, uint256 amount);
+    event Created(address from, uint256 projectId);
     bool public isAllowlistOnly;
     mapping(address => bool) public allowlist;
     mapping(address => bool) public denylist;
@@ -89,6 +90,7 @@ contract MoonpageFactory is
             _initialMintPrice,
             _firstEditionAmount
         );
+        emit Created(msg.sender, projectsIndex);
         auctionsManager.setupAuctionSettings(projectsIndex, msg.sender);
         projectsIndex++;
     }

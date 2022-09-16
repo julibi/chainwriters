@@ -17,10 +17,10 @@ const Congrats = ({ onSubmit }: CongratsProps) => {
     <Wrapper>
       <InputName>Congratulations!</InputName>
       <InputDescription>
-        The Dao smart contract for your project was created!
+        Now, your work exists on the blockchain!
       </InputDescription>
       <InputDescription style={{ textAlign: 'center', maxWidth: 500 }}>
-        {`We will guide you to the page, where you can see a dashboard of your project, in a minute. But first let's configure some more things. All of them are OPTIONAL, so you can skip them if you like.`}
+        {`Now let's configure a few more things. It's optional, so you can skip them if you like.`}
       </InputDescription>
       <SubmitButton
         onClick={onSubmit}

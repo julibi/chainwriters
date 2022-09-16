@@ -104,29 +104,29 @@ async function deployAll() {
   );
 
   // deploy BallotFactory
-  const BallotsFactoryFactory = await hre.ethers.getContractFactory(
-    "BallotsFactory"
-  );
-  const BallotsFactoryProxy = await hre.upgrades.deployProxy(
-    BallotsFactoryFactory,
-    [MoonpageManagerProxy.address, MoonpageCollection.address],
-    { kind: "uups" }
-  );
+  // const BallotsFactoryFactory = await hre.ethers.getContractFactory(
+  //   "BallotsFactory"
+  // );
+  // const BallotsFactoryProxy = await hre.upgrades.deployProxy(
+  //   BallotsFactoryFactory,
+  //   [MoonpageManagerProxy.address, MoonpageCollection.address],
+  //   { kind: "uups" }
+  // );
 
-  await BallotsFactoryProxy.deployed();
+  // await BallotsFactoryProxy.deployed();
 
-  const BallotsFactoryImplAddress = await upgrades.getImplementationAddress(
-    provider,
-    BallotsFactoryProxy.address
-  );
+  // const BallotsFactoryImplAddress = await upgrades.getImplementationAddress(
+  //   provider,
+  //   BallotsFactoryProxy.address
+  // );
 
-  console.log(
-    `BallotsFactoryImpl contract deployed to: ${BallotsFactoryImplAddress}`
-  );
+  // console.log(
+  //   `BallotsFactoryImpl contract deployed to: ${BallotsFactoryImplAddress}`
+  // );
 
-  console.log(
-    `BallotsFactoryProxy contract deployed to: ${BallotsFactoryProxy.address}`
-  );
+  // console.log(
+  //   `BallotsFactoryProxy contract deployed to: ${BallotsFactoryProxy.address}`
+  // );
 
   // set Contract on Moonpage Collection
   await MoonpageCollection.setAddresses(
@@ -157,10 +157,10 @@ async function deployAll() {
   );
 
   // set Contracts on Ballots Factory
-  await BallotsFactoryProxy.setContract(
-    MoonpageManagerProxy.address,
-    MoonpageCollection.address
-  );
+  // await BallotsFactoryProxy.setContract(
+  //   MoonpageManagerProxy.address,
+  //   MoonpageCollection.address
+  // );
 
   // wait around for a bit
   console.log("Waiting for etherscan/polygonscan once more...");
@@ -184,11 +184,11 @@ async function deployAll() {
     hre.run("verify:verify", {
       address: MoonpageFactoryImplAddress,
       constructorArguments: [],
-    }),
-    hre.run("verify:verify", {
-      address: BallotsFactoryImplAddress,
-      constructorArguments: [],
-    }),
+    })
+    // hre.run("verify:verify", {
+    //   address: BallotsFactoryImplAddress,
+    //   constructorArguments: [],
+    // }),
     // necessary to verify all proxies? also as constructor arguments I pass the
     // implementation addresses or the proxy addresses? :P
     // hre.run("verify:verify", {

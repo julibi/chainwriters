@@ -3,7 +3,6 @@ import {
   FadeIn,
   Wrapper,
   InputName,
-  InputDescription,
   SubmitButton,
 } from '../../pages/create';
 import InputField from '../InputField';
@@ -20,7 +19,6 @@ const NameForm = ({ onChange, onSubmit, title }: NameFormProps) => {
     <FadeIn>
       <Wrapper>
         <InputName>Title</InputName>
-        <InputDescription>What is the title of your project?</InputDescription>
         <InputField
           error={title.length < 1 && 'At least 1 character.'}
           onChange={onChange}

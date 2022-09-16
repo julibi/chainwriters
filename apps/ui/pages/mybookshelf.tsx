@@ -68,7 +68,6 @@ const MyBookShelf = () => {
     useGetProjectsOfAccount();
   const { contributions, isLoading: contributionsLoading } =
     useGetContributionsOfAccount();
-  console.log({ contributions, contributionsLoading });
 
   const handleClickRead = useCallback(
     (e, projectId) => {

@@ -26,14 +26,6 @@ export function FactoryProvider({ children }: FactoryProviderProps) {
         onSuccess,
         onError
     }: CreateArgs) => {
-        console.log({
-            title,
-            textIpfsHash,
-            originalLanguage,
-            initialMintPrice,
-            firstEditionAmount,
-            onSuccess,
-            onError})
       try { 
         setCreateProjectStatus('confirming');
         
@@ -48,6 +40,7 @@ export function FactoryProvider({ children }: FactoryProviderProps) {
         setCreateProjectStatus('waiting');
         toast.info(<ToastLink message={'Setting up project...'} />);
         factory.provider.once(hash, async (transaction) => {
+            console.log({Tx, transaction});
           // we need a time, because the graph needs some time
           setTimeout(() => {
             setCreateProjectStatus('success');

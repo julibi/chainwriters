@@ -17,7 +17,7 @@ const Waiting = () => {
     <LoadingWrapper>
       <Loading height={200} />
       <ReviewItem>
-        {`We're creating the Smart Contract for you.
+        {`We're creating the project for you.
           This takes a minute. Be patient and don't refresh the page plz :)`}
       </ReviewItem>
     </LoadingWrapper>

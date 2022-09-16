@@ -7,7 +7,7 @@ import React, {
 } from 'react';
 import styled from 'styled-components';
 import { toast } from 'react-toastify';
-import { formatEther, parseEther } from 'ethers/lib/utils';
+import { parseEther } from 'ethers/lib/utils';
 import { useWeb3React } from '@web3-react/core';
 import ProgressBar from '../components/ProgressBar';
 import {
@@ -43,6 +43,7 @@ import {
 import { useFactory } from '../hooks/factory';
 import { useIpfsClient } from '../hooks/useIpfsClient';
 import { BigNumber } from 'ethers';
+import { useManager } from '../hooks/manager';
 
 const Root = styled.div`
   display: flex;
@@ -202,7 +203,7 @@ const Create = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [title, setTitle] = useState('');
   const [text, setText] = useState('');
-  const [textIPFS, setTextIPFS] = useState<null | string>(null);
+  // const [textIPFS, setTextIPFS] = useState<null | string>(null);
   const [agreed, setAgreed] = useState(false);
   const [firstEdMintPrice, setFirstEdMintPrice] = useState<string>('0');
   const [firstEdMaxAmount, setFirstEdMaxAmount] = useState(0);
@@ -215,13 +216,14 @@ const Create = () => {
   const [genre, setGenre] = useState('');
   const [subtitle, setSubtitle] = useState<string>('');
   const { createProject, createProjectStatus } = useFactory();
+  const { configureProject, configureStatus } = useManager();
 
   const uploadText = useCallback(async () => {
     try {
       const added = await client.add(text);
       // const url = `https://ipfs.infura.io/ipfs/${added.path}`;
-      // TODO what about pinning?
-      setTextIPFS(added.path);
+      // setTextIPFS(added.path);
+      // TODO pinning
       return added.path;
     } catch (e) {
       console.log({ e });
@@ -231,19 +233,38 @@ const Create = () => {
 
   const handleCreateProject = useCallback(async () => {
     const hash = await uploadText();
+
     await createProject({
       title,
       textIpfsHash: hash,
       originalLanguage: 'ENG',
-      // TODO: continue here
-      initialMintPrice: BigNumber.from('20000000000000000'),
+      initialMintPrice: parseEther(firstEdMintPrice),
       firstEditionAmount: BigNumber.from(firstEdMaxAmount.toString()),
       onSuccess: () => {
-        setCurrentStep(currentStep + 1)
+        setCurrentStep(currentStep + 1);
       },
       onError: undefined
     });
-  }, [createProject, currentStep, firstEdMaxAmount, title, uploadText]);
+  }, [createProject, currentStep, firstEdMaxAmount, firstEdMintPrice, title, uploadText]);
+
+  const handleConfigure = useCallback(async() => {
+    // TODO: add animationhash
+
+    // missing the projectId
+    // deploy the contracts again
+    // and see if we can somehow fetch the projectId in the transactions by getting events
+    await configureProject({
+      projectId: "2",
+      imgHash: coverImgIPFS,
+      animationHash: "",
+      blurbHash: blurbIPFS,
+      genre,
+      subtitle,
+      onSuccess: () => {
+        setCurrentStep(currentStep + 1);
+      }
+    });
+  }, [configureProject]);
 
   const contribInitialState = {
     1: { address: '', share: 0, role: '' },
@@ -359,7 +380,6 @@ const Create = () => {
                 onSubmit={() => setCurrentStep(currentStep + 1)}
               />
             )}
-            {/* 
             {currentStep === 6 && !creatingDao && (
               <CoverImageForm
                 captureFile={captureFile}
@@ -397,6 +417,7 @@ const Create = () => {
                 onNextStep={() => setCurrentStep(currentStep + 1)}
               />
             )}
+                     
             {currentStep === 10 && !creatingDao && (
               <ConfigReviewForm
                 genre={genre}
@@ -405,9 +426,10 @@ const Create = () => {
                 imgFile={imgFile}
                 loading={loading}
                 blurbIPFS={blurbIPFS}
-                onSubmit={handleSetConfiguration}
+                onSubmit={handleConfigure}
               />
             )}
+               {/* 
             {currentStep === 11 && !creatingDao && (
               <ContributorsForm
                 contributors={contributors}
