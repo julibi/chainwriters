@@ -17,6 +17,6 @@ export type CreateArgs = {
     originalLanguage: string;
     initialMintPrice: BigNumber;
     firstEditionAmount: BigNumber;
-    onSuccess?: () => void;
+    onSuccess?: (newProjectId: string) => void;
     onError?: (e: any) => void;
 };

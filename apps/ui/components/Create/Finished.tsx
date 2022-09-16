@@ -9,21 +9,21 @@ import {
 } from '../../pages/create';
 
 interface FinishedProps {
-  daoAddress: string;
+  projectId: string;
 }
 
-const Finished = ({ daoAddress }: FinishedProps) => {
+const Finished = ({ projectId }: FinishedProps) => {
   const router = useRouter();
   return (
     <FadeIn>
     <Wrapper>
       <InputName>DONE!</InputName>
       <InputDescription>
-        {`You have completed configuring your Project's DAO Contract. Visit your newly created Project page.`}
+        {`You have completed configuring your Project. Visit the newly created Project page.`}
       </InputDescription>
       <SubmitButton onClick={(e) => {
           e.preventDefault()
-          router.push(`projects/${daoAddress}`)
+          router.push(`projects/${projectId}`)
         }}
       >
         SEE PROJECT

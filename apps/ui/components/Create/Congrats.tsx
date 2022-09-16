@@ -20,7 +20,7 @@ const Congrats = ({ onSubmit }: CongratsProps) => {
         Now, your work exists on the blockchain!
       </InputDescription>
       <InputDescription style={{ textAlign: 'center', maxWidth: 500 }}>
-        {`Now let's configure a few more things. It's optional, so you can skip them if you like.`}
+        {`Let's configure a few more things. It's optional, so you can skip them if you like.`}
       </InputDescription>
       <SubmitButton
         onClick={onSubmit}

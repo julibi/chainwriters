@@ -40,14 +40,15 @@ export function FactoryProvider({ children }: FactoryProviderProps) {
         setCreateProjectStatus('waiting');
         toast.info(<ToastLink message={'Setting up project...'} />);
         factory.provider.once(hash, async (transaction) => {
-            console.log({Tx, transaction});
-            const receipt = await Tx.wait();
-            console.log({receipt})
+          const receipt = await Tx.wait();
+          const CreationEvent = receipt.events?.find(event => event.event === 'Created');
+          const projectId = Number(CreationEvent.args.projectId).toString();
+            
           // we need a time, because the graph needs some time
           setTimeout(() => {
             setCreateProjectStatus('success');
             toast.info(<ToastLink message={'Success!'} />);
-            onSuccess?.();
+            onSuccess?.(projectId);
           }, 10000);
         });
       } catch (e) {

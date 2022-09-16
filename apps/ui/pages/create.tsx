@@ -207,16 +207,16 @@ const Create = () => {
   const [agreed, setAgreed] = useState(false);
   const [firstEdMintPrice, setFirstEdMintPrice] = useState<string>('0');
   const [firstEdMaxAmount, setFirstEdMaxAmount] = useState(0);
+  const [projectId, setProjectId] = useState<string| null>(null);
   const [imgBuffer, setImgBuffer] = useState<null | Buffer>(null);
   const [imgFile, setImgFile] = useState(null);
   const [coverImgIPFS, setCoverImgIPFS] = useState<string>('');
   const [blurb, setBlurb] = useState<string>('');
   const [blurbIPFS, setBlurbIPFS] = useState<string>('');
-  const [loading, setLoading] = useState(false);
   const [genre, setGenre] = useState('');
   const [subtitle, setSubtitle] = useState<string>('');
   const { createProject, createProjectStatus } = useFactory();
-  const { configureProject, configureStatus } = useManager();
+  const { configureProject, configureStatus, setContributors, setContributorsStatus } = useManager();
 
   const uploadText = useCallback(async () => {
     try {
@@ -240,8 +240,9 @@ const Create = () => {
       originalLanguage: 'ENG',
       initialMintPrice: parseEther(firstEdMintPrice),
       firstEditionAmount: BigNumber.from(firstEdMaxAmount.toString()),
-      onSuccess: () => {
+      onSuccess: (newProjectId: string) => {
         setCurrentStep(currentStep + 1);
+        setProjectId(newProjectId)
       },
       onError: undefined
     });
@@ -249,12 +250,8 @@ const Create = () => {
 
   const handleConfigure = useCallback(async() => {
     // TODO: add animationhash
-
-    // missing the projectId
-    // deploy the contracts again
-    // and see if we can somehow fetch the projectId in the transactions by getting events
     await configureProject({
-      projectId: "2",
+      projectId,
       imgHash: coverImgIPFS,
       animationHash: "",
       blurbHash: blurbIPFS,
@@ -264,23 +261,33 @@ const Create = () => {
         setCurrentStep(currentStep + 1);
       }
     });
-  }, [configureProject]);
+  }, [blurbIPFS, configureProject, coverImgIPFS, currentStep, genre, projectId, subtitle]);
 
   const contribInitialState = {
     1: { address: '', share: 0, role: '' },
     2: { address: '', share: 0, role: '' },
     3: { address: '', share: 0, role: '' },
   };
-  const [contributors, setContributors] = useState(contribInitialState);
-  const contributorList = useMemo(() => {
+  const [contribs, setContribs] = useState(contribInitialState);
+  const contributorsList = useMemo(() => {
     const contribsArray = [];
-    Object.entries(contributors).map((contrib) => {
+    Object.entries(contribs).map((contrib) => {
       if (contrib[1].address.length > 0 && contrib[1].share > 0) {
         contribsArray.push(contrib[1]);
       }
     });
     return contribsArray;
-  }, [contributors]);
+  }, [contribs]);
+
+  const handleSetContributors = useCallback(async() => {
+    await setContributors({
+      projectId,
+      contributorsList,
+      onSuccess: () => {
+        setCurrentStep(currentStep + 1);
+      }
+    });
+  }, [contributorsList, currentStep, projectId, setContributors]);
 
   const captureFile = (file: any) => {
     const reader = new window.FileReader();
@@ -424,21 +431,20 @@ const Create = () => {
                 subtitle={subtitle}
                 blurb={blurb}
                 imgFile={imgFile}
-                loading={loading}
+                loading={configureStatus === 'confirming' || configureStatus === 'waiting'}
                 blurbIPFS={blurbIPFS}
                 onSubmit={handleConfigure}
               />
             )}
-               {/* 
             {currentStep === 11 && !creatingDao && (
               <ContributorsForm
-                contributors={contributors}
-                contributorList={contributorList}
-                loading={loading}
+                contributors={contribs}
+                contributorsList={contributorsList}
+                loading={setContributorsStatus === 'confirming' || setContributorsStatus === 'waiting'}
                 onChange={(idx, key, val) =>
-                  setContributors({
-                    ...contributors,
-                    [idx]: { ...contributors[idx], [key]: val },
+                  setContribs({
+                    ...contribs,
+                    [idx]: { ...contribs[idx], [key]: val },
                   })
                 }
                 onNextStep={() => setCurrentStep(currentStep + 1)}
@@ -446,9 +452,8 @@ const Create = () => {
               />
             )}
             {currentStep === 12 && !creatingDao && (
-              <Finished daoAddress={daoAddress} />
+              <Finished projectId={projectId} />
             )}
-            */}
           </Form> 
         </FormWrapper>
       </Content>
