@@ -19,3 +19,8 @@ export const detectLanguage = (input: string) => {
     }
     return undefined;    
 };
+
+export const getDetectableLanguages = () => {
+  const lngDetector = new LanguageDetect();
+  return lngDetector.getLanguages();
+};

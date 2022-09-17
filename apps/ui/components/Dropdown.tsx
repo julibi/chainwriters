@@ -43,6 +43,8 @@ const Options = styled.div`
   border-radius: ${BASE_BORDER_RADIUS};
   box-shadow: ${BASE_BOX_SHADOW};
   width: 100%;
+  max-height: 200px;
+  overflow-y: scroll;
   padding: 1rem;
 
   display: flex;
@@ -69,19 +71,25 @@ const Option = styled(BaseButton)`
 `;
 
 interface OptionType {
-  id: number;
+  id: number | string;
   img?: string;
   value: string;
-  onSelect: (network: number) => void;
+  onSelect: (network: number | string) => void;
 }
 
 interface DropdownProps {
   options: OptionType[];
   preselected?: OptionType;
   width?: string | number;
+  placeholder?: string;
 }
 
-const Dropdown = ({ options, preselected, width }: DropdownProps) => {
+const Dropdown = ({
+  options,
+  preselected,
+  placeholder,
+  width,
+}: DropdownProps) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [selected, setSelected] = useState<OptionType | null>(
     preselected ?? null
@@ -121,7 +129,7 @@ const Dropdown = ({ options, preselected, width }: DropdownProps) => {
           {selected.value}
         </FlexContainer>
       ) : (
-        'Filter'
+        placeholder ?? 'Filter'
       )}
       <ArrowDown>
         <Image

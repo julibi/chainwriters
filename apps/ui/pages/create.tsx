@@ -201,11 +201,12 @@ const Create = () => {
   const [title, setTitle] = useState('');
   const [text, setText] = useState('');
   const [language, setLanguage] = useState<string | null>(null);
+  const [translation, setTranslation] = useState('');
   // const [textIPFS, setTextIPFS] = useState<null | string>(null);
   const [agreed, setAgreed] = useState(false);
   const [firstEdMintPrice, setFirstEdMintPrice] = useState<string>('0');
   const [firstEdMaxAmount, setFirstEdMaxAmount] = useState(0);
-  const [projectId, setProjectId] = useState<string| null>(null);
+  const [projectId, setProjectId] = useState<string | null>(null);
   const [imgBuffer, setImgBuffer] = useState<null | Buffer>(null);
   const [imgFile, setImgFile] = useState(null);
   const [coverImgIPFS, setCoverImgIPFS] = useState<string>('');
@@ -214,7 +215,12 @@ const Create = () => {
   const [genre, setGenre] = useState('');
   const [subtitle, setSubtitle] = useState<string>('');
   const { createProject, createProjectStatus } = useFactory();
-  const { configureProject, configureStatus, setContributors, setContributorsStatus } = useManager();
+  const {
+    configureProject,
+    configureStatus,
+    setContributors,
+    setContributorsStatus,
+  } = useManager();
 
   const uploadText = useCallback(async () => {
     try {
@@ -235,31 +241,47 @@ const Create = () => {
     await createProject({
       title,
       textIpfsHash: hash,
-      originalLanguage: 'ENG',
+      originalLanguage: language,
       initialMintPrice: parseEther(firstEdMintPrice),
       firstEditionAmount: BigNumber.from(firstEdMaxAmount.toString()),
       onSuccess: (newProjectId: string) => {
         setCurrentStep(currentStep + 1);
-        setProjectId(newProjectId)
+        setProjectId(newProjectId);
       },
-      onError: undefined
+      onError: undefined,
     });
-  }, [createProject, currentStep, firstEdMaxAmount, firstEdMintPrice, title, uploadText]);
+  }, [
+    createProject,
+    currentStep,
+    firstEdMaxAmount,
+    firstEdMintPrice,
+    language,
+    title,
+    uploadText,
+  ]);
 
-  const handleConfigure = useCallback(async() => {
+  const handleConfigure = useCallback(async () => {
     // TODO: add animationhash
     await configureProject({
       projectId,
       imgHash: coverImgIPFS,
-      animationHash: "",
+      animationHash: '',
       blurbHash: blurbIPFS,
       genre,
       subtitle,
       onSuccess: () => {
         setCurrentStep(currentStep + 1);
-      }
+      },
     });
-  }, [blurbIPFS, configureProject, coverImgIPFS, currentStep, genre, projectId, subtitle]);
+  }, [
+    blurbIPFS,
+    configureProject,
+    coverImgIPFS,
+    currentStep,
+    genre,
+    projectId,
+    subtitle,
+  ]);
 
   const contribInitialState = {
     1: { address: '', share: 0, role: '' },
@@ -277,13 +299,13 @@ const Create = () => {
     return contribsArray;
   }, [contribs]);
 
-  const handleSetContributors = useCallback(async() => {
+  const handleSetContributors = useCallback(async () => {
     await setContributors({
       projectId,
       contributorsList,
       onSuccess: () => {
         setCurrentStep(currentStep + 1);
-      }
+      },
     });
   }, [contributorsList, currentStep, projectId, setContributors]);
 
@@ -317,7 +339,9 @@ const Create = () => {
   }, [blurb, client, currentStep]);
 
   const creatingDao = useMemo(() => {
-    return createProjectStatus === 'confirming' || createProjectStatus === 'waiting';
+    return (
+      createProjectStatus === 'confirming' || createProjectStatus === 'waiting'
+    );
   }, [createProjectStatus]);
   return (
     <Root>
@@ -329,7 +353,7 @@ const Create = () => {
           <ProgressBar completed={currentStep ? (currentStep / 12) * 100 : 0} />
         </ProgressBarWrapper>
         <FormWrapper>
-        <Form>
+          <Form>
             {currentStep === 0 && (
               <NameForm
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
@@ -348,7 +372,8 @@ const Create = () => {
             )}
             {currentStep === 2 && (
               <LanguageForm
-                onKeyDown={(val: string) => setLanguage(val)}
+                onKeyDown={(val: string) => setTranslation(val)}
+                onLanguageSet={(val: string) => setLanguage(val)}
                 onSubmit={() => setCurrentStep(currentStep + 1)}
                 language={language}
                 text={text}
@@ -387,9 +412,7 @@ const Create = () => {
             )}
             {creatingDao && <Waiting />}
             {currentStep === 6 && !creatingDao && (
-              <Congrats
-                onSubmit={() => setCurrentStep(currentStep + 1)}
-              />
+              <Congrats onSubmit={() => setCurrentStep(currentStep + 1)} />
             )}
             {currentStep === 7 && !creatingDao && (
               <CoverImageForm
@@ -428,14 +451,17 @@ const Create = () => {
                 onNextStep={() => setCurrentStep(currentStep + 1)}
               />
             )}
-                     
+
             {currentStep === 11 && !creatingDao && (
               <ConfigReviewForm
                 genre={genre}
                 subtitle={subtitle}
                 blurb={blurb}
                 imgFile={imgFile}
-                loading={configureStatus === 'confirming' || configureStatus === 'waiting'}
+                loading={
+                  configureStatus === 'confirming' ||
+                  configureStatus === 'waiting'
+                }
                 blurbIPFS={blurbIPFS}
                 onSubmit={handleConfigure}
               />
@@ -444,7 +470,10 @@ const Create = () => {
               <ContributorsForm
                 contributors={contribs}
                 contributorsList={contributorsList}
-                loading={setContributorsStatus === 'confirming' || setContributorsStatus === 'waiting'}
+                loading={
+                  setContributorsStatus === 'confirming' ||
+                  setContributorsStatus === 'waiting'
+                }
                 onChange={(idx, key, val) =>
                   setContribs({
                     ...contribs,
@@ -458,7 +487,7 @@ const Create = () => {
             {currentStep === 13 && !creatingDao && (
               <Finished projectId={projectId} />
             )}
-          </Form> 
+          </Form>
         </FormWrapper>
       </Content>
     </Root>
