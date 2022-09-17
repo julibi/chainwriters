@@ -41,7 +41,8 @@ const RichText = ({ onKeyDown }: RichTextProps) => {
   const editor = useMemo(() => withHistory(withReact(createEditor())), []);
 
   return (
-    <Slate editor={editor} value={initialValue}>
+    //@ts-expect-error Property 'children' does not exist on type 'Descendant'. Property 'children' does not exist on type 'CustomText'
+    <Slate editor={editor} value={initialValue} onChange={(event) => onKeyDown(event[0]?.children[0]?.text)}>
       <Toolbar>
         <MarkButton format="bold" icon="format_bold" />
         <MarkButton format="italic" icon="format_italic" />
@@ -64,8 +65,6 @@ const RichText = ({ onKeyDown }: RichTextProps) => {
         spellCheck
         autoFocus
         onKeyDown={(event) => {
-          //@ts-expect-error innerText not inside target
-          console.log(event.target.innerText);
           //@ts-expect-error innerText not inside target
           onKeyDown(event.target.innerText);
           for (const hotkey in HOTKEYS) {

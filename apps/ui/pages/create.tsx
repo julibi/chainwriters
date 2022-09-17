@@ -8,7 +8,6 @@ import React, {
 import styled from 'styled-components';
 import { toast } from 'react-toastify';
 import { parseEther } from 'ethers/lib/utils';
-import { useWeb3React } from '@web3-react/core';
 import ProgressBar from '../components/ProgressBar';
 import {
   BaseButton,
@@ -32,10 +31,8 @@ import BlurbForm from '../components/Create/BlurbForm';
 import GenreForm from '../components/Create/GenreForm';
 import SubtitleForm from '../components/Create/SubtitleForm';
 import ConfigReviewForm from '../components/Create/ConfigReviewForm';
-import AuthorClaimForm from '../components/Create/AuthorClaimForm';
 import ContributorsForm from '../components/Create/ContributorsForm';
 import Finished from '../components/Create/Finished';
-import { BLURB_FETCH_ERROR } from '../constants';
 import {
   SectionTitle,
   SectionTitleWrapper,
@@ -44,6 +41,7 @@ import { useFactory } from '../hooks/factory';
 import { useIpfsClient } from '../hooks/useIpfsClient';
 import { BigNumber } from 'ethers';
 import { useManager } from '../hooks/manager';
+import LanguageForm from '../components/Create/LanguageForm';
 
 const Root = styled.div`
   display: flex;
@@ -198,11 +196,11 @@ export interface Contributor {
 }
 
 const Create = () => {
-  const { chainId } = useWeb3React();
   const client = useIpfsClient();
   const [currentStep, setCurrentStep] = useState(0);
   const [title, setTitle] = useState('');
   const [text, setText] = useState('');
+  const [language, setLanguage] = useState<string | null>(null);
   // const [textIPFS, setTextIPFS] = useState<null | string>(null);
   const [agreed, setAgreed] = useState(false);
   const [firstEdMintPrice, setFirstEdMintPrice] = useState<string>('0');
@@ -321,7 +319,6 @@ const Create = () => {
   const creatingDao = useMemo(() => {
     return createProjectStatus === 'confirming' || createProjectStatus === 'waiting';
   }, [createProjectStatus]);
-
   return (
     <Root>
       <SectionTitleWrapper style={{ marginBlockEnd: '4rem' }}>
@@ -349,8 +346,15 @@ const Create = () => {
                 text={text}
               />
             )}
-        
             {currentStep === 2 && (
+              <LanguageForm
+                onKeyDown={(val: string) => setLanguage(val)}
+                onSubmit={() => setCurrentStep(currentStep + 1)}
+                language={language}
+                text={text}
+              />
+            )}
+            {currentStep === 3 && (
               <AmountForm
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
                   setFirstEdMaxAmount(Number(e.target.value))
@@ -359,7 +363,7 @@ const Create = () => {
                 firstEdMaxAmount={firstEdMaxAmount}
               />
             )}
-            {currentStep === 3 && (
+            {currentStep === 4 && (
               <PriceForm
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
                   setFirstEdMintPrice(e.target.value)
@@ -369,7 +373,7 @@ const Create = () => {
               />
             )}
             {/* TODO: enable changing things here */}
-            {currentStep === 4 && !creatingDao && (
+            {currentStep === 5 && !creatingDao && (
               <ReviewForm
                 agreed={agreed}
                 title={title}
@@ -382,12 +386,12 @@ const Create = () => {
               />
             )}
             {creatingDao && <Waiting />}
-            {currentStep === 5 && !creatingDao && (
+            {currentStep === 6 && !creatingDao && (
               <Congrats
                 onSubmit={() => setCurrentStep(currentStep + 1)}
               />
             )}
-            {currentStep === 6 && !creatingDao && (
+            {currentStep === 7 && !creatingDao && (
               <CoverImageForm
                 captureFile={captureFile}
                 imgFile={imgFile}
@@ -396,7 +400,7 @@ const Create = () => {
                 onSubmit={submitImage}
               />
             )}
-            {currentStep === 7 && !creatingDao && (
+            {currentStep === 8 && !creatingDao && (
               <BlurbForm
                 blurb={blurb}
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
@@ -406,7 +410,7 @@ const Create = () => {
                 onSubmit={handleSetBlurb}
               />
             )}
-            {currentStep === 8 && !creatingDao && (
+            {currentStep === 9 && !creatingDao && (
               <GenreForm
                 genre={genre}
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
@@ -415,7 +419,7 @@ const Create = () => {
                 onNextStep={() => setCurrentStep(currentStep + 1)}
               />
             )}
-            {currentStep === 9 && !creatingDao && (
+            {currentStep === 10 && !creatingDao && (
               <SubtitleForm
                 subtitle={subtitle}
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
@@ -425,7 +429,7 @@ const Create = () => {
               />
             )}
                      
-            {currentStep === 10 && !creatingDao && (
+            {currentStep === 11 && !creatingDao && (
               <ConfigReviewForm
                 genre={genre}
                 subtitle={subtitle}
@@ -436,7 +440,7 @@ const Create = () => {
                 onSubmit={handleConfigure}
               />
             )}
-            {currentStep === 11 && !creatingDao && (
+            {currentStep === 12 && !creatingDao && (
               <ContributorsForm
                 contributors={contribs}
                 contributorsList={contributorsList}
@@ -451,7 +455,7 @@ const Create = () => {
                 onSubmit={handleSetContributors}
               />
             )}
-            {currentStep === 12 && !creatingDao && (
+            {currentStep === 13 && !creatingDao && (
               <Finished projectId={projectId} />
             )}
           </Form> 
