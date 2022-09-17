@@ -1,6 +1,5 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import styled from 'styled-components';
-import isHotkey from 'is-hotkey';
 import { Editable, withReact, useSlate, Slate } from 'slate-react';
 import {
   Editor,
@@ -15,17 +14,11 @@ import { FlatButton, INSET_BASE_BOX_SHADOW } from '../../themes';
 const StyledEditable = styled(Editable)`
   box-shadow: ${INSET_BASE_BOX_SHADOW};
   width: 100%;
-  min-height: 500px;
+  // otherwise it shrinks to 24px height somehow
+  min-height: 500px !important;
   margin-block-start: 1rem;
   padding: 1rem;
 `;
-
-const HOTKEYS = {
-  'mod+b': 'bold',
-  'mod+i': 'italic',
-  'mod+u': 'underline',
-  'mod+`': 'code',
-};
 
 const LIST_TYPES = ['numbered-list', 'bulleted-list'];
 const TEXT_ALIGN_TYPES = ['left', 'center', 'right', 'justify'];
@@ -39,10 +32,15 @@ const RichText = ({ onKeyDown }: RichTextProps) => {
   const renderElement = useCallback((props) => <Element {...props} />, []);
   const renderLeaf = useCallback((props) => <Leaf {...props} />, []);
   const editor = useMemo(() => withHistory(withReact(createEditor())), []);
-
+  const handleChange = (event) => {
+    let wholeString = '';
+    for (let i = 0; i < event.length; i++) {
+      wholeString += event[i]?.children[0]?.text + '\n\n';
+    }
+    onKeyDown(wholeString);
+  };
   return (
-    //@ts-expect-error Property 'children' does not exist on type 'Descendant'. Property 'children' does not exist on type 'CustomText'
-    <Slate editor={editor} value={initialValue} onChange={(event) => onKeyDown(event[0]?.children[0]?.text)}>
+    <Slate editor={editor} value={initialValue} onChange={handleChange}>
       <Toolbar>
         <MarkButton format="bold" icon="format_bold" />
         <MarkButton format="italic" icon="format_italic" />
@@ -61,20 +59,9 @@ const RichText = ({ onKeyDown }: RichTextProps) => {
       <StyledEditable
         renderElement={renderElement}
         renderLeaf={renderLeaf}
-        placeholder="Enter some rich text…"
+        placeholder="Enter some text…"
         spellCheck
         autoFocus
-        onKeyDown={(event) => {
-          //@ts-expect-error innerText not inside target
-          onKeyDown(event.target.innerText);
-          for (const hotkey in HOTKEYS) {
-            if (isHotkey(hotkey, event as any)) {
-              event.preventDefault();
-              const mark = HOTKEYS[hotkey];
-              toggleMark(editor, mark);
-            }
-          }
-        }}
       />
     </Slate>
   );
@@ -251,7 +238,7 @@ const MarkButton = ({ format, icon }) => {
 const initialValue: Descendant[] = [
   {
     type: 'paragraph',
-    children: [{ text: 'My magic text...' }],
+    children: [{ text: '' }],
   },
 ];
 

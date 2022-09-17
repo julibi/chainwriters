@@ -343,6 +343,7 @@ const Create = () => {
       createProjectStatus === 'confirming' || createProjectStatus === 'waiting'
     );
   }, [createProjectStatus]);
+
   return (
     <Root>
       <SectionTitleWrapper style={{ marginBlockEnd: '4rem' }}>
@@ -377,6 +378,7 @@ const Create = () => {
                 onSubmit={() => setCurrentStep(currentStep + 1)}
                 language={language}
                 text={text}
+                translation={translation}
               />
             )}
             {currentStep === 3 && (
