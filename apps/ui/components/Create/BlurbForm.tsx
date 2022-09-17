@@ -1,14 +1,14 @@
-import React, { ChangeEvent } from 'react'
+import React, { ChangeEvent } from 'react';
 import {
   ButtonsWrapper,
   FadeIn,
   Wrapper,
   InputName,
   InputDescription,
-  SubmitButton,
   TextInput,
 } from '../../pages/create';
-import { StyledInputError } from '../InputField'
+import ActionButton from '../ActionButton';
+import { StyledInputError } from '../InputField';
 
 interface BlurbFormProps {
   blurb: string;
@@ -17,7 +17,12 @@ interface BlurbFormProps {
   onSubmit: () => void;
 }
 
-const BlurbForm = ({ blurb, onChange, onNextStep, onSubmit }: BlurbFormProps) => {
+const BlurbForm = ({
+  blurb,
+  onChange,
+  onNextStep,
+  onSubmit,
+}: BlurbFormProps) => {
   return (
     <FadeIn>
       <Wrapper>
@@ -36,20 +41,25 @@ const BlurbForm = ({ blurb, onChange, onNextStep, onSubmit }: BlurbFormProps) =>
           {blurb.length < 20 ? 'At least 20 characters.' : ' '}
         </StyledInputError>
         <ButtonsWrapper>
-          <SubmitButton onClick={onNextStep}>
-            {'Skip'}
-          </SubmitButton>
-          <SubmitButton
+          <ActionButton
+            onClick={onNextStep}
+            text="Skip"
+            disabled={false}
+            loading={false}
+            margin="0"
+            color="#fff"
+          />
+          <ActionButton
             onClick={onSubmit}
             disabled={blurb.length < 20}
-            style={{ minWidth: '182px', marginInlineStart: '1rem' }}
-          >
-            Set Blurb
-          </SubmitButton>
+            loading={false}
+            margin="0 0 0 1rem"
+            text="Set Blurb"
+          />
         </ButtonsWrapper>
       </Wrapper>
     </FadeIn>
   );
-}
+};
 
-export default BlurbForm
+export default BlurbForm;

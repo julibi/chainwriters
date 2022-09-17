@@ -17,6 +17,7 @@ import {
   PINK,
   PLAIN_WHITE,
 } from '../../themes';
+import ActionButton from '../ActionButton';
 
 export const SubmitButton = styled(BaseButton)`
   text-transform: uppercase;
@@ -91,10 +92,6 @@ export const FileName = styled.span`
   height: 24px;
 `;
 
-export const StyledSubmitButton = styled(SubmitButton)`
-  color: ${PINK};
-`;
-
 export const shortenImageName = (filename: string) => {
   const filenameStart = filename.substring(0, 6);
   const filenameLength = filename.length;
@@ -158,10 +155,19 @@ const CoverImageForm = ({
               }}
             />
             <ButtonsWrapper>
-              <SubmitButton onClick={onNextStep}>Skip</SubmitButton>
-              <StyledSubmitButton disabled={!imgBuffer} onClick={onSubmit}>
-                Set Image
-              </StyledSubmitButton>
+              <ActionButton
+                disabled={false}
+                loading={false}
+                onClick={onNextStep}
+                text="Skip"
+                color="#fff"
+              />
+              <ActionButton
+                disabled={!!imgFile}
+                loading={false}
+                onClick={onSubmit}
+                text="Set Image"
+              />
             </ButtonsWrapper>
           </UploadCTAWrapper>
         </StyledImageForm>

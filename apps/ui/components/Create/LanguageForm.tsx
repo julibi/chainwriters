@@ -102,10 +102,16 @@ const LanguageForm = ({
               />
               <ActionButton
                 onClick={() => {
+                  // TODO: if it is not english, user should be able to claim it is english
                   if (isEnglish) {
+                    onLanguageSet('English');
                     onSubmit();
                   } else {
-                    onLanguageSet(detectLanguage(text)[0].toString());
+                    onLanguageSet(
+                      detectLanguage(text)
+                        ? detectLanguage(text)[0].toString()
+                        : 'Other'
+                    );
                     setShowTranslationUpload(true);
                   }
                 }}

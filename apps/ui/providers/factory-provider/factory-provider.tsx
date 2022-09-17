@@ -1,5 +1,9 @@
 import { createContext, useCallback, useMemo, useState } from 'react';
-import { CreateArgs, FactoryApi, FactoryProviderProps } from './factory-provider.types';
+import {
+  CreateArgs,
+  FactoryApi,
+  FactoryProviderProps,
+} from './factory-provider.types';
 import { toast } from 'react-toastify';
 import ToastLink from '../../components/ToastLink';
 import { WriteActionStatus } from '../manager-provider/manager-provider.types';
@@ -14,36 +18,45 @@ export const FactoryContext = createContext(defaultContext);
 
 export function FactoryProvider({ children }: FactoryProviderProps) {
   const factory = useMoonpageFactoryContract();
-  const [createProjectStatus, setCreateProjectStatus] = useState<WriteActionStatus>();
-  
+  const [createProjectStatus, setCreateProjectStatus] =
+    useState<WriteActionStatus>();
+
   const createProject = useCallback(
     async ({
-        title,
-        textIpfsHash,
-        originalLanguage,
-        initialMintPrice,
-        firstEditionAmount,
-        onSuccess,
-        onError
+      title,
+      textIpfsHash,
+      originalLanguage,
+      initialMintPrice,
+      firstEditionAmount,
+      onSuccess,
+      onError,
     }: CreateArgs) => {
-      try { 
+      try {
         setCreateProjectStatus('confirming');
-        
+        console.log({
+          title,
+          textIpfsHash,
+          originalLanguage,
+          initialMintPrice,
+          firstEditionAmount,
+        });
         const Tx = await factory.createProject(
-            title,
-            textIpfsHash,
-            originalLanguage,
-            initialMintPrice,
-            firstEditionAmount
+          title,
+          textIpfsHash,
+          originalLanguage,
+          initialMintPrice,
+          firstEditionAmount
         );
         const { hash } = Tx;
         setCreateProjectStatus('waiting');
         toast.info(<ToastLink message={'Setting up project...'} />);
         factory.provider.once(hash, async (transaction) => {
           const receipt = await Tx.wait();
-          const CreationEvent = receipt.events?.find(event => event.event === 'Created');
+          const CreationEvent = receipt.events?.find(
+            (event) => event.event === 'Created'
+          );
           const projectId = Number(CreationEvent.args.projectId).toString();
-            
+
           // we need a time, because the graph needs some time
           setTimeout(() => {
             setCreateProjectStatus('success');
@@ -52,7 +65,7 @@ export function FactoryProvider({ children }: FactoryProviderProps) {
           }, 10000);
         });
       } catch (e) {
-        console.log({e})
+        console.log({ e });
         setCreateProjectStatus('error');
         toast.error(<ToastLink message={'Something went wrong!'} />);
         onError?.(e);
@@ -63,8 +76,8 @@ export function FactoryProvider({ children }: FactoryProviderProps) {
 
   const api = useMemo(
     () => ({
-        createProject,
-        createProjectStatus
+      createProject,
+      createProjectStatus,
     }),
     [createProject, createProjectStatus]
   );
@@ -72,4 +85,4 @@ export function FactoryProvider({ children }: FactoryProviderProps) {
   return (
     <FactoryContext.Provider value={api}>{children}</FactoryContext.Provider>
   );
-};
+}
