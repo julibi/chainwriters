@@ -343,7 +343,7 @@ const Create = () => {
       createProjectStatus === 'confirming' || createProjectStatus === 'waiting'
     );
   }, [createProjectStatus]);
-  console.log({ text, title, genre });
+
   return (
     <Root>
       <SectionTitleWrapper style={{ marginBlockEnd: '4rem' }}>
@@ -403,6 +403,7 @@ const Create = () => {
             {currentStep === 5 && !creatingDao && (
               <ReviewForm
                 agreed={agreed}
+                language={language}
                 title={title}
                 text={text}
                 firstEdMaxAmount={firstEdMaxAmount}

@@ -1,13 +1,14 @@
-import React from 'react'
-import styled from 'styled-components'
+import { capitalizeFirstLetter } from '../../utils/capitalizestring';
+import React from 'react';
+import styled from 'styled-components';
 import {
   FadeIn,
   SubmitButton,
   ReviewItemWrapper,
   BlockSpan,
-  ReviewItem
+  ReviewItem,
 } from '../../pages/create';
-import Checkbox from '../Checkbox'
+import Checkbox from '../Checkbox';
 
 interface ReviewFormProps {
   agreed: boolean;
@@ -15,6 +16,7 @@ interface ReviewFormProps {
   onCheck: () => void;
   firstEdMaxAmount: number;
   firstEdMintPrice: string;
+  language: string;
   text: string;
   title: string;
   pending: boolean;
@@ -27,12 +29,13 @@ const CheckboxWrapper = styled.div`
 const ReviewForm = ({
   agreed,
   createDao,
+  language,
   title,
   text,
   firstEdMaxAmount,
   firstEdMintPrice,
   onCheck,
-  pending
+  pending,
 }: ReviewFormProps) => {
   return (
     <FadeIn>
@@ -44,6 +47,10 @@ const ReviewForm = ({
         <ReviewItemWrapper>
           <BlockSpan>Text</BlockSpan>
           <ReviewItem>{text}</ReviewItem>
+        </ReviewItemWrapper>
+        <ReviewItemWrapper>
+          <BlockSpan>Language</BlockSpan>
+          <ReviewItem>{capitalizeFirstLetter(language)}</ReviewItem>
         </ReviewItemWrapper>
         <ReviewItemWrapper>
           <BlockSpan>Max Amount Genesis Edition</BlockSpan>
@@ -73,4 +80,4 @@ const ReviewForm = ({
   );
 };
 
-export default ReviewForm
+export default ReviewForm;

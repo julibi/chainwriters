@@ -14,7 +14,6 @@ import {
   BASE_BOX_SHADOW,
   BG_NORMAL,
   INSET_BASE_BOX_SHADOW,
-  PINK,
   PLAIN_WHITE,
 } from '../../themes';
 import ActionButton from '../ActionButton';
@@ -144,7 +143,7 @@ const CoverImageForm = ({
             />
           </DragNDrop>
           <UploadCTAWrapper>
-            {/* @ts-ignore */}
+            {/* @ts-expect-error name does not exist on Blob or Mediasource */}
             <FileName>{imgFile ? shortenImageName(imgFile.name) : ''}</FileName>
             <StyledFileInput
               type="file"
@@ -163,7 +162,8 @@ const CoverImageForm = ({
                 color="#fff"
               />
               <ActionButton
-                disabled={!!imgFile}
+                // @ts-expect-error name does not exist on Blob or Mediasource
+                disabled={!imgFile?.name}
                 loading={false}
                 onClick={onSubmit}
                 text="Set Image"
