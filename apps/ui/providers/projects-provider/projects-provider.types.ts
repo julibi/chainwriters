@@ -54,11 +54,13 @@ export interface Project {
   imgIpfsHash: string | null;
   initialMintPrice: BigNumber;
   mintCount: BigNumber;
+  originalLanguage: string;
   paused: boolean;
   premintedByAuthor: BigNumber;
   startId: BigNumber;
   subtitle: string | null;
   textIpfsHash: string | null;
+  translationIpfsHash: string | null;
   title: string;
 }
 

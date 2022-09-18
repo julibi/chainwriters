@@ -69,6 +69,7 @@ contract MoonpageManager is
     mapping(uint256 => bool) public frozenProjectIds;
     mapping(uint256 => bool) public pausedProjectIds;
     mapping(uint256 => mapping(uint256 => uint256)) public editionRanges;
+    mapping(uint256 => string) public translationIpfsHashes;
 
     event ProjectCreated(
         address creator,
@@ -92,6 +93,7 @@ contract MoonpageManager is
         string newSubtitle
     );
     event TextUpdated(uint256 projectId, string newIpfsHash);
+    event TranslationUpdated(uint256 projectId, string newIpfsHash);
     event BlurbUpdated(uint256 projectId, string newIpfsHash);
     event ImageUpdated(uint256 projectId, string newIpfsHash);
     event AnimationUpdated(uint256 projectId, string newIpfsHash);
@@ -250,6 +252,16 @@ contract MoonpageManager is
         baseDatas[_projectId].textIpfsHash = _ipfsHash;
 
         emit TextUpdated(_projectId, _ipfsHash);
+    }
+
+    function updateTranslationIpfsHash(
+        uint256 _projectId,
+        string calldata _ipfsHash
+    ) external onlyCreator(_projectId) whenNotPaused {
+        require(!pausedProjectIds[_projectId], "Project is paused");
+        translationIpfsHashes[_projectId] = _ipfsHash;
+
+        emit TranslationUpdated(_projectId, _ipfsHash);
     }
 
     function updateImgIpfsHash(uint256 _projectId, string calldata _ipfsHash)

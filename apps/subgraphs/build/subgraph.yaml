@@ -6,9 +6,9 @@ dataSources:
     name: MoonpageManager
     network: mumbai
     source:
-      address: "0x1B0F597fDBb9Bb930ba9c01614d359FE4Ec0801c"
+      address: "0x329C76a27A2104315FE950059315574Fb9736bf9"
       abi: MoonpageManager
-      startBlock: 28134670
+      startBlock: 28166350
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -35,6 +35,8 @@ dataSources:
           handler: handlePremintedByAuthor
         - event: TextUpdated(uint256,string)
           handler: handleTextUpdated
+        - event: TranslationUpdated(uint256,string)
+          handler: handleTranslationUpdated
         - event: BlurbUpdated(uint256,string)
           handler: handleBlurbUpdated
         - event: ImageUpdated(uint256,string)
@@ -56,9 +58,9 @@ dataSources:
     name: MoonpageCollection
     network: mumbai
     source:
-      address: "0x619Afe3c2B5B95E650c6Ac0FaAdF1Eb612771e21"
+      address: "0x72aB32FD18edE6033389909115b5b890379c6fcE"
       abi: MoonpageCollection
-      startBlock: 28134670
+      startBlock: 28166350
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -77,9 +79,9 @@ dataSources:
     name: AuctionsManager
     network: mumbai
     source:
-      address: "0xc1616e8cA6644D0E667D03E0558ca72edE8A3eE1"
+      address: "0xDea33b85fe2343b21258E2755B813717fa842AFB"
       abi: AuctionsManager
-      startBlock: 28134670
+      startBlock: 28166350
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5

@@ -12,6 +12,7 @@ import {
   ProjectCreated,
   ProjectPaused,
   TextUpdated,
+  TranslationUpdated,
   BlurbUpdated,
   ImageUpdated,
   AnimationUpdated,
@@ -32,6 +33,7 @@ export function handleProjectCreated(event: ProjectCreated): void {
   project.createdAt = event.block.timestamp;
   project.title = event.params.title;
   project.textIpfsHash = event.params.textIpfsHash;
+  project.originalLanguage = event.params.originalLanguage;
   project.firstEditionAmount = event.params.firstEditionAmount;
   project.initialMintPrice = event.params.initialMintPrice;
   project.startId = event.params.startId;
@@ -130,6 +132,17 @@ export function handleTextUpdated(event: TextUpdated): void {
   }
 
   project.textIpfsHash = event.params.newIpfsHash;
+  project.save();
+}
+
+export function handleTranslationUpdated(event: TranslationUpdated): void {
+  let projectId = event.params.projectId.toString();
+  let project = Project.load(projectId);
+  if (!project) {
+    throw new Error(`Could not find project with ID`);
+  }
+
+  project.translationIpfsHash = event.params.newIpfsHash;
   project.save();
 }
 

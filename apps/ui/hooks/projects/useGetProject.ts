@@ -35,10 +35,12 @@ export const GET_ONE_PROJECT = gql`
       imgIpfsHash
       initialMintPrice
       mintCount
+      originalLanguage
       premintedByAuthor
       startId
       subtitle
       textIpfsHash
+      translationIpfsHash
       title
     }
   }
@@ -55,6 +57,7 @@ export function useGetProject(projectId: string) {
   const formattedData = useMemo(() => {
     if (!data) return;
     const { project } = data;
+
     const formattedContributors = project.contributors?.map((contributor) => ({
       ...contributor,
       ['sharePercentage']: BigNumber.from(contributor.sharePercentage),

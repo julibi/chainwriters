@@ -42,6 +42,7 @@ import { useIpfsClient } from '../hooks/useIpfsClient';
 import { BigNumber } from 'ethers';
 import { useManager } from '../hooks/manager';
 import LanguageForm from '../components/Create/LanguageForm';
+import TranslationForm from '../components/Create/TranslationForm';
 
 const Root = styled.div`
   display: flex;
@@ -220,23 +221,28 @@ const Create = () => {
     configureStatus,
     setContributors,
     setContributorsStatus,
+    updateTranslation,
+    updateTranslationStatus,
   } = useManager();
 
-  const uploadText = useCallback(async () => {
-    try {
-      const added = await client.add(text);
-      // const url = `https://ipfs.infura.io/ipfs/${added.path}`;
-      // setTextIPFS(added.path);
-      // TODO pinning
-      return added.path;
-    } catch (e) {
-      console.log({ e });
-      toast.error('Something went wrong while uploading your text to ipfs.');
-    }
-  }, [client, text]);
+  const uploadText = useCallback(
+    async (content: string) => {
+      try {
+        const added = await client.add(content);
+        // const url = `https://ipfs.infura.io/ipfs/${added.path}`;
+        // setTextIPFS(added.path);
+        // TODO pinning
+        return added.path;
+      } catch (e) {
+        console.log({ e });
+        toast.error('Something went wrong while uploading your text to ipfs.');
+      }
+    },
+    [client]
+  );
 
   const handleCreateProject = useCallback(async () => {
-    const hash = await uploadText();
+    const hash = await uploadText(text);
 
     await createProject({
       title,
@@ -257,8 +263,22 @@ const Create = () => {
     firstEdMintPrice,
     language,
     title,
+    text,
     uploadText,
   ]);
+
+  const handleUpdateTranslation = useCallback(async () => {
+    const hash = await uploadText(translation);
+
+    await updateTranslation({
+      projectId,
+      translationIpfsHash: hash,
+      onSuccess: () => {
+        setCurrentStep(currentStep + 1);
+      },
+      onError: undefined,
+    });
+  }, [currentStep, projectId, translation, updateTranslation, uploadText]);
 
   const handleConfigure = useCallback(async () => {
     // TODO: add animationhash
@@ -351,7 +371,7 @@ const Create = () => {
       </SectionTitleWrapper>
       <Content>
         <ProgressBarWrapper>
-          <ProgressBar completed={currentStep ? (currentStep / 12) * 100 : 0} />
+          <ProgressBar completed={currentStep ? (currentStep / 14) * 100 : 0} />
         </ProgressBarWrapper>
         <FormWrapper>
           <Form>
@@ -373,12 +393,10 @@ const Create = () => {
             )}
             {currentStep === 2 && (
               <LanguageForm
-                onKeyDown={(val: string) => setTranslation(val)}
                 onLanguageSet={(val: string) => setLanguage(val)}
                 onSubmit={() => setCurrentStep(currentStep + 1)}
                 language={language}
                 text={text}
-                translation={translation}
               />
             )}
             {currentStep === 3 && (
@@ -449,11 +467,28 @@ const Create = () => {
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
                   setSubtitle(e.target.value)
                 }
+                onNextStep={() => {
+                  if (language == 'english') {
+                    setCurrentStep(currentStep + 2);
+                  } else {
+                    setCurrentStep(currentStep + 1);
+                  }
+                }}
+              />
+            )}
+            {currentStep === 11 && (
+              <TranslationForm
+                onKeyDown={(val: string) => setTranslation(val)}
+                onSubmit={handleUpdateTranslation}
+                translation={translation}
+                pending={
+                  updateTranslationStatus === 'confirming' ||
+                  updateTranslationStatus === 'waiting'
+                }
                 onNextStep={() => setCurrentStep(currentStep + 1)}
               />
             )}
-
-            {currentStep === 11 && !creatingDao && (
+            {currentStep === 12 && !creatingDao && (
               <ConfigReviewForm
                 genre={genre}
                 subtitle={subtitle}
@@ -467,7 +502,7 @@ const Create = () => {
                 onSubmit={handleConfigure}
               />
             )}
-            {currentStep === 12 && !creatingDao && (
+            {currentStep === 13 && !creatingDao && (
               <ContributorsForm
                 contributors={contribs}
                 contributorsList={contributorsList}
@@ -485,7 +520,7 @@ const Create = () => {
                 onSubmit={handleSetContributors}
               />
             )}
-            {currentStep === 13 && !creatingDao && (
+            {currentStep === 14 && !creatingDao && (
               <Finished projectId={projectId} />
             )}
           </Form>

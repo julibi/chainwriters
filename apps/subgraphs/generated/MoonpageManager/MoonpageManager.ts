@@ -570,6 +570,28 @@ export class TokenIdIncreased__Params {
   }
 }
 
+export class TranslationUpdated extends ethereum.Event {
+  get params(): TranslationUpdated__Params {
+    return new TranslationUpdated__Params(this);
+  }
+}
+
+export class TranslationUpdated__Params {
+  _event: TranslationUpdated;
+
+  constructor(event: TranslationUpdated) {
+    this._event = event;
+  }
+
+  get projectId(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+
+  get newIpfsHash(): string {
+    return this._event.parameters[1].value.toString();
+  }
+}
+
 export class Unpaused extends ethereum.Event {
   get params(): Unpaused__Params {
     return new Unpaused__Params(this);
@@ -1831,6 +1853,29 @@ export class MoonpageManager extends ethereum.SmartContract {
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toBoolean());
   }
+
+  translationIpfsHashes(param0: BigInt): string {
+    let result = super.call(
+      "translationIpfsHashes",
+      "translationIpfsHashes(uint256):(string)",
+      [ethereum.Value.fromUnsignedBigInt(param0)]
+    );
+
+    return result[0].toString();
+  }
+
+  try_translationIpfsHashes(param0: BigInt): ethereum.CallResult<string> {
+    let result = super.tryCall(
+      "translationIpfsHashes",
+      "translationIpfsHashes(uint256):(string)",
+      [ethereum.Value.fromUnsignedBigInt(param0)]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toString());
+  }
 }
 
 export class ConstructorCall extends ethereum.Call {
@@ -2717,6 +2762,40 @@ export class UpdateTextIpfsHashCall__Outputs {
   _call: UpdateTextIpfsHashCall;
 
   constructor(call: UpdateTextIpfsHashCall) {
+    this._call = call;
+  }
+}
+
+export class UpdateTranslationIpfsHashCall extends ethereum.Call {
+  get inputs(): UpdateTranslationIpfsHashCall__Inputs {
+    return new UpdateTranslationIpfsHashCall__Inputs(this);
+  }
+
+  get outputs(): UpdateTranslationIpfsHashCall__Outputs {
+    return new UpdateTranslationIpfsHashCall__Outputs(this);
+  }
+}
+
+export class UpdateTranslationIpfsHashCall__Inputs {
+  _call: UpdateTranslationIpfsHashCall;
+
+  constructor(call: UpdateTranslationIpfsHashCall) {
+    this._call = call;
+  }
+
+  get _projectId(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+
+  get _ipfsHash(): string {
+    return this._call.inputValues[1].value.toString();
+  }
+}
+
+export class UpdateTranslationIpfsHashCall__Outputs {
+  _call: UpdateTranslationIpfsHashCall;
+
+  constructor(call: UpdateTranslationIpfsHashCall) {
     this._call = call;
   }
 }

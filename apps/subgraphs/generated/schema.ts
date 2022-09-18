@@ -336,6 +336,23 @@ export class Project extends Entity {
     this.set("textIpfsHash", Value.fromString(value));
   }
 
+  get translationIpfsHash(): string | null {
+    let value = this.get("translationIpfsHash");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set translationIpfsHash(value: string | null) {
+    if (!value) {
+      this.unset("translationIpfsHash");
+    } else {
+      this.set("translationIpfsHash", Value.fromString(<string>value));
+    }
+  }
+
   get imgIpfsHash(): string | null {
     let value = this.get("imgIpfsHash");
     if (!value || value.kind == ValueKind.NULL) {

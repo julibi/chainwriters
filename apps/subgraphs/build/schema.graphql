@@ -30,6 +30,7 @@ type Project @entity {
   createdAt: BigInt!
   title: String!
   textIpfsHash: String!
+  translationIpfsHash: String
   imgIpfsHash: String
   animationIpfsHash: String
   blurbIpfsHash: String

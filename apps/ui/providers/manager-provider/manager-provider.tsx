@@ -6,6 +6,7 @@ import {
   ManagerApi,
   ManagerProviderProps,
   SetContributorsArgs,
+  UpdateTranslationHashArgs,
   WriteActionStatus,
 } from './manager-provider.types';
 import { toast } from 'react-toastify';
@@ -19,7 +20,9 @@ const defaultContext: ManagerApi = {
   setContributors: async () => undefined,
   setContributorsStatus: 'idle',
   enableNextEdition: async () => undefined,
-  enableNextEditionStatus: 'idle'
+  enableNextEditionStatus: 'idle',
+  updateTranslation: async () => undefined,
+  updateTranslationStatus: 'idle',
 };
 
 export const ManagerContext = createContext(defaultContext);
@@ -27,9 +30,13 @@ export const ManagerContext = createContext(defaultContext);
 export function ManagerProvider({ children }: ManagerProviderProps) {
   const mpManager = useMoonpageManager();
   const [configureStatus, setConfigureStatus] = useState<WriteActionStatus>();
-  const [setContributorsStatus, setSetContributorsStatus] = useState<WriteActionStatus>();
-  const [enableNextEditionStatus, setEnableNextEditionStatus] = useState<WriteActionStatus>();
-  
+  const [setContributorsStatus, setSetContributorsStatus] =
+    useState<WriteActionStatus>();
+  const [updateTranslationStatus, setUpdateTranslationStatus] =
+    useState<WriteActionStatus>();
+  const [enableNextEditionStatus, setEnableNextEditionStatus] =
+    useState<WriteActionStatus>();
+
   const configureProject = useCallback(
     async ({
       projectId,
@@ -71,21 +78,22 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
     [mpManager]
   );
 
-  const setContributors = useCallback(async({
-    projectId,
-    contributorsList,
-    onError,
-    onSuccess,
-  }: SetContributorsArgs) => {
-     const addressesArray = [];
-     const sharesArray = [];
-     const rolesArray = [];
+  const setContributors = useCallback(
+    async ({
+      projectId,
+      contributorsList,
+      onError,
+      onSuccess,
+    }: SetContributorsArgs) => {
+      const addressesArray = [];
+      const sharesArray = [];
+      const rolesArray = [];
 
-     contributorsList?.forEach((contrib: Contributor) => {
-      addressesArray.push(contrib.address);
-      sharesArray.push(contrib.share);
-      rolesArray.push(contrib.role);
-    });
+      contributorsList?.forEach((contrib: Contributor) => {
+        addressesArray.push(contrib.address);
+        sharesArray.push(contrib.share);
+        rolesArray.push(contrib.role);
+      });
       try {
         setSetContributorsStatus('confirming');
         const Tx = await mpManager.addContributors(
@@ -96,10 +104,10 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
         );
         const { hash } = Tx;
         setSetContributorsStatus('waiting');
-        toast.info(<ToastLink message={'Adding Contributor(s)...'}/>);
-   
+        toast.info(<ToastLink message={'Adding Contributor(s)...'} />);
+
         mpManager.provider.once(hash, (transaction) => {
-          // we need a time, because the graph needs some time
+          // we need a timeout, because the graph needs some time
           setTimeout(() => {
             setSetContributorsStatus('success');
             toast.success(<ToastLink message={'Success!'} />);
@@ -111,20 +119,57 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
         toast.error(<ToastLink message={'Something went wrong!'} />);
         onError?.(e);
       }
-  }, [mpManager]);
+    },
+    [mpManager]
+  );
+
+  const updateTranslation = useCallback(
+    async ({
+      projectId,
+      translationIpfsHash,
+      onError,
+      onSuccess,
+    }: UpdateTranslationHashArgs) => {
+      try {
+        setUpdateTranslationStatus('confirming');
+        const Tx = await mpManager.updateTranslationIpfsHash(
+          projectId,
+          translationIpfsHash
+        );
+        const { hash } = Tx;
+        setUpdateTranslationStatus('waiting');
+        toast.info(<ToastLink message={'Setting Translation...'} />);
+
+        mpManager.provider.once(hash, (transaction) => {
+          // we need a timeout, because the graph needs some time
+          setTimeout(() => {
+            setUpdateTranslationStatus('success');
+            toast.success(<ToastLink message={'Success!'} />);
+            onSuccess?.();
+          }, 10000);
+        });
+      } catch (e) {
+        setUpdateTranslationStatus('error');
+        toast.error(<ToastLink message={'Something went wrong!'} />);
+        onError?.(e);
+      }
+    },
+    [mpManager]
+  );
 
   const enableNextEdition = useCallback(
-    async({
+    async ({
       projectId,
       price,
       amount,
       onError,
-      onSuccess
-    } : EnableNextEditionArgs) => {
-      
+      onSuccess,
+    }: EnableNextEditionArgs) => {
       try {
         setEnableNextEditionStatus('confirming');
-        const formattedPrice = BigNumber.from((Number(price) * 1e18).toString());
+        const formattedPrice = BigNumber.from(
+          (Number(price) * 1e18).toString()
+        );
         const Tx = await mpManager.enableNextEdition(
           projectId,
           amount,
@@ -149,7 +194,7 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
     },
     [mpManager]
   );
-  
+
   const api = useMemo(
     () => ({
       configureProject,
@@ -157,12 +202,23 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
       setContributors,
       setContributorsStatus,
       enableNextEdition,
-      enableNextEditionStatus
+      enableNextEditionStatus,
+      updateTranslation,
+      updateTranslationStatus,
     }),
-    [configureProject, configureStatus, enableNextEdition, enableNextEditionStatus, setContributors, setContributorsStatus]
+    [
+      configureProject,
+      configureStatus,
+      enableNextEdition,
+      enableNextEditionStatus,
+      setContributors,
+      setContributorsStatus,
+      updateTranslation,
+      updateTranslationStatus,
+    ]
   );
 
   return (
     <ManagerContext.Provider value={api}>{children}</ManagerContext.Provider>
   );
-};
+}

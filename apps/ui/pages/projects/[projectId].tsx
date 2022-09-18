@@ -1,9 +1,4 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useWeb3React } from '@web3-react/core';
 import Image from 'next/image';
@@ -33,7 +28,7 @@ import { useAuctions } from '../../hooks/auctions';
 import Checkbox from '../../components/Checkbox';
 import { useGetProject } from '../../hooks/projects/useGetProject';
 import { useGetProjectId } from '../../hooks/projects/useGetProjectId';
-import  useAuctionsManager from '../../hooks/useAuctionsManager';
+import useAuctionsManager from '../../hooks/useAuctionsManager';
 import ActionButton from '../../components/ActionButton';
 import { formatNumber } from '../../utils/formatNumber';
 
@@ -119,7 +114,16 @@ const ReadIndicator = styled(BaseButton)`
 `;
 
 const Author = styled.div`
-  margin-block-end: 2rem;
+  margin-block-end: 1rem;
+  padding: 1rem !important;
+  text-transform: uppercase;
+  font-family: ${INTER_BOLD};
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const Language = styled.div`
   padding: 1rem !important;
   text-transform: uppercase;
   font-family: ${INTER_BOLD};
@@ -140,6 +144,7 @@ export const Val = styled.span`
 
 const Genre = styled.div`
   padding: 1rem !important;
+  margin-block-end: 1rem;
   text-transform: uppercase;
   font-family: ${INTER_BOLD};
   display: flex;
@@ -320,7 +325,8 @@ const ProjectDetailView = () => {
   const { retriggerAuction, retriggerAuctionStatus } = useAuctions();
   const { allowedToRead } = useShowText(projectId);
   const [coverImgLink, setCoverImgLink] = useState<string>(null);
-  const [isGettingCurrentPrice, setIsGettingCurentPrice] = useState<boolean>(false);
+  const [isGettingCurrentPrice, setIsGettingCurentPrice] =
+    useState<boolean>(false);
   const [showBuyModal, setShowBuyModal] = useState<boolean>(false);
   const [currentPrice, setCurrentPrice] = useState(null);
   const [blurb, setBlurb] = useState<null | string>(null);
@@ -377,7 +383,12 @@ const ProjectDetailView = () => {
   }, [project]);
 
   const currentEdition = useMemo(
-    () => project ? project.editions.find(edition => Number(edition.edition) === project.editions.length) : undefined,
+    () =>
+      project
+        ? project.editions.find(
+            (edition) => Number(edition.edition) === project.editions.length
+          )
+        : undefined,
     [project]
   );
 
@@ -411,8 +422,8 @@ const ProjectDetailView = () => {
     setShowBuyModal(true);
   };
 
-  const handleClickBuy = useCallback(async() => {
-    if (!project?.initialMintPrice) return
+  const handleClickBuy = useCallback(async () => {
+    if (!project?.initialMintPrice) return;
     await buy({
       projectId,
       initialMintPrice: project.initialMintPrice,
@@ -420,20 +431,20 @@ const ProjectDetailView = () => {
       onSuccess: () => {
         setShowBuyModal(false);
         refetch();
-      }
+      },
     });
   }, [buy, project, projectId, refetch]);
 
-  const handleRetriggerAuction = useCallback(async() => {
+  const handleRetriggerAuction = useCallback(async () => {
     await retriggerAuction({
       projectId,
       onError: undefined,
       onSuccess: () => {
         refetch();
-      }
+      },
     });
   }, [retriggerAuction, projectId, refetch]);
-  
+
   return (
     <Root>
       {!project && isProjectLoading ? (
@@ -468,6 +479,10 @@ const ProjectDetailView = () => {
                 <Key>{'Genre '}</Key>
                 <Val>{project.genre ?? 'Unknown'}</Val>
               </Genre>
+              <Language>
+                <Key>{'Original Language '}</Key>
+                <Val>{project.originalLanguage ?? 'Unknown'}</Val>
+              </Language>
             </InfoLeft>
             <InfoRight>
               {project.editions?.length > 1 && (
@@ -480,7 +495,11 @@ const ProjectDetailView = () => {
               {project.editions?.length === 1 && (
                 <AuctionSection
                   project={project}
-                  loading={isGettingCurrentPrice || retriggerAuctionStatus === 'confirming' || retriggerAuctionStatus === 'waiting' }
+                  loading={
+                    isGettingCurrentPrice ||
+                    retriggerAuctionStatus === 'confirming' ||
+                    retriggerAuctionStatus === 'waiting'
+                  }
                   onFetchCurrentPrice={fetchCurrentPrice}
                   onRetriggerAuction={handleRetriggerAuction}
                 />
@@ -535,7 +554,9 @@ const ProjectDetailView = () => {
       {showBuyModal && (
         <BaseModal onClose={() => setShowBuyModal(false)}>
           <ContentWrapper>
-            <ModalHeader>{`Current Price: ${formatNumber(currentPrice)} MATIC`}</ModalHeader>
+            <ModalHeader>{`Current Price: ${formatNumber(
+              currentPrice
+            )} MATIC`}</ModalHeader>
             <ModalText>
               {`In a dutch auction the price keeps going down. Don't miss the
               chance and mint now!`}
@@ -547,10 +568,12 @@ const ProjectDetailView = () => {
               label={'Legal text'}
             />
             <ActionButton
-              disabled={buyStatus === 'confirming' || buyStatus === 'waiting' || !agreed}
+              disabled={
+                buyStatus === 'confirming' || buyStatus === 'waiting' || !agreed
+              }
               loading={buyStatus === 'confirming' || buyStatus === 'waiting'}
               onClick={handleClickBuy}
-              text='MINT'
+              text="MINT"
             />
           </ContentWrapper>
         </BaseModal>

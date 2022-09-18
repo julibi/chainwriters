@@ -5,15 +5,22 @@ export interface ManagerProviderProps {
   children: ReactNode;
 }
 
-export type WriteActionStatus = 'idle' | 'confirming' | 'waiting' | 'success' | 'error';
+export type WriteActionStatus =
+  | 'idle'
+  | 'confirming'
+  | 'waiting'
+  | 'success'
+  | 'error';
 
 export type ManagerApi = {
-  configureStatus: WriteActionStatus,
-  configureProject: (x: ConfigureProjectArgs) => Promise<void>,
-  setContributors: (x: SetContributorsArgs) => Promise<void>,
-  setContributorsStatus: WriteActionStatus,
-  enableNextEdition: (x: EnableNextEditionArgs) => Promise<void>,
-  enableNextEditionStatus: WriteActionStatus,
+  configureStatus: WriteActionStatus;
+  configureProject: (x: ConfigureProjectArgs) => Promise<void>;
+  setContributors: (x: SetContributorsArgs) => Promise<void>;
+  setContributorsStatus: WriteActionStatus;
+  enableNextEdition: (x: EnableNextEditionArgs) => Promise<void>;
+  enableNextEditionStatus: WriteActionStatus;
+  updateTranslation: (x: UpdateTranslationHashArgs) => Promise<void>;
+  updateTranslationStatus: WriteActionStatus;
 };
 
 export type NewConfiguration = {
@@ -33,6 +40,13 @@ export interface ConfigureProjectArgs extends NewConfiguration {
 export interface SetContributorsArgs {
   projectId: string;
   contributorsList: Contributor[];
+  onSuccess?: () => void;
+  onError?: (e: any) => void;
+}
+
+export interface UpdateTranslationHashArgs {
+  projectId: string;
+  translationIpfsHash: string;
   onSuccess?: () => void;
   onError?: (e: any) => void;
 }
