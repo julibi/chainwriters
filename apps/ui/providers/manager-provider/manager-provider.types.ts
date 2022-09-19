@@ -35,6 +35,7 @@ export interface ConfigureProjectArgs extends NewConfiguration {
   projectId: string;
   onSuccess?: () => void;
   onError?: (e: any) => void;
+  refetchWithTimeout: boolean;
 }
 
 export interface SetContributorsArgs {
@@ -42,6 +43,7 @@ export interface SetContributorsArgs {
   contributorsList: Contributor[];
   onSuccess?: () => void;
   onError?: (e: any) => void;
+  refetchWithTimeout: boolean;
 }
 
 export interface UpdateTranslationHashArgs {
@@ -49,6 +51,7 @@ export interface UpdateTranslationHashArgs {
   translationIpfsHash: string;
   onSuccess?: () => void;
   onError?: (e: any) => void;
+  refetchWithTimeout: boolean;
 }
 
 export interface EnableNextEditionArgs {

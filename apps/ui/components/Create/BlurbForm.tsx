@@ -30,8 +30,8 @@ const BlurbForm = ({
       <Wrapper>
         <InputName>BLURB</InputName>
         <InputDescription>
-          Write a short text to introduce your project and captivate readers! A
-          short summary? Or just the first few lines?
+          E.G. short introduction to your project, a summary, the first few
+          lines or description of the utility of your NFT.
         </InputDescription>
         <TextInput
           style={{ height: '200px' }}

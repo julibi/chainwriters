@@ -9,7 +9,11 @@ import {
   Element as SlateElement,
 } from 'slate';
 import { withHistory } from 'slate-history';
-import { FlatButton, INSET_BASE_BOX_SHADOW } from '../../themes';
+import {
+  FlatButton,
+  BASE_BORDER_RADIUS,
+  INSET_BASE_BOX_SHADOW,
+} from '../../themes';
 
 const StyledEditable = styled(Editable)`
   box-shadow: ${INSET_BASE_BOX_SHADOW};
@@ -18,6 +22,7 @@ const StyledEditable = styled(Editable)`
   min-height: 500px !important;
   margin-block-start: 1rem;
   padding: 1rem;
+  border-radius: ${BASE_BORDER_RADIUS};
 `;
 
 const LIST_TYPES = ['numbered-list', 'bulleted-list'];

@@ -1,10 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import {
-  PLAIN_WHITE,
-  BASE_BORDER_RADIUS,
-  BASE_BOX_SHADOW
-} from '../../themes';
+import { PLAIN_WHITE, BASE_BORDER_RADIUS, BASE_BOX_SHADOW } from '../../themes';
 
 import { SectionTitle } from '../HomePage/ProjectSection';
 import Emoji from '../Emojis';
@@ -13,8 +9,11 @@ import MoreDetails from '../../components/MoreDetails';
 import ProgressBar from '../ProgressBar';
 import ConfigureModal from './ConfigureModal';
 import ContributorsModal from './ContributorsModal';
-import { Edition, Project } from '../../providers/projects-provider/projects-provider.types';
-import { useManager } from '../../hooks/manager'; 
+import {
+  Edition,
+  Project,
+} from '../../providers/projects-provider/projects-provider.types';
+import { useManager } from '../../hooks/manager';
 import ActionButton from '../ActionButton';
 import StartAuctionsModal from './StartAuctionsModal';
 import { useCollection } from '../../hooks/collection';
@@ -39,7 +38,6 @@ const Title = styled(SectionTitle)`
   display: flex;
   flex-direction: column;
 `;
-
 
 const ProgressBarWrapper = styled.div`
   width: 100%;
@@ -84,14 +82,22 @@ const AuthorSection = ({
   projectId,
   refetch,
 }: AuthorSectionProps) => {
-  const { configureProject, configureStatus, setContributors, setContributorsStatus, enableNextEdition, enableNextEditionStatus } = useManager();
+  const {
+    configureProject,
+    configureStatus,
+    setContributors,
+    setContributorsStatus,
+    enableNextEdition,
+    enableNextEditionStatus,
+  } = useManager();
   const { startAuctions, startAuctionsStatus } = useCollection();
   const [showConfigureModal, setShowConfigureModal] = useState<boolean>(false);
   const [showContributorsModal, setShowContributorsModal] =
     useState<boolean>(false);
   const [showAuthorMintModal, setShowAuthorMintModal] =
     useState<boolean>(false);
-  const [showEnableNextEditionModal, setShowEnableNextEditionModal] = useState(false);
+  const [showEnableNextEditionModal, setShowEnableNextEditionModal] =
+    useState(false);
 
   const configured = useMemo(() => {
     let hasConfigured = false;
@@ -108,9 +114,15 @@ const AuthorSection = ({
     return hasConfigured;
   }, [projectData]);
 
-  const currentEndId = useMemo(() => currentEdition ? Number(currentEdition.endId) : 0, [currentEdition]);
+  const currentEndId = useMemo(
+    () => (currentEdition ? Number(currentEdition.endId) : 0),
+    [currentEdition]
+  );
 
-  const canTriggerNextEdition = useMemo(() => Number(projectData.currentId) > currentEndId, [currentEndId, projectData.currentId]);
+  const canTriggerNextEdition = useMemo(
+    () => Number(projectData.currentId) > currentEndId,
+    [currentEndId, projectData.currentId]
+  );
 
   const calculatedProgress = useMemo((): number => {
     let percentage = 0;
@@ -147,22 +159,27 @@ const AuthorSection = ({
     return text;
   }, [calculatedProgress]);
 
-  const handleConfigure = useCallback(async(args) => 
-    await configureProject({
-      projectId,
-      imgHash: args.imgHash,
-      animationHash: args.animationHash,
-      blurbHash: args.blurbHash,
-      genre: args.genre,
-      subtitle: args.subtitle,
-      onError: undefined,
-      onSuccess: () => {
-        setShowConfigureModal(false);
-        refetch();
-      }}
-    ), [projectId, refetch, configureProject]);
+  const handleConfigure = useCallback(
+    async (args) =>
+      await configureProject({
+        projectId,
+        imgHash: args.imgHash,
+        animationHash: args.animationHash,
+        blurbHash: args.blurbHash,
+        genre: args.genre,
+        subtitle: args.subtitle,
+        onError: undefined,
+        onSuccess: () => {
+          setShowConfigureModal(false);
+          refetch();
+        },
+        refetchWithTimeout: true,
+      }),
+    [projectId, refetch, configureProject]
+  );
 
-    const handleSetContributors = useCallback(async(contributorsList) => 
+  const handleSetContributors = useCallback(
+    async (contributorsList) =>
       await setContributors({
         projectId,
         contributorsList,
@@ -170,10 +187,14 @@ const AuthorSection = ({
         onSuccess: () => {
           setShowContributorsModal(false);
           refetch();
-        }}
-    ), [projectId, refetch, setContributors]);
+        },
+        refetchWithTimeout: true,
+      }),
+    [projectId, refetch, setContributors]
+  );
 
-    const handleStartAuctions = useCallback(async(amountForCreator: number) => 
+  const handleStartAuctions = useCallback(
+    async (amountForCreator: number) =>
       await startAuctions({
         projectId,
         amountForCreator,
@@ -181,10 +202,13 @@ const AuthorSection = ({
         onSuccess: () => {
           setShowAuthorMintModal(false);
           refetch();
-        }
-    }), [projectData.initialMintPrice, projectId, refetch, startAuctions]);
+        },
+      }),
+    [projectData.initialMintPrice, projectId, refetch, startAuctions]
+  );
 
-    const handleEnableNextEdition = useCallback(async(price: string, amount: number) => 
+  const handleEnableNextEdition = useCallback(
+    async (price: string, amount: number) =>
       await enableNextEdition({
         projectId,
         amount,
@@ -192,8 +216,10 @@ const AuthorSection = ({
         onSuccess: () => {
           setShowEnableNextEditionModal(false);
           refetch();
-        }
-    }), [enableNextEdition, projectId, refetch]);
+        },
+      }),
+    [enableNextEdition, projectId, refetch]
+  );
 
   return (
     <Root>
@@ -228,8 +254,10 @@ const AuthorSection = ({
             </p>
             <ActionButton
               disabled={configured || projectData.auctionsStarted}
-              text='Configure Your Project'
-              loading={configureStatus == 'confirming' || configureStatus == 'waiting'}
+              text="Configure Your Project"
+              loading={
+                configureStatus == 'confirming' || configureStatus == 'waiting'
+              }
               onClick={() => setShowConfigureModal(true)}
             />
           </>
@@ -255,16 +283,25 @@ const AuthorSection = ({
               done before triggering the auctions.
             </p>
             <ActionButton
-              disabled={setContributorsStatus === 'confirming' || setContributorsStatus === 'waiting' || projectData.auctionsStarted || !!projectData.contributors?.length}
-              text='Add Contributors'
-              loading={setContributorsStatus === 'confirming' || setContributorsStatus === 'waiting'}
+              disabled={
+                setContributorsStatus === 'confirming' ||
+                setContributorsStatus === 'waiting' ||
+                projectData.auctionsStarted ||
+                !!projectData.contributors?.length
+              }
+              text="Add Contributors"
+              loading={
+                setContributorsStatus === 'confirming' ||
+                setContributorsStatus === 'waiting'
+              }
               onClick={() => setShowContributorsModal(true)}
             />
           </>
         </MoreDetails>
         <MoreDetails
           open={
-            Number(projectData.premintedByAuthor) > 0 && !projectData.auctionsStarted
+            Number(projectData.premintedByAuthor) > 0 &&
+            !projectData.auctionsStarted
           }
           title={
             projectData.auctionsStarted ? (
@@ -284,9 +321,17 @@ const AuthorSection = ({
               amount of NFTs for yourself. At least 1 and max 4.
             </p>
             <ActionButton
-              disabled={startAuctionsStatus === 'confirming' || startAuctionsStatus === 'waiting' || projectData.auctionsStarted || !!Number(projectData.premintedByAuthor)}
-              text='Start Auctions'
-              loading={startAuctionsStatus === 'confirming' || startAuctionsStatus === 'waiting'}
+              disabled={
+                startAuctionsStatus === 'confirming' ||
+                startAuctionsStatus === 'waiting' ||
+                projectData.auctionsStarted ||
+                !!Number(projectData.premintedByAuthor)
+              }
+              text="Start Auctions"
+              loading={
+                startAuctionsStatus === 'confirming' ||
+                startAuctionsStatus === 'waiting'
+              }
               onClick={() => setShowAuthorMintModal(true)}
             />
           </>
@@ -305,9 +350,16 @@ const AuthorSection = ({
               the next one!
             </p>
             <ActionButton
-              disabled={!canTriggerNextEdition || enableNextEditionStatus === 'confirming' || enableNextEditionStatus === 'waiting'}
-              text='Unlock Next Edition'
-              loading={enableNextEditionStatus === 'confirming' || enableNextEditionStatus === 'waiting'}
+              disabled={
+                !canTriggerNextEdition ||
+                enableNextEditionStatus === 'confirming' ||
+                enableNextEditionStatus === 'waiting'
+              }
+              text="Unlock Next Edition"
+              loading={
+                enableNextEditionStatus === 'confirming' ||
+                enableNextEditionStatus === 'waiting'
+              }
               onClick={() => setShowEnableNextEditionModal(true)}
             />
           </>
@@ -317,22 +369,30 @@ const AuthorSection = ({
         <ConfigureModal
           onClose={() => setShowConfigureModal(false)}
           onConfigure={handleConfigure}
-          pending={configureStatus == 'confirming' || configureStatus == 'waiting'}
+          pending={
+            configureStatus == 'confirming' || configureStatus == 'waiting'
+          }
         />
       )}
       {showContributorsModal && (
         <ContributorsModal
           onClose={() => setShowContributorsModal(false)}
           onSetContributors={handleSetContributors}
-          pending={setContributorsStatus === 'confirming' || setContributorsStatus === 'waiting'}
+          pending={
+            setContributorsStatus === 'confirming' ||
+            setContributorsStatus === 'waiting'
+          }
         />
       )}
-      
+
       {showAuthorMintModal && (
         <StartAuctionsModal
           onClose={() => setShowAuthorMintModal(false)}
           onStartAuctions={handleStartAuctions}
-          pending={startAuctionsStatus === 'confirming' || startAuctionsStatus === 'waiting'}
+          pending={
+            startAuctionsStatus === 'confirming' ||
+            startAuctionsStatus === 'waiting'
+          }
           project={projectData}
         />
       )}
@@ -340,7 +400,10 @@ const AuthorSection = ({
         <EnableNextEditionModal
           onClose={() => setShowEnableNextEditionModal(false)}
           onEnableNextEdition={handleEnableNextEdition}
-          pending={enableNextEditionStatus === 'confirming' || enableNextEditionStatus === 'waiting'}
+          pending={
+            enableNextEditionStatus === 'confirming' ||
+            enableNextEditionStatus === 'waiting'
+          }
           project={projectData}
         />
       )}

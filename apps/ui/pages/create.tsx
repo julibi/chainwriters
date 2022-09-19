@@ -122,20 +122,6 @@ export const TextInput = styled.textarea`
   outline: none;
 `;
 
-export const SubmitButton = styled(BaseButton)`
-  text-transform: uppercase;
-  text-align: center;
-  color: ${PLAIN_WHITE};
-  background-color: ${BG_NORMAL};
-  border-radius: ${BASE_BORDER_RADIUS};
-  box-shadow: ${BASE_BOX_SHADOW};
-  padding: 1rem;
-
-  :disabled {
-    color: grey;
-  }
-`;
-
 export const FadeIn = styled.div`
   width: 100%;
   animation: fadein 2s;

@@ -3,12 +3,12 @@ import React from 'react';
 import styled from 'styled-components';
 import {
   FadeIn,
-  SubmitButton,
   ReviewItemWrapper,
   BlockSpan,
   ReviewItem,
 } from '../../pages/create';
 import Checkbox from '../Checkbox';
+import ActionButton from '../ActionButton';
 
 interface ReviewFormProps {
   agreed: boolean;
@@ -73,13 +73,12 @@ const ReviewForm = ({
             check={agreed}
           />
         </CheckboxWrapper>
-        <SubmitButton
+        <ActionButton
           disabled={!agreed || pending}
-          style={{ marginBlockEnd: '0', minWidth: '182px' }}
           onClick={createDao}
-        >
-          {'Create Project'}
-        </SubmitButton>
+          loading={pending}
+          text="Create Project"
+        />
       </>
     </FadeIn>
   );

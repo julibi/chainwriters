@@ -1,25 +1,17 @@
 import React, { ChangeEvent, FormEvent, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import InputField from '../InputField';
-import Loading from '../Loading';
 import {
   FadeIn,
   Wrapper,
   InputName,
   InputDescription,
 } from '../../pages/create';
-import {
-  BaseButton,
-  BASE_BORDER_RADIUS,
-  BASE_BOX_SHADOW,
-  BG_NORMAL,
-  PINK,
-  PLAIN_WHITE,
-} from '../../themes';
 import validateAddress from '../../utils/validateAddress';
 import { truncateAddress } from '../WalletIndicator';
 import { Contributor } from '../../providers/projects-provider/projects-provider.types';
 import ActionButton from '../ActionButton';
+import { PINK } from '../../themes';
 
 const ContribList = styled.ul`
   padding: 0;
@@ -43,25 +35,6 @@ const ContribsError = styled.div`
   color: ${PINK};
   margin-block-end: 2rem;
   text-align: center;
-`;
-
-const SubmitButton = styled(BaseButton)`
-  text-transform: uppercase;
-  text-align: center;
-  color: ${PLAIN_WHITE};
-  background-color: ${BG_NORMAL};
-  border-radius: ${BASE_BORDER_RADIUS};
-  box-shadow: ${BASE_BOX_SHADOW};
-  padding: 1rem;
-
-  :disabled {
-    color: grey;
-  }
-`;
-
-const AddContribButton = styled(SubmitButton)`
-  width: 100%;
-  margin-block-end: 2rem;
 `;
 
 const CTAContainer = styled.div`
@@ -201,7 +174,7 @@ const ContributorsForm = ({
           ) : (
             ''
           )}
-          <AddContribButton
+          <ActionButton
             disabled={
               loading ||
               contributorsList.length < 1 ||
@@ -209,34 +182,39 @@ const ContributorsForm = ({
               contributorsList.length < formsAmount ||
               shareSelf < 1
             }
+            loading={false}
             onClick={() => setFormsAmount(formsAmount + 1)}
-          >
-            + Add More
-          </AddContribButton>
-          <ContribButtonContainer>
-            {onNextStep && (
-              <SubmitButton
-                style={{ marginInlineEnd: '1rem' }}
+            text="+ Add More"
+            color="#fff"
+            margin="1rem 0 0 0"
+            width="325px"
+          />
+          {onNextStep && (
+            <ContribButtonContainer>
+              <ActionButton
                 onClick={onNextStep}
-                disabled={loading}
-              >
-                {contributorsList.length > 0 ? 'Continue' : 'Skip'}
-              </SubmitButton>
-            )}
-            <ActionButton
-              onClick={onSubmit}
-              disabled={
-                loading ||
-                contributorsList.length > 3 ||
-                contributorsList.length < 1 ||
-                shareSelf < 1
-              }
-              loading={loading}
-              text='Set Contributors'
-              margin='0'
-              width='100%'
-            />     
-          </ContribButtonContainer>
+                disabled={false}
+                loading={false}
+                text="Skip"
+                color="#fff"
+                margin="2rem 1rem 0 0"
+                width="30%"
+              />
+              <ActionButton
+                onClick={onSubmit}
+                disabled={
+                  loading ||
+                  contributorsList.length > 3 ||
+                  contributorsList.length < 1 ||
+                  shareSelf < 1
+                }
+                loading={loading}
+                text="Set Contributors"
+                margin="2rem 0 0 1rem"
+                width="70%"
+              />
+            </ContribButtonContainer>
+          )}
         </CTAContainer>
       </Wrapper>
     </FadeIn>

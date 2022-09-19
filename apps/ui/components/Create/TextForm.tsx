@@ -1,7 +1,13 @@
 import React from 'react';
-import { FadeIn, Wrapper, InputName, SubmitButton } from '../../pages/create';
+import styled from 'styled-components';
+import { FadeIn, Wrapper, InputName } from '../../pages/create';
+import ActionButton from '../ActionButton';
 import { StyledInputError } from '../InputField';
 import RichText from './RichText';
+
+const RichTextWrapper = styled.section`
+  margin-block-end: 3rem;
+`;
 
 interface TextFormProps {
   onSubmit: () => void;
@@ -14,14 +20,19 @@ const TextForm = ({ onSubmit, onKeyDown, text }: TextFormProps) => {
     <FadeIn>
       <Wrapper>
         <InputName>TEXT</InputName>
-
-        <RichText onKeyDown={(val) => onKeyDown(val)} />
+        <RichTextWrapper>
+          <RichText onKeyDown={(val) => onKeyDown(val)} />
+        </RichTextWrapper>
         <StyledInputError>
           {text.trim().length < 1 ? 'At least 1 character.' : ' '}
         </StyledInputError>
-        <SubmitButton onClick={onSubmit} disabled={text.trim().length < 1}>
-          {'Continue'}
-        </SubmitButton>
+        <ActionButton
+          onClick={onSubmit}
+          disabled={text.trim().length < 1}
+          loading={false}
+          text="Continue"
+          margin="1rem 0 0 0 "
+        />
       </Wrapper>
     </FadeIn>
   );

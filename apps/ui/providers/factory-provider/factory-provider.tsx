@@ -57,12 +57,9 @@ export function FactoryProvider({ children }: FactoryProviderProps) {
           );
           const projectId = Number(CreationEvent.args.projectId).toString();
 
-          // we need a time, because the graph needs some time
-          setTimeout(() => {
-            setCreateProjectStatus('success');
-            toast.info(<ToastLink message={'Success!'} />);
-            onSuccess?.(projectId);
-          }, 10000);
+          setCreateProjectStatus('success');
+          toast.info(<ToastLink message={'Success!'} />);
+          onSuccess?.(projectId);
         });
       } catch (e) {
         console.log({ e });

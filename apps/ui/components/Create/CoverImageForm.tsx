@@ -9,28 +9,12 @@ import {
   Wrapper,
 } from '../../pages/create';
 import {
-  BaseButton,
   BASE_BORDER_RADIUS,
-  BASE_BOX_SHADOW,
   BG_NORMAL,
   INSET_BASE_BOX_SHADOW,
   PLAIN_WHITE,
 } from '../../themes';
 import ActionButton from '../ActionButton';
-
-export const SubmitButton = styled(BaseButton)`
-  text-transform: uppercase;
-  text-align: center;
-  color: ${PLAIN_WHITE};
-  background-color: ${BG_NORMAL};
-  border-radius: ${BASE_BORDER_RADIUS};
-  box-shadow: ${BASE_BOX_SHADOW};
-  padding: 1rem;
-
-  :disabled {
-    color: grey;
-  }
-`;
 
 export const StyledImageForm = styled.form`
   display: flex;

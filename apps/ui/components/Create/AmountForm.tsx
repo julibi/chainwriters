@@ -1,12 +1,17 @@
 import React, { ChangeEvent } from 'react';
+import styled from 'styled-components';
 import {
   FadeIn,
   Wrapper,
   InputName,
   InputDescription,
-  SubmitButton,
 } from '../../pages/create';
+import ActionButton from '../ActionButton';
 import InputField from '../InputField';
+
+const InputWrapper = styled.div`
+  width: 230px;
+`;
 
 interface AmountFormProps {
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
@@ -30,15 +35,24 @@ const AmountForm = ({
           that you can only trigger the sale of a subsequent edition after the
           Genesis Edition has sold out.
         </InputDescription>
-        <InputField
-          value={firstEdMaxAmount}
-          onChange={onChange}
-          placeholder={'2000'}
-          error={(firstEdMaxAmount > 1000 || firstEdMaxAmount < 10) && 'Min 10, max 1000.'}
+        <InputWrapper>
+          <InputField
+            value={firstEdMaxAmount}
+            onChange={onChange}
+            placeholder={'2000'}
+            error={
+              (firstEdMaxAmount > 1000 || firstEdMaxAmount < 10) &&
+              'Min 10, max 1000.'
+            }
+          />
+        </InputWrapper>
+        <ActionButton
+          onClick={onSubmit}
+          disabled={firstEdMaxAmount > 1000 || firstEdMaxAmount < 10}
+          text="Continue"
+          loading={false}
+          margin="1rem 0 0 0"
         />
-        <SubmitButton onClick={onSubmit} disabled={firstEdMaxAmount > 1000 || firstEdMaxAmount < 10}>
-          {'Continue'}
-        </SubmitButton>
       </Wrapper>
     </FadeIn>
   );

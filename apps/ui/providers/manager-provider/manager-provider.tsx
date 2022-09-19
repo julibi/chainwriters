@@ -47,6 +47,7 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
       subtitle,
       onError,
       onSuccess,
+      refetchWithTimeout = false,
     }: ConfigureProjectArgs) => {
       try {
         setConfigureStatus('confirming');
@@ -61,13 +62,20 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
         const { hash } = Tx;
         setConfigureStatus('waiting');
         toast.info(<ToastLink message={'Configuring...'} />);
+        const handleSuccess = () => {
+          setConfigureStatus('success');
+          toast.info(<ToastLink message={'Success!'} />);
+          onSuccess?.();
+        };
         mpManager.provider.once(hash, async (transaction) => {
-          // we need a time, because the graph needs some time
-          setTimeout(() => {
-            setConfigureStatus('success');
-            toast.info(<ToastLink message={'Success!'} />);
-            onSuccess?.();
-          }, 10000);
+          // we need a timeout, because the graph needs some time
+          if (refetchWithTimeout) {
+            setTimeout(() => {
+              handleSuccess();
+            }, 10000);
+          } else {
+            handleSuccess();
+          }
         });
       } catch (e) {
         setConfigureStatus('error');
@@ -84,6 +92,7 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
       contributorsList,
       onError,
       onSuccess,
+      refetchWithTimeout = false,
     }: SetContributorsArgs) => {
       const addressesArray = [];
       const sharesArray = [];
@@ -105,14 +114,20 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
         const { hash } = Tx;
         setSetContributorsStatus('waiting');
         toast.info(<ToastLink message={'Adding Contributor(s)...'} />);
-
+        const handleSuccess = () => {
+          setSetContributorsStatus('success');
+          toast.success(<ToastLink message={'Success!'} />);
+          onSuccess?.();
+        };
         mpManager.provider.once(hash, (transaction) => {
           // we need a timeout, because the graph needs some time
-          setTimeout(() => {
-            setSetContributorsStatus('success');
-            toast.success(<ToastLink message={'Success!'} />);
-            onSuccess?.();
-          }, 10000);
+          if (refetchWithTimeout) {
+            setTimeout(() => {
+              handleSuccess();
+            }, 10000);
+          } else {
+            handleSuccess();
+          }
         });
       } catch (e) {
         setSetContributorsStatus('error');
@@ -129,6 +144,7 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
       translationIpfsHash,
       onError,
       onSuccess,
+      refetchWithTimeout = false,
     }: UpdateTranslationHashArgs) => {
       try {
         setUpdateTranslationStatus('confirming');
@@ -139,14 +155,20 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
         const { hash } = Tx;
         setUpdateTranslationStatus('waiting');
         toast.info(<ToastLink message={'Setting Translation...'} />);
-
+        const handleSuccess = () => {
+          setUpdateTranslationStatus('success');
+          toast.success(<ToastLink message={'Success!'} />);
+          onSuccess?.();
+        };
         mpManager.provider.once(hash, (transaction) => {
-          // we need a timeout, because the graph needs some time
-          setTimeout(() => {
-            setUpdateTranslationStatus('success');
-            toast.success(<ToastLink message={'Success!'} />);
-            onSuccess?.();
-          }, 10000);
+          if (refetchWithTimeout) {
+            // we need a timeout, because the graph needs some time
+            setTimeout(() => {
+              handleSuccess();
+            }, 10000);
+          } else {
+            handleSuccess();
+          }
         });
       } catch (e) {
         setUpdateTranslationStatus('error');
