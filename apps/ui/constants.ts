@@ -20,3 +20,5 @@ export const GENRES = [
   'Screenplay',
   'Short story',
 ];
+export const DEFAULT_COVER_IMAGE_IPFS_HASH =
+  'QmcfMQgmbwUUqhpagyKNwBQ4zMe6NpMuupASNfMhRh32zS';

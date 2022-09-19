@@ -5,6 +5,7 @@ import {
   ProjectResult,
   ProjectVars,
 } from '../../providers/projects-provider/projects-provider.types';
+import { DEFAULT_COVER_IMAGE_IPFS_HASH } from 'apps/ui/constants';
 
 export const GET_ONE_PROJECT = gql`
   query oneProjectQuery($id: String!) {
@@ -79,6 +80,10 @@ export function useGetProject(projectId: string) {
       premintedByAuthor: BigNumber.from(project.premintedByAuthor),
       contributors: formattedContributors,
       editions: formattedEditions,
+      imgIpfsHash:
+        data.project.imgIpfsHash === DEFAULT_COVER_IMAGE_IPFS_HASH
+          ? null
+          : data.project.imgIpfsHash,
     };
   }, [data]);
 

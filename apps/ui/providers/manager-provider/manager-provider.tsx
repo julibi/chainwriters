@@ -13,6 +13,7 @@ import { toast } from 'react-toastify';
 import ToastLink from '../../components/ToastLink';
 import { Contributor } from '../projects-provider/projects-provider.types';
 import { BigNumber } from 'ethers';
+import { DEFAULT_COVER_IMAGE_IPFS_HASH } from '../../constants';
 
 const defaultContext: ManagerApi = {
   configureProject: async () => undefined,
@@ -51,6 +52,7 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
     }: ConfigureProjectArgs) => {
       try {
         setConfigureStatus('confirming');
+        imgHash = imgHash.length ? imgHash : DEFAULT_COVER_IMAGE_IPFS_HASH;
         const Tx = await mpManager.configureProjectDetails(
           projectId,
           imgHash,

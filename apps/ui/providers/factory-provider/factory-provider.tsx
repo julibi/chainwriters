@@ -33,13 +33,6 @@ export function FactoryProvider({ children }: FactoryProviderProps) {
     }: CreateArgs) => {
       try {
         setCreateProjectStatus('confirming');
-        console.log({
-          title,
-          textIpfsHash,
-          originalLanguage,
-          initialMintPrice,
-          firstEditionAmount,
-        });
         const Tx = await factory.createProject(
           title,
           textIpfsHash,
