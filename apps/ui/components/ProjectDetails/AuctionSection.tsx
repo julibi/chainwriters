@@ -1,31 +1,14 @@
 import React, { useCallback, useMemo } from 'react';
 import styled from 'styled-components';
 import { formatEther } from '@ethersproject/units';
-import {
-  BASE_BORDER_RADIUS,
-  BASE_BOX_SHADOW,
-  PINK,
-  INTER_BOLD,
-} from '../../themes';
+import { BASE_BORDER_RADIUS, BASE_BOX_SHADOW, PINK } from '../../themes';
 import Countdown from '../Countdown';
 import Loading from '../Loading';
 import PieChart from '../PieChart';
-import {
-  Key,
-  Val,
-  StyledPrimaryButton,
-} from '../../pages/projects/[projectId]';
+import { StyledPrimaryButton } from '../../pages/projects/[projectId]';
 import { Project } from '../../providers/projects-provider/projects-provider.types';
 import { BigNumber } from 'ethers';
-
-const AuctionTitle = styled.h2`
-  text-align: center;
-  text-transform: uppercase;
-  font-family: ${INTER_BOLD};
-  margin-block-start: -1rem;
-  margin-block-end: 3rem;
-  padding: 0;
-`;
+import Title from '../Title';
 
 const InfoBlock = styled.div`
   width: 40%;
@@ -94,45 +77,34 @@ const AuctionSection = ({
     if (!project) return;
     const { auctionsStarted, auctionsEnded, currentAuctionExpiresAt } = project;
     if (auctionsEnded) {
-      return <Key style={{ textAlign: 'center' }}>{'Auctions finished'}</Key>;
+      return <Title size="xs">{'Auctions finished'}</Title>;
     }
     if (auctionsStarted) {
       if (Number(currentAuctionExpiresAt) > now) {
         return (
           <>
-            <Key>{'Auction ends in'}</Key>
-            <Val
-              style={{
-                fontSize: '22px',
-                color: `${PINK}`,
-                fontFamily: 'Inter Bold',
-              }}
-            >
+            <Title size="xs">{'Auction ends in'}</Title>
+            <Title size="xs" color={PINK}>
               <Countdown end={Number(currentAuctionExpiresAt)} />
-            </Val>
+            </Title>
           </>
         );
       } else {
-        return <Key style={{ textAlign: 'center' }}>{'Auction expired'}</Key>;
+        return <Title size="xs">{'Auction expired'}</Title>;
       }
     }
-    return (
-      <Key style={{ textAlign: 'center' }}>{'Auction Has Not Started Yet'}</Key>
-    );
+    return <Title size="xs">{'Auction Has Not Started Yet'}</Title>;
   }, [project]);
 
   return (
     <>
-      <AuctionTitle>AUCTION</AuctionTitle>
+      <Title size="m">Auction</Title>
       <FlexWrapper>
         <InfoBlock>{showsAuctionText()}</InfoBlock>
         <InfoBlock>
-          <Key>{'Starting Price'}</Key>
-          {project && (
-            <Val>{`${formatEther(
-              parseInt(project.editions[0].mintPrice._hex, 16).toString()
-            )} MATIC`}</Val>
-          )}
+          <Title size="xs">{`Starting Price ${formatEther(
+            parseInt(project.editions[0].mintPrice._hex, 16).toString()
+          )} MATIC`}</Title>
         </InfoBlock>
       </FlexWrapper>
       <PieChartWrapper>
@@ -140,15 +112,7 @@ const AuctionSection = ({
       </PieChartWrapper>
       <FlexWrapper style={{ marginBlockEnd: '0' }}>
         <InfoBlock>
-          <Key>{'Minted'}</Key>
-          <Val
-            style={{
-              fontSize: '22px',
-              fontFamily: 'Inter Bold',
-            }}
-          >
-            {Number(totalSupply)}
-          </Val>
+          <Title size="xs">{`Minted: ${Number(totalSupply)}`}</Title>
         </InfoBlock>
         {project.auctionsStarted && !project.auctionsEnded && (
           <>

@@ -196,6 +196,7 @@ const Create = () => {
   const [projectId, setProjectId] = useState<string | null>(null);
   const [imgBuffer, setImgBuffer] = useState<null | Buffer>(null);
   const [imgFile, setImgFile] = useState(null);
+  const [isUploadingImage, setIsUploadingImage] = useState<boolean>(false);
   const [coverImgIPFS, setCoverImgIPFS] = useState<string>('');
   const [blurb, setBlurb] = useState<string>('');
   const [blurbIPFS, setBlurbIPFS] = useState<string>('');
@@ -274,6 +275,7 @@ const Create = () => {
         setCurrentStep(currentStep + 1);
       },
       onError: undefined,
+      refetchWithTimeout: false,
     });
   }, [currentStep, projectId, translation, updateTranslation, uploadText]);
 
@@ -289,6 +291,7 @@ const Create = () => {
       onSuccess: () => {
         setCurrentStep(currentStep + 1);
       },
+      refetchWithTimeout: false,
     });
   }, [
     blurbIPFS,
@@ -323,6 +326,7 @@ const Create = () => {
       onSuccess: () => {
         setCurrentStep(currentStep + 1);
       },
+      refetchWithTimeout: false,
     });
   }, [contributorsList, currentStep, projectId, setContributors]);
 
@@ -340,12 +344,14 @@ const Create = () => {
 
   const submitImage = useCallback(
     async (event: FormEvent<HTMLButtonElement>) => {
+      setIsUploadingImage(true);
       event.preventDefault();
       const added = await client.add(imgBuffer);
       // const url = `https://ipfs.infura.io/ipfs/${added.path}`;
       // TODO what about pinning?
       setCoverImgIPFS(added.path);
       setCurrentStep(currentStep + 1);
+      setIsUploadingImage(false);
     },
     [client, imgBuffer, currentStep]
   );
@@ -433,7 +439,7 @@ const Create = () => {
             {currentStep === 6 && !creatingDao && (
               <Congrats
                 onSubmit={() => {
-                  if (language == 'english') {
+                  if (language == 'English') {
                     setCurrentStep(currentStep + 2);
                   } else {
                     setCurrentStep(currentStep + 1);
@@ -461,6 +467,7 @@ const Create = () => {
                 imgBuffer={imgBuffer}
                 onNextStep={() => setCurrentStep(currentStep + 1)}
                 onSubmit={submitImage}
+                pending={isUploadingImage}
                 reset={() => setCoverImgIPFS('')}
               />
             )}

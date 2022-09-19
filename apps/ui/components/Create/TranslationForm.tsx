@@ -1,4 +1,4 @@
-import { FadeIn, Wrapper } from '../../pages/create';
+import { FadeIn, InputName, Wrapper } from '../../pages/create';
 import React from 'react';
 import styled from 'styled-components';
 import ActionButton from '../ActionButton';
@@ -45,6 +45,7 @@ const TranslationForm = ({
     <FadeIn>
       <Wrapper>
         <FlexColumn>
+          <InputName>Translation</InputName>
           <Text>
             If available, provide an English translation for your original text.
           </Text>

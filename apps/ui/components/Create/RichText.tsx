@@ -17,12 +17,13 @@ import {
 
 const StyledEditable = styled(Editable)`
   box-shadow: ${INSET_BASE_BOX_SHADOW};
-  width: 100%;
   // otherwise it shrinks to 24px height somehow
   min-height: 500px !important;
   margin-block-start: 1rem;
   padding: 1rem;
   border-radius: ${BASE_BORDER_RADIUS};
+  overflow-wrap: anywhere;
+  font-family: monospace;
 `;
 
 const LIST_TYPES = ['numbered-list', 'bulleted-list'];

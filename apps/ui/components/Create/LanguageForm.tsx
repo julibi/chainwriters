@@ -77,7 +77,9 @@ const LanguageForm = ({
           <FlexColumn>
             <InputDescription>
               {`The original language of your text seems to be ${
-                detectLanguage(text) ? detectLanguage(text)[0] : 'english'
+                detectLanguage(text)
+                  ? capitalizeFirstLetter(detectLanguage(text)[0].toString())
+                  : 'English'
               }. Is that correct?`}
             </InputDescription>
             <FlexRow>
@@ -93,8 +95,10 @@ const LanguageForm = ({
                 onClick={() => {
                   onLanguageSet(
                     detectLanguage(text)
-                      ? detectLanguage(text)[0].toString()
-                      : 'Other'
+                      ? capitalizeFirstLetter(
+                          detectLanguage(text)[0].toString()
+                        )
+                      : 'English'
                   );
                   onSubmit();
                 }}

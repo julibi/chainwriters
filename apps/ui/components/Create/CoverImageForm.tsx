@@ -49,7 +49,6 @@ export const StyledFileInput = styled.input`
   ::-webkit-file-upload-button {
     width: 100%;
     border-width: 0;
-    text-transform: uppercase;
     text-align: center;
     color: ${BG_NORMAL};
     background-color: ${PLAIN_WHITE};
@@ -89,6 +88,7 @@ interface CoverImageFormProps {
   imgFile: Blob | MediaSource;
   onNextStep: () => void;
   onSubmit: (e: FormEvent<HTMLButtonElement>) => Promise<void>;
+  pending: boolean;
   reset: () => void;
 }
 
@@ -98,6 +98,7 @@ const CoverImageForm = ({
   imgFile,
   onNextStep,
   onSubmit,
+  pending,
   reset,
 }: CoverImageFormProps) => {
   return (
@@ -132,6 +133,7 @@ const CoverImageForm = ({
             {/* @ts-expect-error name does not exist on Blob or Mediasource */}
             <FileName>{imgFile ? shortenImageName(imgFile.name) : ''}</FileName>
             <StyledFileInput
+              disabled={pending}
               type="file"
               onChange={(e: ChangeEvent<HTMLInputElement>) => {
                 e.preventDefault();
@@ -141,7 +143,7 @@ const CoverImageForm = ({
             />
             <ButtonsWrapper>
               <ActionButton
-                disabled={false}
+                disabled={pending}
                 loading={false}
                 onClick={() => {
                   reset();
@@ -152,8 +154,8 @@ const CoverImageForm = ({
               />
               <ActionButton
                 // @ts-expect-error name does not exist on Blob or Mediasource
-                disabled={!imgFile?.name}
-                loading={false}
+                disabled={!imgFile?.name || pending}
+                loading={pending}
                 onClick={onSubmit}
                 text="Set Image"
               />

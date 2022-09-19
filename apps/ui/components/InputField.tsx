@@ -1,5 +1,5 @@
-import React, { FormEvent } from 'react'
-import styled from 'styled-components'
+import React, { FormEvent } from 'react';
+import styled from 'styled-components';
 import { BaseInput, PINK } from '../themes';
 
 const Root = styled.div`
@@ -9,12 +9,13 @@ const Root = styled.div`
 
 const StyledLabel = styled.label`
   display: inline-block;
-  margin-block-end: .5rem;
+  margin-block-end: 0.5rem;
 `;
 
 export const StyledInput = styled(BaseInput)`
   display: inline-block;
   margin-block-end: 1rem;
+  font-family: monospace;
 `;
 
 export const StyledInputError = styled.span`
@@ -43,9 +44,8 @@ const InputField = ({
   placeholder = '',
   label,
   style,
-  type = 'text'
+  type = 'text',
 }: InputFieldTypes) => {
-
   return (
     <Root>
       <StyledLabel>{label}</StyledLabel>
@@ -62,4 +62,4 @@ const InputField = ({
   );
 };
 
-export default InputField
+export default InputField;

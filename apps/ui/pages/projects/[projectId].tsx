@@ -31,6 +31,7 @@ import { useGetProjectId } from '../../hooks/projects/useGetProjectId';
 import useAuctionsManager from '../../hooks/useAuctionsManager';
 import ActionButton from '../../components/ActionButton';
 import { formatNumber } from '../../utils/formatNumber';
+import Title from '../../components/Title';
 
 const Root = styled.div`
   display: flex;
@@ -116,8 +117,6 @@ const ReadIndicator = styled(BaseButton)`
 const Author = styled.div`
   margin-block-end: 1rem;
   padding: 1rem !important;
-  text-transform: uppercase;
-  font-family: ${INTER_BOLD};
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -125,52 +124,16 @@ const Author = styled.div`
 
 const Language = styled.div`
   padding: 1rem !important;
-  text-transform: uppercase;
-  font-family: ${INTER_BOLD};
   display: flex;
   justify-content: space-between;
   align-items: center;
 `;
 
-export const Key = styled.span`
-  display: inline-block;
-`;
-
-export const Val = styled.span`
-  display: inline-block;
-  font-family: ${INTER_BOLD};
-  text-transform: default;
-`;
-
 const Genre = styled.div`
   padding: 1rem !important;
   margin-block-end: 1rem;
-  text-transform: uppercase;
-  font-family: ${INTER_BOLD};
   display: flex;
   justify-content: space-between;
-`;
-
-export const Title = styled(SectionTitle)`
-  text-align: center;
-  margin-block-end: 2rem;
-  display: flex;
-  flex-direction: column;
-`;
-
-const Info = styled.h4`
-  display: inline-block;
-  margin-block-start: 0;
-  padding: 0.5rem 1rem;
-  border-radius: ${BASE_BORDER_RADIUS};
-  box-shadow: ${BASE_BOX_SHADOW};
-`;
-
-const Subtitle = styled(Info)`
-  font-size: 14px;
-  margin: 0;
-  padding: 0;
-  box-shadow: none;
 `;
 
 export const StyledPrimaryButton = styled(PrimaryButton)`
@@ -453,10 +416,12 @@ const ProjectDetailView = () => {
         <>
           <MainInfoWrapper>
             <InfoLeft>
-              <Title>
-                {project.title}
-                {project.subtitle && <Subtitle>{project.subtitle}</Subtitle>}
-              </Title>
+              <Title padding="1rem 1rem 0 1rem">{project.title}</Title>
+              {project.subtitle && (
+                <Title size="s" padding="0 1rem 1rem 1rem">
+                  {project.subtitle}
+                </Title>
+              )}
               <ImageWrapper>
                 {allowedToRead && (
                   <ReadIndicator onClick={handleClickRead}>READ</ReadIndicator>
@@ -472,16 +437,28 @@ const ProjectDetailView = () => {
                 />
               </ImageWrapper>
               <Author>
-                <Key>{'Author '}</Key>
-                <Val>{truncateAddress(project.creator)}</Val>
+                <Title padding="0" size="xs" width="fit-content">
+                  {'Author '}
+                </Title>
+                <Title padding="0" size="xs" width="fit-content">
+                  {truncateAddress(project.creator)}
+                </Title>
               </Author>
               <Genre>
-                <Key>{'Genre '}</Key>
-                <Val>{project.genre ?? 'Unknown'}</Val>
+                <Title padding="0" size="xs" width="fit-content">
+                  {'Genre '}
+                </Title>
+                <Title padding="0" size="xs" width="fit-content">
+                  {project.genre ?? 'Unknown'}
+                </Title>
               </Genre>
               <Language>
-                <Key>{'Original Language '}</Key>
-                <Val>{project.originalLanguage ?? 'Unknown'}</Val>
+                <Title padding="0" size="xs" width="fit-content">
+                  {'Original Language '}
+                </Title>
+                <Title padding="0" size="xs" width="fit-content">
+                  {project.originalLanguage ?? 'Unknown'}
+                </Title>
               </Language>
             </InfoLeft>
             <InfoRight>
@@ -507,7 +484,7 @@ const ProjectDetailView = () => {
             </InfoRight>
           </MainInfoWrapper>
           <DescriptionSection>
-            <Title style={{ maxWidth: '200px' }}>Blurb</Title>
+            <Title>Blurb</Title>
             <Description>
               {blurb ?? <Loading height={20} dotHeight={20} />}
             </Description>

@@ -2,7 +2,6 @@ import React, { useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { PLAIN_WHITE, BASE_BORDER_RADIUS, BASE_BOX_SHADOW } from '../../themes';
 
-import { SectionTitle } from '../HomePage/ProjectSection';
 import Emoji from '../Emojis';
 import Checkmark from '../Checkmark';
 import MoreDetails from '../../components/MoreDetails';
@@ -18,6 +17,7 @@ import ActionButton from '../ActionButton';
 import StartAuctionsModal from './StartAuctionsModal';
 import { useCollection } from '../../hooks/collection';
 import EnableNextEditionModal from './EnableNextEditionModal';
+import Title from '../Title';
 
 const Root = styled.section`
   display: flex;
@@ -30,13 +30,6 @@ const Root = styled.section`
   padding: 2rem;
   border-radius: ${BASE_BORDER_RADIUS};
   box-shadow: ${BASE_BOX_SHADOW};
-`;
-
-const Title = styled(SectionTitle)`
-  text-align: center;
-  margin-block-end: 2rem;
-  display: flex;
-  flex-direction: column;
 `;
 
 const ProgressBarWrapper = styled.div`
@@ -221,123 +214,134 @@ const AuthorSection = ({
     [enableNextEdition, projectId, refetch]
   );
 
+  const beforeAuction = () => {
+    return (
+      <>
+        <Title size="m" margin="0 0 3rem 0">
+          Launching <Emoji symbol="🚀" label="Rocket" />
+        </Title>
+        <ProgressBarWrapper>
+          <ProgressBar completed={calculatedProgress} />
+          <ProgressBarIndicator>
+            {calculatedProgressIndicationText}
+          </ProgressBarIndicator>
+        </ProgressBarWrapper>
+        <ActionItems>
+          <MoreDetails
+            title={
+              configured || projectData.auctionsStarted ? (
+                <Flex>
+                  <span>{'1) Configure Project'}</span>
+                  <Checkmark />
+                </Flex>
+              ) : (
+                '1) Configure Project'
+              )
+            }
+            styles={{ marginBlockEnd: '1rem' }}
+          >
+            <>
+              <p>
+                Save more information about this work in the contract, to make
+                your project more appealing and trustworthy.
+              </p>
+              <ActionButton
+                disabled={configured || projectData.auctionsStarted}
+                text="Configure Your Project"
+                loading={
+                  configureStatus == 'confirming' ||
+                  configureStatus == 'waiting'
+                }
+                onClick={() => setShowConfigureModal(true)}
+              />
+            </>
+          </MoreDetails>
+          <MoreDetails
+            title={
+              projectData.auctionsStarted ||
+              projectData.contributors?.length > 0 ? (
+                <Flex>
+                  <span>{'2) Add Contributors'}</span>
+                  <Checkmark />
+                </Flex>
+              ) : (
+                '2) Add Contributors'
+              )
+            }
+            styles={{ marginBlockEnd: '1rem' }}
+          >
+            <>
+              <p>
+                This is optional. You can specify what share of the fund
+                contributors to your project will receive. This action can only
+                be done before triggering the auctions.
+              </p>
+              <ActionButton
+                disabled={
+                  setContributorsStatus === 'confirming' ||
+                  setContributorsStatus === 'waiting' ||
+                  projectData.auctionsStarted ||
+                  !!projectData.contributors?.length
+                }
+                text="Add Contributors"
+                loading={
+                  setContributorsStatus === 'confirming' ||
+                  setContributorsStatus === 'waiting'
+                }
+                onClick={() => setShowContributorsModal(true)}
+              />
+            </>
+          </MoreDetails>
+          <MoreDetails
+            open={
+              Number(projectData.premintedByAuthor) > 0 &&
+              !projectData.auctionsStarted
+            }
+            title={
+              projectData.auctionsStarted ? (
+                <Flex>
+                  <span>{'3) Start Auctions'}</span>
+                  <Checkmark />
+                </Flex>
+              ) : (
+                '3) Start Auctions'
+              )
+            }
+            styles={{ marginBlockEnd: '1rem' }}
+          >
+            <>
+              <p>
+                Start the auctions for your Genesis Edition. Make sure to claim
+                an amount of NFTs for yourself. At least 1 and max 4.
+              </p>
+              <ActionButton
+                disabled={
+                  startAuctionsStatus === 'confirming' ||
+                  startAuctionsStatus === 'waiting' ||
+                  projectData.auctionsStarted ||
+                  !!Number(projectData.premintedByAuthor)
+                }
+                text="Start Auctions"
+                loading={
+                  startAuctionsStatus === 'confirming' ||
+                  startAuctionsStatus === 'waiting'
+                }
+                onClick={() => setShowAuthorMintModal(true)}
+              />
+            </>
+          </MoreDetails>
+        </ActionItems>
+      </>
+    );
+  };
+
   return (
     <Root>
-      <Title style={{ maxWidth: '300px' }}>Control Settings for Author</Title>
-      <Title>
-        Launching <Emoji symbol="🚀" label="Rocket" />
+      <Title size="l">Project Settings</Title>
+      {!projectData.auctionsStarted && beforeAuction()}
+      <Title size="m" margin="3rem 0 3rem 0">
+        Editions
       </Title>
-      <ProgressBarWrapper>
-        <ProgressBar completed={calculatedProgress} />
-        <ProgressBarIndicator>
-          {calculatedProgressIndicationText}
-        </ProgressBarIndicator>
-      </ProgressBarWrapper>
-      <ActionItems>
-        <MoreDetails
-          title={
-            configured || projectData.auctionsStarted ? (
-              <Flex>
-                <span>{'1) Configure Project'}</span>
-                <Checkmark />
-              </Flex>
-            ) : (
-              '1) Configure Project'
-            )
-          }
-          styles={{ marginBlockEnd: '1rem' }}
-        >
-          <>
-            <p>
-              Save more information about this work in the contract, to make
-              your project more appealing and trustworthy.
-            </p>
-            <ActionButton
-              disabled={configured || projectData.auctionsStarted}
-              text="Configure Your Project"
-              loading={
-                configureStatus == 'confirming' || configureStatus == 'waiting'
-              }
-              onClick={() => setShowConfigureModal(true)}
-            />
-          </>
-        </MoreDetails>
-        <MoreDetails
-          title={
-            projectData.auctionsStarted ||
-            projectData.contributors?.length > 0 ? (
-              <Flex>
-                <span>{'2) Add Contributors'}</span>
-                <Checkmark />
-              </Flex>
-            ) : (
-              '2) Add Contributors'
-            )
-          }
-          styles={{ marginBlockEnd: '1rem' }}
-        >
-          <>
-            <p>
-              This is optional. You can specify what share of the fund
-              contributors to your project will receive. This action can only be
-              done before triggering the auctions.
-            </p>
-            <ActionButton
-              disabled={
-                setContributorsStatus === 'confirming' ||
-                setContributorsStatus === 'waiting' ||
-                projectData.auctionsStarted ||
-                !!projectData.contributors?.length
-              }
-              text="Add Contributors"
-              loading={
-                setContributorsStatus === 'confirming' ||
-                setContributorsStatus === 'waiting'
-              }
-              onClick={() => setShowContributorsModal(true)}
-            />
-          </>
-        </MoreDetails>
-        <MoreDetails
-          open={
-            Number(projectData.premintedByAuthor) > 0 &&
-            !projectData.auctionsStarted
-          }
-          title={
-            projectData.auctionsStarted ? (
-              <Flex>
-                <span>{'3) Start Auctions'}</span>
-                <Checkmark />
-              </Flex>
-            ) : (
-              '3) Start Auctions'
-            )
-          }
-          styles={{ marginBlockEnd: '1rem' }}
-        >
-          <>
-            <p>
-              Start the auctions for your Genesis Edition. Make sure to claim an
-              amount of NFTs for yourself. At least 1 and max 4.
-            </p>
-            <ActionButton
-              disabled={
-                startAuctionsStatus === 'confirming' ||
-                startAuctionsStatus === 'waiting' ||
-                projectData.auctionsStarted ||
-                !!Number(projectData.premintedByAuthor)
-              }
-              text="Start Auctions"
-              loading={
-                startAuctionsStatus === 'confirming' ||
-                startAuctionsStatus === 'waiting'
-              }
-              onClick={() => setShowAuthorMintModal(true)}
-            />
-          </>
-        </MoreDetails>
-      </ActionItems>
-      <Title style={{ marginBlockStart: '1rem' }}>Others</Title>
       <ActionItems>
         <MoreDetails
           open={canTriggerNextEdition}
