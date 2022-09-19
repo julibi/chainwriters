@@ -39,6 +39,7 @@ import { useManager } from '../hooks/manager';
 import LanguageForm from '../components/Create/LanguageForm';
 import TranslationForm from '../components/Create/TranslationForm';
 import Title from '../components/Title';
+import pinToPinata from '../utils/pinToPinata';
 
 const Root = styled.div`
   display: flex;
@@ -220,23 +221,28 @@ const Create = () => {
   }, [subtitle, genre, blurb, coverImgIPFS]);
 
   const uploadText = useCallback(
-    async (content: string) => {
+    async (
+      content: string,
+      type: 'text' | 'translation' | 'blurb' | 'image'
+    ) => {
       try {
+        // upload to IPFS
         const added = await client.add(content);
-        // const url = `https://ipfs.infura.io/ipfs/${added.path}`;
-        // setTextIPFS(added.path);
-        // TODO pinning
+        // pin data with pinata - for now it is fire and forget, change this?
+        if (added.path) {
+          await pinToPinata(added.path, projectId, type, title);
+        }
         return added.path;
       } catch (e) {
         console.log({ e });
         toast.error('Something went wrong while uploading your text to ipfs.');
       }
     },
-    [client]
+    [client, projectId, title]
   );
 
   const handleCreateProject = useCallback(async () => {
-    const hash = await uploadText(text);
+    const hash = await uploadText(text, 'text');
 
     await createProject({
       title,
@@ -262,8 +268,8 @@ const Create = () => {
   ]);
 
   const handleUpdateTranslation = useCallback(async () => {
-    const hash = await uploadText(translation);
-    console.log({ projectId, hash });
+    const hash = await uploadText(translation, 'translation');
+
     await updateTranslation({
       projectId,
       translationIpfsHash: hash,
@@ -343,20 +349,23 @@ const Create = () => {
       setIsUploadingImage(true);
       event.preventDefault();
       const added = await client.add(imgBuffer);
-      // const url = `https://ipfs.infura.io/ipfs/${added.path}`;
-      // TODO what about pinning?
+
+      if (added.path) {
+        await pinToPinata(added.path, projectId, 'image');
+      }
       setCoverImgIPFS(added.path);
       setCurrentStep(currentStep + 1);
       setIsUploadingImage(false);
     },
-    [client, imgBuffer, currentStep]
+    [client, imgBuffer, currentStep, projectId]
   );
 
   const handleSetBlurb = useCallback(async () => {
-    const added = await client.add(blurb);
-    setBlurbIPFS(added.path);
+    const hash = await uploadText(blurb, 'blurb');
+
+    setBlurbIPFS(hash);
     setCurrentStep(currentStep + 1);
-  }, [blurb, client, currentStep]);
+  }, [blurb, currentStep, uploadText]);
 
   const creatingDao = useMemo(() => {
     return (

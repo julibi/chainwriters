@@ -1,25 +1,32 @@
-import { ContentWrapper, CTAWrapper, ModalHeader, ModalText } from '../../pages/projects/[projectId]';
-import React, { ChangeEvent, useMemo, useState } from 'react'
+import {
+  ContentWrapper,
+  CTAWrapper,
+  ModalText,
+} from '../../pages/projects/[projectId]';
+import React, { ChangeEvent, useMemo, useState } from 'react';
 import ActionButton from '../ActionButton';
 import BaseModal from '../BaseModal';
 import InputField from '../InputField';
 import { Project } from '../../providers/projects-provider/projects-provider.types';
+import Title from '../Title';
 
 interface EnableNextEditionModalProps {
-    onClose: () => void;
-    onEnableNextEdition: (
-      price: string,
-      amount: number,
-    ) => void;
-    pending: boolean;
-    project: Project;
-  }
+  onClose: () => void;
+  onEnableNextEdition: (price: string, amount: number) => void;
+  pending: boolean;
+  project: Project;
+}
 
-const EnableNextEditionModal = ({ onClose, onEnableNextEdition, pending, project }: EnableNextEditionModalProps) => {
-  const [nextEditionMaxAmount, setNextEditionMaxAmount] = useState<number>(0); 
+const EnableNextEditionModal = ({
+  onClose,
+  onEnableNextEdition,
+  pending,
+  project,
+}: EnableNextEditionModalProps) => {
+  const [nextEditionMaxAmount, setNextEditionMaxAmount] = useState<number>(0);
   const [nextEditionMintPrice, setMextEditionMintPrice] = useState<string>('0');
   const maxPossibleAmount = useMemo(() => {
-    if (project.endId && project.currentId) { 
+    if (project.endId && project.currentId) {
       return Number(project.endId.sub(project.currentId));
     }
     return 0;
@@ -28,7 +35,7 @@ const EnableNextEditionModal = ({ onClose, onEnableNextEdition, pending, project
   return (
     <BaseModal onClose={onClose}>
       <ContentWrapper>
-        <ModalHeader>{'Unlock Next Edition'}</ModalHeader>
+        <Title size="m">{'Unlock Next Edition'}</Title>
         <ModalText>Specify the max amount and price per mint.</ModalText>
         <CTAWrapper>
           <InputField
@@ -42,7 +49,7 @@ const EnableNextEditionModal = ({ onClose, onEnableNextEdition, pending, project
             }}
             error={
               (Number(nextEditionMaxAmount) < 1 ||
-               Number(nextEditionMaxAmount) > maxPossibleAmount) &&
+                Number(nextEditionMaxAmount) > maxPossibleAmount) &&
               `Must be between 1 and ${maxPossibleAmount}.`
             }
           />
@@ -57,22 +64,22 @@ const EnableNextEditionModal = ({ onClose, onEnableNextEdition, pending, project
           />
           <ActionButton
             disabled={
-                pending ||
+              pending ||
               Number(nextEditionMaxAmount) < 1 ||
               Number(nextEditionMaxAmount) > maxPossibleAmount ||
               Number(nextEditionMintPrice) < 0.01
             }
-            text='UNLOCK'
+            text="UNLOCK"
             loading={pending}
             onClick={(e) => {
-                e.preventDefault();
-                onEnableNextEdition(nextEditionMintPrice, nextEditionMaxAmount);
-              }}
+              e.preventDefault();
+              onEnableNextEdition(nextEditionMintPrice, nextEditionMaxAmount);
+            }}
           />
         </CTAWrapper>
       </ContentWrapper>
     </BaseModal>
-  )
-}
+  );
+};
 
-export default EnableNextEditionModal
+export default EnableNextEditionModal;
