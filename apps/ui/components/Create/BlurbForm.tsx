@@ -15,6 +15,7 @@ interface BlurbFormProps {
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   onNextStep: () => void;
   onSubmit: () => void;
+  pending: boolean;
   reset: () => void;
 }
 
@@ -23,6 +24,7 @@ const BlurbForm = ({
   onChange,
   onNextStep,
   onSubmit,
+  pending,
   reset,
 }: BlurbFormProps) => {
   return (
@@ -49,16 +51,16 @@ const BlurbForm = ({
               onNextStep();
             }}
             text="Skip"
-            disabled={false}
+            disabled={pending}
             loading={false}
-            margin="0"
+            margin="2rem 0 0 0"
             color="#fff"
           />
           <ActionButton
             onClick={onSubmit}
-            disabled={blurb.length < 20}
-            loading={false}
-            margin="0 0 0 1rem"
+            disabled={blurb.length < 20 || pending}
+            loading={pending}
+            margin="2rem 0 0 1rem"
             text="Set Blurb"
           />
         </ButtonsWrapper>

@@ -178,7 +178,7 @@ const ContributorsForm = ({
               contributorsList.length < formsAmount ||
               shareSelf < 1
             }
-            loading={false}
+            loading={loading}
             onClick={() => setFormsAmount(formsAmount + 1)}
             text="+ Add More"
             color="#fff"
@@ -190,7 +190,7 @@ const ContributorsForm = ({
             {onNextStep && (
               <ActionButton
                 onClick={onNextStep}
-                disabled={false}
+                disabled={loading}
                 loading={false}
                 text="Skip"
                 color="#fff"

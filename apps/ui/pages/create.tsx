@@ -199,6 +199,7 @@ const Create = () => {
   const [blurbIPFS, setBlurbIPFS] = useState<string>('');
   const [genre, setGenre] = useState('');
   const [subtitle, setSubtitle] = useState<string>('');
+  const [isPinPending, setIsPinPending] = useState<boolean>(false);
   const { createProject, createProjectStatus } = useFactory();
   const {
     configureProject,
@@ -242,8 +243,9 @@ const Create = () => {
   );
 
   const handleCreateProject = useCallback(async () => {
+    setIsPinPending(true);
     const hash = await uploadText(text, 'text');
-
+    setIsPinPending(false);
     await createProject({
       title,
       textIpfsHash: hash,
@@ -268,7 +270,9 @@ const Create = () => {
   ]);
 
   const handleUpdateTranslation = useCallback(async () => {
+    setIsPinPending(true);
     const hash = await uploadText(translation, 'translation');
+    setIsPinPending(false);
 
     await updateTranslation({
       projectId,
@@ -361,7 +365,9 @@ const Create = () => {
   );
 
   const handleSetBlurb = useCallback(async () => {
+    setIsPinPending(true);
     const hash = await uploadText(blurb, 'blurb');
+    setIsPinPending(false);
 
     setBlurbIPFS(hash);
     setCurrentStep(currentStep + 1);
@@ -435,7 +441,7 @@ const Create = () => {
                 firstEdMintPrice={firstEdMintPrice}
                 onCheck={() => setAgreed(!agreed)}
                 createDao={handleCreateProject}
-                pending={creatingDao}
+                pending={creatingDao || isPinPending}
               />
             )}
             {creatingDao && <Waiting />}
@@ -457,7 +463,8 @@ const Create = () => {
                 translation={translation}
                 pending={
                   updateTranslationStatus === 'confirming' ||
-                  updateTranslationStatus === 'waiting'
+                  updateTranslationStatus === 'waiting' ||
+                  isPinPending
                 }
                 reset={() => setTranslation('')}
                 onNextStep={() => setCurrentStep(currentStep + 1)}
@@ -482,6 +489,7 @@ const Create = () => {
                 }
                 onNextStep={() => setCurrentStep(currentStep + 1)}
                 onSubmit={handleSetBlurb}
+                pending={isPinPending}
                 reset={() => setBlurb('')}
               />
             )}
@@ -513,7 +521,8 @@ const Create = () => {
                 imgFile={imgFile}
                 loading={
                   configureStatus === 'confirming' ||
-                  configureStatus === 'waiting'
+                  configureStatus === 'waiting' ||
+                  isPinPending
                 }
                 blurbIPFS={blurbIPFS}
                 onSubmit={handleConfigure}
