@@ -62,8 +62,13 @@ const ReviewForm = ({
         </ReviewItemWrapper>
         <CheckboxWrapper>
           <Checkbox
-            // TODO: contract - should be able to freeze a contract or destruct
-            label="I am aware that any form of plagiarism or hateful content can be banned from the platfom at any time. Other lawyer gibberish."
+            label={`
+            By checking this box, I confirm that this work does not contain any hateful content,
+            potential copyright issue, plagiarism, illegal or illegitimate content (hereafter defined as "harmful content").
+            Moonpage can freeze the project if it detects any harmful content,
+            which will disable the distribution of any funds and will also disable further minting of the infringing project.
+            In the event of doubt, Moonpage may at its discretion denylist any address.
+            Being denylisted prevents this address from any further action on this platform.`}
             onChange={onCheck}
             check={agreed}
           />

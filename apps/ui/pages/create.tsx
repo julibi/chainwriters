@@ -201,7 +201,7 @@ const Create = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [title, setTitle] = useState('');
   const [text, setText] = useState('');
-  const [language, setLanguage] = useState<string | null>(null);
+  const [language, setLanguage] = useState<string>('');
   const [translation, setTranslation] = useState('');
   // const [textIPFS, setTextIPFS] = useState<null | string>(null);
   const [agreed, setAgreed] = useState(false);
@@ -224,6 +224,17 @@ const Create = () => {
     updateTranslation,
     updateTranslationStatus,
   } = useManager();
+
+  const nothingConfigured = useMemo(() => {
+    if (
+      !subtitle.trim().length &&
+      !genre.trim().length &&
+      !blurb.trim().length &&
+      !coverImgIPFS.trim().length
+    )
+      return true;
+    return false;
+  }, [subtitle, genre, blurb, coverImgIPFS]);
 
   const uploadText = useCallback(
     async (content: string) => {
@@ -330,6 +341,7 @@ const Create = () => {
   }, [contributorsList, currentStep, projectId, setContributors]);
 
   const captureFile = (file: any) => {
+    // TODO: add loading
     const reader = new window.FileReader();
     reader.readAsArrayBuffer(file);
     reader.onloadend = () => {
@@ -433,41 +445,8 @@ const Create = () => {
             )}
             {creatingDao && <Waiting />}
             {currentStep === 6 && !creatingDao && (
-              <Congrats onSubmit={() => setCurrentStep(currentStep + 1)} />
-            )}
-            {currentStep === 7 && !creatingDao && (
-              <CoverImageForm
-                captureFile={captureFile}
-                imgFile={imgFile}
-                imgBuffer={imgBuffer}
-                onNextStep={() => setCurrentStep(currentStep + 1)}
-                onSubmit={submitImage}
-              />
-            )}
-            {currentStep === 8 && !creatingDao && (
-              <BlurbForm
-                blurb={blurb}
-                onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                  setBlurb(e.target.value)
-                }
-                onNextStep={() => setCurrentStep(currentStep + 1)}
-                onSubmit={handleSetBlurb}
-              />
-            )}
-            {currentStep === 9 && !creatingDao && (
-              <GenreForm
-                genre={genre}
-                onGenreSet={(x: string) => setGenre(x)}
-                onNextStep={() => setCurrentStep(currentStep + 1)}
-              />
-            )}
-            {currentStep === 10 && !creatingDao && (
-              <SubtitleForm
-                subtitle={subtitle}
-                onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                  setSubtitle(e.target.value)
-                }
-                onNextStep={() => {
+              <Congrats
+                onSubmit={() => {
                   if (language == 'english') {
                     setCurrentStep(currentStep + 2);
                   } else {
@@ -476,7 +455,7 @@ const Create = () => {
                 }}
               />
             )}
-            {currentStep === 11 && (
+            {currentStep === 7 && (
               <TranslationForm
                 onKeyDown={(val: string) => setTranslation(val)}
                 onSubmit={handleUpdateTranslation}
@@ -485,7 +464,49 @@ const Create = () => {
                   updateTranslationStatus === 'confirming' ||
                   updateTranslationStatus === 'waiting'
                 }
+                reset={() => setTranslation('')}
                 onNextStep={() => setCurrentStep(currentStep + 1)}
+              />
+            )}
+            {currentStep === 8 && !creatingDao && (
+              <CoverImageForm
+                captureFile={captureFile}
+                imgFile={imgFile}
+                imgBuffer={imgBuffer}
+                onNextStep={() => setCurrentStep(currentStep + 1)}
+                onSubmit={submitImage}
+                reset={() => setCoverImgIPFS('')}
+              />
+            )}
+            {currentStep === 9 && !creatingDao && (
+              <BlurbForm
+                blurb={blurb}
+                onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                  setBlurb(e.target.value)
+                }
+                onNextStep={() => setCurrentStep(currentStep + 1)}
+                onSubmit={handleSetBlurb}
+                reset={() => setBlurb('')}
+              />
+            )}
+            {currentStep === 10 && !creatingDao && (
+              <GenreForm
+                genre={genre}
+                onGenreSet={(x: string) => setGenre(x)}
+                onNextStep={() => setCurrentStep(currentStep + 1)}
+                reset={() => setGenre('')}
+              />
+            )}
+            {currentStep === 11 && !creatingDao && (
+              <SubtitleForm
+                subtitle={subtitle}
+                onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                  setSubtitle(e.target.value)
+                }
+                onNextStep={() =>
+                  setCurrentStep(currentStep + (nothingConfigured ? 2 : 1))
+                }
+                reset={() => setSubtitle('')}
               />
             )}
             {currentStep === 12 && !creatingDao && (

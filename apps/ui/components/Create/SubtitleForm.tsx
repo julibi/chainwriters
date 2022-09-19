@@ -13,12 +13,14 @@ interface SubtitleFormProps {
   subtitle: string;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   onNextStep: () => void;
+  reset: () => void;
 }
 
 const SubtitleForm = ({
   onChange,
   onNextStep,
   subtitle,
+  reset,
 }: SubtitleFormProps) => {
   return (
     <FadeIn>
@@ -34,7 +36,10 @@ const SubtitleForm = ({
         <FlexContainer>
           <ActionButton
             color="#fff"
-            onClick={onNextStep}
+            onClick={() => {
+              reset();
+              onNextStep();
+            }}
             disabled={false}
             loading={false}
             margin="0 1rem 0 0"

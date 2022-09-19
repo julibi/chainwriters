@@ -15,6 +15,7 @@ interface BlurbFormProps {
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   onNextStep: () => void;
   onSubmit: () => void;
+  reset: () => void;
 }
 
 const BlurbForm = ({
@@ -22,6 +23,7 @@ const BlurbForm = ({
   onChange,
   onNextStep,
   onSubmit,
+  reset,
 }: BlurbFormProps) => {
   return (
     <FadeIn>
@@ -42,7 +44,10 @@ const BlurbForm = ({
         </StyledInputError>
         <ButtonsWrapper>
           <ActionButton
-            onClick={onNextStep}
+            onClick={() => {
+              reset();
+              onNextStep();
+            }}
             text="Skip"
             disabled={false}
             loading={false}

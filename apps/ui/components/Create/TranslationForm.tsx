@@ -28,6 +28,7 @@ interface TranslationFormProps {
   onKeyDown: (val: string) => void;
   onNextStep: () => void;
   onSubmit: () => void;
+  reset: () => void;
   pending: boolean;
   translation: string;
 }
@@ -36,6 +37,7 @@ const TranslationForm = ({
   onKeyDown,
   onSubmit,
   onNextStep,
+  reset,
   pending,
   translation,
 }: TranslationFormProps) => {
@@ -51,7 +53,10 @@ const TranslationForm = ({
           </RichTextWrapper>
           <FlexRow>
             <ActionButton
-              onClick={onNextStep}
+              onClick={() => {
+                reset();
+                onNextStep();
+              }}
               text="Later"
               disabled={pending}
               loading={false}

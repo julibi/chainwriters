@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { ChangeEventHandler, useState } from 'react';
 import styled from 'styled-components';
 import { BG_NORMAL } from '../themes';
 

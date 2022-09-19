@@ -14,16 +14,18 @@ const Wrapper = styled.section`
   flex-direction: column;
   align-items: space-between;
   align-items: center;
-  min-height: 200px;
+  min-height: 300px;
 `;
 
 const Text = styled.p`
   display: inline-block;
+  margin-block-end: 2rem;
 `;
 
 const FlexColumn = styled.div`
   display: flex;
   flex-direction: column;
+  align-items: center;
 `;
 
 const FlexRow = styled.div`
@@ -34,9 +36,9 @@ const FlexRow = styled.div`
 
 const LanguageSelection = styled.div`
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  width: 50%;
+  margin-block-end: 1rem;
 `;
 
 interface LanguageFormProps {
@@ -104,17 +106,22 @@ const LanguageForm = ({
             </FlexRow>
           </FlexColumn>
         )}
-        {showLanguageSelection && !language && (
+        {showLanguageSelection && (
           <FlexColumn>
             <LanguageSelection>
               <Text>Please choose the language.</Text>
-              <Dropdown options={languageOptions} placeholder="Language" />
+              <Dropdown
+                options={languageOptions}
+                placeholder="Language"
+                width="230px"
+              />
             </LanguageSelection>
             <ActionButton
               onClick={onSubmit}
               text="Next"
-              disabled={!false}
+              disabled={!language.length}
               loading={false}
+              margin="1rem 0 0 0 "
             />
           </FlexColumn>
         )}

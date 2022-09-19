@@ -105,6 +105,7 @@ interface CoverImageFormProps {
   imgFile: Blob | MediaSource;
   onNextStep: () => void;
   onSubmit: (e: FormEvent<HTMLButtonElement>) => Promise<void>;
+  reset: () => void;
 }
 
 const CoverImageForm = ({
@@ -113,6 +114,7 @@ const CoverImageForm = ({
   imgFile,
   onNextStep,
   onSubmit,
+  reset,
 }: CoverImageFormProps) => {
   return (
     <FadeIn>
@@ -157,7 +159,10 @@ const CoverImageForm = ({
               <ActionButton
                 disabled={false}
                 loading={false}
-                onClick={onNextStep}
+                onClick={() => {
+                  reset();
+                  onNextStep();
+                }}
                 text="Skip"
                 color="#fff"
               />

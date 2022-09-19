@@ -19,9 +19,15 @@ interface GenreFormProps {
   genre: string;
   onGenreSet: (x: string) => void;
   onNextStep: () => void;
+  reset: () => void;
 }
 
-const GenreForm = ({ genre, onGenreSet, onNextStep }: GenreFormProps) => {
+const GenreForm = ({
+  genre,
+  onGenreSet,
+  onNextStep,
+  reset,
+}: GenreFormProps) => {
   const genreOptions = GENRES?.map((item) => ({
     id: item,
     value: item,
@@ -44,7 +50,10 @@ const GenreForm = ({ genre, onGenreSet, onNextStep }: GenreFormProps) => {
             disabled={false}
             loading={false}
             margin="0 1rem 0 0"
-            onClick={onNextStep}
+            onClick={() => {
+              reset();
+              onNextStep();
+            }}
             text="Skip"
             color="#fff"
           />
