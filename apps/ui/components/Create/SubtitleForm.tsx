@@ -25,8 +25,7 @@ const SubtitleForm = ({
   return (
     <FadeIn>
       <Wrapper>
-        <InputName>SUBTITLE</InputName>
-        <InputDescription>Does your text have a subtitle?</InputDescription>
+        <InputName>Subtitle</InputName>
         <InputField
           error={subtitle.length < 3 && 'At least 3 characters.'}
           // @ts-ignore

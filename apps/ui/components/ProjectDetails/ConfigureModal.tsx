@@ -15,6 +15,9 @@ import {
 } from '../Create/CoverImageForm';
 import { useIpfsClient } from '../../hooks/useIpfsClient';
 import ActionButton from '../ActionButton';
+import Dropdown from '../Dropdown';
+import { GENRES } from '../../constants';
+import Title from '../Title';
 
 const ContentWrapper = styled.div`
   margin: 2rem;
@@ -24,21 +27,6 @@ const ContentWrapper = styled.div`
   align-items: center;
   overflow: scroll;
   height: 600px;
-`;
-
-const ModalHeader = styled.h2`
-  display: inline-block;
-`;
-
-const ModalText = styled.span`
-  display: inline-block;
-  margin-block: 1rem 2rem;
-  text-align: center;
-`;
-
-const FlexRow = styled.div`
-  display: flex;
-  justify-content: space-between;
 `;
 
 const FlexColumn = styled.div`
@@ -52,15 +40,13 @@ const Label = styled.label`
   margin-block-end: 0.5rem;
 `;
 
+const DropdownWrapper = styled.div`
+  margin-block-end: 3rem;
+`;
+
 interface ConfigureModalProps {
   onClose: () => void;
-  onConfigure: ({
-    imgHash,
-    animationHash,
-    blurbHash,
-    genre,
-    subtitle
-  }) => void;
+  onConfigure: ({ imgHash, animationHash, blurbHash, genre, subtitle }) => void;
   pending: boolean;
 }
 
@@ -76,7 +62,11 @@ const ConfigureModal = ({
   const [genre, setGenre] = useState('');
   const [subtitle, setSubtitle] = useState<string>('');
   const [uploadPending, setUploadPending] = useState<boolean>(false);
-
+  const genreOptions = GENRES?.map((item) => ({
+    id: item,
+    value: item,
+    onSelect: () => setGenre(item),
+  }));
   const captureFile = (file) => {
     const reader = new window.FileReader();
     reader.readAsArrayBuffer(file);
@@ -87,7 +77,7 @@ const ConfigureModal = ({
     };
   };
 
-  const handleClick = useCallback(async() => {
+  const handleClick = useCallback(async () => {
     try {
       setUploadPending(true);
       let blurbCID = '';
@@ -99,7 +89,13 @@ const ConfigureModal = ({
         blurbCID = (await client.add(blurb)).path;
       }
 
-      onConfigure({imgHash: coverImgCID, animationHash: "", blurbHash: blurbCID, genre, subtitle});
+      onConfigure({
+        imgHash: coverImgCID,
+        animationHash: '',
+        blurbHash: blurbCID,
+        genre,
+        subtitle,
+      });
       setUploadPending(false);
     } catch (e: unknown) {
       setUploadPending(false);
@@ -112,28 +108,20 @@ const ConfigureModal = ({
   return (
     <BaseModal onClose={onClose}>
       <ContentWrapper>
-        <ModalHeader>Configure Your Project</ModalHeader>
-        <ModalText>
-          {`Set a cover image, a subtitle, a genre and write a blurb.
-          The more you specify, the better!`}
-        </ModalText>
+        <Title size="m" margin="0 0 2rem 0">
+          Configure Your Project
+        </Title>
         <FlexColumn>
-          <FlexRow>
-            <InputField
-              label={'Subtitle: '}
-              value={subtitle}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                setSubtitle(e.target.value);
-              }}
-            />
-            <InputField
-              label={'Genre: '}
-              value={genre}
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                setGenre(e.target.value)
-              }
-            />
-          </FlexRow>
+          <InputField
+            label={'Subtitle: '}
+            value={subtitle}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+              setSubtitle(e.target.value);
+            }}
+          />
+          <DropdownWrapper>
+            <Dropdown options={genreOptions} placeholder="Genre" width="100%" />
+          </DropdownWrapper>
           <Label>{'Blurb:'}</Label>
           <TextInput
             style={{ height: '200px' }}
@@ -183,10 +171,10 @@ const ConfigureModal = ({
           <ActionButton
             disabled={pending}
             onClick={handleClick}
-            loading={ uploadPending || pending}
-            width='100%'
-            text='Configure'
-          /> 
+            loading={uploadPending || pending}
+            width="100%"
+            text="Configure"
+          />
         </FlexColumn>
       </ContentWrapper>
     </BaseModal>

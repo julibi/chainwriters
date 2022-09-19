@@ -10,7 +10,6 @@ import { toast } from 'react-toastify';
 import { parseEther } from 'ethers/lib/utils';
 import ProgressBar from '../components/ProgressBar';
 import {
-  BaseButton,
   BASE_BORDER_RADIUS,
   BASE_BOX_SHADOW,
   BG_NORMAL,
@@ -33,16 +32,13 @@ import SubtitleForm from '../components/Create/SubtitleForm';
 import ConfigReviewForm from '../components/Create/ConfigReviewForm';
 import ContributorsForm from '../components/Create/ContributorsForm';
 import Finished from '../components/Create/Finished';
-import {
-  SectionTitle,
-  SectionTitleWrapper,
-} from '../components/HomePage/ProjectSection';
 import { useFactory } from '../hooks/factory';
 import { useIpfsClient } from '../hooks/useIpfsClient';
 import { BigNumber } from 'ethers';
 import { useManager } from '../hooks/manager';
 import LanguageForm from '../components/Create/LanguageForm';
 import TranslationForm from '../components/Create/TranslationForm';
+import Title from '../components/Title';
 
 const Root = styled.div`
   display: flex;
@@ -267,7 +263,7 @@ const Create = () => {
 
   const handleUpdateTranslation = useCallback(async () => {
     const hash = await uploadText(translation);
-
+    console.log({ projectId, hash });
     await updateTranslation({
       projectId,
       translationIpfsHash: hash,
@@ -370,9 +366,7 @@ const Create = () => {
 
   return (
     <Root>
-      <SectionTitleWrapper style={{ marginBlockEnd: '4rem' }}>
-        <SectionTitle>Create</SectionTitle>
-      </SectionTitleWrapper>
+      <Title margin="0 0 4rem 0">Create</Title>
       <Content>
         <ProgressBarWrapper>
           <ProgressBar completed={currentStep ? (currentStep / 14) * 100 : 0} />

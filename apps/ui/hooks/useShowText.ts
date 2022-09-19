@@ -14,8 +14,10 @@ export const GET_PROJECT = gql`
       creator
       genre
       id
+      originalLanguage
       subtitle
       textIpfsHash
+      translationIpfsHash
       title
     }
   }
@@ -28,6 +30,7 @@ const useShowText = (projectId: string) => {
     (nft) => nft.projectId === Number(projectId)
   );
   const [text, setText] = useState<string | null>(null);
+  const [translation, setTranslation] = useState<string | null>(null);
   const {
     loading: isLoading,
     error,
@@ -38,6 +41,7 @@ const useShowText = (projectId: string) => {
   const project = useMemo(() => {
     return data?.project;
   }, [data]);
+
   const fetchTextData = useCallback(async () => {
     if (!project || !account || error || isLoading) {
       return null;
@@ -56,15 +60,59 @@ const useShowText = (projectId: string) => {
     }
   }, [project, account, error, isLoading]);
 
+  const fetchTranslation = useCallback(async () => {
+    if (!project?.translationIpfsHash || !account || error || isLoading) {
+      return null;
+    }
+
+    try {
+      const response = await fetch(
+        `https://ipfs.io/ipfs/${project?.translationIpfsHash}`
+      );
+      if (response.ok) {
+        const fetchedTranslation = await response.text();
+        setTranslation(fetchedTranslation);
+      }
+    } catch (e: unknown) {
+      console.log({ e });
+    }
+  }, [account, error, isLoading, project]);
+
+  const hasTranslation = useMemo(() => {
+    return project?.translationIpfsHash?.length > 0;
+  }, [project]);
+
   useEffect(() => {
     if (account && allowedToRead) {
       fetchTextData();
     }
   }, [account, allowedToRead, fetchTextData]);
 
+  useEffect(() => {
+    if (account && hasTranslation) {
+      fetchTranslation();
+    }
+  }, [account, allowedToRead, fetchTextData, fetchTranslation, hasTranslation]);
+
   return useMemo(
-    () => ({ allowedToRead, isLoading, project, text }),
-    [allowedToRead, isLoading, project, text]
+    () => ({
+      allowedToRead,
+      isLoading,
+      project,
+      text,
+      translation,
+      hasTranslation,
+      fetchTranslation,
+    }),
+    [
+      allowedToRead,
+      fetchTranslation,
+      hasTranslation,
+      isLoading,
+      project,
+      text,
+      translation,
+    ]
   );
 };
 

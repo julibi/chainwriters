@@ -4,6 +4,7 @@ import { useProjects } from '../../hooks/projects';
 import { INTER_BLACK } from '../../themes';
 import Loading from '../Loading';
 import { ProjectItem } from '../ProjectItem';
+import Title from '../Title';
 
 export const SectionTitleWrapper = styled.div`
   display: flex;
@@ -35,16 +36,18 @@ const ProjectSection = () => {
   const { topProjects: data, areTopProjectsLoading: loading } = useProjects();
   return (
     <>
-      <SectionTitleWrapper>
-        <SectionTitle>Top Projects</SectionTitle>
-      </SectionTitleWrapper>
+      <Title>Top Projects</Title>
       {loading && !data && <Loading height={530} />}
       <ProjectList>
         {data?.map(
-          ({ id, title, creator, imgIpfsHash, subtitle, genre }, idx) => (
+          (
+            { id, title, createdAt, creator, imgIpfsHash, subtitle, genre },
+            idx
+          ) => (
             <ProjectItem
               key={idx}
               id={id}
+              createdAt={createdAt}
               creator={creator}
               title={title}
               imgIpfsHash={imgIpfsHash}

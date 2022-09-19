@@ -19,7 +19,7 @@ const TextForm = ({ onSubmit, onKeyDown, text }: TextFormProps) => {
   return (
     <FadeIn>
       <Wrapper>
-        <InputName>TEXT</InputName>
+        <InputName>Text</InputName>
         <RichTextWrapper>
           <RichText onKeyDown={(val) => onKeyDown(val)} />
         </RichTextWrapper>

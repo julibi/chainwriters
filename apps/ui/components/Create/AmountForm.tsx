@@ -27,7 +27,7 @@ const AmountForm = ({
   return (
     <FadeIn>
       <Wrapper>
-        <InputName>TOTAL AMOUNT OF GENESIS EDITION</InputName>
+        <InputName>Genesis Edition Total Amount</InputName>
         <InputDescription>
           The first edition of a work is called Genesis Edition. Holders of a
           Genesis Edition will have special benefits. The Genesis Edition will

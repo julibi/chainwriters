@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { truncateAddress } from '../../../components/WalletIndicator';
 import useShowText from '../../../hooks/useShowText';
 import { useGetProjectId } from '../../../hooks/projects';
@@ -12,6 +12,7 @@ import {
   PLAIN_WHITE,
   INTER_BOLD,
 } from '../../../themes';
+import Toggle from '../../../components/Toggle';
 
 const animation = (animationseconds: number) => `
   animation: fadein ${animationseconds}s;
@@ -30,6 +31,10 @@ const Root = styled.div`
 
   border-radius: ${BASE_BORDER_RADIUS};
   box-shadow: ${BASE_BOX_SHADOW};
+
+  @media (max-width: 900px) {
+    margin: 2rem 2rem;
+  }
 `;
 
 const TopRow = styled.div`
@@ -110,10 +115,22 @@ const TextWrapper = styled.div`
 
 const Text = styled.p``;
 
+const ToggleWrapper = styled.div`
+  width: 180px;
+`;
+
 const Read = () => {
   const router = useRouter();
   const projectId = useGetProjectId();
-  const { allowedToRead, project, text, isLoading } = useShowText(projectId);
+  const {
+    allowedToRead,
+    project,
+    text,
+    isLoading,
+    translation,
+    hasTranslation,
+  } = useShowText(projectId);
+  const [translationOn, setTranslationOn] = useState<boolean>(false);
 
   const handleClickGoBack = useCallback(
     (e) => {
@@ -122,6 +139,10 @@ const Read = () => {
     },
     [project, router]
   );
+
+  const handleToggle = (checked: boolean) => {
+    setTranslationOn(checked);
+  };
 
   if (isLoading && !project) {
     return (
@@ -138,6 +159,7 @@ const Read = () => {
       </Root>
     );
   }
+
   return (
     <Root>
       <TopRow>
@@ -164,8 +186,22 @@ const Read = () => {
           <Author>{`By ${truncateAddress(project.creator)}`}</Author>
         </Wrapper>
       </FlexWrapper>
+      {project.originalLanguage && (
+        <Wrapper>
+          <SubTitle>{`Original Language: ${project.originalLanguage}`}</SubTitle>
+          {hasTranslation && (
+            <ToggleWrapper>
+              <Toggle
+                label="Translation"
+                onChange={handleToggle}
+                isChecked={translationOn}
+              />
+            </ToggleWrapper>
+          )}
+        </Wrapper>
+      )}
       <TextWrapper>
-        <Text>{text}</Text>
+        <Text>{translationOn && translation ? translation : text}</Text>
       </TextWrapper>
     </Root>
   );

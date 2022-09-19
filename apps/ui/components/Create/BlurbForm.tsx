@@ -28,7 +28,7 @@ const BlurbForm = ({
   return (
     <FadeIn>
       <Wrapper>
-        <InputName>BLURB</InputName>
+        <InputName>Blurb</InputName>
         <InputDescription>
           E.G. short introduction to your project, a summary, the first few
           lines or description of the utility of your NFT.

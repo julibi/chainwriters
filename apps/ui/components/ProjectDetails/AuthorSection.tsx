@@ -121,10 +121,7 @@ const AuthorSection = ({
     let percentage = 0;
     if (!projectData) return percentage;
     if (configured) {
-      percentage = 33;
-    }
-    if (Number(projectData.premintedByAuthor) > 0) {
-      percentage = 66;
+      percentage = 50;
     }
     if (projectData.auctionsStarted) {
       percentage = 100;
@@ -136,10 +133,7 @@ const AuthorSection = ({
     let text = 'Next: Configure';
 
     switch (calculatedProgress) {
-      case 33:
-        text = 'Next: Start Auctions';
-        break;
-      case 66:
+      case 50:
         text = 'Next: Start Auctions';
         break;
       case 100:

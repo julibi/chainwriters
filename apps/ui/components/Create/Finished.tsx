@@ -17,7 +17,7 @@ const Finished = ({ projectId }: FinishedProps) => {
   return (
     <FadeIn>
       <Wrapper>
-        <InputName>DONE!</InputName>
+        <InputName>Done</InputName>
         <InputDescription>
           {`You have completed configuring your Project. Visit the newly created Project page.`}
         </InputDescription>

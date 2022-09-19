@@ -284,11 +284,15 @@ const Projects = () => {
           {hasSearched &&
             searchedProjects &&
             searchedProjects.map(
-              ({ title, creator, genre, subtitle, imgIpfsHash, id }, idx) => (
+              (
+                { title, createdAt, creator, genre, subtitle, imgIpfsHash, id },
+                idx
+              ) => (
                 <ProjectItem
                   key={idx}
                   id={id}
                   title={title}
+                  createdAt={createdAt}
                   creator={creator}
                   imgIpfsHash={imgIpfsHash}
                   subtitle={subtitle}
@@ -300,10 +304,14 @@ const Projects = () => {
             !searchedProjects &&
             projects &&
             projects.map(
-              ({ title, creator, genre, subtitle, imgIpfsHash, id }, idx) => (
+              (
+                { title, createdAt, creator, genre, subtitle, imgIpfsHash, id },
+                idx
+              ) => (
                 <ProjectItem
                   key={idx}
                   id={id}
+                  createdAt={createdAt}
                   creator={creator}
                   title={title}
                   imgIpfsHash={imgIpfsHash}

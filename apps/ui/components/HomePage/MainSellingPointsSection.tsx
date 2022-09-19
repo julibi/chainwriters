@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import { SectionTitle, SectionTitleWrapper } from './ProjectSection';
 import { BG_DARK, PINK, INTER_BOLD, INTER_LIGHT } from '../../themes';
+import Title from '../Title';
 
 const Root = styled.div`
   display: flex;
@@ -84,9 +84,7 @@ const SubHeader = styled.h3`
 const MainSellingPointsSection = () => {
   return (
     <Root>
-      <SectionTitleWrapper>
-        <SectionTitle>What is Moonpage?</SectionTitle>
-      </SectionTitleWrapper>
+      <Title>What is Moonpage?</Title>
       <BlocksWrapper>
         <AuthorBlock>
           <SubHeader>Creators</SubHeader>

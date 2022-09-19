@@ -27,7 +27,7 @@ const PriceForm = ({
   return (
     <FadeIn>
       <Wrapper>
-        <InputName>STARTING PRICE (MATIC)</InputName>
+        <InputName>Starting Price (Matic)</InputName>
         <InputDescription>
           The Genesis Edition is sold in a dutch auction. In a dutch auction the
           price keeps going down during a given time – in our case: 24 hours –

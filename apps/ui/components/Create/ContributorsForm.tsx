@@ -1,17 +1,13 @@
 import React, { ChangeEvent, FormEvent, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import InputField from '../InputField';
-import {
-  FadeIn,
-  Wrapper,
-  InputName,
-  InputDescription,
-} from '../../pages/create';
+import { FadeIn, Wrapper, InputDescription } from '../../pages/create';
 import validateAddress from '../../utils/validateAddress';
 import { truncateAddress } from '../WalletIndicator';
 import { Contributor } from '../../providers/projects-provider/projects-provider.types';
 import ActionButton from '../ActionButton';
 import { PINK } from '../../themes';
+import Title from '../Title';
 
 const ContribList = styled.ul`
   padding: 0;
@@ -126,11 +122,11 @@ const ContributorsForm = ({
   return (
     <FadeIn>
       <Wrapper>
-        <InputName>CONTRIBUTORS</InputName>
+        <Title size="m">Contributors</Title>
         <InputDescription>
           {`You can specify up to 3 contributors, like Co-Authors, Editors, Translators, Cover Artists etc.
           Shares will be distributed after an edition sells out.  
-          Keep in mind that the total of shares will be deducted from you own share.
+          Keep in mind that the total of shares will be deducted from your own share.
           15% are always going to the Moonpage project.`}
         </InputDescription>
         <CTAContainer>
@@ -189,8 +185,9 @@ const ContributorsForm = ({
             margin="1rem 0 0 0"
             width="325px"
           />
-          {onNextStep && (
-            <ContribButtonContainer>
+
+          <ContribButtonContainer>
+            {onNextStep && (
               <ActionButton
                 onClick={onNextStep}
                 disabled={false}
@@ -200,21 +197,21 @@ const ContributorsForm = ({
                 margin="2rem 1rem 0 0"
                 width="30%"
               />
-              <ActionButton
-                onClick={onSubmit}
-                disabled={
-                  loading ||
-                  contributorsList.length > 3 ||
-                  contributorsList.length < 1 ||
-                  shareSelf < 1
-                }
-                loading={loading}
-                text="Set Contributors"
-                margin="2rem 0 0 1rem"
-                width="70%"
-              />
-            </ContribButtonContainer>
-          )}
+            )}
+            <ActionButton
+              onClick={onSubmit}
+              disabled={
+                loading ||
+                contributorsList.length > 3 ||
+                contributorsList.length < 1 ||
+                shareSelf < 1
+              }
+              loading={loading}
+              text="Set Contributors"
+              margin={onNextStep ? '2rem 0 0 1rem' : '2rem 0 0 0'}
+              width={onNextStep ? '70%' : '100%'}
+            />
+          </ContribButtonContainer>
         </CTAContainer>
       </Wrapper>
     </FadeIn>

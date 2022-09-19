@@ -36,7 +36,7 @@ const GenreForm = ({
   return (
     <FadeIn>
       <Wrapper>
-        <InputName>GENRE</InputName>
+        <InputName>Genre</InputName>
         <InputDescription>
           If you specify the Genre, it makes it easier for people to find your
           project. Also, you are giving more information for possible readers

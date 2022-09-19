@@ -73,6 +73,8 @@ const Indicator = styled.div<IndicatorProps>`
 const BlockSpan = styled.span`
   display: inline-block;
   margin-inline-start: 1.5rem;
+  color: gray;
+  font-size: 14px;
 `;
 
 interface CheckboxProps {

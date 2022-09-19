@@ -1,13 +1,7 @@
 import React, { ChangeEvent, FormEvent } from 'react';
 import Image from 'next/image';
 import styled from 'styled-components';
-import {
-  ButtonsWrapper,
-  FadeIn,
-  InputDescription,
-  InputName,
-  Wrapper,
-} from '../../pages/create';
+import { ButtonsWrapper, FadeIn, InputName, Wrapper } from '../../pages/create';
 import {
   BASE_BORDER_RADIUS,
   BG_NORMAL,
@@ -104,8 +98,7 @@ const CoverImageForm = ({
   return (
     <FadeIn>
       <Wrapper>
-        <InputName>COVER IMAGE</InputName>
-        <InputDescription>Upload a Cover Image</InputDescription>
+        <InputName>Cover Image</InputName>
         {/* @ts-ignore */}
         <StyledImageForm onSubmit={onSubmit}>
           <DragNDrop
