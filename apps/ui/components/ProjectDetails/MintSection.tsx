@@ -3,12 +3,15 @@ import { BigNumber } from 'ethers';
 import { formatEther } from 'ethers/lib/utils';
 import styled from 'styled-components';
 import { BaseButton } from '../../themes';
-import { StyledPrimaryButton } from '../../pages/projects/[projectId]';
-import { Title } from '../../pages/projects/[projectId]';
+import Title from '../Title';
 import PieChart from '../PieChart';
-import Loading from '../Loading';
-import { Edition, Project } from '../../providers/projects-provider/projects-provider.types';
+import {
+  Edition,
+  Project,
+} from '../../providers/projects-provider/projects-provider.types';
 import { useCollection } from '../../hooks/collection';
+import ActionButton from '../ActionButton';
+import MintLegalModal from './MintLegalModal';
 
 const Root = styled.div`
   flex: 1;
@@ -47,10 +50,14 @@ interface MintSectionProps {
   refetch: VoidFunction;
 }
 
-const MintSection = ({ currentEdition, project, refetch }: MintSectionProps) => {
+const MintSection = ({
+  currentEdition,
+  project,
+  refetch,
+}: MintSectionProps) => {
+  const [showLegalModal, setShowLegalModal] = useState<boolean>(false);
   const [amount, setAmount] = useState<number>(1);
   const { mint, mintStatus } = useCollection();
-
   const totalSupply = useMemo(() => {
     return project.currentId.sub(currentEdition?.startId);
   }, [project, currentEdition]);
@@ -65,9 +72,13 @@ const MintSection = ({ currentEdition, project, refetch }: MintSectionProps) => 
     return undefined;
   }, [currentEdition]);
 
+  const edition = useMemo(() => {
+    return currentEdition ? Number(currentEdition.edition) : 'Unknown';
+  }, [currentEdition]);
+
   const price = useMemo(() => {
-    if (currentEdition.mintPrice) {
-      return currentEdition.mintPrice.mul(amount);
+    if (currentEdition?.mintPrice) {
+      return currentEdition?.mintPrice.mul(amount);
     }
   }, [currentEdition, amount]);
 
@@ -79,21 +90,21 @@ const MintSection = ({ currentEdition, project, refetch }: MintSectionProps) => 
     setAmount(amount - 1);
   }, [amount]);
 
-  const handleMint = useCallback(async() => {
+  const handleMint = useCallback(async () => {
     await mint({
       projectId: project.id,
       amount,
       price,
       onSuccess: () => {
         refetch();
-      }
+        setShowLegalModal(false);
+      },
     });
   }, [amount, mint, price, project.id, refetch]);
 
-
   return (
     <Root>
-      <Title>{`MINT - EDITION ${Number(currentEdition.edition)}`}</Title>
+      <Title>{`MINT - EDITION ${edition}`}</Title>
       <Price>{`Price ${price ? formatEther(price) : 0} MATIC`}</Price>
       <PieChart part={Number(totalSupply) ?? 0} whole={Number(maxSupply)} />
       <ControlWrapper>
@@ -112,12 +123,20 @@ const MintSection = ({ currentEdition, project, refetch }: MintSectionProps) => 
           +
         </StyledControl>
       </ControlWrapper>
-      <StyledPrimaryButton
+      <ActionButton
         disabled={amount > Number(maxSupply.sub(totalSupply))}
-        onClick={handleMint}
-      >
-        {(mintStatus === 'confirming' || mintStatus === 'waiting') ? <Loading height={20} dotHeight={20} /> : 'MINT'}
-      </StyledPrimaryButton>
+        onClick={() => setShowLegalModal(true)}
+        text="MINT"
+        loading={mintStatus === 'confirming' || mintStatus === 'waiting'}
+      />
+      {showLegalModal && (
+        <MintLegalModal
+          handleClick={handleMint}
+          onClose={() => setShowLegalModal(false)}
+          mintStatus={mintStatus}
+          price={price}
+        />
+      )}
     </Root>
   );
 };

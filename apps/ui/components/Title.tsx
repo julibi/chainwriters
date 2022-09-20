@@ -31,7 +31,7 @@ type TitleTypes = {
 
 // render differen ones depending on size
 // make them smaller on smallscreen
-const TitleBig = ({
+const Title = ({
   children,
   color,
   margin,
@@ -103,4 +103,4 @@ const TitleBig = ({
   }
 };
 
-export default TitleBig;
+export default Title;

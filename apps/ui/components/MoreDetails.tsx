@@ -6,7 +6,6 @@ import {
   BG_NORMAL,
   INSET_BASE_BOX_SHADOW,
   PLAIN_WHITE,
-  INTER_BOLD,
 } from '../themes';
 import CSS from 'csstype';
 

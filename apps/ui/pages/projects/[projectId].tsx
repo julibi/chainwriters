@@ -7,7 +7,6 @@ import { BLURB_FETCH_ERROR } from '../../constants';
 import BaseModal from '../../components/BaseModal';
 import Loading from '../../components/Loading';
 import MintSection from '../../components/ProjectDetails/MintSection';
-import { SectionTitle } from '../../components/HomePage/ProjectSection';
 import { truncateAddress } from '../../components/WalletIndicator';
 import {
   BASE_BORDER_RADIUS,
@@ -394,6 +393,7 @@ const ProjectDetailView = () => {
       onSuccess: () => {
         setShowBuyModal(false);
         refetch();
+        setAgreed(false);
       },
     });
   }, [buy, project, projectId, refetch]);
@@ -529,11 +529,19 @@ const ProjectDetailView = () => {
         </>
       )}
       {showBuyModal && (
-        <BaseModal onClose={() => setShowBuyModal(false)}>
+        <BaseModal
+          onClose={() => {
+            setShowBuyModal(false);
+            setAgreed(false);
+          }}
+        >
           <ContentWrapper>
-            <ModalHeader>{`Current Price: ${formatNumber(
+            <Title size="m" padding="1rem 0 0 0">
+              Current Price:
+            </Title>
+            <Title color={PINK} size="m" padding="0 0 0 1rem">{`${formatNumber(
               currentPrice
-            )} MATIC`}</ModalHeader>
+            )} MATIC`}</Title>
             <ModalText>
               {`In a dutch auction the price keeps going down. Don't miss the
               chance and mint now!`}
