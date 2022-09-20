@@ -547,6 +547,8 @@ const ProjectDetailView = () => {
                 I am aware that I am solely responsible for this purchase and that the content being represented by the NFT
                 can be changed by the creating wallet address or that the project can be paused or frozen by Moonpage.
                 I assure that I have done my own research and thus want to mint this NFT.
+                Neither Moonpage, nor me as prospective NFT owner hold any copyright. The copyright remains with the author.
+                I am in particular aware that the creator may further publish the content of this project.
               `}
             />
             <ActionButton
