@@ -4,10 +4,22 @@ import { useWeb3React } from '@web3-react/core';
 import Image from 'next/image';
 import styled from 'styled-components';
 import { BLURB_FETCH_ERROR } from '../../constants';
+import ActionButton from '../../components/ActionButton';
 import BaseModal from '../../components/BaseModal';
+import AuthorSection from '../../components/ProjectDetails/AuthorSection';
+import AuctionSection from '../../components/ProjectDetails/AuctionSection';
+import Checkbox from '../../components/Checkbox';
+import Title from '../../components/Title';
 import Loading from '../../components/Loading';
 import MintSection from '../../components/ProjectDetails/MintSection';
 import { truncateAddress } from '../../components/WalletIndicator';
+import useShowText from '../../hooks/useShowText';
+import { useCollection } from '../../hooks/collection';
+import { useAuctions } from '../../hooks/auctions';
+import { useGetProject } from '../../hooks/projects/useGetProject';
+import { useGetProjectId } from '../../hooks/projects/useGetProjectId';
+import useAuctionsManager from '../../hooks/useAuctionsManager';
+import { formatNumber } from '../../utils/formatNumber';
 import {
   BASE_BORDER_RADIUS,
   BASE_BOX_SHADOW,
@@ -19,25 +31,13 @@ import {
   INTER_BOLD,
 } from '../../themes';
 
-import useShowText from '../../hooks/useShowText';
-import AuthorSection from '../../components/ProjectDetails/AuthorSection';
-import AuctionSection from '../../components/ProjectDetails/AuctionSection';
-import { useCollection } from '../../hooks/collection';
-import { useAuctions } from '../../hooks/auctions';
-import Checkbox from '../../components/Checkbox';
-import { useGetProject } from '../../hooks/projects/useGetProject';
-import { useGetProjectId } from '../../hooks/projects/useGetProjectId';
-import useAuctionsManager from '../../hooks/useAuctionsManager';
-import ActionButton from '../../components/ActionButton';
-import { formatNumber } from '../../utils/formatNumber';
-import Title from '../../components/Title';
-
 const Root = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   margin-block-start: 3rem;
+  min-height: 700px;
 `;
 
 const MainInfoWrapper = styled.section`
@@ -408,9 +408,16 @@ const ProjectDetailView = () => {
     });
   }, [retriggerAuction, projectId, refetch]);
 
+  if (!project && !isProjectLoading) {
+    return (
+      <Root>
+        <Title size="xl">{`The project you are looking for does not exist :(`}</Title>
+      </Root>
+    );
+  }
   return (
     <Root>
-      {!project && isProjectLoading ? (
+      {isProjectLoading ? (
         <Loading height={530} />
       ) : (
         <>

@@ -58,6 +58,7 @@ export function useGetProject(projectId: string) {
   const formattedData = useMemo(() => {
     if (!data) return;
     const { project } = data;
+    if (!project) return;
 
     const formattedContributors = project.contributors?.map((contributor) => ({
       ...contributor,
