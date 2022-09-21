@@ -183,7 +183,7 @@ const Create = () => {
   const client = useIpfsClient();
   const [currentStep, setCurrentStep] = useState(0);
   const [title, setTitle] = useState('');
-  const [text, setText] = useState('');
+  const [text, setText] = useState<Node[]>();
   const [language, setLanguage] = useState<string>('');
   const [translation, setTranslation] = useState('');
   // const [textIPFS, setTextIPFS] = useState<null | string>(null);
@@ -223,13 +223,16 @@ const Create = () => {
 
   const uploadText = useCallback(
     async (
-      content: string,
+      content: Node[] | string,
       type: 'text' | 'translation' | 'blurb' | 'image'
     ) => {
       try {
+        const uploadContent =
+          typeof content === 'string' ? content : JSON.stringify(content);
         // upload to IPFS
-        const added = await client.add(content);
-        // pin data with pinata - for now it is fire and forget, change this?
+        const added = await client.add(uploadContent);
+
+        // pin data with pinata - for now it is fire and forget
         if (added.path) {
           await pinToPinata(added.path, projectId, type, title);
         }
@@ -246,6 +249,7 @@ const Create = () => {
     setIsPinPending(true);
     const hash = await uploadText(text, 'text');
     setIsPinPending(false);
+
     await createProject({
       title,
       textIpfsHash: hash,
@@ -399,7 +403,7 @@ const Create = () => {
             )}
             {currentStep === 1 && (
               <TextForm
-                onKeyDown={(val: string) => setText(val)}
+                onKeyDown={(val: Node[]) => setText(val)}
                 onSubmit={() => setCurrentStep(currentStep + 1)}
                 text={text}
               />

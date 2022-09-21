@@ -1,6 +1,7 @@
 import { capitalizeFirstLetter } from '../../utils/capitalizestring';
 import React from 'react';
 import styled from 'styled-components';
+import { Node } from 'slate';
 import {
   FadeIn,
   ReviewItemWrapper,
@@ -9,6 +10,7 @@ import {
 } from '../../pages/create';
 import Checkbox from '../Checkbox';
 import ActionButton from '../ActionButton';
+import { serialize } from '../../utils/serializeMarkdown';
 
 interface ReviewFormProps {
   agreed: boolean;
@@ -17,7 +19,7 @@ interface ReviewFormProps {
   firstEdMaxAmount: number;
   firstEdMintPrice: string;
   language: string;
-  text: string;
+  text: Node[];
   title: string;
   pending: boolean;
 }
@@ -46,7 +48,7 @@ const ReviewForm = ({
         </ReviewItemWrapper>
         <ReviewItemWrapper>
           <BlockSpan>Text</BlockSpan>
-          <ReviewItem>{text}</ReviewItem>
+          <ReviewItem>{serialize(text).substring(0, 100)}</ReviewItem>
         </ReviewItemWrapper>
         <ReviewItemWrapper>
           <BlockSpan>Language</BlockSpan>

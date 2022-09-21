@@ -1,5 +1,5 @@
 import { capitalizeFirstLetter } from '../../utils/capitalizestring';
-import React, { useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { FadeIn, InputName, InputDescription } from '../../pages/create';
 import {
@@ -45,7 +45,8 @@ interface LanguageFormProps {
   onSubmit: () => void;
   onLanguageSet: (val: string) => void;
   language: string;
-  text: string;
+  // TOOD: type
+  text: any;
 }
 
 const LanguageForm = ({
@@ -58,6 +59,14 @@ const LanguageForm = ({
     useState<boolean>(false);
   const [showLanguageSelection, setShowLanguageSelection] =
     useState<boolean>(false);
+  const plainText = useMemo(() => {
+    if (!text) return;
+    let wholeString = '';
+    for (let i = 0; i < text.length; i++) {
+      wholeString += text[i]?.children[0]?.text + '\n\n';
+    }
+    return wholeString;
+  }, [text]);
   const languageOptions = ['other', ...getDetectableLanguages()]
     ?.map((item) => capitalizeFirstLetter(item))
     ?.map((item) => ({
@@ -77,8 +86,10 @@ const LanguageForm = ({
           <FlexColumn>
             <InputDescription>
               {`The original language of your text seems to be ${
-                detectLanguage(text)
-                  ? capitalizeFirstLetter(detectLanguage(text)[0].toString())
+                detectLanguage(plainText)
+                  ? capitalizeFirstLetter(
+                      detectLanguage(plainText)[0].toString()
+                    )
                   : 'English'
               }. Is that correct?`}
             </InputDescription>
@@ -94,9 +105,9 @@ const LanguageForm = ({
               <ActionButton
                 onClick={() => {
                   onLanguageSet(
-                    detectLanguage(text)
+                    detectLanguage(plainText)
                       ? capitalizeFirstLetter(
-                          detectLanguage(text)[0].toString()
+                          detectLanguage(plainText)[0].toString()
                         )
                       : 'English'
                   );

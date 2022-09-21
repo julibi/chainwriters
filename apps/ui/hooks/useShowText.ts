@@ -29,7 +29,7 @@ const useShowText = (projectId: string) => {
   const allowedToRead = !!detailedNfts?.find(
     (nft) => nft.projectId === Number(projectId)
   );
-  const [text, setText] = useState<string | null>(null);
+  const [text, setText] = useState<Node[]>();
   const [translation, setTranslation] = useState<string | null>(null);
   const {
     loading: isLoading,
@@ -53,7 +53,9 @@ const useShowText = (projectId: string) => {
       );
       if (response.ok) {
         const fetchedText = await response.text();
-        setText(fetchedText);
+        const formatted = JSON.parse(fetchedText);
+        console.log({ formatted });
+        setText(formatted);
       }
     } catch (e: unknown) {
       console.log({ e });

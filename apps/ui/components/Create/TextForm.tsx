@@ -1,7 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
-import { FadeIn, Wrapper, InputName } from '../../pages/create';
+import { Node } from 'slate';
 import ActionButton from '../ActionButton';
+import { FadeIn, Wrapper, InputName } from '../../pages/create';
+import { serialize } from '../../utils/serializeMarkdown';
 import { StyledInputError } from '../InputField';
 import RichText from './RichText';
 
@@ -11,8 +13,8 @@ const RichTextWrapper = styled.section`
 
 interface TextFormProps {
   onSubmit: () => void;
-  onKeyDown: (val: string) => void;
-  text: string;
+  onKeyDown: (val: Node[]) => void;
+  text: Node[];
 }
 
 const TextForm = ({ onSubmit, onKeyDown, text }: TextFormProps) => {
@@ -21,14 +23,15 @@ const TextForm = ({ onSubmit, onKeyDown, text }: TextFormProps) => {
       <Wrapper>
         <InputName>Text</InputName>
         <RichTextWrapper>
-          <RichText onKeyDown={(val) => onKeyDown(val)} />
+          <RichText onKeyDown={onKeyDown} />
         </RichTextWrapper>
         <StyledInputError>
-          {text.trim().length < 1 ? 'At least 1 character.' : ' '}
+          {serialize(text).trim().length < 1 ? 'At least 1 character.' : ' '}
+          {text.length < 1 ? 'At least 1 character.' : ' '}
         </StyledInputError>
         <ActionButton
           onClick={onSubmit}
-          disabled={text.trim().length < 1}
+          disabled={serialize(text).trim().length < 1}
           loading={false}
           text="Continue"
           margin="1rem 0 0 0 "

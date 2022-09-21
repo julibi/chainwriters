@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { truncateAddress } from '../../../components/WalletIndicator';
 import useShowText from '../../../hooks/useShowText';
 import { useGetProjectId } from '../../../hooks/projects';
@@ -13,6 +13,9 @@ import {
   INTER_BOLD,
 } from '../../../themes';
 import Toggle from '../../../components/Toggle';
+import { serialize } from '../../../utils/serializeMarkdown';
+
+import RichTextRead from '../../../components/RichTextRead';
 
 const animation = (animationseconds: number) => `
   animation: fadein ${animationseconds}s;
@@ -131,7 +134,6 @@ const Read = () => {
     hasTranslation,
   } = useShowText(projectId);
   const [translationOn, setTranslationOn] = useState<boolean>(false);
-
   const handleClickGoBack = useCallback(
     (e) => {
       e.preventDefault();
@@ -139,7 +141,7 @@ const Read = () => {
     },
     [project, router]
   );
-
+  console.log({ text });
   const handleToggle = (checked: boolean) => {
     setTranslationOn(checked);
   };
@@ -201,7 +203,8 @@ const Read = () => {
         </Wrapper>
       )}
       <TextWrapper>
-        <Text>{translationOn && translation ? translation : text}</Text>
+        {/* {translationOn && translation ? translation : text} */}
+        {text && <RichTextRead text={text} />}
       </TextWrapper>
     </Root>
   );

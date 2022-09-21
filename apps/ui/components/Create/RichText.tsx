@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { Editable, withReact, useSlate, Slate } from 'slate-react';
 import {
   Editor,
+  Node,
   Transforms,
   createEditor,
   Descendant,
@@ -31,22 +32,16 @@ const TEXT_ALIGN_TYPES = ['left', 'center', 'right', 'justify'];
 const Toolbar = styled.div``;
 
 interface RichTextProps {
-  onKeyDown: (val: string) => void;
+  onKeyDown: (val: Node[]) => void;
 }
 
 const RichText = ({ onKeyDown }: RichTextProps) => {
   const renderElement = useCallback((props) => <Element {...props} />, []);
   const renderLeaf = useCallback((props) => <Leaf {...props} />, []);
   const editor = useMemo(() => withHistory(withReact(createEditor())), []);
-  const handleChange = (event) => {
-    let wholeString = '';
-    for (let i = 0; i < event.length; i++) {
-      wholeString += event[i]?.children[0]?.text + '\n\n';
-    }
-    onKeyDown(wholeString);
-  };
+
   return (
-    <Slate editor={editor} value={initialValue} onChange={handleChange}>
+    <Slate editor={editor} value={initialValue} onChange={onKeyDown}>
       <Toolbar>
         <MarkButton format="bold" icon="format_bold" />
         <MarkButton format="italic" icon="format_italic" />
@@ -233,6 +228,7 @@ const MarkButton = ({ format, icon }) => {
       active={isMarkActive(editor, format)}
       onMouseDown={(event) => {
         event.preventDefault();
+        console.log({ event });
         toggleMark(editor, format);
       }}
     >
