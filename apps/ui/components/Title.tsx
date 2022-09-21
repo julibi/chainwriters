@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { INTER_BLACK, PLAIN_WHITE } from '../themes';
 
 const StyledTitle = styled.h1<TitleTypes>`
+  display: inline-block;
   text-align: center;
   font-family: ${INTER_BLACK};
   font-size: ${({ size }) => size};
