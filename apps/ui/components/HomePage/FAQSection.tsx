@@ -32,9 +32,7 @@ const FAQSection = () => {
       <MoreDetailsWrapper>
         <MoreDetails title={'When will Moonpage launch?'}>
           <>
-            <p>
-              The Mainnet launch is planned for the middle of September 2022.
-            </p>
+            <p>The Mainnet launch is planned for the end of September 2022.</p>
           </>
         </MoreDetails>
         <br></br>
@@ -98,8 +96,7 @@ const FAQSection = () => {
               around them. They can unlock exclusive content. But they can also
               be collected and shown off in a digital bookshelf. They could even
               give access to exclusive events, or a right to a DAO vote
-              concerning the project. As an early supporter you could get a
-              share of the royalties of the project. <br />
+              concerning the project. <br />
               Possibilities are endless! You are one of the pioneers exploring
               these possibilities and Moonpage is your tool.
             </p>
@@ -109,55 +106,37 @@ const FAQSection = () => {
         <MoreDetails title={'Why Polygon?'}>
           <>
             <p>
-              The barrier to create and collect NFTs should be low. Polygon is a
-              popular Ethereum Layer 2 scaling solution, that allows users to
-              interact with dApps at low transaction fees without compromising
-              on security. This is why we chose it. Find out more about{' '}
+              Polygon is a popular Ethereum Layer 2 scaling solution, that
+              allows users to interact with dApps at low transaction fees
+              without compromising on security. This is why we chose it. Find
+              out more about{' '}
               <LinkWrapper url="https://polygon.technology/">
                 Polygon
               </LinkWrapper>
               .
               <br />
-              Moonpage will be brought to more networks in the future. Voice
-              your opinion about the next favorable network in our{' '}
-              <LinkWrapper url="https://discord.com/invite/rKjGEzp2">
-                Discord Channel
-              </LinkWrapper>
-              ! There might even be a DAO vote about this in the near future...
+              Moonpage will be brought to more networks in the future.
               <br />
             </p>
           </>
         </MoreDetails>
         <br></br>
-        <MoreDetails title={'Copyright and Ownership'}>
-          <>
-            <p>
-              Neither Moonpage nor NFT holders own text. The ownership remains
-              with the creators. Moonpage accepts no liability for copyright
-              infringements. Please inform us via mail when you notice an
-              infringement. Moonpage will investigate and in case of
-              confirmation, we will immediately pause the NFT contract. Pausing
-              disables any interaction with the contract and freezes the funds
-              in it.
-            </p>
-          </>
-        </MoreDetails>
-        <br></br>
-        {/* <MoreDetails title={'Who is building Moonpage?'}>
+
+        <MoreDetails title={'Who is building Moonpage?'}>
           <>
             <p>
               <LinkWrapper url="/about#founders">Us</LinkWrapper> :)
             </p>
           </>
         </MoreDetails>
-        <br></br> */}
+        <br></br>
         <MoreDetails title={'What is next?'}>
           <>
             <p>
-              The launch to Polygon Mainnet! We will soon publish a Roadmap on
-              this landing page. But you will be able to connect with the team
-              on Discord and Twitter. We are eager to hear what you like to see
-              as the next feature.
+              The launch to Polygon Mainnet! We will soon publish a Roadmap
+              here. But you will be able to connect with the team on Discord and
+              Twitter. We are eager to hear what you like to see as the next
+              feature.
             </p>
           </>
         </MoreDetails>

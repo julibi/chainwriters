@@ -209,7 +209,7 @@ const HowItWorksSection = () => {
               // don't have MATIC yet?
               // why polygon? coz cheap, fast and secure - might launch on more networks in the future
               description={[
-                `After connecting your wallet, go to the Create tab. Set the title, the text and the amount of NFTs in your first edition (Genesis Edition) – we guide you through the process step by step. You will find your project under the "My bookshelf“ tab later.`,
+                `After connecting your wallet, go to the Create tab. Set the title, the text and the amount of NFTs in your first edition (Genesis Edition) – we guide you through the process step by step. You will find your project under the "Bookshelf“ tab later.`,
               ]}
             />
             <InstructionComp
@@ -227,9 +227,8 @@ const HowItWorksSection = () => {
               index={3}
               currentStep={authorInstructionsStep}
               onClick={() => setAuthorInstructionsStep(3)}
-              title="Claim your own NFTs"
+              title="Contributors"
               description={[
-                `Before the auction starts you have to claim some NFTs for yourself. This transaction will transfer 1 NFT to the Moonpage project and also 15% of the collection revenue.`,
                 `Optional: You can add up to 3 contributors. Maybe you want to share your income with an editor, a cover artist or a translator. Enter their wallet addresses, roles and shares. After an edition sells out, the revenue will be split, for example like this: editor - 15%, cover-artist - 5%, Moonpage project - 15%, YOU – 65%.`,
               ]}
             />
@@ -239,7 +238,8 @@ const HowItWorksSection = () => {
               onClick={() => setAuthorInstructionsStep(4)}
               title="Start Selling!"
               description={[
-                `After finishing the creation flow, you are forwarded to your project's page. Scroll down and click on "Trigger Auction".`,
+                `After finishing the creation flow, you are forwarded to your project's page. Scroll down and click on "Start Auctions".`,
+                `This transaction transfers 1 NFT of your project to Moonpage and lets you claim some for yourself.`,
                 `Congratulations! You have published your text to the Blockchain. Seriously... THIS IS BIG. Go tell everyone!`,
               ]}
             />
@@ -264,7 +264,7 @@ const HowItWorksSection = () => {
               onClick={() => setCollectorInstructionsStep(1)}
               title="Browse Projects"
               description={[
-                `After connecting your wallet, click on the "Projects" tab. You can search or filter for all kinds of texts here. Top projects are listed on the homepage right above this section.`,
+                `After connecting your wallet, click on the "Projects" tab. You can search for all kinds of texts here. Top projects are listed on the homepage right above this section.`,
               ]}
             />
             <InstructionComp
@@ -281,9 +281,9 @@ const HowItWorksSection = () => {
               index={3}
               currentStep={collectorInstructionsStep}
               onClick={() => setCollectorInstructionsStep(3)}
-              title="My Bookshelf"
+              title="Bookshelf"
               description={[
-                `As NFT owner, you see a little "READ" button on the cover of the matching project's page. Click on it to read. Or you can go to "My Bookshelf", where you find a list of the NFTs you own.`,
+                `As NFT owner, you see a little "READ" button on the cover of the matching project's page. Click on it to read. Or you can go to "Bookshelf", where you find a list of the NFTs you own.`,
                 `Further features for NFT owners will be unlocked in the future, so hold on tight!`,
               ]}
             />
