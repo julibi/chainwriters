@@ -68,7 +68,9 @@ const RichText = ({ onKeyDown }: RichTextProps) => {
               editor.selection.anchor.path.slice(0, -1)
             );
             if (
+              // @ts-expect-error type does not exist on Node or Descendant
               selectedElement.type === 'list-item' ||
+              // @ts-expect-error type does not exist on Node or Descendant
               selectedElement.type === 'title'
             ) {
               e.preventDefault();
@@ -76,10 +78,11 @@ const RichText = ({ onKeyDown }: RichTextProps) => {
                 editor,
                 editor.selection.anchor.path
               );
-
+              // @ts-expect-error type does not exist on Descendant
               if (selectedLeaf.text.length === editor.selection.anchor.offset) {
                 Transforms.insertNodes(editor, {
                   type: 'paragraph',
+                  // @ts-expect-error marks, text not assignable to Descendant
                   children: [{ text: '', marks: [] }],
                 });
               } else {
