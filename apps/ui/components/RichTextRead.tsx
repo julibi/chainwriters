@@ -6,14 +6,14 @@ import { withHistory } from 'slate-history';
 
 const StyledEditable = styled(Editable)`
   min-height: 500px !important;
+  font-size: 16px;
   margin-block-start: 1rem;
-  padding: 1rem;
   overflow-wrap: anywhere;
   font-family: monospace;
 `;
 
 interface RichTextReadProps {
-  text: Node[];
+  text?: Node[];
 }
 
 const RichText = ({ text }: RichTextReadProps) => {
@@ -21,68 +21,68 @@ const RichText = ({ text }: RichTextReadProps) => {
   const renderLeaf = useCallback((props) => <Leaf {...props} />, []);
   const editor = useMemo(() => withHistory(withReact(createEditor())), []);
 
+  if (!text) return;
   return (
     <Slate editor={editor} value={text as Descendant[]}>
       <StyledEditable
-        contentEditable={false}
         renderElement={renderElement}
         renderLeaf={renderLeaf}
-        spellCheck
         disabled
       />
     </Slate>
   );
 };
 
-const Element = ({ attributes, children, element }) => {
+const Element = ({ children, element }) => {
+  const attributes = { contentEditable: false };
   const style = { textAlign: element.align };
   switch (element.type) {
     case 'block-quote':
       return (
-        <blockquote style={style} contentEditable={false}>
+        <blockquote style={style} {...attributes}>
           {children}
         </blockquote>
       );
     case 'bulleted-list':
       return (
-        <ul style={style} contentEditable={false}>
+        <ul style={style} {...attributes}>
           {children}
         </ul>
       );
     case 'heading-one':
       return (
-        <h1 style={style} contentEditable={false}>
+        <h1 style={{ fontSize: '36px' }} {...attributes}>
           {children}
         </h1>
       );
     case 'heading-two':
       return (
-        <h2 style={style} contentEditable={false}>
+        <h2 style={{ fontSize: '24px' }} {...attributes}>
           {children}
         </h2>
       );
     case 'list-item':
       return (
-        <li style={style} contentEditable={false}>
+        <li style={style} {...attributes}>
           {children}
         </li>
       );
     case 'numbered-list':
       return (
-        <ol style={style} contentEditable={false}>
+        <ol style={style} {...attributes}>
           {children}
         </ol>
       );
     default:
       return (
-        <p style={style} contentEditable={false}>
+        <p style={style} {...attributes}>
           {children}
         </p>
       );
   }
 };
 
-const Leaf = ({ attributes, children, leaf }) => {
+const Leaf = ({ children, leaf }) => {
   if (leaf.bold) {
     children = <strong>{children}</strong>;
   }
@@ -99,7 +99,7 @@ const Leaf = ({ attributes, children, leaf }) => {
     children = <u>{children}</u>;
   }
 
-  return <span {...attributes}>{children}</span>;
+  return <span contentEditable={false}>{children}</span>;
 };
 
 export default RichText;

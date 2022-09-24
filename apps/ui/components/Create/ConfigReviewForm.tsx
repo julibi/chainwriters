@@ -7,10 +7,10 @@ import {
   ReviewItemWrapper,
   FadeIn,
   Wrapper,
-  InputName,
   InputDescription,
 } from '../../pages/create';
 import ActionButton from '../ActionButton';
+import Title from '../Title';
 
 const FlexContainer = styled.div`
   display: flex;
@@ -69,7 +69,7 @@ const ConfigReviewForm = ({
   return (
     <FadeIn>
       <Wrapper>
-        <InputName>Your Project Details</InputName>
+        <Title size="m">Your Project Details</Title>
         <InputDescription>
           {`Review this data closely before submitting it.`}
         </InputDescription>

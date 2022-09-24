@@ -1,8 +1,9 @@
 import React, { ChangeEvent } from 'react';
 import styled from 'styled-components';
-import { FadeIn, Wrapper, InputName } from '../../pages/create';
+import { FadeIn, Wrapper } from '../../pages/create';
 import ActionButton from '../ActionButton';
 import InputField from '../InputField';
+import Title from '../Title';
 
 const InputWrapper = styled.div`
   width: 230px;
@@ -19,7 +20,7 @@ const NameForm = ({ onChange, onSubmit, title }: NameFormProps) => {
   return (
     <FadeIn>
       <Wrapper>
-        <InputName>Title</InputName>
+        <Title size="m">Title</Title>
         <InputWrapper>
           <InputField
             error={title.length < 1 && 'At least 1 character.'}

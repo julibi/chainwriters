@@ -1,12 +1,8 @@
 import React from 'react';
 import { useRouter } from 'next/router';
-import {
-  FadeIn,
-  Wrapper,
-  InputName,
-  InputDescription,
-} from '../../pages/create';
+import { FadeIn, Wrapper, InputDescription } from '../../pages/create';
 import ActionButton from '../ActionButton';
+import Title from '../Title';
 
 interface FinishedProps {
   projectId: string;
@@ -17,7 +13,7 @@ const Finished = ({ projectId }: FinishedProps) => {
   return (
     <FadeIn>
       <Wrapper>
-        <InputName>Done</InputName>
+        <Title size="m">Done</Title>
         <InputDescription>
           {`You have completed configuring your Project. Visit the newly created Project page.`}
         </InputDescription>

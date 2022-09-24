@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Node } from 'slate';
 import { gql, useQuery } from '@apollo/client';
 import { useWeb3React } from '@web3-react/core';
 import {
@@ -26,11 +27,13 @@ export const GET_PROJECT = gql`
 const useShowText = (projectId: string) => {
   const { account } = useWeb3React();
   const { detailedNfts } = useUser();
-  const allowedToRead = !!detailedNfts?.find(
-    (nft) => nft.projectId === Number(projectId)
+  const allowedToRead = useMemo(
+    () => !!detailedNfts?.find((nft) => nft.projectId === Number(projectId)),
+    [detailedNfts, projectId]
   );
   const [text, setText] = useState<Node[]>();
-  const [translation, setTranslation] = useState<string | null>(null);
+  const [translation, setTranslation] = useState<Node[]>();
+  const [pending, setPending] = useState<boolean>(true);
   const {
     loading: isLoading,
     error,
@@ -43,7 +46,8 @@ const useShowText = (projectId: string) => {
   }, [data]);
 
   const fetchTextData = useCallback(async () => {
-    if (!project || !account || error || isLoading) {
+    setPending(true);
+    if (!project || !account || error) {
       return null;
     }
 
@@ -54,16 +58,18 @@ const useShowText = (projectId: string) => {
       if (response.ok) {
         const fetchedText = await response.text();
         const formatted = JSON.parse(fetchedText);
-        console.log({ formatted });
         setText(formatted);
+        setPending(false);
       }
     } catch (e: unknown) {
       console.log({ e });
+      setPending(false);
     }
-  }, [project, account, error, isLoading]);
+  }, [project, account, error]);
 
   const fetchTranslation = useCallback(async () => {
-    if (!project?.translationIpfsHash || !account || error || isLoading) {
+    setPending(true);
+    if (!project?.translationIpfsHash || !account || error) {
       return null;
     }
 
@@ -73,12 +79,15 @@ const useShowText = (projectId: string) => {
       );
       if (response.ok) {
         const fetchedTranslation = await response.text();
-        setTranslation(fetchedTranslation);
+        const formatted = JSON.parse(fetchedTranslation);
+        setTranslation(formatted);
+        setPending(false);
       }
     } catch (e: unknown) {
       console.log({ e });
+      setPending(false);
     }
-  }, [account, error, isLoading, project]);
+  }, [account, error, project]);
 
   const hasTranslation = useMemo(() => {
     return project?.translationIpfsHash?.length > 0;
@@ -99,7 +108,7 @@ const useShowText = (projectId: string) => {
   return useMemo(
     () => ({
       allowedToRead,
-      isLoading,
+      pending: pending || isLoading,
       project,
       text,
       translation,
@@ -111,6 +120,7 @@ const useShowText = (projectId: string) => {
       fetchTranslation,
       hasTranslation,
       isLoading,
+      pending,
       project,
       text,
       translation,

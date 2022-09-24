@@ -8,6 +8,7 @@ import React, {
 import styled from 'styled-components';
 import { toast } from 'react-toastify';
 import { parseEther } from 'ethers/lib/utils';
+import { Node } from 'slate';
 import ProgressBar from '../components/ProgressBar';
 import {
   BASE_BORDER_RADIUS,
@@ -183,9 +184,9 @@ const Create = () => {
   const client = useIpfsClient();
   const [currentStep, setCurrentStep] = useState(0);
   const [title, setTitle] = useState('');
-  const [text, setText] = useState<Node[]>();
+  const [text, setText] = useState<Node[] | undefined>();
   const [language, setLanguage] = useState<string>('');
-  const [translation, setTranslation] = useState('');
+  const [translation, setTranslation] = useState<Node[] | undefined>('');
   // const [textIPFS, setTextIPFS] = useState<null | string>(null);
   const [agreed, setAgreed] = useState(false);
   const [firstEdMintPrice, setFirstEdMintPrice] = useState<string>('0');
@@ -462,7 +463,7 @@ const Create = () => {
             )}
             {currentStep === 7 && (
               <TranslationForm
-                onKeyDown={(val: string) => setTranslation(val)}
+                onKeyDown={(val: Node[]) => setTranslation(val)}
                 onSubmit={handleUpdateTranslation}
                 translation={translation}
                 pending={
@@ -470,7 +471,7 @@ const Create = () => {
                   updateTranslationStatus === 'waiting' ||
                   isPinPending
                 }
-                reset={() => setTranslation('')}
+                reset={() => setTranslation(undefined)}
                 onNextStep={() => setCurrentStep(currentStep + 1)}
               />
             )}

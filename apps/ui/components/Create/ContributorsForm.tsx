@@ -178,7 +178,7 @@ const ContributorsForm = ({
               contributorsList.length < formsAmount ||
               shareSelf < 1
             }
-            loading={loading}
+            loading={false}
             onClick={() => setFormsAmount(formsAmount + 1)}
             text="+ Add More"
             color="#fff"

@@ -1,11 +1,7 @@
 import React from 'react';
-import {
-  FadeIn,
-  Wrapper,
-  InputName,
-  InputDescription,
-} from '../../pages/create';
+import { FadeIn, Wrapper, InputDescription } from '../../pages/create';
 import ActionButton from '../ActionButton';
+import Title from '../Title';
 
 interface CongratsProps {
   onSubmit: () => void;
@@ -15,7 +11,7 @@ const Congrats = ({ onSubmit }: CongratsProps) => {
   return (
     <FadeIn>
       <Wrapper>
-        <InputName>Congratulations!</InputName>
+        <Title size="m">Congratulations!</Title>
         <InputDescription>
           Now, your work exists on the blockchain!
         </InputDescription>

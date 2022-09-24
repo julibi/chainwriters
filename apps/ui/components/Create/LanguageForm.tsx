@@ -8,6 +8,7 @@ import {
 } from '../../utils/detectLanguage';
 import ActionButton from '../ActionButton';
 import Dropdown from '../Dropdown';
+import Title from '../Title';
 
 const Wrapper = styled.section`
   display: flex;
@@ -81,7 +82,7 @@ const LanguageForm = ({
   return (
     <FadeIn>
       <Wrapper>
-        <InputName>Language</InputName>
+        <Title size="m">Language</Title>
         {!showLanguageSelection && !showTranslationUpload && (
           <FlexColumn>
             <InputDescription>

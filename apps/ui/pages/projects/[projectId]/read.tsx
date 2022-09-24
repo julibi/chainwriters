@@ -13,9 +13,9 @@ import {
   INTER_BOLD,
 } from '../../../themes';
 import Toggle from '../../../components/Toggle';
-import { serialize } from '../../../utils/serializeMarkdown';
 
 import RichTextRead from '../../../components/RichTextRead';
+import Title from '../../../components/Title';
 
 const animation = (animationseconds: number) => `
   animation: fadein ${animationseconds}s;
@@ -87,12 +87,6 @@ const FlexWrapper = styled.div`
   }
 `;
 
-const Title = styled.h1`
-  font-family: 'Inter';
-  margin-block-start: 3rem;
-  text-align: center;
-`;
-
 const Wrapper = styled.div`
   padding-inline: 2rem;
   margin-block-end: 1rem;
@@ -125,14 +119,8 @@ const ToggleWrapper = styled.div`
 const Read = () => {
   const router = useRouter();
   const projectId = useGetProjectId();
-  const {
-    allowedToRead,
-    project,
-    text,
-    isLoading,
-    translation,
-    hasTranslation,
-  } = useShowText(projectId);
+  const { allowedToRead, project, text, pending, translation, hasTranslation } =
+    useShowText(projectId);
   const [translationOn, setTranslationOn] = useState<boolean>(false);
   const handleClickGoBack = useCallback(
     (e) => {
@@ -141,12 +129,12 @@ const Read = () => {
     },
     [project, router]
   );
-  console.log({ text });
+
   const handleToggle = (checked: boolean) => {
     setTranslationOn(checked);
   };
 
-  if (isLoading && !project) {
+  if (pending) {
     return (
       <Root>
         <Loading height={530} />
@@ -154,10 +142,11 @@ const Read = () => {
     );
   }
 
-  if (!allowedToRead && !isLoading) {
+  // fix bug showing this for too long
+  if (!allowedToRead && !pending) {
     return (
       <Root>
-        <Title>Sorry, you need to own an NFT to read this.</Title>
+        <Title size="l">Sorry, you need to own an NFT to read this.</Title>
       </Root>
     );
   }
@@ -203,8 +192,8 @@ const Read = () => {
         </Wrapper>
       )}
       <TextWrapper>
-        {/* {translationOn && translation ? translation : text} */}
-        {text && <RichTextRead text={text} />}
+        {text && !translationOn && <RichTextRead text={text} />}
+        {translation && translationOn && <RichTextRead text={translation} />}
       </TextWrapper>
     </Root>
   );

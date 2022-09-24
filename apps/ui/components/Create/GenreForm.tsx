@@ -4,12 +4,12 @@ import {
   FlexContainer,
   FadeIn,
   Wrapper,
-  InputName,
   InputDescription,
 } from '../../pages/create';
 import Dropdown from '../Dropdown';
 import { GENRES } from '../../constants';
 import ActionButton from '../ActionButton';
+import Title from '../Title';
 
 const DropdownWrapper = styled.div`
   margin-block-end: 2rem;
@@ -36,7 +36,7 @@ const GenreForm = ({
   return (
     <FadeIn>
       <Wrapper>
-        <InputName>Genre</InputName>
+        <Title size="m">Genre</Title>
         <InputDescription>
           If you specify the Genre, it makes it easier for people to find your
           project. Also, you are giving more information for possible readers

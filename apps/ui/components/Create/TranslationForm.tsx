@@ -1,8 +1,11 @@
-import { FadeIn, InputName, Wrapper } from '../../pages/create';
 import React from 'react';
+import { Node } from 'slate';
+import { FadeIn, Wrapper } from '../../pages/create';
 import styled from 'styled-components';
 import ActionButton from '../ActionButton';
 import RichText from './RichText';
+import Title from '../Title';
+import { serialize } from '../../utils/serializeMarkdown';
 
 const Text = styled.p`
   display: inline-block;
@@ -25,12 +28,12 @@ const RichTextWrapper = styled.section`
 `;
 
 interface TranslationFormProps {
-  onKeyDown: (val: string) => void;
+  onKeyDown: (val: Node[]) => void;
   onNextStep: () => void;
   onSubmit: () => void;
   reset: () => void;
   pending: boolean;
-  translation: string;
+  translation: Node[];
 }
 
 const TranslationForm = ({
@@ -45,7 +48,7 @@ const TranslationForm = ({
     <FadeIn>
       <Wrapper>
         <FlexColumn>
-          <InputName>Translation</InputName>
+          <Title size="m">Translation</Title>
           <Text>
             If available, provide an English translation for your original text.
           </Text>
@@ -67,7 +70,10 @@ const TranslationForm = ({
             <ActionButton
               onClick={onSubmit}
               text="Use this translation"
-              disabled={translation.trim().length < 1 || pending}
+              disabled={
+                (translation && serialize(translation)?.trim().length < 1) ||
+                pending
+              }
               loading={pending}
               margin="3rem 0 0 0"
             />

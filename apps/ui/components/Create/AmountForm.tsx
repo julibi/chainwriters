@@ -8,6 +8,7 @@ import {
 } from '../../pages/create';
 import ActionButton from '../ActionButton';
 import InputField from '../InputField';
+import Title from '../Title';
 
 const InputWrapper = styled.div`
   width: 230px;
@@ -27,7 +28,7 @@ const AmountForm = ({
   return (
     <FadeIn>
       <Wrapper>
-        <InputName>Genesis Edition Total Amount</InputName>
+        <Title size="m">Genesis Edition Total Amount</Title>
         <InputDescription>
           The first edition of a work is called Genesis Edition. Holders of a
           Genesis Edition will have special benefits. The Genesis Edition will

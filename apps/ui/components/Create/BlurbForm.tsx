@@ -9,6 +9,7 @@ import {
 } from '../../pages/create';
 import ActionButton from '../ActionButton';
 import { StyledInputError } from '../InputField';
+import Title from '../Title';
 
 interface BlurbFormProps {
   blurb: string;
@@ -30,7 +31,7 @@ const BlurbForm = ({
   return (
     <FadeIn>
       <Wrapper>
-        <InputName>Blurb</InputName>
+        <Title size="m">Blurb</Title>
         <InputDescription>
           E.G. short introduction to your project, a summary, the first few
           lines or description of the utility of your NFT.

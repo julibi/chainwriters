@@ -9,6 +9,7 @@ import {
   PLAIN_WHITE,
 } from '../../themes';
 import ActionButton from '../ActionButton';
+import Title from '../Title';
 
 export const StyledImageForm = styled.form`
   display: flex;
@@ -98,7 +99,7 @@ const CoverImageForm = ({
   return (
     <FadeIn>
       <Wrapper>
-        <InputName>Cover Image</InputName>
+        <Title size="m">Cover Image</Title>
         {/* @ts-ignore */}
         <StyledImageForm onSubmit={onSubmit}>
           <DragNDrop

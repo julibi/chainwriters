@@ -8,6 +8,7 @@ import {
 } from '../../pages/create';
 import ActionButton from '../ActionButton';
 import InputField from '../InputField';
+import Title from '../Title';
 
 const InputWrapper = styled.div`
   width: 230px;
@@ -27,7 +28,7 @@ const PriceForm = ({
   return (
     <FadeIn>
       <Wrapper>
-        <InputName>Starting Price (Matic)</InputName>
+        <Title size="m">Starting Price (Matic)</Title>
         <InputDescription>
           The Genesis Edition is sold in a dutch auction. In a dutch auction the
           price keeps going down during a given time – in our case: 24 hours –

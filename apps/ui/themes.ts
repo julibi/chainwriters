@@ -72,7 +72,6 @@ export const BaseButton = styled.button<BaseButtonProps>`
 `;
 
 export const FlatButton = styled.button<BaseButtonProps>`
-  background-color: ${BG_DARK};
   color: ${PLAIN_WHITE};
   font-family: ${INTER_BOLD};
   border-radius: ${BASE_BORDER_RADIUS};
@@ -84,7 +83,7 @@ export const FlatButton = styled.button<BaseButtonProps>`
   }
 
   :disabled {
-    background-color: ${BG_LIGHT};
+    // background-color: ${BG_LIGHT};
     color: grey;
     pointer-events: none;
   }
@@ -106,6 +105,7 @@ export const PrimaryButton = styled.button`
 
 export const BaseInput = styled.input`
   font-family: ${INTER_BOLD};
+  font-size: 16px;
   border-radius: ${BASE_BORDER_RADIUS};
   box-shadow: ${INSET_BASE_BOX_SHADOW};
   padding: 1rem;

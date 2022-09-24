@@ -1,13 +1,8 @@
 import React, { ChangeEvent } from 'react';
-import {
-  FlexContainer,
-  FadeIn,
-  Wrapper,
-  InputName,
-  InputDescription,
-} from '../../pages/create';
+import { FlexContainer, FadeIn, Wrapper } from '../../pages/create';
 import ActionButton from '../ActionButton';
 import InputField from '../InputField';
+import Title from '../Title';
 
 interface SubtitleFormProps {
   subtitle: string;
@@ -25,7 +20,7 @@ const SubtitleForm = ({
   return (
     <FadeIn>
       <Wrapper>
-        <InputName>Subtitle</InputName>
+        <Title size="m">Subtitle</Title>
         <InputField
           error={subtitle.length < 3 && 'At least 3 characters.'}
           // @ts-ignore
