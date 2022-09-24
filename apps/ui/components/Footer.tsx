@@ -62,7 +62,7 @@ const Footer = () => {
         <SocialMediaLinkWrapper
           target="_blank"
           rel="noopener noreferrer"
-          href="https://mobile.twitter.com/moonpage"
+          href="https://mobile.twitter.com/mooonpage"
         >
           <Image
             height={'30px'}
@@ -75,7 +75,7 @@ const Footer = () => {
         <SocialMediaLinkWrapper
           target="_blank"
           rel="noopener noreferrer"
-          href="https://medium.com/polychainmonsters"
+          href="https://discord.com/invite/rKjGEzp2"
         >
           <Image
             height={'30px'}
@@ -86,7 +86,7 @@ const Footer = () => {
           />
           <SocialMediaName>Discord</SocialMediaName>
         </SocialMediaLinkWrapper>
-        <SocialMediaLinkWrapper
+        {/* <SocialMediaLinkWrapper
           target="_blank"
           rel="noopener noreferrer"
           href="https://medium.com/moonpage"
@@ -99,7 +99,7 @@ const Footer = () => {
             priority
           />
           <SocialMediaName>Medium</SocialMediaName>
-        </SocialMediaLinkWrapper>
+        </SocialMediaLinkWrapper> */}
         <SocialMediaLinkWrapper
           target="_self"
           rel="noopener noreferrer"

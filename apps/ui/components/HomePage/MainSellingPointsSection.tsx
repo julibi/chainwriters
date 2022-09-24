@@ -84,7 +84,6 @@ const SubHeader = styled.h3`
 const MainSellingPointsSection = () => {
   return (
     <Root>
-      <Title>What is Moonpage?</Title>
       <BlocksWrapper>
         <AuthorBlock>
           <SubHeader>Creators</SubHeader>
