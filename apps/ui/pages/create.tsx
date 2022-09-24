@@ -186,7 +186,7 @@ const Create = () => {
   const [title, setTitle] = useState('');
   const [text, setText] = useState<Node[] | undefined>();
   const [language, setLanguage] = useState<string>('');
-  const [translation, setTranslation] = useState<Node[] | undefined>('');
+  const [translation, setTranslation] = useState<Node[] | undefined>();
   // const [textIPFS, setTextIPFS] = useState<null | string>(null);
   const [agreed, setAgreed] = useState(false);
   const [firstEdMintPrice, setFirstEdMintPrice] = useState<string>('0');
