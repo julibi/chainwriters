@@ -1,9 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useFetchTopProjects } from '../../state/projects/hooks';
+import { useProjects } from '../../hooks/projects';
 import { INTER_BLACK } from '../../themes';
 import Loading from '../Loading';
 import { ProjectItem } from '../ProjectItem';
+import Title from '../Title';
 
 export const SectionTitleWrapper = styled.div`
   display: flex;
@@ -36,26 +37,23 @@ const ProjectList = styled.section`
 `;
 
 const ProjectSection = () => {
-  const { loading, error, data } = useFetchTopProjects();
+  const { topProjects: data, areTopProjectsLoading: loading } = useProjects();
   return (
     <>
-      <SectionTitleWrapper>
-        <SectionTitle>Top Projects</SectionTitle>
-        <span>(These projects are mockups)</span>
-      </SectionTitleWrapper>
+      <Title>Top Projects</Title>
       {loading && !data && <Loading height={530} />}
       <ProjectList>
-        {data?.daos.map(
+        {data?.map(
           (
-            { id, title, author, address, imgIpfsHash, subtitle, genre },
+            { id, title, createdAt, creator, imgIpfsHash, subtitle, genre },
             idx
           ) => (
             <ProjectItem
               key={idx}
               id={id}
-              address={address}
+              createdAt={createdAt}
+              creator={creator}
               title={title}
-              author={author}
               imgIpfsHash={imgIpfsHash}
               subtitle={subtitle}
               genre={genre}

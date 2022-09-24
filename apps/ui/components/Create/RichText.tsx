@@ -1,38 +1,36 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import styled from 'styled-components';
-import isHotkey from 'is-hotkey';
 import { Editable, withReact, useSlate, Slate } from 'slate-react';
 import {
   Editor,
+  Node,
   Transforms,
   createEditor,
   Descendant,
   Element as SlateElement,
 } from 'slate';
 import { withHistory } from 'slate-history';
-import { FlatButton, INSET_BASE_BOX_SHADOW } from '../../themes';
+import { BASE_BORDER_RADIUS, INSET_BASE_BOX_SHADOW } from '../../themes';
+import EditorToolButton from '../EditorToolButton';
 
 const StyledEditable = styled(Editable)`
   box-shadow: ${INSET_BASE_BOX_SHADOW};
-  width: 100%;
-  min-height: 500px;
+  // otherwise it shrinks to 24px height somehow
+  min-height: 500px !important;
   margin-block-start: 1rem;
   padding: 1rem;
+  border-radius: ${BASE_BORDER_RADIUS};
+  overflow-wrap: anywhere;
+  font-family: monospace;
+  font-size: 16px;
 `;
-
-const HOTKEYS = {
-  'mod+b': 'bold',
-  'mod+i': 'italic',
-  'mod+u': 'underline',
-  'mod+`': 'code',
-};
 
 const LIST_TYPES = ['numbered-list', 'bulleted-list'];
 const TEXT_ALIGN_TYPES = ['left', 'center', 'right', 'justify'];
 const Toolbar = styled.div``;
 
 interface RichTextProps {
-  onKeyDown: (val: string) => void;
+  onKeyDown: (val: Node[]) => void;
 }
 
 const RichText = ({ onKeyDown }: RichTextProps) => {
@@ -41,12 +39,12 @@ const RichText = ({ onKeyDown }: RichTextProps) => {
   const editor = useMemo(() => withHistory(withReact(createEditor())), []);
 
   return (
-    <Slate editor={editor} value={initialValue}>
+    <Slate editor={editor} value={initialValue} onChange={onKeyDown}>
       <Toolbar>
         <MarkButton format="bold" icon="format_bold" />
         <MarkButton format="italic" icon="format_italic" />
         <MarkButton format="underline" icon="format_underlined" />
-        <MarkButton format="code" icon="code" />
+        {/* <MarkButton format="code" icon="code" /> */}
         <BlockButton format="heading-one" icon="looks_one" />
         <BlockButton format="heading-two" icon="looks_two" />
         <BlockButton format="block-quote" icon="format_quote" />
@@ -60,19 +58,34 @@ const RichText = ({ onKeyDown }: RichTextProps) => {
       <StyledEditable
         renderElement={renderElement}
         renderLeaf={renderLeaf}
-        placeholder="Enter some rich text…"
+        placeholder="Enter some text…"
         spellCheck
         autoFocus
-        onKeyDown={(event) => {
-          //@ts-expect-error innerText not inside target
-          console.log(event.target.innerText);
-          //@ts-expect-error innerText not inside target
-          onKeyDown(event.target.innerText);
-          for (const hotkey in HOTKEYS) {
-            if (isHotkey(hotkey, event as any)) {
-              event.preventDefault();
-              const mark = HOTKEYS[hotkey];
-              toggleMark(editor, mark);
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' && e.shiftKey) {
+            const selectedElement = Node.descendant(
+              editor,
+              editor.selection.anchor.path.slice(0, -1)
+            );
+            if (
+              selectedElement.type === 'list-item' ||
+              selectedElement.type === 'title'
+            ) {
+              e.preventDefault();
+              const selectedLeaf = Node.descendant(
+                editor,
+                editor.selection.anchor.path
+              );
+
+              if (selectedLeaf.text.length === editor.selection.anchor.offset) {
+                Transforms.insertNodes(editor, {
+                  type: 'paragraph',
+                  children: [{ text: '', marks: [] }],
+                });
+              } else {
+                Transforms.splitNodes(editor, { always: true });
+                Transforms.setNodes(editor, { type: 'paragraph' });
+              }
             }
           }
         }}
@@ -164,13 +177,13 @@ const Element = ({ attributes, children, element }) => {
       );
     case 'heading-one':
       return (
-        <h1 style={style} {...attributes}>
+        <h1 style={{ fontSize: '36px' }} {...attributes}>
           {children}
         </h1>
       );
     case 'heading-two':
       return (
-        <h2 style={style} {...attributes}>
+        <h2 style={{ fontSize: '24px' }} {...attributes}>
           {children}
         </h2>
       );
@@ -200,9 +213,9 @@ const Leaf = ({ attributes, children, leaf }) => {
     children = <strong>{children}</strong>;
   }
 
-  if (leaf.code) {
-    children = <code>{children}</code>;
-  }
+  // if (leaf.code) {
+  //   children = <code>{children}</code>;
+  // }
 
   if (leaf.italic) {
     children = <em>{children}</em>;
@@ -218,7 +231,7 @@ const Leaf = ({ attributes, children, leaf }) => {
 const BlockButton = ({ format, icon }) => {
   const editor = useSlate();
   return (
-    <FlatButton
+    <EditorToolButton
       active={isBlockActive(
         editor,
         format,
@@ -230,14 +243,14 @@ const BlockButton = ({ format, icon }) => {
       }}
     >
       <span className="material-icons">{icon}</span>
-    </FlatButton>
+    </EditorToolButton>
   );
 };
 
 const MarkButton = ({ format, icon }) => {
   const editor = useSlate();
   return (
-    <FlatButton
+    <EditorToolButton
       active={isMarkActive(editor, format)}
       onMouseDown={(event) => {
         event.preventDefault();
@@ -245,14 +258,14 @@ const MarkButton = ({ format, icon }) => {
       }}
     >
       <span className="material-icons">{icon}</span>
-    </FlatButton>
+    </EditorToolButton>
   );
 };
 
 const initialValue: Descendant[] = [
   {
     type: 'paragraph',
-    children: [{ text: 'My magic text...' }],
+    children: [{ text: '' }],
   },
 ];
 

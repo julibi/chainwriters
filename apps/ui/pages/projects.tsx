@@ -2,7 +2,6 @@ import React, {
   ChangeEvent,
   KeyboardEvent,
   useCallback,
-  useEffect,
   useState,
 } from 'react';
 import Image from 'next/image';
@@ -12,12 +11,8 @@ import {
   SectionTitle,
 } from '../components/HomePage/ProjectSection';
 import { ProjectItem } from '../components/ProjectItem';
-import {
-  useFetchAllAuctions,
-  useFetchAllProjectsDesc,
-  useFetchAllProjectsOldAsc,
-} from '../state/projects/hooks';
-import Dropdown from '../components/Dropdown';
+import { useProjects } from '../hooks/projects';
+// import Dropdown from '../components/Dropdown';
 import {
   BaseButton,
   BaseInput,
@@ -122,10 +117,10 @@ const NoResults = styled.h3`
 `;
 
 const ProjectItems = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-auto-rows: auto;
+  grid-gap: 1rem;
   padding: 3rem;
 
   @media (max-width: 900px) {
@@ -135,11 +130,10 @@ const ProjectItems = styled.div`
   }
 `;
 
-interface Dao {
+interface Project {
   id: string;
-  author: string;
-  address: string;
-  createdAt: string;
+  creator: string;
+  createdAt?: string;
   title: string;
   imgIpfsHash?: string;
   subtitle?: string;
@@ -149,46 +143,45 @@ interface Dao {
 }
 
 const Projects = () => {
-  const [daos, setDaos] = useState<Dao[] | null>(null);
-  const [searchedDaos, setSearchedDaos] = useState<Dao[] | null>(null);
+  const [searchedProjects, setSearchedProjects] = useState<Project[] | null>(
+    null
+  );
   const [searchInput, setSearchInput] = useState<string>('');
   const [hasSearched, setHasSearched] = useState<boolean>(false);
-  const fetchAllDesc = useFetchAllProjectsDesc();
-  const fetchAllAsc = useFetchAllProjectsOldAsc();
-  const fetchAuctions = useFetchAllAuctions();
-  const { data, loading } = fetchAllDesc();
 
-  const search = useCallback(
-    (filtered?: Dao[]) => {
-      const daoArray = filtered ?? daos;
-      if (daoArray && daoArray.length > 0 && searchInput.trim().length > 0) {
-        const search = searchInput.trim().toLowerCase();
-        const result = daoArray.filter(
-          (dao: Dao) =>
-            dao.title.toLowerCase().includes(search) ||
-            dao.subtitle?.toLowerCase().includes(search) ||
-            dao.author.toLowerCase().includes(search)
-        );
-        setHasSearched(true);
-        if (result.length > 0) {
-          setSearchedDaos(result);
-        }
+  const {
+    allProjects: projects,
+    refetchAllProjects,
+    areAllProjectsLoading,
+  } = useProjects();
+
+  // TODO: this is just local filtering - do it with graphql useQuery
+  const search = useCallback(() => {
+    const projectsArray = projects;
+    if (
+      projectsArray &&
+      projectsArray.length > 0 &&
+      searchInput.trim().length > 0
+    ) {
+      const search = searchInput.trim().toLowerCase();
+      const result = projectsArray.filter(
+        (project: Project) =>
+          project.title.toLowerCase().includes(search) ||
+          project.subtitle?.toLowerCase().includes(search) ||
+          project.creator.toLowerCase().includes(search)
+      );
+      setHasSearched(true);
+      if (result.length > 0) {
+        setSearchedProjects(result);
       }
-    },
-    [daos, searchInput]
-  );
+    }
+  }, [projects, searchInput]);
 
   const reset = () => {
     setSearchInput('');
-    setSearchedDaos(null);
+    setSearchedProjects(null);
     setHasSearched(false);
   };
-
-  useEffect(() => {
-    if (data) {
-      setDaos(data.daos);
-    }
-  }, [data]);
 
   return (
     <Root>
@@ -215,7 +208,9 @@ const Projects = () => {
             <SearchButton
               // @ts-ignore
               onClick={search}
-              disabled={!daos || daos.length < 1 || searchInput.length < 1}
+              disabled={
+                !projects || projects.length < 1 || searchInput.length < 1
+              }
             >
               <Image
                 src={'/SearchIcon.svg'}
@@ -226,12 +221,12 @@ const Projects = () => {
             </SearchButton>
             <ResetButton
               onClick={reset}
-              disabled={!searchedDaos && !hasSearched}
+              disabled={!searchedProjects && !hasSearched}
             >
               Reset
             </ResetButton>
           </Search>
-          <Dropdown
+          {/* <Dropdown
             options={[
               {
                 id: 1,
@@ -242,7 +237,7 @@ const Projects = () => {
                     if (searchInput.length > 0 && hasSearched) {
                       search(data.daos);
                     } else {
-                      setDaos(data.daos);
+                      refetchAllProjects();
                     }
                   }
                 },
@@ -256,7 +251,7 @@ const Projects = () => {
                     if (searchInput.length > 0 && hasSearched) {
                       search(data.daos);
                     } else {
-                      setDaos(data.daos);
+                      refetchAllProjects();
                     }
                   }
                 },
@@ -265,39 +260,40 @@ const Projects = () => {
                 id: 3,
                 value: 'Auctions only',
                 onSelect: () => {
-                  const { error, loading, data } = fetchAuctions();
+                  // TODO - fetch the right projects
+                  const { error, loading, data } = fetchProjects();
                   if (!error && !loading) {
                     if (searchInput.length > 0 && hasSearched) {
                       search(data.daos);
                     } else {
-                      setDaos(data.daos);
+                      refetchAllProjects();
                     }
                   }
                 },
               },
             ]}
-          />
+          /> */}
         </Filtering>
-        {loading && !daos && <Loading height={530} />}
+        {areAllProjectsLoading && !projects && <Loading height={530} />}
         <ProjectItems>
-          {hasSearched && !searchedDaos && (
+          {hasSearched && !searchedProjects && (
             <NoResultsWrapper>
               <NoResults>No results</NoResults>
             </NoResultsWrapper>
           )}
           {hasSearched &&
-            searchedDaos &&
-            searchedDaos.map(
+            searchedProjects &&
+            searchedProjects.map(
               (
-                { title, author, address, genre, subtitle, imgIpfsHash, id },
+                { title, createdAt, creator, genre, subtitle, imgIpfsHash, id },
                 idx
               ) => (
                 <ProjectItem
                   key={idx}
                   id={id}
-                  address={address}
                   title={title}
-                  author={author}
+                  createdAt={createdAt}
+                  creator={creator}
                   imgIpfsHash={imgIpfsHash}
                   subtitle={subtitle}
                   genre={genre}
@@ -305,19 +301,19 @@ const Projects = () => {
               )
             )}
           {!hasSearched &&
-            !searchedDaos &&
-            daos &&
-            daos.map(
+            !searchedProjects &&
+            projects &&
+            projects.map(
               (
-                { title, author, address, genre, subtitle, imgIpfsHash, id },
+                { title, createdAt, creator, genre, subtitle, imgIpfsHash, id },
                 idx
               ) => (
                 <ProjectItem
                   key={idx}
                   id={id}
-                  address={address}
+                  createdAt={createdAt}
+                  creator={creator}
                   title={title}
-                  author={author}
                   imgIpfsHash={imgIpfsHash}
                   subtitle={subtitle}
                   genre={genre}

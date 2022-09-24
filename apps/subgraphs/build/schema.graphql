@@ -1,37 +1,57 @@
-type Contribution @entity {
-  id: ID!
-  address: Bytes!
-  share: BigInt!
-  role: String
-  dao: Dao!
-}
-
 type Edition @entity {
   id: ID!
-  # totalSupply: BigInt! - not working
-  maxSupply: BigInt!
-  mintPrice: BigInt!
-  dao: Dao!
-  # only available for GenEd
-  # expiresAt: BigInt - not working
-  # premintedByAuthor: BigInt - not working
+  project: Project!
+  edition: BigInt!
+  startId: BigInt
+  endId: BigInt
+  mintPrice: BigInt
 }
 
-type Dao @entity {
+type Contributor @entity {
   id: ID!
-  author: Bytes!
+  project: Project!
   address: Bytes!
+  role: String
+  sharePercentage: BigInt!
+}
+
+type Mint @entity {
+  id: ID!
+  project: Project!
+  edition: BigInt!
+  receiver: Bytes!
+  tokenId: BigInt!
+}
+
+type Project @entity {
+  id: ID!
+  creator: Bytes!
+  royaltiesSplitter: Bytes!
   createdAt: BigInt!
   title: String!
   textIpfsHash: String!
+  translationIpfsHash: String
   imgIpfsHash: String
+  animationIpfsHash: String
   blurbIpfsHash: String
+  initialMintPrice: BigInt!
+  firstEditionAmount: BigInt!
+  originalLanguage: String
   subtitle: String
   genre: String
-  metadataCID: String
-  editions: [Edition!] @derivedFrom(field: "dao")
   auctionsStarted: Boolean!
   auctionsEnded: Boolean!
-  paused: Boolean!
-  contributions: [Contribution!] @derivedFrom(field: "dao")
+  startId: BigInt
+  endId: BigInt
+  currentId: BigInt!
+  balance: BigInt!
+  isCurated: Boolean
+  isFrozen: Boolean
+  isPaused: Boolean
+  premintedByAuthor: BigInt
+  mintCount: BigInt!
+  currentAuctionExpiresAt: BigInt
+  minted: [Mint!] @derivedFrom(field: "project")
+  contributors: [Contributor!] @derivedFrom(field: "project")
+  editions: [Edition!] @derivedFrom(field: "project")
 }

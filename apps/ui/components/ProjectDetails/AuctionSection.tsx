@@ -1,30 +1,14 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import styled from 'styled-components';
 import { formatEther } from '@ethersproject/units';
-import {
-  BASE_BORDER_RADIUS,
-  BASE_BOX_SHADOW,
-  PINK,
-  INTER_BOLD,
-} from '../../themes';
+import { BASE_BORDER_RADIUS, BASE_BOX_SHADOW, PINK } from '../../themes';
 import Countdown from '../Countdown';
 import Loading from '../Loading';
 import PieChart from '../PieChart';
-import {
-  Key,
-  Val,
-  StyledPrimaryButton,
-} from '../../pages/projects/[projectAddress]';
-import { ProjectData } from '../../state/projects/hooks';
-
-const AuctionTitle = styled.h2`
-  text-align: center;
-  text-transform: uppercase;
-  font-family: ${INTER_BOLD};
-  margin-block-start: -1rem;
-  margin-block-end: 3rem;
-  padding: 0;
-`;
+import { StyledPrimaryButton } from '../../pages/projects/[projectId]';
+import { Project } from '../../providers/projects-provider/projects-provider.types';
+import { BigNumber } from 'ethers';
+import Title from '../Title';
 
 const InfoBlock = styled.div`
   width: 40%;
@@ -59,90 +43,81 @@ const PieChartWrapper = styled.div`
 `;
 
 interface AuctionSectionProps {
-  daoData: ProjectData;
+  project: Project;
   loading: boolean;
   onRetriggerAuction: VoidFunction;
   onFetchCurrentPrice: VoidFunction;
 }
 
 const AuctionSection = ({
-  daoData,
+  project,
   loading,
   onFetchCurrentPrice,
   onRetriggerAuction,
 }: AuctionSectionProps) => {
+  const totalSupply = useMemo(() => {
+    if (project) {
+      return project.mintCount;
+    } else {
+      return BigNumber.from('0');
+    }
+  }, [project]);
+
+  const maxSupply = useMemo(() => {
+    if (project && project.editions) {
+      const edition = project.editions ? project.editions[0] : undefined;
+      return edition?.endId.sub(edition?.startId).add(BigNumber.from('1'));
+    }
+    return undefined;
+  }, [project]);
+
   const showsAuctionText = useCallback(() => {
     const now = Math.round(new Date().getTime() / 1000);
 
-    if (!daoData) return;
-    const { auctionsStarted, auctionsEnded, expiresAt } = daoData;
+    if (!project) return;
+    const { auctionsStarted, auctionsEnded, currentAuctionExpiresAt } = project;
     if (auctionsEnded) {
-      return <Key style={{ textAlign: 'center' }}>{'Auctions finished'}</Key>;
+      return <Title size="xs">{'Auctions finished'}</Title>;
     }
     if (auctionsStarted) {
-      if (expiresAt > now) {
+      if (Number(currentAuctionExpiresAt) > now) {
         return (
           <>
-            <Key>{'Auction ends in'}</Key>
-            <Val
-              style={{
-                fontSize: '22px',
-                color: `${PINK}`,
-                fontFamily: 'Inter Bold',
-              }}
-            >
-              <Countdown end={expiresAt} />
-            </Val>
+            <Title size="xs">{'Auction ends in'}</Title>
+            <Title size="xs" color={PINK}>
+              <Countdown end={Number(currentAuctionExpiresAt)} />
+            </Title>
           </>
         );
       } else {
-        return <Key style={{ textAlign: 'center' }}>{'Auction expired'}</Key>;
+        return <Title size="xs">{'Auction expired'}</Title>;
       }
     }
-    return (
-      <Key style={{ textAlign: 'center' }}>{'Auction Has Not Started Yet'}</Key>
-    );
-  }, [daoData]);
+    return <Title size="xs">{'Auction Has Not Started Yet'}</Title>;
+  }, [project]);
 
   return (
     <>
-      <AuctionTitle>AUCTION</AuctionTitle>
+      <Title size="m">Auction</Title>
       <FlexWrapper>
         <InfoBlock>{showsAuctionText()}</InfoBlock>
         <InfoBlock>
-          <Key>{'Starting Price'}</Key>
-          {daoData && (
-            <Val>{`${formatEther(
-              parseInt(
-                // @ts-ignore
-                daoData.editions[0].mintPrice._hex,
-                16
-              ).toString()
-            )} MATIC`}</Val>
-          )}
+          <Title size="xs">{`Starting Price ${formatEther(
+            parseInt(project.editions[0].mintPrice._hex, 16).toString()
+          )} MATIC`}</Title>
         </InfoBlock>
       </FlexWrapper>
       <PieChartWrapper>
-        <PieChart
-          part={daoData.totalSupplyGenEd}
-          whole={daoData.editions[0].maxSupply}
-        />
+        <PieChart part={Number(project.mintCount)} whole={Number(maxSupply)} />
       </PieChartWrapper>
       <FlexWrapper style={{ marginBlockEnd: '0' }}>
         <InfoBlock>
-          <Key>{'Minted'}</Key>
-          <Val
-            style={{
-              fontSize: '22px',
-              fontFamily: 'Inter Bold',
-            }}
-          >
-            {daoData.totalSupplyGenEd}
-          </Val>
+          <Title size="xs">{`Minted: ${Number(totalSupply)}`}</Title>
         </InfoBlock>
-        {daoData.auctionsStarted && !daoData.auctionsEnded && (
+        {project.auctionsStarted && !project.auctionsEnded && (
           <>
-            {Math.floor(Date.now() / 1000) > daoData.expiresAt ? (
+            {Math.floor(Date.now() / 1000) >
+            Number(project.currentAuctionExpiresAt) ? (
               <StyledPrimaryButton
                 onClick={onRetriggerAuction}
                 disabled={loading}
@@ -167,7 +142,7 @@ const AuctionSection = ({
             )}
           </>
         )}
-        {(!daoData.auctionsStarted || daoData.auctionsEnded) && (
+        {(!project.auctionsStarted || project.auctionsEnded) && (
           <StyledPrimaryButton disabled>Get Current Price</StyledPrimaryButton>
         )}
       </FlexWrapper>

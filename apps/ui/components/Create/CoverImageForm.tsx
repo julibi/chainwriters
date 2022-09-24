@@ -1,36 +1,15 @@
 import React, { ChangeEvent, FormEvent } from 'react';
 import Image from 'next/image';
 import styled from 'styled-components';
+import { ButtonsWrapper, FadeIn, InputName, Wrapper } from '../../pages/create';
 import {
-  ButtonsWrapper,
-  FadeIn,
-  InputDescription,
-  InputName,
-  Wrapper,
-} from '../../pages/create';
-import {
-  BaseButton,
   BASE_BORDER_RADIUS,
-  BASE_BOX_SHADOW,
   BG_NORMAL,
   INSET_BASE_BOX_SHADOW,
-  PINK,
   PLAIN_WHITE,
 } from '../../themes';
-
-export const SubmitButton = styled(BaseButton)`
-  text-transform: uppercase;
-  text-align: center;
-  color: ${PLAIN_WHITE};
-  background-color: ${BG_NORMAL};
-  border-radius: ${BASE_BORDER_RADIUS};
-  box-shadow: ${BASE_BOX_SHADOW};
-  padding: 1rem;
-
-  :disabled {
-    color: grey;
-  }
-`;
+import ActionButton from '../ActionButton';
+import Title from '../Title';
 
 export const StyledImageForm = styled.form`
   display: flex;
@@ -65,7 +44,6 @@ export const StyledFileInput = styled.input`
   ::-webkit-file-upload-button {
     width: 100%;
     border-width: 0;
-    text-transform: uppercase;
     text-align: center;
     color: ${BG_NORMAL};
     background-color: ${PLAIN_WHITE};
@@ -91,10 +69,6 @@ export const FileName = styled.span`
   height: 24px;
 `;
 
-export const StyledSubmitButton = styled(SubmitButton)`
-  color: ${PINK};
-`;
-
 export const shortenImageName = (filename: string) => {
   const filenameStart = filename.substring(0, 6);
   const filenameLength = filename.length;
@@ -109,6 +83,8 @@ interface CoverImageFormProps {
   imgFile: Blob | MediaSource;
   onNextStep: () => void;
   onSubmit: (e: FormEvent<HTMLButtonElement>) => Promise<void>;
+  pending: boolean;
+  reset: () => void;
 }
 
 const CoverImageForm = ({
@@ -117,12 +93,13 @@ const CoverImageForm = ({
   imgFile,
   onNextStep,
   onSubmit,
+  pending,
+  reset,
 }: CoverImageFormProps) => {
   return (
     <FadeIn>
       <Wrapper>
-        <InputName>COVER IMAGE</InputName>
-        <InputDescription>Upload a Cover Image</InputDescription>
+        <Title size="m">Cover Image</Title>
         {/* @ts-ignore */}
         <StyledImageForm onSubmit={onSubmit}>
           <DragNDrop
@@ -147,9 +124,10 @@ const CoverImageForm = ({
             />
           </DragNDrop>
           <UploadCTAWrapper>
-            {/* @ts-ignore */}
+            {/* @ts-expect-error name does not exist on Blob or Mediasource */}
             <FileName>{imgFile ? shortenImageName(imgFile.name) : ''}</FileName>
             <StyledFileInput
+              disabled={pending}
               type="file"
               onChange={(e: ChangeEvent<HTMLInputElement>) => {
                 e.preventDefault();
@@ -158,10 +136,23 @@ const CoverImageForm = ({
               }}
             />
             <ButtonsWrapper>
-              <SubmitButton onClick={onNextStep}>Skip</SubmitButton>
-              <StyledSubmitButton disabled={!imgBuffer} onClick={onSubmit}>
-                Set Image
-              </StyledSubmitButton>
+              <ActionButton
+                disabled={pending}
+                loading={false}
+                onClick={() => {
+                  reset();
+                  onNextStep();
+                }}
+                text="Skip"
+                color="#fff"
+              />
+              <ActionButton
+                // @ts-expect-error name does not exist on Blob or Mediasource
+                disabled={!imgFile?.name || pending}
+                loading={pending}
+                onClick={onSubmit}
+                text="Set Image"
+              />
             </ButtonsWrapper>
           </UploadCTAWrapper>
         </StyledImageForm>

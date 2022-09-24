@@ -1,12 +1,13 @@
 import React, { ChangeEvent } from 'react';
-import {
-  FadeIn,
-  Wrapper,
-  InputName,
-  InputDescription,
-  SubmitButton,
-} from '../../pages/create';
+import styled from 'styled-components';
+import { FadeIn, Wrapper } from '../../pages/create';
+import ActionButton from '../ActionButton';
 import InputField from '../InputField';
+import Title from '../Title';
+
+const InputWrapper = styled.div`
+  width: 230px;
+`;
 
 interface NameFormProps {
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
@@ -19,16 +20,21 @@ const NameForm = ({ onChange, onSubmit, title }: NameFormProps) => {
   return (
     <FadeIn>
       <Wrapper>
-        <InputName>Title</InputName>
-        <InputDescription>What is the title of your project?</InputDescription>
-        <InputField
-          error={title.length < 1 && 'At least 1 character.'}
-          onChange={onChange}
-          value={title}
+        <Title size="m">Title</Title>
+        <InputWrapper>
+          <InputField
+            error={title.length < 1 && 'At least 1 character.'}
+            onChange={onChange}
+            value={title}
+          />
+        </InputWrapper>
+        <ActionButton
+          onClick={onSubmit}
+          disabled={title.length < 1}
+          loading={false}
+          text="Continue"
+          margin="1rem 0 0 0"
         />
-        <SubmitButton onClick={onSubmit} disabled={title.length < 1}>
-          {'Continue'}
-        </SubmitButton>
       </Wrapper>
     </FadeIn>
   );

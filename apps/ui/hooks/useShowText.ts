@@ -1,83 +1,131 @@
-import { useCallback, useState } from 'react'
-import { useWeb3React } from '@web3-react/core'
-import useProjectContract from './useProjectContract'
-import { GET_ONE_DAO } from '../state/projects/hooks'
-import client from '../apolloclient'
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Node } from 'slate';
+import { gql, useQuery } from '@apollo/client';
+import { useWeb3React } from '@web3-react/core';
+import {
+  Project,
+  ProjectVars,
+} from '../providers/projects-provider/projects-provider.types';
+import { useUser } from './user/useUser';
 
-export interface ReadData {
-  author: string;
-  title: string;
-  subtitle?: string;
-  genre?: string;
-  textIpfsHash: string;
-  createdAt: string;
-}
+export const GET_PROJECT = gql`
+  query oneProjectQuery($id: String!) {
+    project(id: $id) {
+      createdAt
+      creator
+      genre
+      id
+      originalLanguage
+      subtitle
+      textIpfsHash
+      translationIpfsHash
+      title
+    }
+  }
+`;
 
-const useShowText = (projectAddress: string) => {
+const useShowText = (projectId: string) => {
   const { account } = useWeb3React();
-  const ProjectContract = useProjectContract(projectAddress);
+  const { detailedNfts } = useUser();
+  const allowedToRead = useMemo(
+    () => !!detailedNfts?.find((nft) => nft.projectId === Number(projectId)),
+    [detailedNfts, projectId]
+  );
+  const [text, setText] = useState<Node[]>();
+  const [translation, setTranslation] = useState<Node[]>();
+  const [pending, setPending] = useState<boolean>(true);
+  const {
+    loading: isLoading,
+    error,
+    data,
+  } = useQuery<{ project: Project }, ProjectVars>(GET_PROJECT, {
+    variables: { id: projectId },
+  });
+  const project = useMemo(() => {
+    return data?.project;
+  }, [data]);
 
-  return useCallback(async (passedCurrentEdition?: number) => {
-    if (!projectAddress || !account || !ProjectContract) {
+  const fetchTextData = useCallback(async () => {
+    setPending(true);
+    if (!project || !account || error) {
       return null;
     }
 
-    let allowed = false;
-    let text = null;
-    let readingData:ReadData;
-    const balancesOfUser = [];
-    let currentEdition: number;
     try {
-      if (passedCurrentEdition) {
-        currentEdition = passedCurrentEdition;
-      } else {
-        const currentEditionBigInt = await ProjectContract.currentEdition();
-        currentEdition = parseInt(currentEditionBigInt._hex, 16);
+      const response = await fetch(
+        `https://ipfs.io/ipfs/${project?.textIpfsHash}`
+      );
+      if (response.ok) {
+        const fetchedText = await response.text();
+        const formatted = JSON.parse(fetchedText);
+        setText(formatted);
+        setPending(false);
       }
-      for (let i = 1; i < currentEdition + 1; i++) {
-        const balanceOfBig = await ProjectContract.balanceOf(account, i);
-        const balance = parseInt(balanceOfBig._hex, 16);
-        balancesOfUser.push({ id: i, balance });
-      }
-      const hasAtLeastOne = !!balancesOfUser.find((x) => x.balance > 0);
-      allowed = hasAtLeastOne;
     } catch (e: unknown) {
       console.log({ e });
+      setPending(false);
+    }
+  }, [project, account, error]);
+
+  const fetchTranslation = useCallback(async () => {
+    setPending(true);
+    if (!project?.translationIpfsHash || !account || error) {
+      return null;
     }
 
-    if (allowed) {
-      const {
-        data: { dao },
-      } = await client.query({
-        query: GET_ONE_DAO,
-        // @ts-ignore
-        variables: { address: projectAddress.toLowerCase() },
-      });
-      if (dao) {
-        try {
-          const response = await fetch(
-            `https://ipfs.io/ipfs/${dao.textIpfsHash}`
-          );
-          if (response.ok) {
-            const fetchedText = await response.text();
-            text = fetchedText;
-          }
-          readingData = {
-            author: dao.author,
-            title: dao.title,
-            subtitle: dao.subtitle,
-            genre: dao.genre,
-            textIpfsHash: dao.textIpfshash,
-            createdAt: dao.createdAt,
-          };
-        } catch (e: unknown) {
-          console.log({ e });
-        }
+    try {
+      const response = await fetch(
+        `https://ipfs.io/ipfs/${project?.translationIpfsHash}`
+      );
+      if (response.ok) {
+        const fetchedTranslation = await response.text();
+        const formatted = JSON.parse(fetchedTranslation);
+        setTranslation(formatted);
+        setPending(false);
       }
+    } catch (e: unknown) {
+      console.log({ e });
+      setPending(false);
     }
+  }, [account, error, project]);
 
-    return { allowed, readingData, text }
-  }, [projectAddress, account, ProjectContract]);
+  const hasTranslation = useMemo(() => {
+    return project?.translationIpfsHash?.length > 0;
+  }, [project]);
+
+  useEffect(() => {
+    if (account && allowedToRead) {
+      fetchTextData();
+    }
+  }, [account, allowedToRead, fetchTextData]);
+
+  useEffect(() => {
+    if (account && hasTranslation) {
+      fetchTranslation();
+    }
+  }, [account, allowedToRead, fetchTextData, fetchTranslation, hasTranslation]);
+
+  return useMemo(
+    () => ({
+      allowedToRead,
+      pending: pending || isLoading,
+      project,
+      text,
+      translation,
+      hasTranslation,
+      fetchTranslation,
+    }),
+    [
+      allowedToRead,
+      fetchTranslation,
+      hasTranslation,
+      isLoading,
+      pending,
+      project,
+      text,
+      translation,
+    ]
+  );
 };
 
 export default useShowText;

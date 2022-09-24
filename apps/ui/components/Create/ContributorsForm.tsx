@@ -1,24 +1,13 @@
-import React, { ChangeEvent, useMemo, useState } from 'react';
+import React, { ChangeEvent, FormEvent, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import InputField from '../InputField';
-import Loading from '../Loading';
-import {
-  FadeIn,
-  Wrapper,
-  InputName,
-  InputDescription,
-  Contributor,
-} from '../../pages/create';
-import {
-  BaseButton,
-  BASE_BORDER_RADIUS,
-  BASE_BOX_SHADOW,
-  BG_NORMAL,
-  PINK,
-  PLAIN_WHITE,
-} from '../../themes';
+import { FadeIn, Wrapper, InputDescription } from '../../pages/create';
 import validateAddress from '../../utils/validateAddress';
 import { truncateAddress } from '../WalletIndicator';
+import { Contributor } from '../../providers/projects-provider/projects-provider.types';
+import ActionButton from '../ActionButton';
+import { PINK } from '../../themes';
+import Title from '../Title';
 
 const ContribList = styled.ul`
   padding: 0;
@@ -44,25 +33,6 @@ const ContribsError = styled.div`
   text-align: center;
 `;
 
-const SubmitButton = styled(BaseButton)`
-  text-transform: uppercase;
-  text-align: center;
-  color: ${PLAIN_WHITE};
-  background-color: ${BG_NORMAL};
-  border-radius: ${BASE_BORDER_RADIUS};
-  box-shadow: ${BASE_BOX_SHADOW};
-  padding: 1rem;
-
-  :disabled {
-    color: grey;
-  }
-`;
-
-const AddContribButton = styled(SubmitButton)`
-  width: 100%;
-  margin-block-end: 2rem;
-`;
-
 const CTAContainer = styled.div`
   padding: 1rem;
 `;
@@ -84,16 +54,16 @@ const ContribButtonContainer = styled(FlexContainer)`
 
 interface ContributorsFormProps {
   contributors: any;
-  contributorList: Contributor[];
+  contributorsList: Contributor[];
   loading: boolean;
   onChange: (index: number, key: string, val: string | number) => void;
   onNextStep?: () => void;
-  onSubmit: () => void;
+  onSubmit: (e: FormEvent<HTMLButtonElement>) => void;
 }
 
 const ContributorsForm = ({
   contributors,
-  contributorList,
+  contributorsList,
   loading,
   onChange,
   onNextStep,
@@ -102,13 +72,13 @@ const ContributorsForm = ({
   const [formsAmount, setFormsAmount] = useState(1);
   const shareSelf = useMemo(() => {
     let initShareSelf = 85;
-    if (contributorList.length > 0) {
-      for (let i = 0; i < contributorList.length; i++) {
-        initShareSelf = initShareSelf - contributorList[i].share;
+    if (contributorsList?.length > 0) {
+      for (let i = 0; i < contributorsList.length; i++) {
+        initShareSelf = initShareSelf - Number(contributorsList[i].share);
       }
     }
     return initShareSelf;
-  }, [contributorList]);
+  }, [contributorsList]);
   const renderForm = (idx: number) => {
     return (
       <ContribInputContainer>
@@ -142,7 +112,7 @@ const ContributorsForm = ({
           onChange={(e: ChangeEvent<HTMLInputElement>) => {
             onChange(idx, 'role', e.target.value);
           }}
-          placeholder={'0x123'}
+          placeholder={'e.g. Editor, Translator, Marketing'}
           value={contributors[idx].role}
         />
       </ContribInputContainer>
@@ -152,18 +122,17 @@ const ContributorsForm = ({
   return (
     <FadeIn>
       <Wrapper>
-        <InputName>CONTRIBUTORS</InputName>
+        <Title size="m">Contributors</Title>
         <InputDescription>
-          {`Do you want to set contributors like Co-Authors, Editors, Translators, Cover Artists etc.?
-          You can input their addresses, roles and shares of the funds raised from the Genesis Edition.
-          Each share should be a number between 0 and 85. 
-          You can specify up to 3. Keep in mind that the total of shares will be deducted from you own share.
+          {`You can specify up to 3 contributors, like Co-Authors, Editors, Translators, Cover Artists etc.
+          Shares will be distributed after an edition sells out.  
+          Keep in mind that the total of shares will be deducted from your own share.
           15% are always going to the Moonpage project.`}
         </InputDescription>
         <CTAContainer>
-          {contributorList.length ? (
+          {contributorsList.length ? (
             <ContribList>
-              {contributorList.map((item, idx) => (
+              {contributorsList.map((item, idx) => (
                 <div key={idx}>
                   <ContribItem>
                     <span>Contributor {idx + 1}:</span>
@@ -182,7 +151,7 @@ const ContributorsForm = ({
             </ContribList>
           ) : null}
           <SpecialShare>
-            <span>PePo Dev Foundation share:</span>
+            <span>Moonpage share:</span>
             <span>15 %</span>
           </SpecialShare>
           <SpecialShare>
@@ -201,43 +170,47 @@ const ContributorsForm = ({
           ) : (
             ''
           )}
-          <AddContribButton
+          <ActionButton
             disabled={
-              contributorList.length < 1 ||
-              contributorList.length === 3 ||
-              contributorList.length < formsAmount ||
+              loading ||
+              contributorsList.length < 1 ||
+              contributorsList.length === 3 ||
+              contributorsList.length < formsAmount ||
               shareSelf < 1
             }
+            loading={false}
             onClick={() => setFormsAmount(formsAmount + 1)}
-          >
-            + Add More
-          </AddContribButton>
+            text="+ Add More"
+            color="#fff"
+            margin="1rem 0 0 0"
+            width="325px"
+          />
+
           <ContribButtonContainer>
             {onNextStep && (
-              <SubmitButton
-                style={{ marginInlineEnd: '1rem' }}
+              <ActionButton
                 onClick={onNextStep}
                 disabled={loading}
-              >
-                {contributorList.length > 0 ? 'Continue' : 'Skip'}
-              </SubmitButton>
+                loading={false}
+                text="Skip"
+                color="#fff"
+                margin="2rem 1rem 0 0"
+                width="30%"
+              />
             )}
-            <SubmitButton
+            <ActionButton
               onClick={onSubmit}
               disabled={
                 loading ||
-                contributorList.length >= 3 ||
-                contributorList.length < 1 ||
+                contributorsList.length > 3 ||
+                contributorsList.length < 1 ||
                 shareSelf < 1
               }
-              style={{ minWidth: '182px' }}
-            >
-              {loading ? (
-                <Loading height={20} dotHeight={20} />
-              ) : (
-                'Set Contributors'
-              )}
-            </SubmitButton>{' '}
+              loading={loading}
+              text="Set Contributors"
+              margin={onNextStep ? '2rem 0 0 1rem' : '2rem 0 0 0'}
+              width={onNextStep ? '70%' : '100%'}
+            />
           </ContribButtonContainer>
         </CTAContainer>
       </Wrapper>

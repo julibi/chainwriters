@@ -1,12 +1,18 @@
-import React, { ChangeEvent } from 'react'
+import React, { ChangeEvent } from 'react';
+import styled from 'styled-components';
 import {
   FadeIn,
   Wrapper,
   InputName,
   InputDescription,
-  SubmitButton,
 } from '../../pages/create';
-import InputField from '../InputField'
+import ActionButton from '../ActionButton';
+import InputField from '../InputField';
+import Title from '../Title';
+
+const InputWrapper = styled.div`
+  width: 230px;
+`;
 
 interface PriceFormProps {
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
@@ -14,11 +20,15 @@ interface PriceFormProps {
   firstEdMintPrice: string;
 }
 
-const PriceForm = ({ onChange, onSubmit, firstEdMintPrice }: PriceFormProps) => {
+const PriceForm = ({
+  onChange,
+  onSubmit,
+  firstEdMintPrice,
+}: PriceFormProps) => {
   return (
     <FadeIn>
       <Wrapper>
-        <InputName>STARTING PRICE(MATIC)</InputName>
+        <Title size="m">Starting Price (Matic)</Title>
         <InputDescription>
           The Genesis Edition is sold in a dutch auction. In a dutch auction the
           price keeps going down during a given time – in our case: 24 hours –
@@ -28,21 +38,24 @@ const PriceForm = ({ onChange, onSubmit, firstEdMintPrice }: PriceFormProps) => 
           each new edition that you unlock.
         </InputDescription>
         {/* TODO validation so that it is 0.1 and not 0,1 */}
-        <InputField
-          error={Number(firstEdMintPrice) < 0.01 && 'At least 0.01 Matic.'}
-          onChange={onChange}
-          placeholder={'50'}
-          value={firstEdMintPrice}
-        />
-        <SubmitButton
+        <InputWrapper>
+          <InputField
+            error={Number(firstEdMintPrice) < 0.01 && 'At least 0.01 Matic.'}
+            onChange={onChange}
+            placeholder={'50'}
+            value={firstEdMintPrice}
+          />
+        </InputWrapper>
+        <ActionButton
           onClick={onSubmit}
           disabled={Number(firstEdMintPrice) < 0.01}
-        >
-          {'Continue'}
-        </SubmitButton>
+          loading={false}
+          text="Continue"
+          margin="1rem 0 0 0"
+        />
       </Wrapper>
     </FadeIn>
   );
 };
 
-export default PriceForm
+export default PriceForm;

@@ -11,8 +11,7 @@ import {
   PLAIN_WHITE,
   INTER_BOLD,
 } from '../../themes';
-
-import { SectionTitle, SectionTitleWrapper } from './ProjectSection';
+import Title from '../Title';
 
 const Root = styled.section`
   display: flex;
@@ -196,9 +195,7 @@ const HowItWorksSection = () => {
   >(1);
   return (
     <Root id="howitworks">
-      <SectionTitleWrapper>
-        <SectionTitle>How does it work?</SectionTitle>
-      </SectionTitleWrapper>
+      <Title>How does it work?</Title>
       <Content>
         <NavButton disabled>Creators</NavButton>
         <Wrapper>

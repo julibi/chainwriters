@@ -8,6 +8,7 @@ import {
   PINK,
   PLAIN_WHITE,
   INTER_BOLD,
+  INTER_REGULAR,
 } from '../themes';
 import { truncateAddress } from './WalletIndicator';
 
@@ -23,9 +24,9 @@ const Root = styled.div`
   border-radius: ${BASE_BORDER_RADIUS};
   box-shadow: ${BASE_BOX_SHADOW};
 
-  // :hover {
-  //   cursor: pointer;
-  // }
+  :hover {
+    cursor: pointer;
+  }
 `;
 
 const ImageWrapper = styled.div`
@@ -43,7 +44,7 @@ const ImageWrapper = styled.div`
 
 const InfoWrapper = styled.div`
   flex: 1;
-  font-family: ${INTER_BOLD};
+  font-family: ${INTER_REGULAR};
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -51,6 +52,7 @@ const InfoWrapper = styled.div`
 
 const Title = styled.h4`
   color: ${PINK};
+  font-family: ${INTER_BOLD};
   margin-block-end: 0;
 `;
 
@@ -65,19 +67,18 @@ const Label = styled.span`
 
 interface ProjectItemTypes {
   id: string;
-  address: string;
-  author: string;
+  createdAt: string;
+  creator: string;
   title: string;
   imgIpfsHash: string;
   subtitle: string;
   genre: string;
-  // get the price
 }
 
 const ProjectItem = ({
   id,
-  address,
-  author,
+  createdAt,
+  creator,
   title,
   imgIpfsHash,
   subtitle,
@@ -85,10 +86,12 @@ const ProjectItem = ({
 }: ProjectItemTypes) => {
   const router = useRouter();
   const handleClick = (e) => {
-    // e.preventDefault();
-    // router.push(`projects/${address}`);
+    e.preventDefault();
+    router.push(`projects/${id}`);
   };
-
+  const created = new Date(Number(createdAt) * 1000).toLocaleDateString(
+    'en-US'
+  );
   return (
     <Root onClick={handleClick}>
       <ImageWrapper>
@@ -106,20 +109,20 @@ const ProjectItem = ({
       </ImageWrapper>
       <InfoWrapper>
         <Title>{title}</Title>
-        {subtitle && (
-          <Flex>
-            <Label style={{ color: PINK }}>{subtitle}</Label>
-          </Flex>
-        )}
-        {genre && (
-          <Flex>
-            <Label>Genre</Label>
-            <div>{genre}</div>
-          </Flex>
-        )}
+        <Flex>
+          <Label style={{ color: PINK }}>{subtitle ?? ''}</Label>
+        </Flex>
+        <Flex>
+          <Label>Genre</Label>
+          <div>{genre ?? 'Unknown'}</div>
+        </Flex>
+        <Flex>
+          <Label>Created</Label>
+          <div>{created}</div>
+        </Flex>
         <Flex>
           <Label>Author</Label>
-          <div>{truncateAddress(author)}</div>
+          <div>{truncateAddress(creator)}</div>
         </Flex>
       </InfoWrapper>
     </Root>

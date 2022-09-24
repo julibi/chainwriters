@@ -1,13 +1,16 @@
-import React from 'react'
-import styled from 'styled-components'
+import { capitalizeFirstLetter } from '../../utils/capitalizestring';
+import React from 'react';
+import styled from 'styled-components';
+import { Node } from 'slate';
 import {
   FadeIn,
-  SubmitButton,
   ReviewItemWrapper,
   BlockSpan,
-  ReviewItem
+  ReviewItem,
 } from '../../pages/create';
-import Checkbox from '../Checkbox'
+import Checkbox from '../Checkbox';
+import ActionButton from '../ActionButton';
+import { serialize } from '../../utils/serializeMarkdown';
 
 interface ReviewFormProps {
   agreed: boolean;
@@ -15,8 +18,10 @@ interface ReviewFormProps {
   onCheck: () => void;
   firstEdMaxAmount: number;
   firstEdMintPrice: string;
-  text: string;
+  language: string;
+  text: Node[];
   title: string;
+  pending: boolean;
 }
 
 const CheckboxWrapper = styled.div`
@@ -26,11 +31,13 @@ const CheckboxWrapper = styled.div`
 const ReviewForm = ({
   agreed,
   createDao,
+  language,
   title,
   text,
   firstEdMaxAmount,
   firstEdMintPrice,
-  onCheck
+  onCheck,
+  pending,
 }: ReviewFormProps) => {
   return (
     <FadeIn>
@@ -41,7 +48,11 @@ const ReviewForm = ({
         </ReviewItemWrapper>
         <ReviewItemWrapper>
           <BlockSpan>Text</BlockSpan>
-          <ReviewItem>{text}</ReviewItem>
+          <ReviewItem>{serialize(text).substring(0, 100)}</ReviewItem>
+        </ReviewItemWrapper>
+        <ReviewItemWrapper>
+          <BlockSpan>Language</BlockSpan>
+          <ReviewItem>{capitalizeFirstLetter(language)}</ReviewItem>
         </ReviewItemWrapper>
         <ReviewItemWrapper>
           <BlockSpan>Max Amount Genesis Edition</BlockSpan>
@@ -53,22 +64,28 @@ const ReviewForm = ({
         </ReviewItemWrapper>
         <CheckboxWrapper>
           <Checkbox
-            // TODO: contract - should be able to freeze a contract or destruct
-            label="I am aware that any form of plagiarism or hateful content can be banned from the platfom at any time. Other lawyer gibberish."
+            label={`
+            By checking this box, I confirm that this work to be published (including the cover image) does not contain any hateful content,
+            potential copyright issue, plagiarism, illegal or illegitimate content (hereafter defined as "harmful content").
+            Moonpage can freeze the project if it detects any harmful content,
+            which will disable the distribution of any funds and will also disable further minting of the infringing project.
+            In the event of doubt, Moonpage may at its discretion denylist any involved wallet address.
+            Being denylisted prevents this wallet address from any further action on this platform.
+            Neither Moonpage, nor the NFT owners of a project hold any copyright. The copyright remains with the author. 
+            `}
             onChange={onCheck}
             check={agreed}
           />
         </CheckboxWrapper>
-        <SubmitButton
-          disabled={!agreed}
-          style={{ marginBlockEnd: '0', minWidth: '182px' }}
+        <ActionButton
+          disabled={!agreed || pending}
           onClick={createDao}
-        >
-          {'Create Project'}
-        </SubmitButton>
+          loading={pending}
+          text="Create Project"
+        />
       </>
     </FadeIn>
   );
 };
 
-export default ReviewForm
+export default ReviewForm;

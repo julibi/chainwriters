@@ -1,17 +1,16 @@
-import React from 'react'
-import styled from 'styled-components'
-import Image from 'next/image'
-import Loading from '../Loading'
+import React from 'react';
+import styled from 'styled-components';
+import Image from 'next/image';
 import {
   BlockSpan,
   ReviewItem,
   ReviewItemWrapper,
   FadeIn,
   Wrapper,
-  InputName,
   InputDescription,
-  SubmitButton,
 } from '../../pages/create';
+import ActionButton from '../ActionButton';
+import Title from '../Title';
 
 const FlexContainer = styled.div`
   display: flex;
@@ -38,7 +37,6 @@ const CoverImageReview = styled.div`
 
     img {
       object-fit: contain !important;
-      
     }
   }
 
@@ -71,7 +69,7 @@ const ConfigReviewForm = ({
   return (
     <FadeIn>
       <Wrapper>
-        <InputName>Your Project Details</InputName>
+        <Title size="m">Your Project Details</Title>
         <InputDescription>
           {`Review this data closely before submitting it.`}
         </InputDescription>
@@ -103,16 +101,16 @@ const ConfigReviewForm = ({
             </ReviewItemWrapper>
           </ReviewItems>
         </FlexContainer>
-        <SubmitButton
+        <ActionButton
           disabled={loading}
-          style={{ marginBlockEnd: '0', minWidth: '182px' }}
           onClick={onSubmit}
-        >
-          {loading ? <Loading height={20} dotHeight={20} /> : 'Looks Good'}
-        </SubmitButton>
+          margin="1rem 0 0 0"
+          text="Looks Good"
+          loading={loading}
+        />
       </Wrapper>
     </FadeIn>
   );
 };
 
-export default ConfigReviewForm
+export default ConfigReviewForm;

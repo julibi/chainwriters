@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import LinkWrapper from '../LinkWrapper';
 import MoreDetails from '../MoreDetails';
-import { SectionTitle, SectionTitleWrapper } from './ProjectSection';
+import Title from '../Title';
 
 const Root = styled.div`
   display: flex;
@@ -27,9 +27,7 @@ const MoreDetailsWrapper = styled.div`
 const FAQSection = () => {
   return (
     <Root>
-      <SectionTitleWrapper>
-        <SectionTitle>FAQ</SectionTitle>
-      </SectionTitleWrapper>
+      <Title>FAQ</Title>
       <br></br>
       <MoreDetailsWrapper>
         <MoreDetails title={'When will Moonpage launch?'}>

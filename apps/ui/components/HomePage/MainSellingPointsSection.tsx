@@ -1,13 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import { SectionTitle, SectionTitleWrapper } from './ProjectSection';
-import {
-  BG_DARK,
-  FadeInBaseAnimation,
-  PINK,
-  INTER_BOLD,
-  INTER_LIGHT,
-} from '../../themes';
+import { BG_DARK, PINK, INTER_BOLD, INTER_LIGHT } from '../../themes';
+import Title from '../Title';
 
 const Root = styled.div`
   display: flex;

@@ -1,30 +1,40 @@
-import React, { ChangeEvent } from 'react'
+import React, { ChangeEvent } from 'react';
 import {
   ButtonsWrapper,
   FadeIn,
   Wrapper,
   InputName,
   InputDescription,
-  SubmitButton,
   TextInput,
 } from '../../pages/create';
-import { StyledInputError } from '../InputField'
+import ActionButton from '../ActionButton';
+import { StyledInputError } from '../InputField';
+import Title from '../Title';
 
 interface BlurbFormProps {
   blurb: string;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   onNextStep: () => void;
   onSubmit: () => void;
+  pending: boolean;
+  reset: () => void;
 }
 
-const BlurbForm = ({ blurb, onChange, onNextStep, onSubmit }: BlurbFormProps) => {
+const BlurbForm = ({
+  blurb,
+  onChange,
+  onNextStep,
+  onSubmit,
+  pending,
+  reset,
+}: BlurbFormProps) => {
   return (
     <FadeIn>
       <Wrapper>
-        <InputName>BLURB</InputName>
+        <Title size="m">Blurb</Title>
         <InputDescription>
-          Write a short text to introduce your project and captivate readers! A
-          short summary? Or just the first few lines?
+          E.G. short introduction to your project, a summary, the first few
+          lines or description of the utility of your NFT.
         </InputDescription>
         <TextInput
           style={{ height: '200px' }}
@@ -36,20 +46,28 @@ const BlurbForm = ({ blurb, onChange, onNextStep, onSubmit }: BlurbFormProps) =>
           {blurb.length < 20 ? 'At least 20 characters.' : ' '}
         </StyledInputError>
         <ButtonsWrapper>
-          <SubmitButton onClick={onNextStep}>
-            {'Skip'}
-          </SubmitButton>
-          <SubmitButton
+          <ActionButton
+            onClick={() => {
+              reset();
+              onNextStep();
+            }}
+            text="Skip"
+            disabled={pending}
+            loading={false}
+            margin="2rem 0 0 0"
+            color="#fff"
+          />
+          <ActionButton
             onClick={onSubmit}
-            disabled={blurb.length < 20}
-            style={{ minWidth: '182px', marginInlineStart: '1rem' }}
-          >
-            Set Blurb
-          </SubmitButton>
+            disabled={blurb.length < 20 || pending}
+            loading={pending}
+            margin="2rem 0 0 1rem"
+            text="Set Blurb"
+          />
         </ButtonsWrapper>
       </Wrapper>
     </FadeIn>
   );
-}
+};
 
-export default BlurbForm
+export default BlurbForm;

@@ -1,12 +1,9 @@
 import React from 'react';
 import Image from 'next/image';
 import styled from 'styled-components';
-import {
-  SectionTitleWrapper,
-  SectionTitle,
-} from '../components/HomePage/ProjectSection';
 import { PINK, INTER_BOLD } from '../themes';
 import LinkWrapper from '../components/LinkWrapper';
+import Title from '../components/Title';
 
 const Root = styled.div`
   display: flex;
@@ -133,11 +130,6 @@ const Name = styled.span`
   font-family: ${INTER_BOLD};
 `;
 
-const Title = styled.span`
-  display: inline-block;
-  font-family: ${INTER_BOLD};
-`;
-
 const Field = styled.span`
   display: inline-block;
   font-family: ${INTER_BOLD};
@@ -152,9 +144,7 @@ const Introduction = styled(Text)`
 const About = () => {
   return (
     <Root>
-      <SectionTitleWrapper style={{ marginBlockEnd: '-4rem' }}>
-        <SectionTitle>About</SectionTitle>
-      </SectionTitleWrapper>
+      <Title>About</Title>
       <Content>
         <QAWrapper>
           <SubHeader>Why Text NFTs?</SubHeader>
@@ -208,9 +198,7 @@ const About = () => {
           </Text>
         </QAWrapper>
         <CoFoundersWrapper>
-          <SectionTitleWrapper>
-            <SectionTitle>Team</SectionTitle>
-          </SectionTitleWrapper>
+          <Title>Team</Title>
           <CoFounders id="founders">
             <CoFounderWithMarginBottom>
               <CoFounderImgWrapper>
@@ -232,8 +220,8 @@ const About = () => {
                 >
                   <Name>Hyun-Kyung</Name>
                 </StyledLink>
-                <Title>Founder</Title>
                 <Field>Software Engineer</Field>
+                <Field>Founder</Field>
                 <Introduction>
                   Experienced developer specialising in Web3. As a software
                   engineer she has contributed to multiple well-known NFT
@@ -258,7 +246,7 @@ const About = () => {
                   layout="responsive"
                   height={'100%'}
                   width={'100%'}
-                  alt={'Co-Founder Olivia'}
+                  alt={'Olivia'}
                   priority
                 />
               </CoFounderImgWrapper>

@@ -1,36 +1,35 @@
-import React from 'react'
-import { useRouter } from 'next/router'
-import {
-  FadeIn,
-  Wrapper,
-  InputName,
-  InputDescription,
-  SubmitButton,
-} from '../../pages/create';
+import React from 'react';
+import { useRouter } from 'next/router';
+import { FadeIn, Wrapper, InputDescription } from '../../pages/create';
+import ActionButton from '../ActionButton';
+import Title from '../Title';
 
 interface FinishedProps {
-  daoAddress: string;
+  projectId: string;
 }
 
-const Finished = ({ daoAddress }: FinishedProps) => {
+const Finished = ({ projectId }: FinishedProps) => {
   const router = useRouter();
   return (
     <FadeIn>
-    <Wrapper>
-      <InputName>DONE!</InputName>
-      <InputDescription>
-        {`You have completed configuring your Project's DAO Contract. Visit your newly created Project page.`}
-      </InputDescription>
-      <SubmitButton onClick={(e) => {
-          e.preventDefault()
-          router.push(`projects/${daoAddress}`)
-        }}
-      >
-        SEE PROJECT
-      </SubmitButton>
-    </Wrapper>
-  </FadeIn>
-  )
-}
+      <Wrapper>
+        <Title size="m">Done</Title>
+        <InputDescription>
+          {`You have completed configuring your Project. Visit the newly created Project page.`}
+        </InputDescription>
+        <ActionButton
+          onClick={(e) => {
+            e.preventDefault();
+            router.push(`projects/${projectId}`);
+          }}
+          disabled={false}
+          loading={false}
+          margin="1rem 0 0 0"
+          text="See Project"
+        />
+      </Wrapper>
+    </FadeIn>
+  );
+};
 
-export default Finished
+export default Finished;

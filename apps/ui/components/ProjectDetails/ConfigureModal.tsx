@@ -1,11 +1,10 @@
-import React, { ChangeEvent, useState } from 'react';
-import { create } from 'ipfs-http-client';
+import React, { ChangeEvent, useCallback, useState } from 'react';
+
 import Image from 'next/image';
 import styled from 'styled-components';
+import { toast } from 'react-toastify';
 import BaseModal from '../BaseModal';
-import Loading from '../Loading';
 import InputField from '../InputField';
-import { BaseButton, DISABLED_WHITE, PINK, INTER_BOLD } from '../../themes';
 import { TextInput } from '../../pages/create';
 import {
   StyledImageForm,
@@ -14,7 +13,11 @@ import {
   FileName,
   shortenImageName,
 } from '../Create/CoverImageForm';
-import { toast } from 'react-toastify';
+import { useIpfsClient } from '../../hooks/useIpfsClient';
+import ActionButton from '../ActionButton';
+import Dropdown from '../Dropdown';
+import { GENRES } from '../../constants';
+import Title from '../Title';
 
 const ContentWrapper = styled.div`
   margin: 2rem;
@@ -24,21 +27,6 @@ const ContentWrapper = styled.div`
   align-items: center;
   overflow: scroll;
   height: 600px;
-`;
-
-const ModalHeader = styled.h2`
-  display: inline-block;
-`;
-
-const ModalText = styled.span`
-  display: inline-block;
-  margin-block: 1rem 2rem;
-  text-align: center;
-`;
-
-const FlexRow = styled.div`
-  display: flex;
-  justify-content: space-between;
 `;
 
 const FlexColumn = styled.div`
@@ -52,35 +40,13 @@ const Label = styled.label`
   margin-block-end: 0.5rem;
 `;
 
-interface MintButtonProps {
-  disabled: boolean;
-}
-
-const MintButton = styled(BaseButton)<MintButtonProps>`
-  font-family: ${INTER_BOLD};
-  padding: 1rem;
-  width: 209px;
-  color: ${({ disabled }) => (disabled ? DISABLED_WHITE : PINK)};
-
-  :disabled {
-    :hover {
-      pointer-events: none;
-    }
-  }
-
-  @media (max-width: 900px) {
-    width: 100%;
-  }
+const DropdownWrapper = styled.div`
+  margin-block-end: 3rem;
 `;
 
 interface ConfigureModalProps {
   onClose: () => void;
-  onConfigure: (
-    imgHash: string,
-    blurbHash: string,
-    genre: string,
-    subtitle: string
-  ) => void;
+  onConfigure: ({ imgHash, animationHash, blurbHash, genre, subtitle }) => void;
   pending: boolean;
 }
 
@@ -89,50 +55,73 @@ const ConfigureModal = ({
   onClose,
   pending,
 }: ConfigureModalProps) => {
-  // @ts-ignore
-  const client = create('https://ipfs.infura.io:5001/api/v0');
+  const client = useIpfsClient();
   const [imgBuffer, setImgBuffer] = useState<null | Buffer>(null);
   const [imgFile, setImgFile] = useState(null);
   const [blurb, setBlurb] = useState<string>('');
   const [genre, setGenre] = useState('');
   const [subtitle, setSubtitle] = useState<string>('');
-
-  const captureFile = (file: any) => {
+  const [uploadPending, setUploadPending] = useState<boolean>(false);
+  const genreOptions = GENRES?.map((item) => ({
+    id: item,
+    value: item,
+    onSelect: () => setGenre(item),
+  }));
+  const captureFile = (file) => {
     const reader = new window.FileReader();
     reader.readAsArrayBuffer(file);
     reader.onloadend = () => {
-      // @ts-ignore
-      const buffer = Buffer.from(reader.result);
+      const buffer = Buffer.from(reader.result as ArrayBuffer);
       setImgFile(file);
       setImgBuffer(buffer);
     };
   };
 
+  const handleClick = useCallback(async () => {
+    try {
+      setUploadPending(true);
+      let blurbCID = '';
+      let coverImgCID = '';
+      if (imgBuffer) {
+        coverImgCID = (await client.add(imgBuffer)).path;
+      }
+      if (blurb) {
+        blurbCID = (await client.add(blurb)).path;
+      }
+
+      onConfigure({
+        imgHash: coverImgCID,
+        animationHash: '',
+        blurbHash: blurbCID,
+        genre,
+        subtitle,
+      });
+      setUploadPending(false);
+    } catch (e: unknown) {
+      setUploadPending(false);
+      toast.error(
+        'Something went wrong while trying to uplod your data to IPFS.'
+      );
+    }
+  }, [blurb, client, genre, imgBuffer, onConfigure, subtitle]);
+
   return (
     <BaseModal onClose={onClose}>
       <ContentWrapper>
-        <ModalHeader>Configure Your Project</ModalHeader>
-        <ModalText>
-          {`Set a cover image, a subtitle, a genre and write a blurb.
-          The more you specify, the better!`}
-        </ModalText>
+        <Title size="m" margin="0 0 2rem 0">
+          Configure Your Project
+        </Title>
         <FlexColumn>
-          <FlexRow>
-            <InputField
-              label={'Subtitle: '}
-              value={subtitle}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                setSubtitle(e.target.value);
-              }}
-            />
-            <InputField
-              label={'Genre: '}
-              value={genre}
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                setGenre(e.target.value)
-              }
-            />
-          </FlexRow>
+          <InputField
+            label={'Subtitle: '}
+            value={subtitle}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+              setSubtitle(e.target.value);
+            }}
+          />
+          <DropdownWrapper>
+            <Dropdown options={genreOptions} placeholder="Genre" width="100%" />
+          </DropdownWrapper>
           <Label>{'Blurb:'}</Label>
           <TextInput
             style={{ height: '200px' }}
@@ -168,42 +157,24 @@ const ConfigureModal = ({
               <FileName>
                 {imgFile ? shortenImageName(imgFile.name) : ''}
               </FileName>
-              <FlexRow>
-                <StyledFileInput
-                  style={{ maxWidth: '200px' }}
-                  type="file"
-                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                    e.preventDefault();
-                    const file = e.target.files[0];
-                    captureFile(file);
-                  }}
-                />
-              </FlexRow>
+              <StyledFileInput
+                disabled={pending}
+                type="file"
+                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                  e.preventDefault();
+                  const file = e.target.files[0];
+                  captureFile(file);
+                }}
+              />
             </FlexColumn>
           </StyledImageForm>
-          <MintButton
-            style={{ margin: '1rem auto' }}
+          <ActionButton
             disabled={pending}
-            onClick={async () => {
-              try {
-                let blurbCID = '';
-                let coverImgCID = '';
-                if (imgBuffer) {
-                  coverImgCID = (await client.add(imgBuffer)).path;
-                }
-                if (blurb) {
-                  blurbCID = (await client.add(blurb)).path;
-                }
-                onConfigure(coverImgCID, blurbCID, genre, subtitle);
-              } catch (e: unknown) {
-                toast.error(
-                  'Something went wrong while trying to uplod your data to IPFS.'
-                );
-              }
-            }}
-          >
-            {pending ? <Loading height={20} dotHeight={20} /> : 'Configure'}
-          </MintButton>
+            onClick={handleClick}
+            loading={uploadPending || pending}
+            width="100%"
+            text="Configure"
+          />
         </FlexColumn>
       </ContentWrapper>
     </BaseModal>

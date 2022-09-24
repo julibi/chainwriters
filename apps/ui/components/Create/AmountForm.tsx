@@ -1,12 +1,18 @@
 import React, { ChangeEvent } from 'react';
+import styled from 'styled-components';
 import {
   FadeIn,
   Wrapper,
   InputName,
   InputDescription,
-  SubmitButton,
 } from '../../pages/create';
+import ActionButton from '../ActionButton';
 import InputField from '../InputField';
+import Title from '../Title';
+
+const InputWrapper = styled.div`
+  width: 230px;
+`;
 
 interface AmountFormProps {
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
@@ -22,7 +28,7 @@ const AmountForm = ({
   return (
     <FadeIn>
       <Wrapper>
-        <InputName>TOTAL AMOUNT OF GENESIS EDITION</InputName>
+        <Title size="m">Genesis Edition Total Amount</Title>
         <InputDescription>
           The first edition of a work is called Genesis Edition. Holders of a
           Genesis Edition will have special benefits. The Genesis Edition will
@@ -30,15 +36,24 @@ const AmountForm = ({
           that you can only trigger the sale of a subsequent edition after the
           Genesis Edition has sold out.
         </InputDescription>
-        <InputField
-          value={firstEdMaxAmount}
-          onChange={onChange}
-          placeholder={'2000'}
-          error={firstEdMaxAmount < 4 && 'At least 4.'}
+        <InputWrapper>
+          <InputField
+            value={firstEdMaxAmount}
+            onChange={onChange}
+            placeholder={'2000'}
+            error={
+              (firstEdMaxAmount > 1000 || firstEdMaxAmount < 10) &&
+              'Min 10, max 1000.'
+            }
+          />
+        </InputWrapper>
+        <ActionButton
+          onClick={onSubmit}
+          disabled={firstEdMaxAmount > 1000 || firstEdMaxAmount < 10}
+          text="Continue"
+          loading={false}
+          margin="1rem 0 0 0"
         />
-        <SubmitButton onClick={onSubmit} disabled={firstEdMaxAmount < 2}>
-          {'Continue'}
-        </SubmitButton>
       </Wrapper>
     </FadeIn>
   );

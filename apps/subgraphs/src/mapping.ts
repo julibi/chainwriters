@@ -1,122 +1,284 @@
-import { BigInt } from '@graphprotocol/graph-ts'
-import { DaoCreated } from "../generated/ProjectFactory/ProjectFactory"
+import { log } from '@graphprotocol/graph-ts';
+import { BigInt } from '@graphprotocol/graph-ts';
 import {
-  AuctionsEnded,
-  AuctionsStarted,
-  AuthorMinted,
-  ContributorAdded,
+  BalanceDecreased,
+  BalanceIncreased,
+  BaseDataFrozen,
   Configured,
-  ExpirationSet,
-  Minted,
+  ContributorAdded,
+  Curated,
   NextEditionEnabled,
-  TextSet,
-  URISet
-} from '../generated/templates/ProjectDao/ProjectDao';
-import { Contribution, Dao, Edition } from "../generated/schema"
-import { ProjectDao as ProjectDaoTemplate } from '../generated/templates'
-import { log } from "@graphprotocol/graph-ts"
+  PremintedByAuthor,
+  ProjectCreated,
+  ProjectPaused,
+  TextUpdated,
+  TranslationUpdated,
+  BlurbUpdated,
+  ImageUpdated,
+  AnimationUpdated,
+  TokenIdIncreased,
+} from '../generated/MoonpageManager/MoonpageManager';
+import { Minted } from '../generated/MoonpageCollection/MoonpageCollection';
+import {
+  AuctionsStarted,
+  AuctionsEnded,
+  ExpirationSet,
+} from '../generated/AuctionsManager/AuctionsManager';
+import { Contributor, Edition, Mint, Project } from '../generated/schema';
 
-export function handleDaoCreated(event: DaoCreated): void {
-  let dao = new Dao(event.params.dao.toHexString())
-  ProjectDaoTemplate.create(event.params.dao)
-  dao.author = event.params.caller
-  dao.address = event.params.dao
-  dao.title = event.params.title
-  dao.textIpfsHash = event.params.textIpfsHash
-  dao.createdAt = event.block.timestamp
-  dao.auctionsStarted = false
-  dao.auctionsEnded = false
-  dao.save()
+export function handleProjectCreated(event: ProjectCreated): void {
+  let project = new Project(event.params.projectId.toString());
+  project.creator = event.params.creator;
+  project.royaltiesSplitter = event.params.royaltiesSplitter;
+  project.createdAt = event.block.timestamp;
+  project.title = event.params.title;
+  project.textIpfsHash = event.params.textIpfsHash;
+  project.originalLanguage = event.params.originalLanguage;
+  project.firstEditionAmount = event.params.firstEditionAmount;
+  project.initialMintPrice = event.params.initialMintPrice;
+  project.startId = event.params.startId;
+  project.endId = event.params.endId;
+  project.currentId = event.params.startId;
+  project.balance = BigInt.fromString('0');
+  project.premintedByAuthor = BigInt.fromString('0');
+  project.isFrozen = false;
+  project.isCurated = false;
+  project.isPaused = false;
+  project.auctionsStarted = false;
+  project.auctionsEnded = false;
+  project.mintCount = BigInt.fromString('0');
+  project.save();
 
-  let edition = new Edition(event.params.dao.toHexString() + '1') 
-  edition.dao = dao.id
-  edition.maxSupply = event.params.firstEditionAmount
-  edition.mintPrice = event.params.initialMintPrice
-  edition.save()
-}
-
-export function handleTextSet(event: TextSet): void {
-  let dao = Dao.load(event.address.toHexString())
-  if (!dao) return
-  dao.textIpfsHash = event.params.textHash
-  dao.save()
-}
-
-export function handleConfigured(event: Configured): void {
-  let dao = Dao.load(event.address.toHexString())
-  if (!dao) return
-  dao.imgIpfsHash = event.params.imgHash
-  dao.blurbIpfsHash = event.params.blurbHash
-  dao.genre = event.params.newGenre
-  dao.subtitle = event.params.newSubtitle
-  dao.save()
-}
-
-export function handleAuctionsStarted(event: AuctionsStarted): void {
-  let dao = Dao.load(event.address.toHexString())
-  if (!dao) return
-  dao.auctionsStarted = true
-  dao.save()
-}
-
-export function handleAuctionsEnded(event: AuctionsEnded): void {
-  let dao = Dao.load(event.address.toHexString())
-  if (!dao) return
-  dao.auctionsEnded = true
-  dao.save()
-}
-
-export function handleContributorAdded(event: ContributorAdded): void {
-  let dao = Dao.load(event.address.toHexString())
-  if (!dao) return
-  let contribution = new Contribution(event.params.contributor.toHex() + "-" + event.transaction.hash.toHex() + "-" + event.logIndex.toString())
-  contribution.address = event.params.contributor
-  contribution.share = event.params.share
-  contribution.role = event.params.role
-  contribution.dao = dao.id
-  contribution.save()
-}
-
-export function handleAuthorMinted(event: AuthorMinted): void {
-  let id = event.address.toHexString() + '1'
-  let edition = Edition.load(id) 
-  log.info("handleAuthorMinted", [event.address.toHexString()])
-  if (!edition) return
-  log.info("there is an edition! handleAuthorMing", [edition.id])
-  // NOT WORKING
-}
-
-export function handleMinted(event: Minted): void {
-  let edition = Edition.load(event.address.toHexString() + event.params.edition.toHexString())
-  if (!edition) return
-  // NOT WORKING
-  // edition.totalSupply = edition.totalSupply.plus(event.params.amount)
-  // edition.save()
-}
-
-export function handleExpirationSet(event: ExpirationSet): void {
-  let edition = Edition.load(event.address.toHexString() + event.params.edition.toHexString())
-  if (!edition) return
-   // NOT WORKING
-  // edition.expiresAt = event.params.expirationTime
-  // edition.save()
-}
-
-export function handleURISet(event: URISet): void {
-  let dao = Dao.load(event.address.toHexString())
-  if (!dao) return
-  dao.metadataCID = event.params.uri
-  dao.save()
+  let edition = new Edition(event.transaction.hash.toHexString() + '1');
+  edition.project = project.id;
+  edition.edition = BigInt.fromString('1');
+  edition.startId = event.params.startId;
+  edition.endId = event.params.currentEdLastId;
+  edition.mintPrice = event.params.initialMintPrice;
+  edition.save();
 }
 
 export function handleNextEditionEnabled(event: NextEditionEnabled): void {
-  let edition = new Edition(event.address.toHexString() + event.params.nextEdId.toHexString())
-  let dao = Dao.load(event.address.toHexString())
-  if (!dao) return
-  edition.dao = dao.id
-  edition.maxSupply = event.params.maxSupply
-  edition.mintPrice = event.params.mintPrice
-  edition.save()
+  let edition = new Edition(
+    event.transaction.hash.toHexString() + event.params.editionId.toHexString()
+  );
+  if (!edition) {
+    throw new Error('Could not create edition for project');
+  }
+  edition.project = event.params.projectId.toString();
+  edition.edition = event.params.editionId;
+  edition.startId = event.params.startId;
+  edition.endId = event.params.endId;
+  edition.mintPrice = event.params.mintPrice;
+  edition.save();
 }
 
-// TODO paused && unpaused
+export function handleProjectConfigured(event: Configured): void {
+  let projectId = event.params.projectId.toString();
+  let project = Project.load(projectId);
+  if (!project) {
+    throw new Error(`Could not find project with ID`);
+  }
+  project.imgIpfsHash = event.params.imgHash;
+  project.animationIpfsHash = event.params.animationHash;
+  project.blurbIpfsHash = event.params.blurbHash;
+  project.genre = event.params.newGenre;
+  project.subtitle = event.params.newSubtitle;
+  project.save();
+}
+
+export function handleContributorAdded(event: ContributorAdded): void {
+  let contributor = new Contributor(
+    event.transaction.hash.toHexString() +
+      event.params.contributor.toHexString()
+  );
+
+  if (!contributor) {
+    throw new Error('Could not create contributor');
+  }
+  contributor.project = event.params.projectId.toString();
+  contributor.address = event.params.contributor;
+  contributor.role = event.params.role;
+  contributor.sharePercentage = event.params.share;
+  contributor.save();
+}
+
+export function handleBaseDataFrozen(event: BaseDataFrozen): void {
+  let projectId = event.params.projectId.toString();
+  let project = Project.load(projectId);
+  if (!project) {
+    throw new Error(`Could not find project with ID`);
+  }
+  project.isFrozen = event.params.frozen;
+  project.save();
+}
+
+export function handlePremintedByAuthor(event: PremintedByAuthor): void {
+  let projectId = event.params.projectId.toString();
+  let project = Project.load(projectId);
+  if (!project) {
+    throw new Error(`Could not find project with ID`);
+  }
+
+  project.premintedByAuthor = event.params.amount;
+  project.save();
+}
+
+export function handleTextUpdated(event: TextUpdated): void {
+  let projectId = event.params.projectId.toString();
+  let project = Project.load(projectId);
+  if (!project) {
+    throw new Error(`Could not find project with ID`);
+  }
+
+  project.textIpfsHash = event.params.newIpfsHash;
+  project.save();
+}
+
+export function handleTranslationUpdated(event: TranslationUpdated): void {
+  let projectId = event.params.projectId.toString();
+  let project = Project.load(projectId);
+  if (!project) {
+    throw new Error(`Could not find project with ID`);
+  }
+
+  project.translationIpfsHash = event.params.newIpfsHash;
+  project.save();
+}
+
+export function handleBlurbUpdated(event: BlurbUpdated): void {
+  let projectId = event.params.projectId.toString();
+  let project = Project.load(projectId);
+  if (!project) {
+    throw new Error(`Could not find project with ID`);
+  }
+
+  project.blurbIpfsHash = event.params.newIpfsHash;
+  project.save();
+}
+
+export function handleImageUpdated(event: ImageUpdated): void {
+  let projectId = event.params.projectId.toString();
+  let project = Project.load(projectId);
+  if (!project) {
+    throw new Error(`Could not find project with ID`);
+  }
+
+  project.imgIpfsHash = event.params.newIpfsHash;
+  project.save();
+}
+
+export function handleAnimationUpdated(event: AnimationUpdated): void {
+  let projectId = event.params.projectId.toString();
+  let project = Project.load(projectId);
+  if (!project) {
+    throw new Error(`Could not find project with ID`);
+  }
+
+  project.animationIpfsHash = event.params.newIpfsHash;
+  project.save();
+}
+
+export function handleMint(event: Minted): void {
+  let projectId = event.params.projectId.toString();
+  let project = Project.load(projectId);
+  if (!project) {
+    throw new Error(`Could not find project with ID`);
+  }
+  project.mintCount = project.mintCount.plus(BigInt.fromString('1'));
+  project.save();
+
+  let mint = new Mint(
+    event.transaction.hash.toHexString() + '-' + event.logIndex.toHexString()
+  );
+  mint.project = project.id;
+  mint.edition = event.params.edition;
+  mint.receiver = event.params.account;
+  mint.tokenId = event.params.tokenId;
+  mint.save();
+}
+
+export function handleTokenIdIncreased(event: TokenIdIncreased): void {
+  let projectId = event.params.projectId.toString();
+  let project = Project.load(projectId);
+  if (!project) {
+    throw new Error(`Could not find project with ID`);
+  }
+  project.currentId = project.currentId.plus(event.params.amount);
+  project.save();
+}
+
+export function handleBalanceIncreased(event: BalanceIncreased): void {
+  let projectId = event.params.projectId.toString();
+  let project = Project.load(projectId);
+  if (!project) {
+    throw new Error(`Could not find project with ID`);
+  }
+
+  project.balance = project.balance.plus(event.params.amount);
+  project.save();
+}
+
+export function handleBalanceDecreased(event: BalanceDecreased): void {
+  let projectId = event.params.projectId.toString();
+  let project = Project.load(projectId);
+  if (!project) {
+    throw new Error(`Could not find project with ID`);
+  }
+
+  project.balance = project.balance.minus(event.params.amount);
+  project.save();
+}
+
+export function handlePaused(event: ProjectPaused): void {
+  let projectId = event.params.projectId.toString();
+  let project = Project.load(projectId);
+  if (!project) {
+    throw new Error(`Could not find project with ID`);
+  }
+
+  project.isPaused = event.params.isPaused;
+  project.save();
+}
+
+export function handleCurated(event: Curated): void {
+  let projectId = event.params.projectId.toString();
+  let project = Project.load(projectId);
+  if (!project) {
+    throw new Error(`Could not find project with ID`);
+  }
+
+  project.isCurated = event.params.isCurated;
+  project.save();
+}
+
+export function handleAuctionsStarted(event: AuctionsStarted): void {
+  let projectId = event.params.projectId.toString();
+  let project = Project.load(projectId);
+  if (!project) {
+    throw new Error(`Could not find project with ID`);
+  }
+  project.auctionsStarted = true;
+  project.save();
+}
+
+export function handleAuctionsEnded(event: AuctionsEnded): void {
+  let projectId = event.params.projectId.toString();
+  let project = Project.load(projectId);
+  if (!project) {
+    throw new Error(`Could not find project with ID`);
+  }
+  project.auctionsEnded = true;
+  project.save();
+}
+
+export function handleExpirationSet(event: ExpirationSet): void {
+  let projectId = event.params.projectId.toString();
+  let expiration = event.params.expirationTime;
+  let project = Project.load(projectId);
+  if (!project) {
+    throw new Error(`Could not find project with ID`);
+  }
+  project.currentAuctionExpiresAt = expiration;
+  project.save();
+}

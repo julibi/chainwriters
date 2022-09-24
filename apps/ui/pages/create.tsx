@@ -6,14 +6,11 @@ import React, {
   useState,
 } from 'react';
 import styled from 'styled-components';
-import { create } from 'ipfs-http-client';
 import { toast } from 'react-toastify';
 import { parseEther } from 'ethers/lib/utils';
-import { useWeb3React } from '@web3-react/core';
+import { Node } from 'slate';
 import ProgressBar from '../components/ProgressBar';
-import useFactoryContract from '../hooks/useFactoryContract';
 import {
-  BaseButton,
   BASE_BORDER_RADIUS,
   BASE_BOX_SHADOW,
   BG_NORMAL,
@@ -22,14 +19,6 @@ import {
   PLAIN_WHITE,
   INTER_BOLD,
 } from '../themes';
-import useDaoContract from '../state/useDaoContract';
-import {
-  useCreateAuthorMint,
-  useCreateSetContributors,
-  useCreateSetConfiguration,
-} from '../state/projects/create/hooks';
-import SuccessToast from '../components/SuccessToast';
-import PendingToast from '../components/PendingToast';
 import NameForm from '../components/Create/NameForm';
 import TextForm from '../components/Create/TextForm';
 import AmountForm from '../components/Create/AmountForm';
@@ -42,14 +31,16 @@ import BlurbForm from '../components/Create/BlurbForm';
 import GenreForm from '../components/Create/GenreForm';
 import SubtitleForm from '../components/Create/SubtitleForm';
 import ConfigReviewForm from '../components/Create/ConfigReviewForm';
-import AuthorClaimForm from '../components/Create/AuthorClaimForm';
 import ContributorsForm from '../components/Create/ContributorsForm';
 import Finished from '../components/Create/Finished';
-import { BLURB_FETCH_ERROR } from '../constants';
-import {
-  SectionTitle,
-  SectionTitleWrapper,
-} from '../components/HomePage/ProjectSection';
+import { useFactory } from '../hooks/factory';
+import { useIpfsClient } from '../hooks/useIpfsClient';
+import { BigNumber } from 'ethers';
+import { useManager } from '../hooks/manager';
+import LanguageForm from '../components/Create/LanguageForm';
+import TranslationForm from '../components/Create/TranslationForm';
+import Title from '../components/Title';
+import pinToPinata from '../utils/pinToPinata';
 
 const Root = styled.div`
   display: flex;
@@ -129,20 +120,6 @@ export const TextInput = styled.textarea`
   outline: none;
 `;
 
-export const SubmitButton = styled(BaseButton)`
-  text-transform: uppercase;
-  text-align: center;
-  color: ${PLAIN_WHITE};
-  background-color: ${BG_NORMAL};
-  border-radius: ${BASE_BORDER_RADIUS};
-  box-shadow: ${BASE_BOX_SHADOW};
-  padding: 1rem;
-
-  :disabled {
-    color: grey;
-  }
-`;
-
 export const FadeIn = styled.div`
   width: 100%;
   animation: fadein 2s;
@@ -204,97 +181,168 @@ export interface Contributor {
 }
 
 const Create = () => {
-  const { chainId } = useWeb3React();
-  const FactoryContract = useFactoryContract();
-  // TODO
-  // @ts-ignore
-  const client = create('https://ipfs.infura.io:5001/api/v0');
+  const client = useIpfsClient();
   const [currentStep, setCurrentStep] = useState(0);
   const [title, setTitle] = useState('');
-  const [text, setText] = useState('');
-  // need it for state? We are returning the hash after upload...
-  const [textIPFS, setTextIPFS] = useState('');
+  const [text, setText] = useState<Node[] | undefined>();
+  const [language, setLanguage] = useState<string>('');
+  const [translation, setTranslation] = useState<Node[] | undefined>('');
+  // const [textIPFS, setTextIPFS] = useState<null | string>(null);
   const [agreed, setAgreed] = useState(false);
   const [firstEdMintPrice, setFirstEdMintPrice] = useState<string>('0');
   const [firstEdMaxAmount, setFirstEdMaxAmount] = useState(0);
-  // TODO type for buffer
+  const [projectId, setProjectId] = useState<string | null>(null);
   const [imgBuffer, setImgBuffer] = useState<null | Buffer>(null);
   const [imgFile, setImgFile] = useState(null);
+  const [isUploadingImage, setIsUploadingImage] = useState<boolean>(false);
   const [coverImgIPFS, setCoverImgIPFS] = useState<string>('');
   const [blurb, setBlurb] = useState<string>('');
   const [blurbIPFS, setBlurbIPFS] = useState<string>('');
-  const [loading, setLoading] = useState(false);
   const [genre, setGenre] = useState('');
-  const [daoAddress, setDaoAddress] = useState<string>('');
-  const [creatingDao, setCreatingDao] = useState<boolean>(false);
   const [subtitle, setSubtitle] = useState<string>('');
-  const [authorMintAmount, setAuthorMintAmount] = useState<number>(0);
-  const getDaoContract = useDaoContract();
-  const createSetConfiguration = useCreateSetConfiguration();
-  const createAuthorMint = useCreateAuthorMint();
-  const createSetContributors = useCreateSetContributors();
-  const daoContract = useMemo(
-    () => (daoAddress ? getDaoContract(daoAddress) : null),
-    [daoAddress, getDaoContract]
+  const [isPinPending, setIsPinPending] = useState<boolean>(false);
+  const { createProject, createProjectStatus } = useFactory();
+  const {
+    configureProject,
+    configureStatus,
+    setContributors,
+    setContributorsStatus,
+    updateTranslation,
+    updateTranslationStatus,
+  } = useManager();
+
+  const nothingConfigured = useMemo(() => {
+    if (
+      !subtitle.trim().length &&
+      !genre.trim().length &&
+      !blurb.trim().length &&
+      !coverImgIPFS.trim().length
+    )
+      return true;
+    return false;
+  }, [subtitle, genre, blurb, coverImgIPFS]);
+
+  const uploadText = useCallback(
+    async (
+      content: Node[] | string,
+      type: 'text' | 'translation' | 'blurb' | 'image'
+    ) => {
+      try {
+        const uploadContent =
+          typeof content === 'string' ? content : JSON.stringify(content);
+        // upload to IPFS
+        const added = await client.add(uploadContent);
+
+        // pin data with pinata - for now it is fire and forget
+        if (added.path) {
+          await pinToPinata(added.path, projectId, type, title);
+        }
+        return added.path;
+      } catch (e) {
+        console.log({ e });
+        toast.error('Something went wrong while uploading your text to ipfs.');
+      }
+    },
+    [client, projectId, title]
   );
+
+  const handleCreateProject = useCallback(async () => {
+    setIsPinPending(true);
+    const hash = await uploadText(text, 'text');
+    setIsPinPending(false);
+
+    await createProject({
+      title,
+      textIpfsHash: hash,
+      originalLanguage: language,
+      initialMintPrice: parseEther(firstEdMintPrice),
+      firstEditionAmount: BigNumber.from(firstEdMaxAmount.toString()),
+      onSuccess: (newProjectId: string) => {
+        setCurrentStep(currentStep + 1);
+        setProjectId(newProjectId);
+      },
+      onError: undefined,
+    });
+  }, [
+    createProject,
+    currentStep,
+    firstEdMaxAmount,
+    firstEdMintPrice,
+    language,
+    title,
+    text,
+    uploadText,
+  ]);
+
+  const handleUpdateTranslation = useCallback(async () => {
+    setIsPinPending(true);
+    const hash = await uploadText(translation, 'translation');
+    setIsPinPending(false);
+
+    await updateTranslation({
+      projectId,
+      translationIpfsHash: hash,
+      onSuccess: () => {
+        setCurrentStep(currentStep + 1);
+      },
+      onError: undefined,
+      refetchWithTimeout: false,
+    });
+  }, [currentStep, projectId, translation, updateTranslation, uploadText]);
+
+  const handleConfigure = useCallback(async () => {
+    // TODO: add animationhash
+    await configureProject({
+      projectId,
+      imgHash: coverImgIPFS,
+      animationHash: '',
+      blurbHash: blurbIPFS,
+      genre,
+      subtitle,
+      onSuccess: () => {
+        setCurrentStep(currentStep + 1);
+      },
+      refetchWithTimeout: false,
+    });
+  }, [
+    blurbIPFS,
+    configureProject,
+    coverImgIPFS,
+    currentStep,
+    genre,
+    projectId,
+    subtitle,
+  ]);
+
   const contribInitialState = {
     1: { address: '', share: 0, role: '' },
     2: { address: '', share: 0, role: '' },
     3: { address: '', share: 0, role: '' },
   };
-  const [contributors, setContributors] = useState(contribInitialState);
-  const contributorList = useMemo(() => {
+  const [contribs, setContribs] = useState(contribInitialState);
+  const contributorsList = useMemo(() => {
     const contribsArray = [];
-    Object.entries(contributors).map((contrib) => {
+    Object.entries(contribs).map((contrib) => {
       if (contrib[1].address.length > 0 && contrib[1].share > 0) {
         contribsArray.push(contrib[1]);
       }
     });
     return contribsArray;
-  }, [contributors]);
+  }, [contribs]);
 
-  const uploadText = useCallback(async () => {
-    try {
-      const added = await client.add(text);
-      // const url = `https://ipfs.infura.io/ipfs/${added.path}`;
-      // TODO what about pinning?
-      setTextIPFS(added.path);
-      return added.path;
-    } catch (e) {
-      console.log({ e });
-      toast.error('Something went wrong while uploading your text to ipfs.');
-    }
-  }, [client, text]);
-
-  const createDao = async () => {
-    setCreatingDao(true);
-    const ipfsHash = await uploadText();
-    const mintPrice = parseEther(firstEdMintPrice);
-
-    try {
-      const Tx = await FactoryContract.createDao(
-        title,
-        ipfsHash,
-        mintPrice,
-        firstEdMaxAmount
-      );
-      const { hash } = Tx;
-      PendingToast(chainId, hash);
-      FactoryContract.provider.once(hash, (transaction) => {
-        const newDaoAddress = transaction.logs[0].address;
-        setDaoAddress(newDaoAddress);
-        SuccessToast(chainId, hash);
-        setCreatingDao(false);
+  const handleSetContributors = useCallback(async () => {
+    await setContributors({
+      projectId,
+      contributorsList,
+      onSuccess: () => {
         setCurrentStep(currentStep + 1);
-      });
-    } catch (e) {
-      setCreatingDao(false);
-      console.log({ e });
-      toast.error(e.reason ?? 'Something went wrong.');
-    }
-  };
+      },
+      refetchWithTimeout: false,
+    });
+  }, [contributorsList, currentStep, projectId, setContributors]);
 
   const captureFile = (file: any) => {
+    // TODO: add loading
     const reader = new window.FileReader();
     reader.readAsArrayBuffer(file);
     reader.onloadend = () => {
@@ -307,134 +355,45 @@ const Create = () => {
 
   const submitImage = useCallback(
     async (event: FormEvent<HTMLButtonElement>) => {
+      setIsUploadingImage(true);
       event.preventDefault();
       const added = await client.add(imgBuffer);
-      // const url = `https://ipfs.infura.io/ipfs/${added.path}`;
-      // TODO what about pinning?
+
+      if (added.path) {
+        await pinToPinata(added.path, projectId, 'image');
+      }
       setCoverImgIPFS(added.path);
       setCurrentStep(currentStep + 1);
+      setIsUploadingImage(false);
     },
-    [client, imgBuffer, currentStep]
+    [client, imgBuffer, currentStep, projectId]
   );
 
   const handleSetBlurb = useCallback(async () => {
-    const added = await client.add(blurb);
-    setBlurbIPFS(added.path);
+    setIsPinPending(true);
+    const hash = await uploadText(blurb, 'blurb');
+    setIsPinPending(false);
+
+    setBlurbIPFS(hash);
     setCurrentStep(currentStep + 1);
-  }, [blurb, client, currentStep]);
+  }, [blurb, currentStep, uploadText]);
 
-  const handleSetConfiguration = useCallback(async () => {
-    createSetConfiguration(
-      daoContract,
-      coverImgIPFS,
-      blurbIPFS,
-      genre,
-      subtitle,
-      setLoading,
-      PendingToast,
-      (x, y, z) => {
-        setCurrentStep(currentStep + 1);
-        // @ts-ignore
-        return <SuccessToast chainId={x} hash={y} customMessage={z} />;
-      }
-    )
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      .then(() => {})
-      .catch((e) => {
-        console.log({ e });
-        toast.error('Something went wrong');
-      });
-  }, [
-    createSetConfiguration,
-    daoContract,
-    coverImgIPFS,
-    blurbIPFS,
-    subtitle,
-    genre,
-    currentStep,
-  ]);
-
-  const handleAuthorMint = useCallback(async () => {
-    setLoading(true);
-    let uri;
-    // first create metadata object
-    try {
-      const response = await fetch(`https://ipfs.io/ipfs/${blurbIPFS}`);
-      if (!response.ok) {
-        setBlurb(BLURB_FETCH_ERROR);
-      } else {
-        const fetchedBlurb = await response.text();
-        setBlurb(fetchedBlurb);
-      }
-      const metadataObject = {
-        name: title,
-        description:
-          blurb && blurb !== BLURB_FETCH_ERROR
-            ? `${blurb} (Created with Moonpage)`
-            : 'Created with Moonpage',
-        image: coverImgIPFS ? `ipfs://${coverImgIPFS}` : '',
-      };
-      const metadata = JSON.stringify(metadataObject, null, 2);
-      const uploadedMeta = (await client.add(metadata)).path;
-      uri = `ipfs://${uploadedMeta}`;
-    } catch (e: unknown) {
-      toast.error('Something went wrong while uploading metadata to IPFS.');
-      setLoading(false);
-      return;
-    }
-    // then call the contract
-    createAuthorMint(
-      daoContract,
-      authorMintAmount,
-      uri,
-      setLoading,
-      PendingToast,
-      (x, y, z) => {
-        setCurrentStep(currentStep + 1);
-        // @ts-ignore
-        return <SuccessToast chainId={x} hash={y} customMessage={z} />;
-      }
-    )
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      .then(() => {})
-      .catch((e) => {
-        console.log({ e });
-        toast.error('Something went wrong');
-      });
-  }, [createAuthorMint, daoContract, authorMintAmount, currentStep]);
-
-  const handleSetContributors = useCallback(async () => {
-    createSetContributors(
-      daoContract,
-      contributorList,
-      setLoading,
-      PendingToast,
-      (x, y, z) => {
-        setCurrentStep(currentStep + 1);
-        // @ts-ignore
-        return <SuccessToast chainId={x} hash={y} customMessage={z} />;
-      }
-    )
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      .then(() => {})
-      .catch((e) => {
-        console.log({ e });
-        toast.error('Something went wrong');
-      });
-  }, [createSetContributors, daoContract, contributorList, currentStep]);
+  const creatingDao = useMemo(() => {
+    return (
+      createProjectStatus === 'confirming' || createProjectStatus === 'waiting'
+    );
+  }, [createProjectStatus]);
 
   return (
     <Root>
-      <SectionTitleWrapper style={{ marginBlockEnd: '4rem' }}>
-        <SectionTitle>Create</SectionTitle>
-      </SectionTitleWrapper>
+      <Title margin="0 0 4rem 0">Create</Title>
       <Content>
         <ProgressBarWrapper>
-          <ProgressBar completed={currentStep ? (currentStep / 12) * 100 : 0} />
+          <ProgressBar completed={currentStep ? (currentStep / 14) * 100 : 0} />
         </ProgressBarWrapper>
         <FormWrapper>
           <Form>
-            {currentStep === 0 && !creatingDao && (
+            {currentStep === 0 && (
               <NameForm
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
                   setTitle(e.target.value)
@@ -443,14 +402,22 @@ const Create = () => {
                 title={title}
               />
             )}
-            {currentStep === 1 && !creatingDao && (
+            {currentStep === 1 && (
               <TextForm
-                onKeyDown={(val: string) => setText(val)}
+                onKeyDown={(val: Node[]) => setText(val)}
                 onSubmit={() => setCurrentStep(currentStep + 1)}
                 text={text}
               />
             )}
-            {currentStep === 2 && !creatingDao && (
+            {currentStep === 2 && (
+              <LanguageForm
+                onLanguageSet={(val: string) => setLanguage(val)}
+                onSubmit={() => setCurrentStep(currentStep + 1)}
+                language={language}
+                text={text}
+              />
+            )}
+            {currentStep === 3 && (
               <AmountForm
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
                   setFirstEdMaxAmount(Number(e.target.value))
@@ -459,7 +426,7 @@ const Create = () => {
                 firstEdMaxAmount={firstEdMaxAmount}
               />
             )}
-            {currentStep === 3 && !creatingDao && (
+            {currentStep === 4 && (
               <PriceForm
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
                   setFirstEdMintPrice(e.target.value)
@@ -468,34 +435,58 @@ const Create = () => {
                 firstEdMintPrice={firstEdMintPrice}
               />
             )}
-            {currentStep === 4 && !creatingDao && (
+            {/* TODO: enable changing things here */}
+            {currentStep === 5 && !creatingDao && (
               <ReviewForm
                 agreed={agreed}
+                language={language}
                 title={title}
                 text={text}
                 firstEdMaxAmount={firstEdMaxAmount}
                 firstEdMintPrice={firstEdMintPrice}
                 onCheck={() => setAgreed(!agreed)}
-                createDao={createDao}
+                createDao={handleCreateProject}
+                pending={creatingDao || isPinPending}
               />
             )}
             {creatingDao && <Waiting />}
-            {currentStep === 5 && !creatingDao && (
+            {currentStep === 6 && !creatingDao && (
               <Congrats
-                daoAddress={daoAddress}
-                onSubmit={() => setCurrentStep(currentStep + 1)}
+                onSubmit={() => {
+                  if (language == 'English') {
+                    setCurrentStep(currentStep + 2);
+                  } else {
+                    setCurrentStep(currentStep + 1);
+                  }
+                }}
               />
             )}
-            {currentStep === 6 && !creatingDao && (
+            {currentStep === 7 && (
+              <TranslationForm
+                onKeyDown={(val: Node[]) => setTranslation(val)}
+                onSubmit={handleUpdateTranslation}
+                translation={translation}
+                pending={
+                  updateTranslationStatus === 'confirming' ||
+                  updateTranslationStatus === 'waiting' ||
+                  isPinPending
+                }
+                reset={() => setTranslation(undefined)}
+                onNextStep={() => setCurrentStep(currentStep + 1)}
+              />
+            )}
+            {currentStep === 8 && !creatingDao && (
               <CoverImageForm
                 captureFile={captureFile}
                 imgFile={imgFile}
                 imgBuffer={imgBuffer}
                 onNextStep={() => setCurrentStep(currentStep + 1)}
                 onSubmit={submitImage}
+                pending={isUploadingImage}
+                reset={() => setCoverImgIPFS('')}
               />
             )}
-            {currentStep === 7 && !creatingDao && (
+            {currentStep === 9 && !creatingDao && (
               <BlurbForm
                 blurb={blurb}
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
@@ -503,65 +494,65 @@ const Create = () => {
                 }
                 onNextStep={() => setCurrentStep(currentStep + 1)}
                 onSubmit={handleSetBlurb}
+                pending={isPinPending}
+                reset={() => setBlurb('')}
               />
             )}
-            {currentStep === 8 && !creatingDao && (
+            {currentStep === 10 && !creatingDao && (
               <GenreForm
                 genre={genre}
-                onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                  setGenre(e.target.value)
-                }
+                onGenreSet={(x: string) => setGenre(x)}
                 onNextStep={() => setCurrentStep(currentStep + 1)}
+                reset={() => setGenre('')}
               />
             )}
-            {currentStep === 9 && !creatingDao && (
+            {currentStep === 11 && !creatingDao && (
               <SubtitleForm
                 subtitle={subtitle}
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
                   setSubtitle(e.target.value)
                 }
-                onNextStep={() => setCurrentStep(currentStep + 1)}
+                onNextStep={() =>
+                  setCurrentStep(currentStep + (nothingConfigured ? 2 : 1))
+                }
+                reset={() => setSubtitle('')}
               />
             )}
-            {currentStep === 10 && !creatingDao && (
+            {currentStep === 12 && !creatingDao && (
               <ConfigReviewForm
                 genre={genre}
                 subtitle={subtitle}
                 blurb={blurb}
                 imgFile={imgFile}
-                loading={loading}
-                blurbIPFS={blurbIPFS}
-                onSubmit={handleSetConfiguration}
-              />
-            )}
-            {currentStep === 11 && !creatingDao && (
-              <AuthorClaimForm
-                loading={loading}
-                authorMintAmount={authorMintAmount}
-                firstEdMaxAmount={firstEdMaxAmount}
-                onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                  setAuthorMintAmount(Number(e.target.value))
+                loading={
+                  configureStatus === 'confirming' ||
+                  configureStatus === 'waiting' ||
+                  isPinPending
                 }
-                onSubmit={handleAuthorMint}
+                blurbIPFS={blurbIPFS}
+                onSubmit={handleConfigure}
               />
             )}
-            {currentStep === 12 && !creatingDao && (
+            {currentStep === 13 && !creatingDao && (
               <ContributorsForm
-                contributors={contributors}
-                contributorList={contributorList}
-                loading={loading}
+                contributors={contribs}
+                contributorsList={contributorsList}
+                loading={
+                  setContributorsStatus === 'confirming' ||
+                  setContributorsStatus === 'waiting'
+                }
                 onChange={(idx, key, val) =>
-                  setContributors({
-                    ...contributors,
-                    [idx]: { ...contributors[idx], [key]: val },
+                  setContribs({
+                    ...contribs,
+                    [idx]: { ...contribs[idx], [key]: val },
                   })
                 }
                 onNextStep={() => setCurrentStep(currentStep + 1)}
                 onSubmit={handleSetContributors}
               />
             )}
-            {currentStep === 13 && !creatingDao && (
-              <Finished daoAddress={daoAddress} />
+            {currentStep === 14 && !creatingDao && (
+              <Finished projectId={projectId} />
             )}
           </Form>
         </FormWrapper>
