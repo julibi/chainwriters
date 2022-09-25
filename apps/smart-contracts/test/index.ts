@@ -411,6 +411,16 @@ describe("Project", function () {
         authorOwnsAmount,
         discountRate
       );
+      await expect(
+        ManagerAsCreator.configureProjectDetails(
+          1,
+          "",
+          "newipfshash",
+          "",
+          "Horror",
+          "My different fancy subtitle"
+        )
+      ).to.be.revertedWith("Base data frozen");
     });
 
     it("lets creator start auctions and after sellout of Gen Ed, shares get distributed", async () => {
@@ -1316,5 +1326,100 @@ describe("Project", function () {
       await advanceDays(9);
       await expect(BallotAsCreator.endVote()).to.not.reverted;
     });
+  });
+
+  // we are interacting with projectID 2 but there is no project with the ID 2 yet
+  it("user cannot buy or mint when the project does not exist yet", async () => {
+    await expect(
+      CollectionAsUserA.buy(2, {
+        value: myMintPrice,
+      })
+    ).to.be.revertedWith("Auctions have not started");
+
+    await expect(
+      CollectionAsUserA.publicMint(2, 1, {
+        value: myMintPrice,
+      })
+    ).to.be.revertedWith("Public minting possible from edition 2");
+  });
+
+  describe("MOONPAGE FACTORY", () => {
+    it("only admin can update allowlist and denylist state", async () => {
+      const FactoryAsSecondCreator = Factory.connect(userA);
+      const FactoryAsThirdCreator = Factory.connect(userB);
+
+      // allowlist only
+      await expect(FactoryAsCreator.setIsAllowlistOnly(true)).to.be.reverted;
+      await expect(FactoryAsDeployer.setIsAllowlistOnly(true)).not.to.be
+        .reverted;
+      await expect(
+        FactoryAsSecondCreator.createProject(
+          "",
+          "textIpfsHash",
+          "ENG",
+          myMintPrice,
+          100
+        )
+      ).to.be.revertedWith("Not on allowlist");
+
+      // allowlist allowlist updated
+      await FactoryAsDeployer.updateAllowlist(creator.address, true);
+      await expect(
+        FactoryAsCreator.createProject(
+          "",
+          "textIpfsHash",
+          "ENG",
+          myMintPrice,
+          100
+        )
+      ).not.to.be.reverted;
+      await expect(FactoryAsSecondCreator.updateAllowlist(userA.address, true))
+        .to.be.reverted;
+      await FactoryAsDeployer.updateAllowlist(userA.address, true);
+      await expect(
+        FactoryAsCreator.createProject(
+          "Yay U can create now haha",
+          "textIpfsHash",
+          "ENG",
+          myMintPrice,
+          100
+        )
+      ).not.to.be.reverted;
+
+      // now open for all
+      await expect(FactoryAsDeployer.setIsAllowlistOnly(false)).not.to.be
+        .reverted;
+
+      await expect(
+        FactoryAsThirdCreator.createProject(
+          "Hans und Franz can create a Project now",
+          "hatefulcontentipfshash",
+          "ENG",
+          myMintPrice,
+          100
+        )
+      ).not.to.be.reverted;
+
+      // admin denylists ThirdCreator
+      await expect(FactoryAsDeployer.updateDenylist(userB.address, true)).not.to
+        .be.reverted;
+
+      // Third Creator cannot create stuff anymore
+      await expect(
+        FactoryAsThirdCreator.createProject(
+          "Wants to create another bad project",
+          "hatefulcontentipfshash",
+          "ENG",
+          myMintPrice,
+          100
+        )
+      ).to.be.reverted;
+    });
+
+    it("only admin can pause the factory and this pauses the creation of projects", async () => {});
+
+    it("only admin can upgrade the contract and the upgrade works - minting etc. too", async () => {});
+
+    it("only admin can change the genesis amount range - minting etc. still works", async () => {});
   });
 });
