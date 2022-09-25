@@ -1347,7 +1347,6 @@ describe("Project", function () {
     it("only admin can update allowlist and denylist state", async () => {
       const FactoryAsSecondCreator = Factory.connect(userA);
       const FactoryAsThirdCreator = Factory.connect(userB);
-
       // allowlist only
       await expect(FactoryAsCreator.setIsAllowlistOnly(true)).to.be.reverted;
       await expect(FactoryAsDeployer.setIsAllowlistOnly(true)).not.to.be
@@ -1416,7 +1415,27 @@ describe("Project", function () {
       ).to.be.reverted;
     });
 
-    it("only admin can pause the factory and this pauses the creation of projects", async () => {});
+    it.only("only admin can pause the factory and this pauses the creation of projects", async () => {
+      const FactoryAsSecondCreator = Factory.connect(userA);
+      const FactoryAsThirdCreator = Factory.connect(userB);
+      // everyone can create
+      await expect(FactoryAsDeployer.setIsAllowlistOnly(false)).not.to.be
+        .reverted;
+
+      // admin pauses contract
+      await expect(FactoryAsSecondCreator.pause()).to.be.reverted;
+      await expect(FactoryAsDeployer.pause()).not.to.be.reverted;
+      // const test = await Factory.paused();
+      await expect(
+        FactoryAsCreator.createProject(
+          "",
+          "textIpfsHash",
+          "ENG",
+          myMintPrice,
+          100
+        )
+      ).to.be.reverted;
+    });
 
     it("only admin can upgrade the contract and the upgrade works - minting etc. too", async () => {});
 
