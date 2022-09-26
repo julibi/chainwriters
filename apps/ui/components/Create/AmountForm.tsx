@@ -1,11 +1,6 @@
 import React, { ChangeEvent } from 'react';
 import styled from 'styled-components';
-import {
-  FadeIn,
-  Wrapper,
-  InputName,
-  InputDescription,
-} from '../../pages/create';
+import { FadeIn, Wrapper, InputDescription } from '../../pages/create';
 import ActionButton from '../ActionButton';
 import InputField from '../InputField';
 import Title from '../Title';
