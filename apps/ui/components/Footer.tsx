@@ -62,7 +62,7 @@ const Footer = () => {
         <SocialMediaLinkWrapper
           target="_blank"
           rel="noopener noreferrer"
-          href="https://mobile.twitter.com/mooonpage"
+          href="https://mobile.twitter.com/moonpage_nft"
         >
           <Image
             height={'30px'}
@@ -75,16 +75,16 @@ const Footer = () => {
         <SocialMediaLinkWrapper
           target="_blank"
           rel="noopener noreferrer"
-          href="https://discord.com/invite/rKjGEzp2"
+          href="https://t.me/moonpagedao"
         >
           <Image
             height={'30px'}
             width={'30px'}
-            src={'/Discord.svg'}
+            src={'/Telegram.svg'}
             alt={'Twitter'}
             priority
           />
-          <SocialMediaName>Discord</SocialMediaName>
+          <SocialMediaName>Telegram</SocialMediaName>
         </SocialMediaLinkWrapper>
         {/* <SocialMediaLinkWrapper
           target="_blank"
