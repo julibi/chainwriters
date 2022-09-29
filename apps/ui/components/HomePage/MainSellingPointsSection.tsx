@@ -1,7 +1,13 @@
+import { useRouter } from 'next/router';
 import React from 'react';
 import styled from 'styled-components';
-import { BG_DARK, PINK, INTER_BOLD, INTER_LIGHT } from '../../themes';
-import Title from '../Title';
+import {
+  PINK,
+  INTER_BOLD,
+  INTER_LIGHT,
+  INSET_BASE_BOX_SHADOW,
+} from '../../themes';
+import ActionButton from '../ActionButton';
 
 const Root = styled.div`
   display: flex;
@@ -27,36 +33,32 @@ const BlocksWrapper = styled.div`
   }
 `;
 
-const AuthorBlock = styled.div`
+const Block = `
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   width: 45%;
   max-width: 600px;
-  animation-delay: 3s;
-  background-color: ${BG_DARK};
   border-radius: 20px;
   padding: 2rem;
+  box-shadow: ${INSET_BASE_BOX_SHADOW};
 
   @media (max-width: 900px) {
     width: 100%;
+  }
+`;
+
+const CreatorsBlock = styled.div`
+  ${Block}
+  color: ${PINK};
+
+  @media (max-width: 900px) {
     margin-block-end: 2rem;
   }
 `;
 
-const ReaderBlock = styled.div`
-  width: 45%;
-  max-width: 600px;
-  background-color: ${BG_DARK};
-  color: ${PINK};
-
-  background-color: ${BG_DARK};
-  border-radius: 20px;
-  padding: 2rem;
-
-  @media (max-width: 900px) {
-    width: 100%;
-  }
+const CollectorsBlock = styled.div`
+  ${Block}
 `;
 
 const Text = styled.p`
@@ -82,21 +84,41 @@ const SubHeader = styled.h3`
 `;
 
 const MainSellingPointsSection = () => {
+  const router = useRouter();
   return (
     <Root>
       <BlocksWrapper>
-        <AuthorBlock>
+        <CreatorsBlock>
           <SubHeader>Creators</SubHeader>
           <Text>{'Publish and sell your text as NFT collection'}</Text>
           <Text>{'Receive creator royalties'}</Text>
           <Text>{'Create a community of readers'}</Text>
-        </AuthorBlock>
-        <ReaderBlock>
+          <ActionButton
+            onClick={() => {
+              router.push(`/create`);
+            }}
+            disabled={false}
+            loading={false}
+            margin="2rem auto 0"
+            text="CREATE NOW"
+          />
+        </CreatorsBlock>
+        <CollectorsBlock>
           <SubHeader>Collectors</SubHeader>
           <Text>{'Collect text NFT gems and unlock the content'}</Text>
           <Text>{'Be part of an exclusive community'}</Text>
           <Text>{'(Beta) Vote with the NFTs'}</Text>
-        </ReaderBlock>
+          <ActionButton
+            onClick={() => {
+              router.push(`/projects`);
+            }}
+            color="#fff"
+            disabled={false}
+            loading={false}
+            margin="2rem auto 0"
+            text="BROWSE"
+          />
+        </CollectorsBlock>
       </BlocksWrapper>
     </Root>
   );

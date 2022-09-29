@@ -30,7 +30,7 @@ interface InputFieldTypes {
   onChange: (e: FormEvent<HTMLInputElement>) => void;
   disabled?: boolean;
   error?: string;
-  placeholder?: string;
+  placeholder?: string | number;
   style?: any;
   label?: string;
   type?: string;

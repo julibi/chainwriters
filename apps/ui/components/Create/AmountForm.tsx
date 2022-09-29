@@ -35,11 +35,12 @@ const AmountForm = ({
           <InputField
             value={firstEdMaxAmount}
             onChange={onChange}
-            placeholder={'2000'}
+            placeholder={100}
             error={
               (firstEdMaxAmount > 1000 || firstEdMaxAmount < 10) &&
               'Min 10, max 1000.'
             }
+            type="number"
           />
         </InputWrapper>
         <ActionButton
