@@ -391,7 +391,6 @@ const AuthorSection = ({
             startAuctionsStatus === 'confirming' ||
             startAuctionsStatus === 'waiting'
           }
-          project={projectData}
         />
       )}
       {showEnableNextEditionModal && (

@@ -282,7 +282,8 @@ const ProjectDetailView = () => {
     refetch,
     isLoading: isProjectLoading,
   } = useGetProject(projectId);
-  const { buy, buyStatus } = useCollection();
+  const { buy, buyStatus, startAuctions, startAuctionsStatus } =
+    useCollection();
   const auctionsManager = useAuctionsManager();
   const { retriggerAuction, retriggerAuctionStatus } = useAuctions();
   const { allowedToRead } = useShowText(projectId);
@@ -408,6 +409,21 @@ const ProjectDetailView = () => {
     });
   }, [retriggerAuction, projectId, refetch]);
 
+  const handleStartAuctions = useCallback(
+    async (amountForCreator: number) => {
+      await startAuctions({
+        projectId,
+        amountForCreator,
+        initialMintPrice: project?.initialMintPrice,
+        onError: undefined,
+        onSuccess: () => {
+          refetch();
+        },
+      });
+    },
+    [project?.initialMintPrice, projectId, refetch, startAuctions]
+  );
+
   if (!project && !isProjectLoading) {
     return (
       <Root>
@@ -478,14 +494,20 @@ const ProjectDetailView = () => {
               )}
               {project.editions?.length === 1 && (
                 <AuctionSection
+                  isAuthor={isAuthor}
                   project={project}
                   loading={
                     isGettingCurrentPrice ||
                     retriggerAuctionStatus === 'confirming' ||
                     retriggerAuctionStatus === 'waiting'
                   }
+                  loadingStartAucions={
+                    startAuctionsStatus === 'confirming' ||
+                    startAuctionsStatus === 'waiting'
+                  }
                   onFetchCurrentPrice={fetchCurrentPrice}
                   onRetriggerAuction={handleRetriggerAuction}
+                  onStartAuctions={handleStartAuctions}
                 />
               )}
             </InfoRight>

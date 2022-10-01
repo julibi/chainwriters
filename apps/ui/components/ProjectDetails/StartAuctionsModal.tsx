@@ -1,14 +1,12 @@
 import {
   ContentWrapper,
   CTAWrapper,
-  ModalHeader,
   ModalText,
 } from '../../pages/projects/[projectId]';
 import React, { ChangeEvent, useState } from 'react';
 import ActionButton from '../ActionButton';
 import BaseModal from '../BaseModal';
 import InputField from '../InputField';
-import { Project } from '../../providers/projects-provider/projects-provider.types';
 import { MAX_MINTABLE_BY_CREATOR } from '../../constants';
 import Title from '../Title';
 
@@ -16,24 +14,14 @@ interface StartAuctionsModalProps {
   onClose: () => void;
   onStartAuctions: (authorMintInput: number) => void;
   pending: boolean;
-  project: Project;
 }
 
 const StartAuctionsModal = ({
   onClose,
   onStartAuctions,
   pending,
-  project,
 }: StartAuctionsModalProps) => {
   const [authorMintInput, setAuthorMintInput] = useState<string>('');
-
-  // const max = useMemo(() => {
-  //   if (!project) return 0;
-  //   const firstEd = project.editions.find(edition => Number(edition.edition) === 1);
-  //   const amount = Number(firstEd.endId.sub(firstEd.startId));
-  //   return amount;
-
-  // }, [project]);
 
   return (
     <BaseModal onClose={onClose}>

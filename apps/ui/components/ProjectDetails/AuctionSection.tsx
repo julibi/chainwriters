@@ -1,14 +1,14 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { formatEther } from '@ethersproject/units';
-import { BASE_BORDER_RADIUS, BASE_BOX_SHADOW, PINK } from '../../themes';
+import { BASE_BORDER_RADIUS, INSET_BASE_BOX_SHADOW, PINK } from '../../themes';
 import Countdown from '../Countdown';
-import Loading from '../Loading';
 import PieChart from '../PieChart';
-import { StyledPrimaryButton } from '../../pages/projects/[projectId]';
 import { Project } from '../../providers/projects-provider/projects-provider.types';
 import { BigNumber } from 'ethers';
 import Title from '../Title';
+import ActionButton from '../ActionButton';
+import StartAuctionsModal from './StartAuctionsModal';
 
 const InfoBlock = styled.div`
   width: 40%;
@@ -18,7 +18,7 @@ const InfoBlock = styled.div`
   align-items: center;
   padding: 2rem;
   border-radius: ${BASE_BORDER_RADIUS};
-  box-shadow: ${BASE_BOX_SHADOW};
+  box-shadow: ${INSET_BASE_BOX_SHADOW};
 
   @media (max-width: 900px) {
     width: 100%;
@@ -44,17 +44,24 @@ const PieChartWrapper = styled.div`
 
 interface AuctionSectionProps {
   project: Project;
+  isAuthor: boolean;
   loading: boolean;
+  loadingStartAucions: boolean;
   onRetriggerAuction: VoidFunction;
   onFetchCurrentPrice: VoidFunction;
+  onStartAuctions: (amountForCreator: number) => void;
 }
 
 const AuctionSection = ({
   project,
+  isAuthor,
   loading,
+  loadingStartAucions,
   onFetchCurrentPrice,
   onRetriggerAuction,
+  onStartAuctions,
 }: AuctionSectionProps) => {
+  const [showStartAuctionsModal, setShowStartAuctionsModal] = useState(false);
   const totalSupply = useMemo(() => {
     if (project) {
       return project.mintCount;
@@ -73,9 +80,9 @@ const AuctionSection = ({
 
   const showsAuctionText = useCallback(() => {
     const now = Math.round(new Date().getTime() / 1000);
+    const { auctionsStarted, auctionsEnded, currentAuctionExpiresAt } = project;
 
     if (!project) return;
-    const { auctionsStarted, auctionsEnded, currentAuctionExpiresAt } = project;
     if (auctionsEnded) {
       return <Title size="xs">{'Auctions finished'}</Title>;
     }
@@ -93,8 +100,18 @@ const AuctionSection = ({
         return <Title size="xs">{'Auction expired'}</Title>;
       }
     }
-    return <Title size="xs">{'Auction Has Not Started Yet'}</Title>;
-  }, [project]);
+    return isAuthor ? (
+      <ActionButton
+        disabled={loadingStartAucions}
+        loading={loadingStartAucions}
+        margin="0"
+        onClick={() => setShowStartAuctionsModal(true)}
+        text="Start Auctions"
+      />
+    ) : (
+      <Title size="xs">{'Auction Has Not Started Yet'}</Title>
+    );
+  }, [isAuthor, loadingStartAucions, project]);
 
   return (
     <>
@@ -118,34 +135,40 @@ const AuctionSection = ({
           <>
             {Math.floor(Date.now() / 1000) >
             Number(project.currentAuctionExpiresAt) ? (
-              <StyledPrimaryButton
+              <ActionButton
+                disabled={loading}
+                loading={loading}
+                margin="0"
                 onClick={onRetriggerAuction}
-                disabled={loading}
-              >
-                {loading ? (
-                  <Loading height={20} dotHeight={20} short />
-                ) : (
-                  'Retrigger Auction'
-                )}
-              </StyledPrimaryButton>
+                text="Retrigger Auction"
+              />
             ) : (
-              <StyledPrimaryButton
-                onClick={onFetchCurrentPrice}
+              <ActionButton
                 disabled={loading}
-              >
-                {loading ? (
-                  <Loading height={20} dotHeight={20} short />
-                ) : (
-                  'Get Current Price'
-                )}
-              </StyledPrimaryButton>
+                loading={loading}
+                margin="0"
+                onClick={onFetchCurrentPrice}
+                text="Get Current Price"
+              />
             )}
           </>
         )}
         {(!project.auctionsStarted || project.auctionsEnded) && (
-          <StyledPrimaryButton disabled>Get Current Price</StyledPrimaryButton>
+          <ActionButton
+            disabled
+            loading={false}
+            margin="0"
+            text="Get Current Price"
+          />
         )}
       </FlexWrapper>
+      {showStartAuctionsModal && (
+        <StartAuctionsModal
+          onClose={() => setShowStartAuctionsModal(false)}
+          onStartAuctions={onStartAuctions}
+          pending={loadingStartAucions}
+        />
+      )}
     </>
   );
 };
