@@ -107,6 +107,7 @@ const ConfigReviewForm = ({
           margin="1rem 0 0 0"
           text="Looks Good"
           loading={loading}
+          web3Connectable
         />
       </Wrapper>
     </FadeIn>

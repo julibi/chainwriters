@@ -174,6 +174,7 @@ const ConfigureModal = ({
             loading={uploadPending || pending}
             width="100%"
             text="Configure"
+            web3Connectable
           />
         </FlexColumn>
       </ContentWrapper>

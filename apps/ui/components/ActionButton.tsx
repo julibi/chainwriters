@@ -1,4 +1,5 @@
-import React, { FormEvent } from 'react';
+import { useWeb3React } from '@web3-react/core';
+import React, { FormEvent, useState } from 'react';
 import styled from 'styled-components';
 import {
   BaseButton,
@@ -8,6 +9,7 @@ import {
   PINK,
 } from '../themes';
 import Loading from './Loading';
+import WalletConnectionModal from './WalletConnectionModal';
 
 interface ActionButtonTypes {
   disabled: boolean;
@@ -17,6 +19,7 @@ interface ActionButtonTypes {
   margin?: string;
   width?: string;
   color?: string;
+  web3Connectable?: boolean;
 }
 
 interface ButtonTypes {
@@ -48,7 +51,28 @@ const ActionButton = ({
   margin,
   width,
   color,
+  web3Connectable,
 }: ActionButtonTypes) => {
+  const { account } = useWeb3React();
+  const [showConnectModal, setShowConnectModal] = useState(false);
+  if (web3Connectable && !account) {
+    return (
+      <>
+        <RootButton
+          color={color}
+          onClick={() => setShowConnectModal(true)}
+          disabled={false}
+          margin={margin}
+          width={width}
+        >
+          {`Connect to ${text}`}
+        </RootButton>
+        {showConnectModal && (
+          <WalletConnectionModal onClose={() => setShowConnectModal(false)} />
+        )}
+      </>
+    );
+  }
   return (
     <RootButton
       color={color}

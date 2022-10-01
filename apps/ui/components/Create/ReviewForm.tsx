@@ -94,6 +94,7 @@ const ReviewForm = ({
           onClick={createDao}
           loading={isPinPending}
           text="Create Project"
+          web3Connectable
         />
       </>
     </FadeIn>

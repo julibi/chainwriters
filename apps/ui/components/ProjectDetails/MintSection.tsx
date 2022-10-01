@@ -128,6 +128,7 @@ const MintSection = ({
         onClick={() => setShowLegalModal(true)}
         text="MINT"
         loading={mintStatus === 'confirming' || mintStatus === 'waiting'}
+        web3Connectable
       />
       {showLegalModal && (
         <MintLegalModal

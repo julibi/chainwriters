@@ -60,6 +60,7 @@ const StartAuctionsModal = ({
               e.preventDefault();
               onStartAuctions(Number(authorMintInput));
             }}
+            web3Connectable
           />
         </CTAWrapper>
       </ContentWrapper>

@@ -66,6 +66,7 @@ const MintLegalModal = ({
           loading={mintStatus === 'confirming' || mintStatus === 'waiting'}
           onClick={handleClick}
           text="MINT"
+          web3Connectable
         />
       </Wrapper>
     </BaseModal>

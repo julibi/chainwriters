@@ -210,6 +210,7 @@ const ContributorsForm = ({
               text="Set Contributors"
               margin={onNextStep ? '2rem 0 0 1rem' : '2rem 0 0 0'}
               width={onNextStep ? '70%' : '100%'}
+              web3Connectable
             />
           </ContribButtonContainer>
         </CTAContainer>

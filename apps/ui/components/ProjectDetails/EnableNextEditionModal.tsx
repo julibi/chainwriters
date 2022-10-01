@@ -82,6 +82,7 @@ const EnableNextEditionModal = ({
               e.preventDefault();
               onEnableNextEdition(nextEditionMintPrice, nextEditionMaxAmount);
             }}
+            web3Connectable
           />
         </CTAWrapper>
       </ContentWrapper>

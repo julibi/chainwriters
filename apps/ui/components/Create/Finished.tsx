@@ -95,6 +95,7 @@ const Finished = ({ projectId, onStartAuctions }: FinishedProps) => {
               loading={pending}
               margin="1rem 0 0 0"
               text="Start Auctions"
+              web3Connectable
             />
           </OptionRight>
         </OptionsWrapper>

@@ -179,6 +179,7 @@ const AuctionSection = ({
                 margin="0"
                 onClick={onFetchCurrentPrice}
                 text="Get Current Price"
+                web3Connectable
               />
             )}
           </>
