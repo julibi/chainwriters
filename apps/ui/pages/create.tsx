@@ -41,6 +41,9 @@ import LanguageForm from '../components/Create/LanguageForm';
 import TranslationForm from '../components/Create/TranslationForm';
 import Title from '../components/Title';
 import pinToPinata from '../utils/pinToPinata';
+import { useCollection } from '../hooks/collection';
+import { useRouter } from 'next/router';
+import StartAuctionsModal from '../components/ProjectDetails/StartAuctionsModal';
 
 const Root = styled.div`
   display: flex;
@@ -182,6 +185,7 @@ export interface Contributor {
 
 const Create = () => {
   const client = useIpfsClient();
+  const router = useRouter();
   const [currentStep, setCurrentStep] = useState(0);
   const [title, setTitle] = useState('');
   const [text, setText] = useState<Node[] | undefined>();
@@ -201,7 +205,7 @@ const Create = () => {
   const [genre, setGenre] = useState('');
   const [subtitle, setSubtitle] = useState<string>('');
   const [isPinPending, setIsPinPending] = useState<boolean>(false);
-  const { createProject, createProjectStatus } = useFactory();
+  const { createProject } = useFactory();
   const {
     configureProject,
     configureStatus,
@@ -210,7 +214,7 @@ const Create = () => {
     updateTranslation,
     updateTranslationStatus,
   } = useManager();
-
+  const { startAuctions } = useCollection();
   const nothingConfigured = useMemo(() => {
     if (
       !subtitle.trim().length &&
@@ -378,11 +382,17 @@ const Create = () => {
     setCurrentStep(currentStep + 1);
   }, [blurb, currentStep, uploadText]);
 
-  const creatingDao = useMemo(() => {
-    return (
-      createProjectStatus === 'confirming' || createProjectStatus === 'waiting'
-    );
-  }, [createProjectStatus]);
+  const handleStartAuctions = useCallback(
+    async (authorMintInput: number) => {
+      await startAuctions({
+        projectId,
+        amountForCreator: authorMintInput,
+        initialMintPrice: BigNumber.from(firstEdMaxAmount.toString()),
+        onSuccess: () => router.push(`projects/${projectId}`),
+      });
+    },
+    [firstEdMaxAmount, projectId, router, startAuctions]
+  );
 
   return (
     <Root>
@@ -436,7 +446,7 @@ const Create = () => {
               />
             )}
             {/* TODO: enable changing things here */}
-            {currentStep === 5 && !creatingDao && (
+            {currentStep === 5 && (
               <ReviewForm
                 agreed={agreed}
                 language={language}
@@ -445,12 +455,11 @@ const Create = () => {
                 firstEdMaxAmount={firstEdMaxAmount}
                 firstEdMintPrice={firstEdMintPrice}
                 onCheck={() => setAgreed(!agreed)}
+                isPinPending={isPinPending}
                 createDao={handleCreateProject}
-                pending={creatingDao || isPinPending}
               />
             )}
-            {creatingDao && <Waiting />}
-            {currentStep === 6 && !creatingDao && (
+            {currentStep === 6 && (
               <Congrats
                 onSubmit={() => {
                   if (language == 'English') {
@@ -475,7 +484,7 @@ const Create = () => {
                 onNextStep={() => setCurrentStep(currentStep + 1)}
               />
             )}
-            {currentStep === 8 && !creatingDao && (
+            {currentStep === 8 && (
               <CoverImageForm
                 captureFile={captureFile}
                 imgFile={imgFile}
@@ -486,7 +495,7 @@ const Create = () => {
                 reset={() => setCoverImgIPFS('')}
               />
             )}
-            {currentStep === 9 && !creatingDao && (
+            {currentStep === 9 && (
               <BlurbForm
                 blurb={blurb}
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
@@ -498,7 +507,7 @@ const Create = () => {
                 reset={() => setBlurb('')}
               />
             )}
-            {currentStep === 10 && !creatingDao && (
+            {currentStep === 10 && (
               <GenreForm
                 genre={genre}
                 onGenreSet={(x: string) => setGenre(x)}
@@ -506,7 +515,7 @@ const Create = () => {
                 reset={() => setGenre('')}
               />
             )}
-            {currentStep === 11 && !creatingDao && (
+            {currentStep === 11 && (
               <SubtitleForm
                 subtitle={subtitle}
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
@@ -518,7 +527,7 @@ const Create = () => {
                 reset={() => setSubtitle('')}
               />
             )}
-            {currentStep === 12 && !creatingDao && (
+            {currentStep === 12 && (
               <ConfigReviewForm
                 genre={genre}
                 subtitle={subtitle}
@@ -533,7 +542,7 @@ const Create = () => {
                 onSubmit={handleConfigure}
               />
             )}
-            {currentStep === 13 && !creatingDao && (
+            {currentStep === 13 && (
               <ContributorsForm
                 contributors={contribs}
                 contributorsList={contributorsList}
@@ -551,8 +560,11 @@ const Create = () => {
                 onSubmit={handleSetContributors}
               />
             )}
-            {currentStep === 14 && !creatingDao && (
-              <Finished projectId={projectId} />
+            {currentStep === 14 && (
+              <Finished
+                projectId={projectId}
+                onStartAuctions={handleStartAuctions}
+              />
             )}
           </Form>
         </FormWrapper>

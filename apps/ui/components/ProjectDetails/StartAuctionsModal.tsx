@@ -21,7 +21,10 @@ const StartAuctionsModal = ({
   onStartAuctions,
   pending,
 }: StartAuctionsModalProps) => {
-  const [authorMintInput, setAuthorMintInput] = useState<string>('');
+  const [authorMintInput, setAuthorMintInput] = useState<number>(0);
+
+  const isValidInput = (amount: number) =>
+    amount >= 1 && amount <= MAX_MINTABLE_BY_CREATOR;
 
   return (
     <BaseModal onClose={onClose}>
@@ -31,27 +34,25 @@ const StartAuctionsModal = ({
           {`You as an author can mint an amount (min 1, max 4) of your project's Genesis
         Edition NFTs for yourself. One will always go to the Moonpage Project.`}
         </ModalText>
+        <ModalText>
+          <Title size="xs" padding="0">{`You: ${authorMintInput}`}</Title>
+          <Title size="xs" padding="0">
+            {'Moonpage: 1'}
+          </Title>
+        </ModalText>
         <CTAWrapper>
           <InputField
             value={authorMintInput}
             onChange={(e: ChangeEvent<HTMLInputElement>) => {
-              const onlyNumbers = /^[0-9\b]+$/;
-              if (e.target.value === '' || onlyNumbers.test(e.target.value)) {
-                setAuthorMintInput(e.target.value);
+              if (isValidInput(Number(e.target.value))) {
+                setAuthorMintInput(Number(e.target.value));
               }
             }}
-            error={
-              (Number(authorMintInput) < 1 ||
-                Number(authorMintInput) > MAX_MINTABLE_BY_CREATOR) &&
-              'Incorrect amount.'
-            }
+            error={!isValidInput(authorMintInput) && 'Incorrect amount.'}
+            type="number"
           />
           <ActionButton
-            disabled={
-              pending ||
-              Number(authorMintInput) < 1 ||
-              Number(authorMintInput) > MAX_MINTABLE_BY_CREATOR
-            }
+            disabled={pending || !isValidInput(authorMintInput)}
             text="MINT"
             loading={pending}
             margin="0"

@@ -1,5 +1,5 @@
 import { capitalizeFirstLetter } from '../../utils/capitalizestring';
-import React from 'react';
+import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import { Node } from 'slate';
 import {
@@ -11,6 +11,8 @@ import {
 import Checkbox from '../Checkbox';
 import ActionButton from '../ActionButton';
 import { serialize } from '../../utils/serializeMarkdown';
+import Waiting from './Waiting';
+import { useFactory } from '../../hooks/factory';
 
 interface ReviewFormProps {
   agreed: boolean;
@@ -21,7 +23,7 @@ interface ReviewFormProps {
   language: string;
   text: Node[];
   title: string;
-  pending: boolean;
+  isPinPending: boolean;
 }
 
 const CheckboxWrapper = styled.div`
@@ -36,9 +38,19 @@ const ReviewForm = ({
   text,
   firstEdMaxAmount,
   firstEdMintPrice,
+  isPinPending,
   onCheck,
-  pending,
 }: ReviewFormProps) => {
+  const { createProjectStatus } = useFactory();
+  const creatingDao = useMemo(() => {
+    return (
+      createProjectStatus === 'confirming' || createProjectStatus === 'waiting'
+    );
+  }, [createProjectStatus]);
+
+  if (creatingDao) {
+    return <Waiting />;
+  }
   return (
     <FadeIn>
       <>
@@ -78,9 +90,9 @@ const ReviewForm = ({
           />
         </CheckboxWrapper>
         <ActionButton
-          disabled={!agreed || pending}
+          disabled={!agreed || isPinPending}
           onClick={createDao}
-          loading={pending}
+          loading={isPinPending}
           text="Create Project"
         />
       </>

@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { formatEther } from '@ethersproject/units';
 import { BASE_BORDER_RADIUS, INSET_BASE_BOX_SHADOW, PINK } from '../../themes';
@@ -9,6 +9,8 @@ import { BigNumber } from 'ethers';
 import Title from '../Title';
 import ActionButton from '../ActionButton';
 import StartAuctionsModal from './StartAuctionsModal';
+import { useCollection } from '../../hooks/collection';
+import { useAuctions } from '../../hooks/auctions';
 
 const InfoBlock = styled.div`
   width: 40%;
@@ -45,8 +47,7 @@ const PieChartWrapper = styled.div`
 interface AuctionSectionProps {
   project: Project;
   isAuthor: boolean;
-  loading: boolean;
-  loadingStartAucions: boolean;
+  isGettingCurrentPrice: boolean;
   onRetriggerAuction: VoidFunction;
   onFetchCurrentPrice: VoidFunction;
   onStartAuctions: (amountForCreator: number) => void;
@@ -55,12 +56,13 @@ interface AuctionSectionProps {
 const AuctionSection = ({
   project,
   isAuthor,
-  loading,
-  loadingStartAucions,
+  isGettingCurrentPrice,
   onFetchCurrentPrice,
   onRetriggerAuction,
   onStartAuctions,
 }: AuctionSectionProps) => {
+  const { startAuctionsStatus } = useCollection();
+  const { retriggerAuctionStatus } = useAuctions();
   const [showStartAuctionsModal, setShowStartAuctionsModal] = useState(false);
   const totalSupply = useMemo(() => {
     if (project) {
@@ -69,7 +71,19 @@ const AuctionSection = ({
       return BigNumber.from('0');
     }
   }, [project]);
+  const startAuctionsPending = useMemo(
+    () =>
+      startAuctionsStatus === 'confirming' || startAuctionsStatus === 'waiting',
 
+    [startAuctionsStatus]
+  );
+  const retriggerPending = useMemo(
+    () =>
+      isGettingCurrentPrice ||
+      retriggerAuctionStatus === 'confirming' ||
+      retriggerAuctionStatus === 'waiting',
+    [isGettingCurrentPrice, retriggerAuctionStatus]
+  );
   const maxSupply = useMemo(() => {
     if (project && project.editions) {
       const edition = project.editions ? project.editions[0] : undefined;
@@ -84,40 +98,56 @@ const AuctionSection = ({
 
     if (!project) return;
     if (auctionsEnded) {
-      return <Title size="xs">{'Auctions finished'}</Title>;
+      return (
+        <InfoBlock>
+          <Title size="xs">{'Auctions finished'}</Title>
+        </InfoBlock>
+      );
     }
     if (auctionsStarted) {
       if (Number(currentAuctionExpiresAt) > now) {
         return (
-          <>
+          <InfoBlock>
             <Title size="xs">{'Auction ends in'}</Title>
             <Title size="xs" color={PINK}>
               <Countdown end={Number(currentAuctionExpiresAt)} />
             </Title>
-          </>
+          </InfoBlock>
         );
       } else {
-        return <Title size="xs">{'Auction expired'}</Title>;
+        return (
+          <InfoBlock>
+            <Title size="xs">{'Auction expired'}</Title>
+          </InfoBlock>
+        );
       }
     }
     return isAuthor ? (
       <ActionButton
-        disabled={loadingStartAucions}
-        loading={loadingStartAucions}
+        disabled={startAuctionsPending}
+        loading={startAuctionsPending}
         margin="0"
         onClick={() => setShowStartAuctionsModal(true)}
         text="Start Auctions"
       />
     ) : (
-      <Title size="xs">{'Auction Has Not Started Yet'}</Title>
+      <InfoBlock>
+        <Title size="xs">{'Auction Has Not Started Yet'}</Title>
+      </InfoBlock>
     );
-  }, [isAuthor, loadingStartAucions, project]);
+  }, [isAuthor, startAuctionsPending, project]);
+
+  useEffect(() => {
+    if (startAuctionsStatus === 'success') {
+      setShowStartAuctionsModal(false);
+    }
+  }, [startAuctionsStatus]);
 
   return (
     <>
       <Title size="m">Auction</Title>
       <FlexWrapper>
-        <InfoBlock>{showsAuctionText()}</InfoBlock>
+        {showsAuctionText()}
         <InfoBlock>
           <Title size="xs">{`Starting Price ${formatEther(
             parseInt(project.editions[0].mintPrice._hex, 16).toString()
@@ -136,16 +166,16 @@ const AuctionSection = ({
             {Math.floor(Date.now() / 1000) >
             Number(project.currentAuctionExpiresAt) ? (
               <ActionButton
-                disabled={loading}
-                loading={loading}
+                disabled={retriggerPending}
+                loading={retriggerPending}
                 margin="0"
                 onClick={onRetriggerAuction}
                 text="Retrigger Auction"
               />
             ) : (
               <ActionButton
-                disabled={loading}
-                loading={loading}
+                disabled={retriggerPending}
+                loading={retriggerPending}
                 margin="0"
                 onClick={onFetchCurrentPrice}
                 text="Get Current Price"
@@ -166,7 +196,7 @@ const AuctionSection = ({
         <StartAuctionsModal
           onClose={() => setShowStartAuctionsModal(false)}
           onStartAuctions={onStartAuctions}
-          pending={loadingStartAucions}
+          pending={startAuctionsPending}
         />
       )}
     </>

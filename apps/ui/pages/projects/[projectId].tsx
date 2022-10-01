@@ -282,10 +282,9 @@ const ProjectDetailView = () => {
     refetch,
     isLoading: isProjectLoading,
   } = useGetProject(projectId);
-  const { buy, buyStatus, startAuctions, startAuctionsStatus } =
-    useCollection();
+  const { buy, buyStatus, startAuctions } = useCollection();
   const auctionsManager = useAuctionsManager();
-  const { retriggerAuction, retriggerAuctionStatus } = useAuctions();
+  const { retriggerAuction } = useAuctions();
   const { allowedToRead } = useShowText(projectId);
   const [coverImgLink, setCoverImgLink] = useState<string>(null);
   const [isGettingCurrentPrice, setIsGettingCurentPrice] =
@@ -496,15 +495,7 @@ const ProjectDetailView = () => {
                 <AuctionSection
                   isAuthor={isAuthor}
                   project={project}
-                  loading={
-                    isGettingCurrentPrice ||
-                    retriggerAuctionStatus === 'confirming' ||
-                    retriggerAuctionStatus === 'waiting'
-                  }
-                  loadingStartAucions={
-                    startAuctionsStatus === 'confirming' ||
-                    startAuctionsStatus === 'waiting'
-                  }
+                  isGettingCurrentPrice={isGettingCurrentPrice}
                   onFetchCurrentPrice={fetchCurrentPrice}
                   onRetriggerAuction={handleRetriggerAuction}
                   onStartAuctions={handleStartAuctions}
