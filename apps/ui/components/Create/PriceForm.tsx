@@ -42,7 +42,7 @@ const PriceForm = ({
         {/* TODO validation so that it is 0.1 and not 0,1 */}
         <InputWrapper>
           <InputField
-            error={Number(firstEdMintPrice) < 0.01 && 'At least 0.01 Matic.'}
+            error={Number(firstEdMintPrice) < 0.1 && 'At least 0.1 Matic.'}
             onChange={onChange}
             placeholder={'50'}
             value={firstEdMintPrice}
@@ -51,7 +51,7 @@ const PriceForm = ({
         </InputWrapper>
         <ActionButton
           onClick={onSubmit}
-          disabled={Number(firstEdMintPrice) < 0.01}
+          disabled={Number(firstEdMintPrice) < 0.1}
           loading={false}
           text="Continue"
           margin="1rem 0 0 0"

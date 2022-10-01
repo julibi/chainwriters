@@ -9,6 +9,7 @@ import BaseModal from '../BaseModal';
 import InputField from '../InputField';
 import { Project } from '../../providers/projects-provider/projects-provider.types';
 import Title from '../Title';
+import { PINK } from '../../themes';
 
 interface EnableNextEditionModalProps {
   onClose: () => void;
@@ -26,17 +27,23 @@ const EnableNextEditionModal = ({
   const [nextEditionMaxAmount, setNextEditionMaxAmount] = useState<number>(0);
   const [nextEditionMintPrice, setMextEditionMintPrice] = useState<string>('0');
   const maxPossibleAmount = useMemo(() => {
-    if (project.endId && project.currentId) {
+    if (project?.endId && project?.currentId) {
       return Number(project.endId.sub(project.currentId));
     }
     return 0;
-  }, [project.endId, project.currentId]);
+  }, [project?.endId, project?.currentId]);
 
   return (
     <BaseModal onClose={onClose}>
       <ContentWrapper>
         <Title size="m">{'Unlock Next Edition'}</Title>
         <ModalText>Specify the max amount and price per mint.</ModalText>
+        <Title size="xs" color={PINK} margin="0 0 2rem 0" width="75%">
+          Caution: The matic your project earns by selling the NFTs are only
+          distributed after an edition sells out. Make sure you choose an
+          appropriate price and amount. If an edition does not sell out, the
+          matic earned stays locked inside the contract.
+        </Title>
         <CTAWrapper>
           <InputField
             label={'Max Amount'}
@@ -59,8 +66,8 @@ const EnableNextEditionModal = ({
             onChange={(e: ChangeEvent<HTMLInputElement>) => {
               setMextEditionMintPrice(e.target.value);
             }}
-            // TODO: read this from contract -  min price is 1ETH
-            error={Number(nextEditionMintPrice) < 1 && 'Price too low.'}
+            // TODO: read this from contract
+            error={Number(nextEditionMintPrice) < 0.1 && 'Price too low.'}
           />
           <ActionButton
             disabled={

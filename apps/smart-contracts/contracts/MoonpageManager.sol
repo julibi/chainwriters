@@ -151,7 +151,7 @@ contract MoonpageManager is
         _grantRole(PAUSER_ROLE, msg.sender);
         _grantRole(UPGRADER_ROLE, msg.sender);
         maxAmountEdition = 1000;
-        minPrice = 1 ether;
+        minPrice = 0.1 ether;
         projectsLength = 0;
         fee = 15;
     }

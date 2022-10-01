@@ -24,7 +24,6 @@ import TextForm from '../components/Create/TextForm';
 import AmountForm from '../components/Create/AmountForm';
 import PriceForm from '../components/Create/PriceForm';
 import ReviewForm from '../components/Create/ReviewForm';
-import Waiting from '../components/Create/Waiting';
 import Congrats from '../components/Create/Congrats';
 import CoverImageForm from '../components/Create/CoverImageForm';
 import BlurbForm from '../components/Create/BlurbForm';
@@ -43,7 +42,6 @@ import Title from '../components/Title';
 import pinToPinata from '../utils/pinToPinata';
 import { useCollection } from '../hooks/collection';
 import { useRouter } from 'next/router';
-import StartAuctionsModal from '../components/ProjectDetails/StartAuctionsModal';
 
 const Root = styled.div`
   display: flex;
