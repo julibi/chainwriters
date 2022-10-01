@@ -166,6 +166,11 @@ export const InputDescription = styled.p`
   margin-block-end: 2rem;
   display: inline-block;
   text-align: center;
+  width: 75%;
+
+  @media (max-width: 900px) {
+    width: 100%;
+  }
 `;
 
 export const FlexContainer = styled.div`

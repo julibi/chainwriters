@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { FadeIn, Wrapper, InputDescription } from '../../pages/create';
 import ActionButton from '../ActionButton';
 import InputField from '../InputField';
+import { PINK } from '../../themes';
 import Title from '../Title';
 
 const InputWrapper = styled.div`
@@ -32,6 +33,12 @@ const PriceForm = ({
           Edition copies in Matic. You will be able to determine the price for
           each new edition that you unlock.
         </InputDescription>
+        <Title size="xs" color={PINK} margin="0 0 2rem 0" width="75%">
+          Caution: The matic your project earns by selling the NFTs are only
+          distributed after an edition sells out. Make sure you choose an
+          appropriate price. If an edition does not sell out, the matic earned
+          stays locked inside the contract.
+        </Title>
         {/* TODO validation so that it is 0.1 and not 0,1 */}
         <InputWrapper>
           <InputField
