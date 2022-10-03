@@ -253,127 +253,127 @@
     },
     {
       "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
-      "txHash": "0x41a8cf81201e1ea98497a53f62ba6c629f437dbbc5d5cf797909e84d12947e05",
+      "txHash": "0x43d05f6094c0b0675cf036c49bd0239a1cdc699b1ed0253bdd90f609a2dad7d3",
       "kind": "uups"
     },
     {
       "address": "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
-      "txHash": "0xb573f6d73dc95d76d17feab6595ba47b44a2bdec25d6b14951ef10c791d5ac8e",
+      "txHash": "0x7b03f392139a36ef044377a7d79f01d677c4ff036471c863778a645d8c9454a2",
       "kind": "uups"
     },
     {
       "address": "0x0165878A594ca255338adfa4d48449f69242Eb8F",
-      "txHash": "0x4f487ad7f4b12df010dee02b33e2864a443186f44bfe83bbee9e72d93baf2fe0",
+      "txHash": "0x8c32cc83b168f0d44ebb72e3dff3732cfc65fa1c096a596bb84782d65b6b4ba8",
       "kind": "uups"
     },
     {
       "address": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
-      "txHash": "0x67044274142ba8d0ab56856151b45a349bf355ebb042b1b99b2b4be85603fac6",
+      "txHash": "0x53ceecdf6a171e35d7e320be0d05903d9622f2d5b38518808029a0151129e3da",
       "kind": "uups"
     },
     {
       "address": "0x9A9f2CCfdE556A7E9Ff0848998Aa4a0CFD8863AE",
-      "txHash": "0x05428eba37edd9f48ad07e4ced8c879b972cb687ad4788403f3dd41c3230d69f",
+      "txHash": "0xa8637b1fdaf9b1ca98837e001001af54274ce25c502d0e15979c2f2483c8d94f",
       "kind": "uups"
     },
     {
       "address": "0x68B1D87F95878fE05B998F19b66F4baba5De1aed",
-      "txHash": "0xc277c374cbaab0d4be7d0f96187790a641363b8575895c0fb2edbb6851e80f02",
+      "txHash": "0x9c77e9fb151692d2d4e09ec291889030bdc7448839a8c2456d957a2760846262",
       "kind": "uups"
     },
     {
       "address": "0x3Aa5ebB10DC797CAC828524e59A333d0A371443c",
-      "txHash": "0x0a26e8e0bb5406ed141656abd993a0874cb59edc20e538cfa056122c542085bc",
+      "txHash": "0x1c4c7274c77117765952d11b91b3774fc81e1a5e4f7f7ea34efefbf2b10f5b49",
       "kind": "uups"
     },
     {
       "address": "0xc6e7DF5E7b4f2A278906862b61205850344D4e7d",
-      "txHash": "0x2f4d4ee071c58026d9b4f19fb83b8bd2d5030181a13ce210bf6ed87f35566365",
+      "txHash": "0x237c6d8a758a9702753df27cefa52294dd9d8213b5fbb99f0997b9e83d4e02ec",
       "kind": "uups"
     },
     {
       "address": "0xc5a5C42992dECbae36851359345FE25997F5C42d",
-      "txHash": "0xe841edf551ca9989f5e74485e4379625e9fa050aba97c5682b5e1cf1107043f7",
+      "txHash": "0x13d351eca9b23cdb20676f4967b2f8be6c26b90c00afe4af68bc76e7340df4f5",
       "kind": "uups"
     },
     {
       "address": "0x67d269191c92Caf3cD7723F116c85e6E9bf55933",
-      "txHash": "0xbfc5c9e43dee200c13ced164d55416bca94c0413c1ef2e4a6af436d1d699f9a2",
+      "txHash": "0xd570e3517ed3bf581667a913a161fac32bdb87e3a4c601d91c111d4a033b758b",
       "kind": "uups"
     },
     {
       "address": "0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E",
-      "txHash": "0xd47f942ac1a6b1a78e5efd20f81ef5ea981ad6523d4397eaa0fef4d1a2c6cc2e",
+      "txHash": "0x7b3382d137ff05b7e83791d2b19a487a6f407ad0d1cca242473999a00aa8785b",
       "kind": "uups"
     },
     {
       "address": "0xc3e53F4d16Ae77Db1c982e75a937B9f60FE63690",
-      "txHash": "0xda927498440c387cc80b2e3f2975cdbd72c1e2760caa0a679fcd204f224cd5da",
+      "txHash": "0x898ed9c23c9a7602fa94f7fa183dfe8a6c4fe4f1e1143edd1b554e875661b90a",
       "kind": "uups"
     },
     {
       "address": "0x99bbA657f2BbC93c02D617f8bA121cB8Fc104Acf",
-      "txHash": "0xa64e8c49bd7813bb523ec3eb2cb64cf85e9dd98ea4c075816cd11dab3684d43b",
+      "txHash": "0xe81430ef36a9c72b769acb54f6ffdce5e964dac182a5d3e76bb80aaa141407db",
       "kind": "uups"
     },
     {
       "address": "0x0E801D84Fa97b50751Dbf25036d067dCf18858bF",
-      "txHash": "0xfea09858145a40e2388c045f75689f60c22732adfbe2c3872e1d621d502a3d8c",
+      "txHash": "0x391d7919f61e562b40922aa3075b10e230719600d7e572f41d6b418879d06efb",
       "kind": "uups"
     },
     {
       "address": "0x8f86403A4DE0BB5791fa46B8e795C547942fE4Cf",
-      "txHash": "0xca7fbe6716f70f42400004e4285fc0900898ee0c429b1defab46aba78ac27d7b",
+      "txHash": "0x66df68a0d05013df1cc6d28edb62ef603fa82a20a34c406a0b55fc0982115b97",
       "kind": "uups"
     },
     {
       "address": "0x9d4454B023096f34B160D6B654540c56A1F81688",
-      "txHash": "0x46534bae779dde990c4602472c20109c592ded25f1b4ce63c546c660d63f2166",
+      "txHash": "0x215b5d9070af276b96f4f489d89198217fa35365337062a922f68ba31cde4368",
       "kind": "uups"
     },
     {
       "address": "0xCD8a1C3ba11CF5ECfa6267617243239504a98d90",
-      "txHash": "0x4e2e0c7ea3633dd6036980015f226368edc6e40d85bfb8d2636db6bbb4872ae6",
+      "txHash": "0xe606e73588ef10743500b44f9567cee41d34c0d30afc04bef024f07c9c3b017f",
       "kind": "uups"
     },
     {
       "address": "0x82e01223d51Eb87e16A03E24687EDF0F294da6f1",
-      "txHash": "0xada5b5733200783be22f6ff00aac80128761943f98a29f1e1647a2aec92db574",
+      "txHash": "0x7a16b4afd0769368f4f9fa181cad591863b155f20ae902d5ccf9357fbd1312c1",
       "kind": "uups"
     },
     {
       "address": "0x2bdCC0de6bE1f7D2ee689a0342D76F52E8EFABa3",
-      "txHash": "0x399350fb3689aab3d9206240884d24f5c43416bde73a638563cf20a6a6271d32",
+      "txHash": "0xcefb1c6e15dc09d4a6123265f4b5826c77b1a14d62ff0365d2821a9517aa5698",
       "kind": "uups"
     },
     {
       "address": "0x7969c5eD335650692Bc04293B07F5BF2e7A673C0",
-      "txHash": "0x9f6126c0664307c8446f0fa090ebd20dee9973d0e2c8968cc2a179240dedd37e",
+      "txHash": "0x6462dda99bfc62f517094612dc4865f8acfe982e8f7c8f1df56271d1635c5b8e",
       "kind": "uups"
     },
     {
       "address": "0x922D6956C99E12DFeB3224DEA977D0939758A1Fe",
-      "txHash": "0x221dc8cbed2ea3778362ae54e1bd3764c8b87a5939aceaec9824a9c3d80dddb4",
+      "txHash": "0xfbbb63c0cc20e9e459f38279bdad683567e16755beffc1bb62048a6acf69aa8c",
       "kind": "uups"
     },
     {
       "address": "0x5081a39b8A5f0E35a8D959395a630b68B74Dd30f",
-      "txHash": "0xaf3b0c0db3ccb85fab68fbffa100afa653c44c3154b139e814dbe88df8354271",
+      "txHash": "0x8836b6dd8ae802d871a4eab1f9727ef0e04f48ad2a85956f3df94008a27f0e9b",
       "kind": "uups"
     },
     {
       "address": "0x1fA02b2d6A771842690194Cf62D91bdd92BfE28d",
-      "txHash": "0x54df3ed4470dbc6481c0ed4ce05d1afb44ab5bf8358db780fb5d0efedfa8f8ee",
+      "txHash": "0xf54f9caa1069107b059f440b81a804f9c6c3460bc7fb201b0633e8e2848d1b17",
       "kind": "uups"
     },
     {
       "address": "0xdbC43Ba45381e02825b14322cDdd15eC4B3164E6",
-      "txHash": "0x0d7cc7e93755ee6e996f76cdab77ffc5b8a9c641a9e616cea5023c2ea8079dcd",
+      "txHash": "0x6b8e6285f2191bd93eeb9c981527c0d2e7efd3271bb24da5b8195e71324a7982",
       "kind": "uups"
     },
     {
       "address": "0x4EE6eCAD1c2Dae9f525404De8555724e3c35d07B",
-      "txHash": "0x195f90c629f22d870b44a3880e3fd3f26273d9a89e50684c692a54cd6da43786",
+      "txHash": "0x0c875b052b6c7a14c773a47f8545110d73e4b7076861dd8c64a8d8d9db425b4e",
       "kind": "uups"
     },
     {
@@ -393,7 +393,7 @@
     },
     {
       "address": "0xAA292E8611aDF267e563f334Ee42320aC96D0463",
-      "txHash": "0x8e7b5290a205d674a3b83390162bfcf0a614f7578b8c1c083ba3fdb0c7413866",
+      "txHash": "0x3f680448942d532d88e81f1d442725d7aac22cb2a332e819e5176c57f3d6532c",
       "kind": "uups"
     },
     {
@@ -621,7 +621,7 @@
     },
     "9e44c37024e7e830e5180cd3723ddd42b7e6e1ff7ab1495a0a9e8445b4f3e8fe": {
       "address": "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
-      "txHash": "0x55f5a29a58b99317b59444e361418ca196e9c94271269390c0c1859469f700e4",
+      "txHash": "0x3cdcf92ec38d4b8a17bbde017f5d9e4c296089db94cc14aa21bea9581bda0d1d",
       "layout": {
         "storage": [
           {
@@ -709,7 +709,7 @@
             "label": "moonpageManager",
             "offset": 0,
             "slot": "301",
-            "type": "t_contract(IMoonpageManager)2722",
+            "type": "t_contract(IMoonpageManager)11656",
             "contract": "AuctionsManager",
             "src": "contracts/AuctionsManager.sol:21"
           },
@@ -717,7 +717,7 @@
             "label": "moonpageFactory",
             "offset": 0,
             "slot": "302",
-            "type": "t_contract(IMoonpageFactory)2541",
+            "type": "t_contract(IMoonpageFactory)11475",
             "contract": "AuctionsManager",
             "src": "contracts/AuctionsManager.sol:22"
           },
@@ -725,7 +725,7 @@
             "label": "moonpageCollection",
             "offset": 0,
             "slot": "303",
-            "type": "t_contract(IMoonpageCollection)2482",
+            "type": "t_contract(IMoonpageCollection)11416",
             "contract": "AuctionsManager",
             "src": "contracts/AuctionsManager.sol:23"
           },
@@ -733,7 +733,7 @@
             "label": "auctions",
             "offset": 0,
             "slot": "304",
-            "type": "t_mapping(t_uint256,t_struct(AuctionSettings)1896_storage)",
+            "type": "t_mapping(t_uint256,t_struct(AuctionSettings)6666_storage)",
             "contract": "AuctionsManager",
             "src": "contracts/AuctionsManager.sol:34"
           }
@@ -759,15 +759,15 @@
             "label": "bytes32",
             "numberOfBytes": "32"
           },
-          "t_contract(IMoonpageCollection)2482": {
+          "t_contract(IMoonpageCollection)11416": {
             "label": "contract IMoonpageCollection",
             "numberOfBytes": "20"
           },
-          "t_contract(IMoonpageFactory)2541": {
+          "t_contract(IMoonpageFactory)11475": {
             "label": "contract IMoonpageFactory",
             "numberOfBytes": "20"
           },
-          "t_contract(IMoonpageManager)2722": {
+          "t_contract(IMoonpageManager)11656": {
             "label": "contract IMoonpageManager",
             "numberOfBytes": "20"
           },
@@ -779,11 +779,11 @@
             "label": "mapping(bytes32 => struct AccessControlUpgradeable.RoleData)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_uint256,t_struct(AuctionSettings)1896_storage)": {
+          "t_mapping(t_uint256,t_struct(AuctionSettings)6666_storage)": {
             "label": "mapping(uint256 => struct AuctionsManager.AuctionSettings)",
             "numberOfBytes": "32"
           },
-          "t_struct(AuctionSettings)1896_storage": {
+          "t_struct(AuctionSettings)6666_storage": {
             "label": "struct AuctionsManager.AuctionSettings",
             "members": [
               {
@@ -862,7 +862,7 @@
     },
     "086c42769802b2531ebb0c49db87281e6f3cdbc4c38b9f42375693ac00ced905": {
       "address": "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
-      "txHash": "0xf8ddf460a161a00dfafa2ba6c8c79f9c28f7fca95423d2bce79d86a3149f15bc",
+      "txHash": "0x0084f24057111709663c75d3b15d454c6c499d85ca44fe8b2e00f212fb4d5a17",
       "layout": {
         "storage": [
           {
@@ -958,7 +958,7 @@
             "label": "moonpageManager",
             "offset": 0,
             "slot": "302",
-            "type": "t_contract(IMoonpageManager)4293",
+            "type": "t_contract(IMoonpageManager)11656",
             "contract": "BallotsFactory",
             "src": "contracts/BallotsFactory.sol:21"
           },
@@ -966,7 +966,7 @@
             "label": "moonpageCollection",
             "offset": 0,
             "slot": "303",
-            "type": "t_contract(IMoonpageCollection)4112",
+            "type": "t_contract(IMoonpageCollection)11416",
             "contract": "BallotsFactory",
             "src": "contracts/BallotsFactory.sol:22"
           },
@@ -1000,11 +1000,11 @@
             "label": "bytes32",
             "numberOfBytes": "32"
           },
-          "t_contract(IMoonpageCollection)4112": {
+          "t_contract(IMoonpageCollection)11416": {
             "label": "contract IMoonpageCollection",
             "numberOfBytes": "20"
           },
-          "t_contract(IMoonpageManager)4293": {
+          "t_contract(IMoonpageManager)11656": {
             "label": "contract IMoonpageManager",
             "numberOfBytes": "20"
           },
@@ -1049,9 +1049,9 @@
         }
       }
     },
-    "7e25a469b54ef312d888ef9c71b36f9570389a587ace6a1dd65175146e5472c9": {
+    "5eed636fbc10b13b56328a24a8fc0b3858222e19e73d9ede64de7947fed075e0": {
       "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
-      "txHash": "0xea9e839a73f79e003ad789fcf577b902c4d1c1a1fd526e8fd7ce3f2e3a0f1e85",
+      "txHash": "0x6beced374506922b25390f048c527df53951ace6ae879ea339b52e91f515d026",
       "layout": {
         "storage": [
           {
@@ -1187,7 +1187,7 @@
             "label": "collection",
             "offset": 0,
             "slot": "307",
-            "type": "t_contract(IMoonpageCollection)4028",
+            "type": "t_contract(IMoonpageCollection)11416",
             "contract": "MoonpageManager",
             "src": "contracts/MoonpageManager.sol:26"
           },
@@ -1195,7 +1195,7 @@
             "label": "baseDatas",
             "offset": 0,
             "slot": "308",
-            "type": "t_mapping(t_uint256,t_struct(BaseData)2221_storage)",
+            "type": "t_mapping(t_uint256,t_struct(BaseData)9370_storage)",
             "contract": "MoonpageManager",
             "src": "contracts/MoonpageManager.sol:61"
           },
@@ -1203,7 +1203,7 @@
             "label": "authorShares",
             "offset": 0,
             "slot": "309",
-            "type": "t_mapping(t_uint256,t_struct(AuthorShare)2226_storage)",
+            "type": "t_mapping(t_uint256,t_struct(AuthorShare)9375_storage)",
             "contract": "MoonpageManager",
             "src": "contracts/MoonpageManager.sol:62"
           },
@@ -1211,7 +1211,7 @@
             "label": "editions",
             "offset": 0,
             "slot": "310",
-            "type": "t_mapping(t_uint256,t_struct(Edition)2250_storage)",
+            "type": "t_mapping(t_uint256,t_struct(Edition)9399_storage)",
             "contract": "MoonpageManager",
             "src": "contracts/MoonpageManager.sol:63"
           },
@@ -1219,7 +1219,7 @@
             "label": "contributions",
             "offset": 0,
             "slot": "311",
-            "type": "t_mapping(t_uint256,t_mapping(t_uint256,t_struct(Contribution)2235_storage))",
+            "type": "t_mapping(t_uint256,t_mapping(t_uint256,t_struct(Contribution)9384_storage))",
             "contract": "MoonpageManager",
             "src": "contracts/MoonpageManager.sol:64"
           },
@@ -1278,6 +1278,14 @@
             "type": "t_mapping(t_uint256,t_mapping(t_uint256,t_uint256))",
             "contract": "MoonpageManager",
             "src": "contracts/MoonpageManager.sol:71"
+          },
+          {
+            "label": "translationIpfsHashes",
+            "offset": 0,
+            "slot": "319",
+            "type": "t_mapping(t_uint256,t_string_storage)",
+            "contract": "MoonpageManager",
+            "src": "contracts/MoonpageManager.sol:72"
           }
         ],
         "types": {
@@ -1301,7 +1309,7 @@
             "label": "bytes32",
             "numberOfBytes": "32"
           },
-          "t_contract(IMoonpageCollection)4028": {
+          "t_contract(IMoonpageCollection)11416": {
             "label": "contract IMoonpageCollection",
             "numberOfBytes": "20"
           },
@@ -1317,7 +1325,7 @@
             "label": "mapping(uint256 => bool)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_uint256,t_mapping(t_uint256,t_struct(Contribution)2235_storage))": {
+          "t_mapping(t_uint256,t_mapping(t_uint256,t_struct(Contribution)9384_storage))": {
             "label": "mapping(uint256 => mapping(uint256 => struct MoonpageManager.Contribution))",
             "numberOfBytes": "32"
           },
@@ -1325,19 +1333,23 @@
             "label": "mapping(uint256 => mapping(uint256 => uint256))",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_uint256,t_struct(AuthorShare)2226_storage)": {
+          "t_mapping(t_uint256,t_string_storage)": {
+            "label": "mapping(uint256 => string)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_struct(AuthorShare)9375_storage)": {
             "label": "mapping(uint256 => struct MoonpageManager.AuthorShare)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_uint256,t_struct(BaseData)2221_storage)": {
+          "t_mapping(t_uint256,t_struct(BaseData)9370_storage)": {
             "label": "mapping(uint256 => struct MoonpageManager.BaseData)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_uint256,t_struct(Contribution)2235_storage)": {
+          "t_mapping(t_uint256,t_struct(Contribution)9384_storage)": {
             "label": "mapping(uint256 => struct MoonpageManager.Contribution)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_uint256,t_struct(Edition)2250_storage)": {
+          "t_mapping(t_uint256,t_struct(Edition)9399_storage)": {
             "label": "mapping(uint256 => struct MoonpageManager.Edition)",
             "numberOfBytes": "32"
           },
@@ -1353,7 +1365,7 @@
             "label": "string",
             "numberOfBytes": "32"
           },
-          "t_struct(AuthorShare)2226_storage": {
+          "t_struct(AuthorShare)9375_storage": {
             "label": "struct MoonpageManager.AuthorShare",
             "members": [
               {
@@ -1371,7 +1383,7 @@
             ],
             "numberOfBytes": "64"
           },
-          "t_struct(BaseData)2221_storage": {
+          "t_struct(BaseData)9370_storage": {
             "label": "struct MoonpageManager.BaseData",
             "members": [
               {
@@ -1443,7 +1455,7 @@
             ],
             "numberOfBytes": "352"
           },
-          "t_struct(Contribution)2235_storage": {
+          "t_struct(Contribution)9384_storage": {
             "label": "struct MoonpageManager.Contribution",
             "members": [
               {
@@ -1473,7 +1485,7 @@
             ],
             "numberOfBytes": "128"
           },
-          "t_struct(Edition)2250_storage": {
+          "t_struct(Edition)9399_storage": {
             "label": "struct MoonpageManager.Edition",
             "members": [
               {
@@ -1550,9 +1562,9 @@
         }
       }
     },
-    "37f5f1681d960d777e77dd17e0a7babdeeb64c228ae5587d102be669af0d32c8": {
+    "feddaeba1413a593c7936b49165de65436dadaee0d014a04fd6ce0a9091acf33": {
       "address": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
-      "txHash": "0x06e7685d5ff3caebb304177652befd1ed777f09d82e4b860125113ae9d69aa27",
+      "txHash": "0xbe24e6e35206ca5426fa5e24c4971b4dd18dc5d2df7c2e28ce481f0ed9842455",
       "layout": {
         "storage": [
           {
@@ -1661,7 +1673,7 @@
             "src": "contracts/MoonpageFactory.sol:22"
           },
           {
-            "label": "moonpageDev",
+            "label": "moonpageRoyaltiesReceiver",
             "offset": 0,
             "slot": "304",
             "type": "t_address",
@@ -1672,7 +1684,7 @@
             "label": "moonpageManager",
             "offset": 0,
             "slot": "305",
-            "type": "t_contract(IMoonpageManager)3606",
+            "type": "t_contract(IMoonpageManager)11656",
             "contract": "MoonpageFactory",
             "src": "contracts/MoonpageFactory.sol:24"
           },
@@ -1680,7 +1692,7 @@
             "label": "auctionsManager",
             "offset": 0,
             "slot": "306",
-            "type": "t_contract(IAuctionsManager)3425",
+            "type": "t_contract(IAuctionsManager)11363",
             "contract": "MoonpageFactory",
             "src": "contracts/MoonpageFactory.sol:25"
           },
@@ -1690,7 +1702,7 @@
             "slot": "306",
             "type": "t_bool",
             "contract": "MoonpageFactory",
-            "src": "contracts/MoonpageFactory.sol:27"
+            "src": "contracts/MoonpageFactory.sol:28"
           },
           {
             "label": "allowlist",
@@ -1698,7 +1710,7 @@
             "slot": "307",
             "type": "t_mapping(t_address,t_bool)",
             "contract": "MoonpageFactory",
-            "src": "contracts/MoonpageFactory.sol:28"
+            "src": "contracts/MoonpageFactory.sol:29"
           },
           {
             "label": "denylist",
@@ -1706,7 +1718,7 @@
             "slot": "308",
             "type": "t_mapping(t_address,t_bool)",
             "contract": "MoonpageFactory",
-            "src": "contracts/MoonpageFactory.sol:29"
+            "src": "contracts/MoonpageFactory.sol:30"
           }
         ],
         "types": {
@@ -1730,11 +1742,11 @@
             "label": "bytes32",
             "numberOfBytes": "32"
           },
-          "t_contract(IAuctionsManager)3425": {
+          "t_contract(IAuctionsManager)11363": {
             "label": "contract IAuctionsManager",
             "numberOfBytes": "20"
           },
-          "t_contract(IMoonpageManager)3606": {
+          "t_contract(IMoonpageManager)11656": {
             "label": "contract IMoonpageManager",
             "numberOfBytes": "20"
           },

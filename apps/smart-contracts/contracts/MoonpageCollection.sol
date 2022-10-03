@@ -278,7 +278,7 @@ contract MoonpageCollection is
                         " #",
                         Strings.toString(_tokenId),
                         '", "description": "',
-                        'A Moonpage DAO Literature NFT", ',
+                        'A Moonpage Text NFT", ',
                         '"image": "ipfs://',
                         imgIpfsHash,
                         '", ',

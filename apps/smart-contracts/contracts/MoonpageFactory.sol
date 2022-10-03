@@ -20,7 +20,7 @@ contract MoonpageFactory is
     uint256 public projectsIndex;
     uint256 public firstEditionMin;
     uint256 public firstEditionMax;
-    address public moonpageDev;
+    address public moonpageRoyaltiesReceiver;
     IMoonpageManager public moonpageManager;
     IAuctionsManager public auctionsManager;
     event Received(address from, uint256 amount);
@@ -73,7 +73,7 @@ contract MoonpageFactory is
         address[] memory addressArgs = new address[](2);
         uint256[] memory percentageArgs = new uint256[](2);
         addressArgs[0] = address(msg.sender);
-        addressArgs[1] = address(moonpageDev);
+        addressArgs[1] = address(moonpageRoyaltiesReceiver);
         percentageArgs[0] = 70;
         percentageArgs[1] = 30;
         PaymentSplitter royaltiesSplitter = new PaymentSplitter(
@@ -125,11 +125,11 @@ contract MoonpageFactory is
     function setAddresses(
         address _mpManager,
         address _aManager,
-        address _mpDev
+        address _mpRoyaltiesReceiver
     ) external onlyRole(DEFAULT_ADMIN_ROLE) {
         moonpageManager = IMoonpageManager(_mpManager);
         auctionsManager = IAuctionsManager(_aManager);
-        moonpageDev = address(_mpDev);
+        moonpageRoyaltiesReceiver = address(_mpRoyaltiesReceiver);
     }
 
     function setGenesisAmountRange(uint256 _min, uint256 _max)
