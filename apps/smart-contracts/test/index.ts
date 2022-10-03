@@ -17,14 +17,6 @@ const advanceDays = async (days: any) => {
   await ethers.provider.send("evm_mine", []);
 };
 
-// TODO
-
-// test that author cannot changes textipfshash when paused and no one can mint when paused
-// payment splitter itself works fine when just sending money
-// changing the max amount works fine
-// setAddresses in factory, and everything still works fine
-// testing that an upgrade works fine
-
 describe("Project", function () {
   let deployer: SignerWithAddress;
   let creator: SignerWithAddress;
@@ -412,7 +404,7 @@ describe("Project", function () {
           "Horror",
           "My different fancy subtitle"
         )
-      ).to.be.revertedWith("Base data frozen");
+      ).to.revertedWith("Base data frozen");
     });
 
     it("lets creator start auctions and after sellout of Gen Ed, shares get distributed", async () => {
@@ -847,17 +839,18 @@ describe("Project", function () {
       ).to.be.reverted;
     });
 
-    it.only("only admin can pause the factory and this pauses the creation of projects", async () => {
+    it("only admin can pause the factory and this pauses the creation of projects", async () => {
       const FactoryAsSecondCreator = Factory.connect(userA);
       const FactoryAsThirdCreator = Factory.connect(userB);
       // everyone can create
       await expect(FactoryAsDeployer.setIsAllowlistOnly(false)).not.to.be
         .reverted;
 
-      // admin pauses contract
+      // admin pauses Factory
       await expect(FactoryAsSecondCreator.pause()).to.be.reverted;
       await expect(FactoryAsDeployer.pause()).not.to.be.reverted;
-      // const test = await Factory.paused();
+      const isPaused = await Factory.paused();
+      expect(isPaused).to.equal(true);
       await expect(
         FactoryAsCreator.createProject(
           "",
@@ -867,13 +860,144 @@ describe("Project", function () {
           100
         )
       ).to.be.reverted;
+
+      // admin unpauses Factory and creation works again
+      await expect(FactoryAsDeployer.unpause()).not.to.be.reverted;
+      await expect(
+        FactoryAsCreator.createProject(
+          "",
+          "textIpfsHash",
+          "ENG",
+          myMintPrice,
+          100
+        )
+      ).not.to.be.reverted;
+
+      // admin pauses Manager and the textipshash cannot be updated
+      await expect(ManagerAsDeployer.pause()).not.to.be.reverted;
+      const isManagerPaused = await Manager.paused();
+      expect(isManagerPaused).to.equal(true);
+      const projectIndex = await Factory.projectsIndex();
+      const projectId = Number(projectIndex) - 1;
+      await expect(
+        ManagerAsCreator.updateTextIpfsHash(projectId, "newTextIpfsHas")
+      ).to.revertedWith("Pausable: paused");
+
+      // adming unpauses Manager and textipfshash can be set again
+      await expect(ManagerAsDeployer.unpause()).not.to.be.reverted;
+      await expect(
+        ManagerAsCreator.updateTextIpfsHash(projectId, "newTextIpfsHas")
+      ).not.to.be.reverted;
+
+      const projectData = await Manager.readBaseData(projectId);
+      expect(projectData.includes("newTextIpfsHas")).to.equal(true);
+    });
+
+    it("the payment splitter created with a project works fine", async () => {
+      await expect(FactoryAsDeployer.setIsAllowlistOnly(false)).not.to.be
+        .reverted;
+
+      await expect(
+        FactoryAsCreator.createProject(
+          "My Title",
+          "textIpfsHash",
+          "ENG",
+          myMintPrice,
+          100
+        )
+      ).not.to.be.reverted;
+      const projectIndex = await Factory.projectsIndex();
+      const projectId = Number(projectIndex) - 1;
+      const baseData = await Manager.readBaseData(projectId);
+
+      const RoyaltiesPaymentSplitter = baseData[5];
+      // since it is not possible to test royalties on testnet, payment splitters were tested manually via polygonscan on testnet
+    });
+
+    it("manager can be deployed again and be set, everyhing should work", async () => {
+      // deploy Manager again
+      const ManagerFactory = await ethers.getContractFactory("MoonpageManager");
+      const NewManager = await upgrades.deployProxy(ManagerFactory, [], {
+        kind: "uups",
+      });
+      const NewManagerAsDeployer = NewManager.connect(deployer);
+
+      // updating all the contract addresses everywhere....
+      // set Contracts on Collection
+      await CollectionAsDeployer.setAddresses(
+        NewManager.address,
+        AuctionsManager.address,
+        deployer.address
+      );
+
+      // set Contracts on Manager
+      await NewManagerAsDeployer.setAddresses(
+        Collection.address,
+        Factory.address,
+        deployer.address
+      );
+
+      // set Contracts on Auctions
+      await AuctionsManagerAsDeployer.setContracts(
+        NewManager.address,
+        Factory.address,
+        Collection.address
+      );
+
+      // set Contracts on Factory
+      await FactoryAsDeployer.setAddresses(
+        NewManager.address,
+        AuctionsManager.address,
+        deployer.address
+      );
+
+      // create a project
+      await expect(FactoryAsCreator.setIsAllowlistOnly(false)).to.be.reverted;
+      await expect(
+        FactoryAsCreator.createProject(
+          "My first title on new manager",
+          "textIpfsHash",
+          "ENG",
+          myMintPrice,
+          10
+        )
+      ).not.to.be.reverted;
+      const projectIndex = await Factory.projectsIndex();
+      const projectId = Number(projectIndex) - 1;
+      const baseData = await NewManager.readBaseData(projectId);
+      expect(baseData[0]).to.equal("My first title on new manager");
+
+      // start auction
+      await expect(
+        CollectionAsCreator.startAuctions(projectId, 4, 1000000000000000)
+      ).not.to.be.reverted;
+
+      // buy until sellout
+      await CollectionAsUserA.buy(projectId, {
+        value: myMintPrice,
+      });
+      await CollectionAsUserA.buy(projectId, {
+        value: myMintPrice,
+      });
+      await CollectionAsUserA.buy(projectId, {
+        value: myMintPrice,
+      });
+      await CollectionAsUserA.buy(projectId, {
+        value: myMintPrice,
+      });
+      await CollectionAsUserA.buy(projectId, {
+        value: myMintPrice,
+      });
+      await expect(
+        CollectionAsUserA.buy(projectId, {
+          value: myMintPrice,
+        })
+      ).to.revertedWith("Auctions ended");
     });
 
     it("only admin can upgrade the contract and the upgrade works - minting etc. too", async () => {});
-
-    it("only admin can change the genesis amount range - minting etc. still works", async () => {});
   });
 });
 
-// what should it look like with royalties?
-// add payments splitter
+// TODO
+// testing that an upgrade works fine

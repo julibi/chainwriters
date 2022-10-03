@@ -489,13 +489,6 @@ contract MoonpageManager is
         moonpageDev = address(_deployer);
     }
 
-    function setMaxAmountEdition(uint256 _newMaxAmount)
-        external
-        onlyRole(DEFAULT_ADMIN_ROLE)
-    {
-        maxAmountEdition = _newMaxAmount;
-    }
-
     function setMinPrice(uint256 _minPrice)
         external
         onlyRole(DEFAULT_ADMIN_ROLE)
