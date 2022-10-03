@@ -54,7 +54,7 @@ const InputField = ({
         disabled={disabled}
         value={value}
         onChange={onChange}
-        placeholder={placeholder}
+        placeholder={placeholder.toString()}
         style={style}
       />
       <StyledInputError>{error ?? ' '}</StyledInputError>
