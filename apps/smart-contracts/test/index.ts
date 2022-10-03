@@ -962,7 +962,7 @@ describe("Project", function () {
       );
     });
 
-    it("sell out happens as excepted", async () => {
+    it.only("sell out happens as excepted", async () => {
       // project created and sold out
       await expect(
         FactoryAsCreator.createProject(
@@ -972,9 +972,9 @@ describe("Project", function () {
           myMintPrice,
           10
         )
-      ).not.to.be.revertedWith("Not on allowlist");
-      const projectIndex = await Factory.projectsIndex();
-      const projectId = Number(projectIndex) - 1;
+      ).not.to.be.reverted;
+      let projectIndex = await Factory.projectsIndex();
+      let projectId = Number(projectIndex) - 1;
 
       await expect(
         CollectionAsCreator.startAuctions(projectId, 4, 100000000000000)
@@ -1007,7 +1007,7 @@ describe("Project", function () {
         ManagerAsCreator.enableNextEdition(projectId, 990, myMintPrice)
       ).not.to.be.reverted;
 
-      // user buys 110 NFts, with that 200 should be sold
+      // user buys 190 NFts, with that 200 should be sold
       await expect(
         CollectionAsUserA.publicMint(projectId, 190, {
           value: myMintPrice.mul(190),
@@ -1052,12 +1052,26 @@ describe("Project", function () {
       const newCurrentTokenId = Number(newEditionData[3]);
       expect(newCurrentTokenId).to.equal(1601);
 
+      // at the same time project with id 1 still gets sold
+      const otherProjectAuctionStartTX =
+        await CollectionAsCreator.startAuctions(1, 4, 100000000000000);
+      otherProjectAuctionStartTX.wait();
+      await expect(
+        CollectionAsCreator.buy(1, {
+          value: myMintPrice,
+        })
+      ).not.to.be.reverted;
+
       // userE buys 200 NFts
       const CollectionAsUserE = Collection.connect(userE);
       const userEMint = await CollectionAsUserE.publicMint(projectId, 200, {
         value: myMintPrice.mul(200),
       });
       await userEMint.wait();
+
+      // balance – after selling 790 non-auction NFTs - sells out
+      let balance = await Manager.projectBalances(projectId);
+      expect(balance).to.equal(myMintPrice.mul(790));
 
       // userF buys 200 NFts
       const CollectionAsUserF = Collection.connect(userF);
@@ -1085,6 +1099,38 @@ describe("Project", function () {
       expect(lastGenEdTokenId).to.equal(1010);
       expect(currentEdLastTokenId).to.equal(2000);
       expect(endTokenId).to.equal(2000);
+
+      // when another project gets created and sold after the "SELLOUT" project, everything works as expected
+      await expect(
+        FactoryAsCreator.createProject(
+          "AFTERSELLOUTPROJECT",
+          textIpfsHash,
+          originalLanguage,
+          myMintPrice,
+          10
+        )
+      ).not.to.be.reverted;
+
+      projectIndex = await Factory.projectsIndex();
+      projectId = Number(projectIndex) - 1;
+
+      await expect(
+        CollectionAsCreator.startAuctions(projectId, 4, 100000000000000)
+      ).not.to.be.reverted;
+
+      editionData = await Manager.readEditionData(projectId);
+      currentEdition = Number(editionData[0]);
+      startTokenId = Number(editionData[2]);
+      currentTokenId = Number(editionData[3]);
+      lastGenEdTokenId = Number(editionData[4]);
+      currentEdLastTokenId = Number(editionData[5]);
+      endTokenId = Number(editionData[6]);
+      expect(currentEdition).to.equal(1);
+      expect(startTokenId).to.equal(2001);
+      expect(currentTokenId).to.equal(2006);
+      expect(lastGenEdTokenId).to.equal(2010);
+      expect(currentEdLastTokenId).to.equal(2010);
+      expect(endTokenId).to.equal(3000);
     });
   });
 
