@@ -1053,7 +1053,7 @@ describe("Project", function () {
       );
     });
 
-    it("sell out happens as excepted", async () => {
+    it.only("sell out happens as excepted", async () => {
       // project created and sold out
       await expect(
         FactoryAsCreator.createProject(
