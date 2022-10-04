@@ -38,13 +38,6 @@ interface IMoonpageManager {
 
     function isPaused(uint256 _projectId) external view returns (bool);
 
-    function isFrozen(uint256 _projectId) external view returns (bool);
-
-    function readProjectBalance(uint256 _projectId)
-        external
-        view
-        returns (uint256);
-
     function readBaseData(uint256 _projectId)
         external
         view

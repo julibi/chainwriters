@@ -8,7 +8,7 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "../interfaces/IMoonpageCollection.sol";
 
-contract MoonpageManager is
+contract MoonpageManagerTestingV2 is
     Initializable,
     PausableUpgradeable,
     AccessControlUpgradeable,
@@ -70,6 +70,9 @@ contract MoonpageManager is
     mapping(uint256 => bool) public pausedProjectIds;
     mapping(uint256 => mapping(uint256 => uint256)) public editionRanges;
     mapping(uint256 => string) public translationIpfsHashes;
+
+    // what gets added in this upgrade
+    mapping(uint256 => string) public testStringToBeSavedPerProject;
 
     event ProjectCreated(
         address creator,
@@ -134,11 +137,6 @@ contract MoonpageManager is
 
     modifier onlyCollection() {
         require(msg.sender == address(collection), "Not authorized");
-        _;
-    }
-
-    modifier whenProjectNotFrozen(uint256 _projectId) {
-        require(!frozenProjectIds[_projectId], "Base data frozen");
         _;
     }
 
@@ -251,9 +249,9 @@ contract MoonpageManager is
     function updateTextIpfsHash(uint256 _projectId, string calldata _ipfsHash)
         external
         onlyCreator(_projectId)
-        whenProjectNotFrozen(_projectId)
         whenNotPaused
     {
+        require(!pausedProjectIds[_projectId], "Project is paused");
         baseDatas[_projectId].textIpfsHash = _ipfsHash;
 
         emit TextUpdated(_projectId, _ipfsHash);
@@ -262,12 +260,8 @@ contract MoonpageManager is
     function updateTranslationIpfsHash(
         uint256 _projectId,
         string calldata _ipfsHash
-    )
-        external
-        onlyCreator(_projectId)
-        whenProjectNotFrozen(_projectId)
-        whenNotPaused
-    {
+    ) external onlyCreator(_projectId) whenNotPaused {
+        require(!pausedProjectIds[_projectId], "Project is paused");
         translationIpfsHashes[_projectId] = _ipfsHash;
 
         emit TranslationUpdated(_projectId, _ipfsHash);
@@ -276,9 +270,9 @@ contract MoonpageManager is
     function updateImgIpfsHash(uint256 _projectId, string calldata _ipfsHash)
         external
         onlyCreator(_projectId)
-        whenProjectNotFrozen(_projectId)
         whenNotPaused
     {
+        require(!pausedProjectIds[_projectId], "Project is paused");
         baseDatas[_projectId].imgIpfsHash = _ipfsHash;
 
         emit ImageUpdated(_projectId, _ipfsHash);
@@ -287,12 +281,8 @@ contract MoonpageManager is
     function updateAnimationIpfsHash(
         uint256 _projectId,
         string calldata _ipfsHash
-    )
-        external
-        onlyCreator(_projectId)
-        whenProjectNotFrozen(_projectId)
-        whenNotPaused
-    {
+    ) external onlyCreator(_projectId) whenNotPaused {
+        require(!pausedProjectIds[_projectId], "Project is paused");
         baseDatas[_projectId].animationIpfsHash = _ipfsHash;
         emit AnimationUpdated(_projectId, _ipfsHash);
     }
@@ -300,11 +290,20 @@ contract MoonpageManager is
     function updateBlurbIpfsHash(uint256 _projectId, string calldata _ipfsHash)
         external
         onlyCreator(_projectId)
-        whenProjectNotFrozen(_projectId)
         whenNotPaused
     {
+        require(!pausedProjectIds[_projectId], "Project is paused");
         baseDatas[_projectId].blurbIpfsHash = _ipfsHash;
         emit BlurbUpdated(_projectId, _ipfsHash);
+    }
+
+    // what gets added in this upgrade
+    function updateTestString(
+        uint256 _projectId,
+        string calldata _exampledString
+    ) external onlyCreator(_projectId) whenNotPaused {
+        require(!pausedProjectIds[_projectId], "Project is paused");
+        testStringToBeSavedPerProject[_projectId] = _exampledString;
     }
 
     function addContributors(
@@ -312,15 +311,10 @@ contract MoonpageManager is
         address[] calldata _contributors,
         uint256[] calldata _shares,
         string[] calldata _roles
-    )
-        external
-        onlyCreator(_projectId)
-        whenProjectNotFrozen(_projectId)
-        whenNotPaused
-    {
-        require(!pausedProjectIds[_projectId], "Project paused");
+    ) external onlyCreator(_projectId) whenNotPaused {
         // in theory user can put the same contributor 3 times - we don't care
         AuthorShare storage share = authorShares[_projectId];
+        require(!frozenProjectIds[_projectId], "Base data frozen");
         require(
             contributionsIndeces[_projectId] == 0,
             "Contributors set already"
@@ -361,7 +355,7 @@ contract MoonpageManager is
         uint256 _newEdAmount,
         uint256 _newEdMintPrice
     ) external onlyCreator(_projectId) whenNotPaused {
-        require(!pausedProjectIds[_projectId], "Project paused");
+        require(!pausedProjectIds[_projectId], "Project is paused");
         require(
             editions[_projectId].currentTokenId ==
                 editions[_projectId].currentEdLastTokenId + 1,
@@ -394,15 +388,6 @@ contract MoonpageManager is
         );
     }
 
-    function setIsBaseDataFrozen(uint256 _projectId, bool _shouldBeFrozen)
-        external
-        whenNotPaused
-        onlyCreator(_projectId)
-    {
-        frozenProjectIds[_projectId] = _shouldBeFrozen;
-        emit BaseDataFrozen(_projectId, true);
-    }
-
     // ------------------
     // Can only be called by a Collection
     // ------------------
@@ -425,6 +410,15 @@ contract MoonpageManager is
             .currentTokenId
             .add(1);
         emit TokenIdIncreased(_projectId, 1);
+    }
+
+    function setIsBaseDataFrozen(uint256 _projectId, bool _shouldBeFrozen)
+        external
+        whenNotPaused
+        onlyCollection
+    {
+        frozenProjectIds[_projectId] = _shouldBeFrozen;
+        emit BaseDataFrozen(_projectId, true);
     }
 
     function setPremintedByCreator(
@@ -574,6 +568,10 @@ contract MoonpageManager is
 
     function isPaused(uint256 _projectId) external view returns (bool) {
         return pausedProjectIds[_projectId];
+    }
+
+    function isFrozen(uint256 _projectId) external view returns (bool) {
+        return frozenProjectIds[_projectId];
     }
 
     function exists(uint256 _projectId) external view returns (bool) {

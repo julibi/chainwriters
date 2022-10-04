@@ -132,14 +132,6 @@ contract MoonpageFactory is
         moonpageRoyaltiesReceiver = address(_mpRoyaltiesReceiver);
     }
 
-    function setGenesisAmountRange(uint256 _min, uint256 _max)
-        external
-        onlyRole(DEFAULT_ADMIN_ROLE)
-    {
-        firstEditionMin = _min;
-        firstEditionMax = _max;
-    }
-
     function pause() external onlyRole(PAUSER_ROLE) {
         _pause();
     }
