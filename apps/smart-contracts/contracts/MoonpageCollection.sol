@@ -147,17 +147,16 @@ contract MoonpageCollection is
     {
         (, , , , , , , , , , uint256 premintedByCreator) = moonpageManager
             .readBaseData(_projectId);
-        require(
-            (premintedByCreator == 0) && !moonpageManager.isFrozen(_projectId),
-            "Auctions already started"
-        );
+        bool isProjectPaused = moonpageManager.isPaused(_projectId);
+        require(!isProjectPaused, "Project paused");
+        require(premintedByCreator == 0, "Auctions already started");
+
         require(
             (_amountForCreator > 0) &&
                 (_amountForCreator <= maxMintableCreator),
             "Invalid amount for maxMintableCreator"
         );
         auctionsManager.startAuctions(_projectId, _discountRate);
-        moonpageManager.setIsBaseDataFrozen(_projectId, true);
         moonpageManager.setPremintedByCreator(_projectId, _amountForCreator);
         mint(_projectId, moonpageDev, 1);
         mint(_projectId, msg.sender, _amountForCreator);
@@ -185,7 +184,6 @@ contract MoonpageCollection is
 
         ) = moonpageManager.readEditionData(_projectId);
         for (uint256 i = 0; i < _amount; i++) {
-            // TODO: do I need more requires for this?
             if ((currentTokenId + i) <= currentEdLastTokenId) {
                 _safeMint(_receiver, currentTokenId + i);
                 emit Minted(_projectId, current, _receiver, currentTokenId + i);

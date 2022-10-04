@@ -270,10 +270,10 @@ describe("Project", function () {
         endTokenId,
       ] = await Manager.readEditionData(projectId);
       const contributionIndex = await Manager.readContributionIndex(projectId);
-      const projectBalance = await Manager.readProjectBalance(projectId);
+      const projectBalance = await Manager.projectBalances(projectId);
       const projectExists = await Manager.exists(projectId);
       const isProjectCurated = await Manager.curatedProjectIds(projectId);
-      const isProjectFrozen = await Manager.isFrozen(projectId);
+      const isProjectFrozen = await Manager.frozenProjectIds(projectId);
       const isProjectPaused = await Manager.pausedProjectIds(projectId);
       expect(baseData.title).to.equal("My little Phony");
       expect(baseData.subtitle).to.equal("");
@@ -296,7 +296,7 @@ describe("Project", function () {
       expect(projectBalance).to.equal(0);
       expect(projectExists).to.equal(true);
       expect(isProjectCurated).to.equal(false);
-      expect(isProjectFrozen).to.equal(true);
+      expect(isProjectFrozen).to.equal(false);
       expect(isProjectPaused).to.equal(false);
     });
 
@@ -411,16 +411,6 @@ describe("Project", function () {
         authorOwnsAmount,
         discountRate
       );
-      await expect(
-        ManagerAsCreator.configureProjectDetails(
-          1,
-          "",
-          "newipfshash",
-          "",
-          "Horror",
-          "My different fancy subtitle"
-        )
-      ).to.revertedWith("Base data frozen");
     });
 
     it("lets creator start auctions and after sellout of Gen Ed, shares get distributed", async () => {
@@ -926,11 +916,102 @@ describe("Project", function () {
   });
 
   describe("MANAGER", () => {
-    it("freezing a project", async () => {});
+    it("frozen projects should not be able to be configured", async () => {
+      // configurable
+      await expect(
+        ManagerAsCreator.configureProjectDetails(
+          1, // _projectId
+          "imgHash", // _imgHash
+          "animationHash", // _animationHash
+          "blurbHash", // _blurbHash
+          "genre", // _genre
+          "subtitle" // _subtitle
+        )
+      ).not.to.be.reverted;
+
+      // project gets frozen
+      await expect(ManagerAsDeployer.setIsBaseDataFrozen(1, true)).to.be
+        .reverted;
+      const pausingTX = await ManagerAsCreator.setIsBaseDataFrozen(1, true);
+      pausingTX.wait();
+
+      // basedata cannot be changed anymore
+      await expect(
+        ManagerAsCreator.configureProjectDetails(
+          1,
+          "attempingToChangeThis",
+          "attempingToChangeThis",
+          "attempingToChangeThis",
+          "attempingToChangeThis",
+          "attempingToChangeThis"
+        )
+      ).to.be.revertedWith("Base data frozen");
+
+      await expect(
+        ManagerAsCreator.updateTextIpfsHash(1, "newTextIpfsHash")
+      ).to.be.revertedWith("Base data frozen");
+
+      // unfreeze
+      await ManagerAsCreator.setIsBaseDataFrozen(1, false);
+
+      const configureTX = await ManagerAsCreator.configureProjectDetails(
+        1,
+        "configured",
+        "configured",
+        "configured",
+        "configured",
+        "configured"
+      );
+      configureTX.wait();
+
+      const updateTextTX = await ManagerAsCreator.updateTextIpfsHash(
+        1,
+        "newTextIpfsHash"
+      );
+      updateTextTX.wait();
+    });
+
+    it("paused projects should not be mintable", async () => {
+      // minting is possible at first
+      const startAuctionsTX = await CollectionAsCreator.startAuctions(
+        1,
+        4,
+        100000000000000
+      );
+      startAuctionsTX.wait();
+
+      await expect(
+        CollectionAsUserA.buy(1, {
+          value: myMintPrice,
+        })
+      ).not.to.be.reverted;
+
+      // then the admin pauses a certain project
+      await expect(ManagerAsCreator.setIsPaused(1, true)).to.be.reverted;
+      const pausingTX = await ManagerAsDeployer.setIsPaused(1, true);
+      pausingTX.wait();
+
+      // and minting is not possible anymore
+      await expect(
+        CollectionAsUserA.buy(1, {
+          value: myMintPrice,
+        })
+      ).to.be.revertedWith("Project paused");
+
+      // then admin unpauses the project
+      const unpausingTX = await ManagerAsDeployer.setIsPaused(1, false);
+      unpausingTX.wait();
+
+      await expect(
+        CollectionAsUserA.buy(1, {
+          value: myMintPrice,
+        })
+      ).not.to.be.reverted;
+    });
   });
 
   describe("COLLECTION", () => {
-    it("being pausing blocks minting in auctions", async () => {
+    it("pausing blocks minting in auctions", async () => {
       // pause
       await expect(CollectionAsDeployer.pause()).not.to.be.reverted;
       await expect(
@@ -962,7 +1043,7 @@ describe("Project", function () {
       );
     });
 
-    it.only("sell out happens as excepted", async () => {
+    it("sell out happens as excepted", async () => {
       // project created and sold out
       await expect(
         FactoryAsCreator.createProject(
@@ -1237,6 +1318,3 @@ describe("Project", function () {
     });
   });
 });
-
-// TODO
-// testing that an upgrade works fine

@@ -578,14 +578,6 @@ contract MoonpageManagerTestingV2 is
         return existingProjectIds[_projectId];
     }
 
-    function readProjectBalance(uint256 _projectId)
-        external
-        view
-        returns (uint256)
-    {
-        return projectBalances[_projectId];
-    }
-
     function readBaseData(uint256 _projectId)
         external
         view
