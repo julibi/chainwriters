@@ -411,16 +411,6 @@ describe("Project", function () {
         authorOwnsAmount,
         discountRate
       );
-      await expect(
-        ManagerAsCreator.configureProjectDetails(
-          1,
-          "",
-          "newipfshash",
-          "",
-          "Horror",
-          "My different fancy subtitle"
-        )
-      ).to.revertedWith("Base data frozen");
     });
 
     it("lets creator start auctions and after sellout of Gen Ed, shares get distributed", async () => {
@@ -1053,7 +1043,7 @@ describe("Project", function () {
       );
     });
 
-    it.only("sell out happens as excepted", async () => {
+    it("sell out happens as excepted", async () => {
       // project created and sold out
       await expect(
         FactoryAsCreator.createProject(
@@ -1327,5 +1317,4 @@ describe("Project", function () {
       await expect(BallotAsCreator.endVote()).to.not.reverted;
     });
   });
-
- 
+});
