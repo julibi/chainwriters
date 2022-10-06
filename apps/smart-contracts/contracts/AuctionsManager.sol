@@ -26,7 +26,7 @@ contract AuctionsManager is
         bool exists;
         address creator;
         uint256 discountRate;
-        uint256 startAt;
+        uint256 startsAt;
         uint256 expiresAt;
         bool auctionsStarted;
         bool auctionsEnded;
@@ -62,7 +62,7 @@ contract AuctionsManager is
     // -----------------
 
     // only called by factory
-    function setupAuctionSettings(uint256 _projectId, address _creatorAddress)
+    function setupAuctions(uint256 _projectId, address _creatorAddress)
         external
         whenNotPaused
     {
@@ -72,7 +72,7 @@ contract AuctionsManager is
         auctions[_projectId].exists = true;
         auctions[_projectId].creator = _creatorAddress;
         auctions[_projectId].discountRate = 0;
-        auctions[_projectId].startAt = 0;
+        auctions[_projectId].startsAt = 0;
         auctions[_projectId].expiresAt = 0;
         auctions[_projectId].auctionsStarted = false;
         auctions[_projectId].auctionsEnded = false;
@@ -91,7 +91,7 @@ contract AuctionsManager is
         require(!auctions[_projectId].auctionsEnded, "Auctions already ended");
 
         auctions[_projectId].discountRate = _discountRate;
-        auctions[_projectId].startAt = block.timestamp;
+        auctions[_projectId].startsAt = block.timestamp;
         auctions[_projectId].expiresAt = block.timestamp + AUCTION_DURATION;
         auctions[_projectId].auctionsStarted = true;
         emit ExpirationSet(_projectId, block.timestamp + AUCTION_DURATION);
@@ -104,7 +104,7 @@ contract AuctionsManager is
         onlyCollection
         whenNotPaused
     {
-        auctions[_projectId].startAt = block.timestamp;
+        auctions[_projectId].startsAt = block.timestamp;
         auctions[_projectId].expiresAt = block.timestamp + AUCTION_DURATION;
         emit ExpirationSet(_projectId, block.timestamp + AUCTION_DURATION);
     }
@@ -163,7 +163,7 @@ contract AuctionsManager is
             auctions[_projectId].expiresAt < block.timestamp,
             "Triggering unnecessary. Auction running."
         );
-        auctions[_projectId].startAt = block.timestamp;
+        auctions[_projectId].startsAt = block.timestamp;
         auctions[_projectId].expiresAt = block.timestamp + AUCTION_DURATION;
         emit ExpirationSet(_projectId, block.timestamp + AUCTION_DURATION);
     }
@@ -179,7 +179,7 @@ contract AuctionsManager is
     {
         AuctionSettings memory auctionSetting = auctions[_projectId];
         if (auctionSetting.auctionsStarted && !auctionSetting.auctionsEnded) {
-            uint256 timeElapsed = block.timestamp - auctionSetting.startAt;
+            uint256 timeElapsed = block.timestamp - auctionSetting.startsAt;
             uint256 discount = auctionSetting.discountRate * timeElapsed;
             return _startPrice - discount;
         }
@@ -205,7 +205,7 @@ contract AuctionsManager is
             data.exists,
             data.creator,
             data.discountRate,
-            data.startAt,
+            data.startsAt,
             data.expiresAt,
             data.auctionsStarted,
             data.auctionsEnded

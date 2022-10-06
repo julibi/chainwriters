@@ -125,7 +125,7 @@ contract MoonpageManagerTestingV2 is
     modifier onlyCreator(uint256 _projectId) {
         require(
             msg.sender == baseDatas[_projectId].creatorAddress,
-            "Not author"
+            "Not creator"
         );
         _;
     }

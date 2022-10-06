@@ -27,6 +27,7 @@ contract MoonpageCollection is
     IAuctionsManager public auctionsManager;
     address public moonpageDev;
     uint256 royaltyFraction = 700;
+    uint256 royaltyBips = 10000;
 
     event Minted(
         uint256 projectId,
@@ -44,7 +45,7 @@ contract MoonpageCollection is
         _;
     }
 
-    modifier onlyDaoManager() {
+    modifier onlyManager() {
         require(msg.sender == address(moonpageManager), "Not authorized");
         _;
     }
@@ -206,8 +207,13 @@ contract MoonpageCollection is
         moonpageDev = address(_mpDev);
     }
 
-    function setRoyaltyFraction(uint256 _fraction) external onlyOwner {
+    function setRoyaltyParams(uint256 _fraction, uint256 _bips)
+        external
+        onlyOwner
+    {
+        // bips should be 10.000 and fraction between 100 and 1000
         royaltyFraction = _fraction;
+        royaltyBips = _bips;
     }
 
     function setMaxMintableCreator(uint256 _maxAmount) external onlyOwner {
@@ -231,12 +237,12 @@ contract MoonpageCollection is
     }
 
     // ------------------
-    // Dao Manager functions
+    // Manager functions
     // ------------------
 
     function withdraw(address _to, uint256 _amount)
         external
-        onlyDaoManager
+        onlyManager
         noNullAddress(_to)
     {
         payable(_to).transfer(_amount);
@@ -313,7 +319,7 @@ contract MoonpageCollection is
         require(projectId > 0, "Invalid tokenId");
         (, , , , address royaltyReceiver, , , , , , ) = moonpageManager
             .readBaseData(projectId);
-        uint256 royaltyAmount = (_salePrice * royaltyFraction) / 10000;
+        uint256 royaltyAmount = (_salePrice * royaltyFraction) / royaltyBips;
         return (royaltyReceiver, royaltyAmount);
     }
 

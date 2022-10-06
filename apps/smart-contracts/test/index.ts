@@ -10,6 +10,7 @@ import {
   BallotsFactory,
   Ballot,
   AuctionsManager,
+  PaymentSplitter,
 } from "../typechain";
 import { BigNumber } from "ethers";
 
@@ -29,6 +30,7 @@ describe("Project", function () {
   let userD: SignerWithAddress;
   let userE: SignerWithAddress;
   let userF: SignerWithAddress;
+  let royaltiesReceiver: SignerWithAddress;
   let Collection: MoonpageCollection;
   let CollectionAsDeployer: MoonpageCollection;
   let CollectionAsCreator: MoonpageCollection;
@@ -78,6 +80,7 @@ describe("Project", function () {
       userD,
       userE,
       userF,
+      royaltiesReceiver,
     ] = await ethers.getSigners();
 
     // ------------------
@@ -114,7 +117,7 @@ describe("Project", function () {
     const FactoryFactory = await ethers.getContractFactory("MoonpageFactory");
     Factory = await upgrades.deployProxy(
       FactoryFactory,
-      [Manager.address, AuctionsManager.address],
+      [Manager.address, AuctionsManager.address, royaltiesReceiver.address],
       {
         kind: "uups",
       }
@@ -165,7 +168,7 @@ describe("Project", function () {
     await FactoryAsDeployer.setAddresses(
       Manager.address,
       AuctionsManager.address,
-      deployer.address
+      royaltiesReceiver.address
     );
 
     // set Contracts on Ballots Factory
@@ -598,6 +601,9 @@ describe("Project", function () {
 
     it("second edition of Project ID 1 sells out and distribution works again", async () => {
       // auction started + sells out
+      // await expect(
+      //   CollectionAsCreator.startAuctions(1, authorOwnsAmount, -1000)
+      // ).to.be.reverted; -- throws an error but not catchable with revert expectation?
       await CollectionAsCreator.startAuctions(
         1,
         authorOwnsAmount,
@@ -671,6 +677,26 @@ describe("Project", function () {
   });
 
   describe("MOONPAGE FACTORY", () => {
+    it("payment splitter is setup correctly - project creator getting 70% and mp royaltiesreceiver address getting 30%", async () => {
+      const baseData = await Manager.readBaseData(1);
+      const SplitterAddress = baseData[4];
+      const CreatorAddress = baseData[3];
+      const ReceiverAddress = royaltiesReceiver.address;
+      const SplitterFactory = await ethers.getContractFactory(
+        "PaymentSplitter"
+      );
+      const Splitter = SplitterFactory.attach(SplitterAddress);
+      const FirstSplitterPayee = await Splitter.payee(0);
+      const SecondSplitterPayee = await Splitter.payee(1);
+      const FirstSplitterShare = await Splitter.shares(FirstSplitterPayee);
+      const SecondSplitterShare = await Splitter.shares(SecondSplitterPayee);
+
+      expect(FirstSplitterPayee).to.equal(CreatorAddress);
+      expect(SecondSplitterPayee).to.equal(ReceiverAddress);
+      expect(FirstSplitterShare).to.equal(70);
+      expect(SecondSplitterShare).to.equal(30);
+    });
+
     it("only admin can update allowlist and denylist state", async () => {
       const FactoryAsSecondCreator = Factory.connect(userA);
       const FactoryAsThirdCreator = Factory.connect(userB);
@@ -811,9 +837,6 @@ describe("Project", function () {
       ).not.to.be.reverted;
       const projectIndex = await Factory.projectsIndex();
       const projectId = Number(projectIndex) - 1;
-      const baseData = await Manager.readBaseData(projectId);
-
-      const RoyaltiesPaymentSplitter = baseData[5];
       // since it is not possible to test royalties on testnet, payment splitters were tested manually via polygonscan on testnet
     });
 
@@ -851,7 +874,7 @@ describe("Project", function () {
       await FactoryAsDeployer.setAddresses(
         NewManager.address,
         AuctionsManager.address,
-        deployer.address
+        royaltiesReceiver.address
       );
 
       // create a project
@@ -930,9 +953,8 @@ describe("Project", function () {
       ).not.to.be.reverted;
 
       // project gets frozen
-      await expect(ManagerAsDeployer.setIsBaseDataFrozen(1, true)).to.be
-        .reverted;
-      const pausingTX = await ManagerAsCreator.setIsBaseDataFrozen(1, true);
+      await expect(ManagerAsDeployer.setIsBaseDataFrozen(1)).to.be.reverted;
+      const pausingTX = await ManagerAsCreator.setIsBaseDataFrozen(1);
       pausingTX.wait();
 
       // basedata cannot be changed anymore
@@ -950,25 +972,6 @@ describe("Project", function () {
       await expect(
         ManagerAsCreator.updateTextIpfsHash(1, "newTextIpfsHash")
       ).to.be.revertedWith("Base data frozen");
-
-      // unfreeze
-      await ManagerAsCreator.setIsBaseDataFrozen(1, false);
-
-      const configureTX = await ManagerAsCreator.configureProjectDetails(
-        1,
-        "configured",
-        "configured",
-        "configured",
-        "configured",
-        "configured"
-      );
-      configureTX.wait();
-
-      const updateTextTX = await ManagerAsCreator.updateTextIpfsHash(
-        1,
-        "newTextIpfsHash"
-      );
-      updateTextTX.wait();
     });
 
     it("paused projects should not be mintable", async () => {

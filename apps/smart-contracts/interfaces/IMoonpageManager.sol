@@ -2,7 +2,7 @@
 pragma solidity ^0.8.9;
 
 interface IMoonpageManager {
-    function setupDao(
+    function setupProject(
         address _caller,
         address _royaltiesSplitter,
         uint256 _projectId,
@@ -30,6 +30,11 @@ interface IMoonpageManager {
     ) external;
 
     function projectIdOfToken(uint256 _projectId)
+        external
+        view
+        returns (uint256);
+
+    function editionOfToken(uint256 _projectId, uint256 _tokenId)
         external
         view
         returns (uint256);
@@ -84,11 +89,6 @@ interface IMoonpageManager {
         );
 
     function readContributionIndex(uint256 _projectId)
-        external
-        view
-        returns (uint256);
-
-    function editionOfToken(uint256 _projectId, uint256 _tokenId)
         external
         view
         returns (uint256);
