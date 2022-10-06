@@ -1205,25 +1205,6 @@
         "type": "uint256"
       }
     ],
-    "name": "isFrozen",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_projectId",
-        "type": "uint256"
-      }
-    ],
     "name": "isPaused",
     "outputs": [
       {
@@ -1580,25 +1561,6 @@
   {
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "_projectId",
-        "type": "uint256"
-      }
-    ],
-    "name": "readProjectBalance",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "bytes32",
         "name": "role",
         "type": "bytes32"
@@ -1646,7 +1608,7 @@
       },
       {
         "internalType": "address",
-        "name": "_deployer",
+        "name": "_mpDev",
         "type": "address"
       }
     ],
@@ -1659,13 +1621,21 @@
     "inputs": [
       {
         "internalType": "uint256",
+        "name": "_fee",
+        "type": "uint256"
+      }
+    ],
+    "name": "setFee",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
         "name": "_projectId",
         "type": "uint256"
-      },
-      {
-        "internalType": "bool",
-        "name": "_shouldBeFrozen",
-        "type": "bool"
       }
     ],
     "name": "setIsBaseDataFrozen",
@@ -1705,19 +1675,6 @@
       }
     ],
     "name": "setIsPaused",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_newMaxAmount",
-        "type": "uint256"
-      }
-    ],
-    "name": "setMaxAmountEdition",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1796,7 +1753,7 @@
         "type": "uint256"
       }
     ],
-    "name": "setupDao",
+    "name": "setupProject",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

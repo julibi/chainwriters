@@ -422,6 +422,11 @@
                 "internalType": "address",
                 "name": "_auctionsManager",
                 "type": "address"
+            },
+            {
+                "internalType": "address",
+                "name": "_mpRoyaltiesReceiver",
+                "type": "address"
             }
         ],
         "name": "initialize",
@@ -444,10 +449,10 @@
     },
     {
         "inputs": [],
-        "name": "moonpageDev",
+        "name": "moonpageManager",
         "outputs": [
             {
-                "internalType": "address",
+                "internalType": "contract IMoonpageManager",
                 "name": "",
                 "type": "address"
             }
@@ -457,10 +462,10 @@
     },
     {
         "inputs": [],
-        "name": "moonpageManager",
+        "name": "moonpageRoyaltiesReceiver",
         "outputs": [
             {
-                "internalType": "contract IMoonpageManager",
+                "internalType": "address",
                 "name": "",
                 "type": "address"
             }
@@ -564,29 +569,11 @@
             },
             {
                 "internalType": "address",
-                "name": "_mpDev",
+                "name": "_mpRoyaltiesReceiver",
                 "type": "address"
             }
         ],
         "name": "setAddresses",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "_min",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "_max",
-                "type": "uint256"
-            }
-        ],
-        "name": "setGenesisAmountRange",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"

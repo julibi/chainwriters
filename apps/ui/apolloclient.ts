@@ -1,7 +1,10 @@
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 
 const client = new ApolloClient({
-  uri: 'https://api.thegraph.com/subgraphs/name/julibi/moonpage-graphs',
+  uri:
+    process.env.NEXT_PUBLIC_ENVIRONMENT === 'DEV'
+      ? 'https://api.thegraph.com/subgraphs/name/julibi/moonpage-graphs-dev'
+      : 'https://api.thegraph.com/subgraphs/name/julibi/moonpage-graphs',
   cache: new InMemoryCache(),
 });
 

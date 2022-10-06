@@ -10,18 +10,20 @@ async function deployAll() {
   await hre.run("compile");
 
   const [deployer] = await hre.ethers.getSigners();
+  const royaltiesReceiver = "0x0aff32d090190b254d3ec5aa4487db2c98c17a23";
   const provider = await hre.ethers.provider;
   console.log("Deploying contracts with the account:", deployer.address);
   console.log("Account balance:", (await deployer.getBalance()).toString());
-  console.log(`Network: ${hre.ethers.network}`);
 
   // deploy MoonpageCollection
   const MoonpageCollectionFactory = await hre.ethers.getContractFactory(
     "MoonpageCollection"
   );
-  const MoonpageCollection = await MoonpageCollectionFactory.deploy();
-  await MoonpageCollection.deployed();
 
+  const MoonpageCollection = await MoonpageCollectionFactory.deploy();
+  // await MoonpageCollection.deployed();
+
+  console.log(MoonpageCollection.address);
   console.log(
     `MoonpageCollection contract deployed to: ${MoonpageCollection.address}`
   );
@@ -84,7 +86,11 @@ async function deployAll() {
   );
   const MoonpageFactoryProxy = await hre.upgrades.deployProxy(
     MoonpageFactoryFactory,
-    [MoonpageManagerProxy.address, AuctionsManagerProxy.address],
+    [
+      MoonpageManagerProxy.address,
+      AuctionsManagerProxy.address,
+      royaltiesReceiver,
+    ],
     { kind: "uups" }
   );
 
@@ -153,7 +159,7 @@ async function deployAll() {
   await MoonpageFactoryProxy.setAddresses(
     MoonpageManagerProxy.address,
     AuctionsManagerProxy.address,
-    deployer.address
+    royaltiesReceiver
   );
 
   // set Contracts on Ballots Factory
@@ -184,7 +190,7 @@ async function deployAll() {
     hre.run("verify:verify", {
       address: MoonpageFactoryImplAddress,
       constructorArguments: [],
-    })
+    }),
     // hre.run("verify:verify", {
     //   address: BallotsFactoryImplAddress,
     //   constructorArguments: [],

@@ -1024,20 +1024,20 @@ export class SetContractsCall__Outputs {
   }
 }
 
-export class SetupAuctionSettingsCall extends ethereum.Call {
-  get inputs(): SetupAuctionSettingsCall__Inputs {
-    return new SetupAuctionSettingsCall__Inputs(this);
+export class SetupAuctionsCall extends ethereum.Call {
+  get inputs(): SetupAuctionsCall__Inputs {
+    return new SetupAuctionsCall__Inputs(this);
   }
 
-  get outputs(): SetupAuctionSettingsCall__Outputs {
-    return new SetupAuctionSettingsCall__Outputs(this);
+  get outputs(): SetupAuctionsCall__Outputs {
+    return new SetupAuctionsCall__Outputs(this);
   }
 }
 
-export class SetupAuctionSettingsCall__Inputs {
-  _call: SetupAuctionSettingsCall;
+export class SetupAuctionsCall__Inputs {
+  _call: SetupAuctionsCall;
 
-  constructor(call: SetupAuctionSettingsCall) {
+  constructor(call: SetupAuctionsCall) {
     this._call = call;
   }
 
@@ -1050,10 +1050,10 @@ export class SetupAuctionSettingsCall__Inputs {
   }
 }
 
-export class SetupAuctionSettingsCall__Outputs {
-  _call: SetupAuctionSettingsCall;
+export class SetupAuctionsCall__Outputs {
+  _call: SetupAuctionsCall;
 
-  constructor(call: SetupAuctionSettingsCall) {
+  constructor(call: SetupAuctionsCall) {
     this._call = call;
   }
 }

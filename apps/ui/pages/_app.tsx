@@ -1,19 +1,26 @@
 import { AppProps } from 'next/app';
 import Head from 'next/head';
+import { ApolloProvider } from '@apollo/client';
 import { Web3ReactProvider } from '@web3-react/core';
-import { createGlobalStyle } from 'styled-components';
 import {
   ExternalProvider,
   JsonRpcFetchFunc,
   Web3Provider,
 } from '@ethersproject/providers';
+import { createGlobalStyle } from 'styled-components';
 import Layout from '../components/Layout';
 import { BG_NORMAL, PLAIN_WHITE } from '../themes';
 import './styles.css';
 import ToastContainer from '../components/ToastContainer';
 import client from '../apolloclient';
-import { ApolloProvider } from '@apollo/client';
-import { AuctionsProvider, CollectionProvider, FactoryProvider, ManagerProvider, ProjectsProvider, UserProvider } from '../providers';
+import {
+  AuctionsProvider,
+  CollectionProvider,
+  FactoryProvider,
+  ManagerProvider,
+  ProjectsProvider,
+  UserProvider,
+} from '../providers';
 
 const GlobalStyle = createGlobalStyle`
 html{
@@ -109,7 +116,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
                           <Component {...pageProps} />
                         </Layout>
                       </main>
-                    </FactoryProvider>       
+                    </FactoryProvider>
                   </CollectionProvider>
                 </AuctionsProvider>
               </ManagerProvider>

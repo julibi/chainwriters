@@ -1398,25 +1398,6 @@ export class MoonpageManager extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBoolean());
   }
 
-  isFrozen(_projectId: BigInt): boolean {
-    let result = super.call("isFrozen", "isFrozen(uint256):(bool)", [
-      ethereum.Value.fromUnsignedBigInt(_projectId)
-    ]);
-
-    return result[0].toBoolean();
-  }
-
-  try_isFrozen(_projectId: BigInt): ethereum.CallResult<boolean> {
-    let result = super.tryCall("isFrozen", "isFrozen(uint256):(bool)", [
-      ethereum.Value.fromUnsignedBigInt(_projectId)
-    ]);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBoolean());
-  }
-
   isPaused(_projectId: BigInt): boolean {
     let result = super.call("isPaused", "isPaused(uint256):(bool)", [
       ethereum.Value.fromUnsignedBigInt(_projectId)
@@ -1806,29 +1787,6 @@ export class MoonpageManager extends ethereum.SmartContract {
         value[6].toBigInt()
       )
     );
-  }
-
-  readProjectBalance(_projectId: BigInt): BigInt {
-    let result = super.call(
-      "readProjectBalance",
-      "readProjectBalance(uint256):(uint256)",
-      [ethereum.Value.fromUnsignedBigInt(_projectId)]
-    );
-
-    return result[0].toBigInt();
-  }
-
-  try_readProjectBalance(_projectId: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall(
-      "readProjectBalance",
-      "readProjectBalance(uint256):(uint256)",
-      [ethereum.Value.fromUnsignedBigInt(_projectId)]
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
   supportsInterface(interfaceId: Bytes): boolean {
@@ -2337,7 +2295,7 @@ export class SetAddressesCall__Inputs {
     return this._call.inputValues[1].value.toAddress();
   }
 
-  get _deployer(): Address {
+  get _mpDev(): Address {
     return this._call.inputValues[2].value.toAddress();
   }
 }
@@ -2346,6 +2304,36 @@ export class SetAddressesCall__Outputs {
   _call: SetAddressesCall;
 
   constructor(call: SetAddressesCall) {
+    this._call = call;
+  }
+}
+
+export class SetFeeCall extends ethereum.Call {
+  get inputs(): SetFeeCall__Inputs {
+    return new SetFeeCall__Inputs(this);
+  }
+
+  get outputs(): SetFeeCall__Outputs {
+    return new SetFeeCall__Outputs(this);
+  }
+}
+
+export class SetFeeCall__Inputs {
+  _call: SetFeeCall;
+
+  constructor(call: SetFeeCall) {
+    this._call = call;
+  }
+
+  get _fee(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+}
+
+export class SetFeeCall__Outputs {
+  _call: SetFeeCall;
+
+  constructor(call: SetFeeCall) {
     this._call = call;
   }
 }
@@ -2369,10 +2357,6 @@ export class SetIsBaseDataFrozenCall__Inputs {
 
   get _projectId(): BigInt {
     return this._call.inputValues[0].value.toBigInt();
-  }
-
-  get _shouldBeFrozen(): boolean {
-    return this._call.inputValues[1].value.toBoolean();
   }
 }
 
@@ -2452,36 +2436,6 @@ export class SetIsPausedCall__Outputs {
   }
 }
 
-export class SetMaxAmountEditionCall extends ethereum.Call {
-  get inputs(): SetMaxAmountEditionCall__Inputs {
-    return new SetMaxAmountEditionCall__Inputs(this);
-  }
-
-  get outputs(): SetMaxAmountEditionCall__Outputs {
-    return new SetMaxAmountEditionCall__Outputs(this);
-  }
-}
-
-export class SetMaxAmountEditionCall__Inputs {
-  _call: SetMaxAmountEditionCall;
-
-  constructor(call: SetMaxAmountEditionCall) {
-    this._call = call;
-  }
-
-  get _newMaxAmount(): BigInt {
-    return this._call.inputValues[0].value.toBigInt();
-  }
-}
-
-export class SetMaxAmountEditionCall__Outputs {
-  _call: SetMaxAmountEditionCall;
-
-  constructor(call: SetMaxAmountEditionCall) {
-    this._call = call;
-  }
-}
-
 export class SetMinPriceCall extends ethereum.Call {
   get inputs(): SetMinPriceCall__Inputs {
     return new SetMinPriceCall__Inputs(this);
@@ -2546,20 +2500,20 @@ export class SetPremintedByCreatorCall__Outputs {
   }
 }
 
-export class SetupDaoCall extends ethereum.Call {
-  get inputs(): SetupDaoCall__Inputs {
-    return new SetupDaoCall__Inputs(this);
+export class SetupProjectCall extends ethereum.Call {
+  get inputs(): SetupProjectCall__Inputs {
+    return new SetupProjectCall__Inputs(this);
   }
 
-  get outputs(): SetupDaoCall__Outputs {
-    return new SetupDaoCall__Outputs(this);
+  get outputs(): SetupProjectCall__Outputs {
+    return new SetupProjectCall__Outputs(this);
   }
 }
 
-export class SetupDaoCall__Inputs {
-  _call: SetupDaoCall;
+export class SetupProjectCall__Inputs {
+  _call: SetupProjectCall;
 
-  constructor(call: SetupDaoCall) {
+  constructor(call: SetupProjectCall) {
     this._call = call;
   }
 
@@ -2596,10 +2550,10 @@ export class SetupDaoCall__Inputs {
   }
 }
 
-export class SetupDaoCall__Outputs {
-  _call: SetupDaoCall;
+export class SetupProjectCall__Outputs {
+  _call: SetupProjectCall;
 
-  constructor(call: SetupDaoCall) {
+  constructor(call: SetupProjectCall) {
     this._call = call;
   }
 }

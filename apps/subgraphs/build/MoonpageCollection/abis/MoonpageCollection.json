@@ -548,9 +548,14 @@
         "internalType": "uint256",
         "name": "_fraction",
         "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_bips",
+        "type": "uint256"
       }
     ],
-    "name": "setRoyaltyFraction",
+    "name": "setRoyaltyParams",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

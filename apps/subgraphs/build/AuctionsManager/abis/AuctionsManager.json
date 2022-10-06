@@ -299,7 +299,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "startAt",
+        "name": "startsAt",
         "type": "uint256"
       },
       {
@@ -645,7 +645,7 @@
         "type": "address"
       }
     ],
-    "name": "setupAuctionSettings",
+    "name": "setupAuctions",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

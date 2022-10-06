@@ -973,32 +973,36 @@ export class SetMaxMintableCreatorCall__Outputs {
   }
 }
 
-export class SetRoyaltyFractionCall extends ethereum.Call {
-  get inputs(): SetRoyaltyFractionCall__Inputs {
-    return new SetRoyaltyFractionCall__Inputs(this);
+export class SetRoyaltyParamsCall extends ethereum.Call {
+  get inputs(): SetRoyaltyParamsCall__Inputs {
+    return new SetRoyaltyParamsCall__Inputs(this);
   }
 
-  get outputs(): SetRoyaltyFractionCall__Outputs {
-    return new SetRoyaltyFractionCall__Outputs(this);
+  get outputs(): SetRoyaltyParamsCall__Outputs {
+    return new SetRoyaltyParamsCall__Outputs(this);
   }
 }
 
-export class SetRoyaltyFractionCall__Inputs {
-  _call: SetRoyaltyFractionCall;
+export class SetRoyaltyParamsCall__Inputs {
+  _call: SetRoyaltyParamsCall;
 
-  constructor(call: SetRoyaltyFractionCall) {
+  constructor(call: SetRoyaltyParamsCall) {
     this._call = call;
   }
 
   get _fraction(): BigInt {
     return this._call.inputValues[0].value.toBigInt();
   }
+
+  get _bips(): BigInt {
+    return this._call.inputValues[1].value.toBigInt();
+  }
 }
 
-export class SetRoyaltyFractionCall__Outputs {
-  _call: SetRoyaltyFractionCall;
+export class SetRoyaltyParamsCall__Outputs {
+  _call: SetRoyaltyParamsCall;
 
-  constructor(call: SetRoyaltyFractionCall) {
+  constructor(call: SetRoyaltyParamsCall) {
     this._call = call;
   }
 }
