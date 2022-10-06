@@ -601,6 +601,9 @@ describe("Project", function () {
 
     it("second edition of Project ID 1 sells out and distribution works again", async () => {
       // auction started + sells out
+      // await expect(
+      //   CollectionAsCreator.startAuctions(1, authorOwnsAmount, -1000)
+      // ).to.be.reverted; -- throws an error but not catchable with revert expectation?
       await CollectionAsCreator.startAuctions(
         1,
         authorOwnsAmount,
@@ -950,9 +953,8 @@ describe("Project", function () {
       ).not.to.be.reverted;
 
       // project gets frozen
-      await expect(ManagerAsDeployer.setIsBaseDataFrozen(1, true)).to.be
-        .reverted;
-      const pausingTX = await ManagerAsCreator.setIsBaseDataFrozen(1, true);
+      await expect(ManagerAsDeployer.setIsBaseDataFrozen(1)).to.be.reverted;
+      const pausingTX = await ManagerAsCreator.setIsBaseDataFrozen(1);
       pausingTX.wait();
 
       // basedata cannot be changed anymore
@@ -970,25 +972,6 @@ describe("Project", function () {
       await expect(
         ManagerAsCreator.updateTextIpfsHash(1, "newTextIpfsHash")
       ).to.be.revertedWith("Base data frozen");
-
-      // unfreeze
-      await ManagerAsCreator.setIsBaseDataFrozen(1, false);
-
-      const configureTX = await ManagerAsCreator.configureProjectDetails(
-        1,
-        "configured",
-        "configured",
-        "configured",
-        "configured",
-        "configured"
-      );
-      configureTX.wait();
-
-      const updateTextTX = await ManagerAsCreator.updateTextIpfsHash(
-        1,
-        "newTextIpfsHash"
-      );
-      updateTextTX.wait();
     });
 
     it("paused projects should not be mintable", async () => {

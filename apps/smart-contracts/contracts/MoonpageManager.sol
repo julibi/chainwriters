@@ -122,7 +122,7 @@ contract MoonpageManager is
     modifier onlyCreator(uint256 _projectId) {
         require(
             msg.sender == baseDatas[_projectId].creatorAddress,
-            "Not author"
+            "Not creator"
         );
         _;
     }
@@ -335,7 +335,10 @@ contract MoonpageManager is
         for (uint8 i = 0; i < _contributors.length; i++) {
             contribTotalShares += _shares[i];
         }
-        require(contribTotalShares <= 85, "Contributor shares too high");
+        require(
+            contribTotalShares <= (100 - fee),
+            "Contributor shares too high"
+        );
 
         for (uint8 i = 0; i < _contributors.length; i++) {
             require(
@@ -394,12 +397,12 @@ contract MoonpageManager is
         );
     }
 
-    function setIsBaseDataFrozen(uint256 _projectId, bool _shouldBeFrozen)
+    function setIsBaseDataFrozen(uint256 _projectId)
         external
         whenNotPaused
         onlyCreator(_projectId)
     {
-        frozenProjectIds[_projectId] = _shouldBeFrozen;
+        frozenProjectIds[_projectId] = true;
         emit BaseDataFrozen(_projectId, true);
     }
 
@@ -409,7 +412,6 @@ contract MoonpageManager is
 
     function increaseBalance(uint256 _projectId, uint256 _amount)
         external
-        whenNotPaused
         onlyCollection
     {
         projectBalances[_projectId] = projectBalances[_projectId].add(_amount);
@@ -418,7 +420,6 @@ contract MoonpageManager is
 
     function increaseCurrentTokenId(uint256 _projectId)
         external
-        whenNotPaused
         onlyCollection
     {
         editions[_projectId].currentTokenId = editions[_projectId]
@@ -430,7 +431,7 @@ contract MoonpageManager is
     function setPremintedByCreator(
         uint256 _projectId,
         uint256 _premintedByCreator
-    ) external whenNotPaused onlyCollection {
+    ) external onlyCollection {
         baseDatas[_projectId].premintedByCreator = _premintedByCreator;
         emit PremintedByAuthor(_projectId, _premintedByCreator);
     }
@@ -500,11 +501,11 @@ contract MoonpageManager is
     function setAddresses(
         address _collection,
         address _factory,
-        address _deployer
+        address _mpDev
     ) external onlyRole(DEFAULT_ADMIN_ROLE) {
         collection = IMoonpageCollection(_collection);
         factory = address(_factory);
-        moonpageDev = address(_deployer);
+        moonpageDev = address(_mpDev);
     }
 
     function setMinPrice(uint256 _minPrice)
@@ -512,6 +513,10 @@ contract MoonpageManager is
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
         minPrice = _minPrice;
+    }
+
+    function setFee(uint256 _fee) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        fee = _fee;
     }
 
     function pause() external onlyRole(PAUSER_ROLE) {
@@ -558,8 +563,8 @@ contract MoonpageManager is
         view
         returns (uint256)
     {
-        uint256 maxTokenId = _projectId * 1000;
-        uint256 minTokenId = maxTokenId - 1000 + 1;
+        uint256 maxTokenId = _projectId.mul(maxAmountEdition);
+        uint256 minTokenId = maxTokenId - maxAmountEdition + 1;
         if (_tokenId >= minTokenId && _tokenId <= maxTokenId) {
             uint256 maxEditions = editions[_projectId].current;
             for (uint256 i = 1; i <= maxEditions; i++) {

@@ -34,6 +34,11 @@ interface IMoonpageManager {
         view
         returns (uint256);
 
+    function editionOfToken(uint256 _projectId, uint256 _tokenId)
+        external
+        view
+        returns (uint256);
+
     function exists(uint256 _projectId) external view returns (bool);
 
     function isPaused(uint256 _projectId) external view returns (bool);
@@ -84,11 +89,6 @@ interface IMoonpageManager {
         );
 
     function readContributionIndex(uint256 _projectId)
-        external
-        view
-        returns (uint256);
-
-    function editionOfToken(uint256 _projectId, uint256 _tokenId)
         external
         view
         returns (uint256);
