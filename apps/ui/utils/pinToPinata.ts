@@ -10,6 +10,7 @@ const pinToPinata = async (
   type: string,
   title?: string
 ) => {
+  if (process.env.NEXT_PUBLIC_ENVIRONMENT === 'DEV') return;
   const timestamp = new Date().getTime();
   const name = `${projectId ?? title}-${type}-${timestamp}`;
   try {
