@@ -23,21 +23,23 @@ contract MoonpageFactory is
     address public moonpageRoyaltiesReceiver;
     IMoonpageManager public moonpageManager;
     IAuctionsManager public auctionsManager;
-    event Received(address from, uint256 amount);
-    event Created(address from, uint256 projectId);
     bool public isAllowlistOnly;
     mapping(address => bool) public allowlist;
     mapping(address => bool) public denylist;
+
+    event Received(address from, uint256 amount);
+    event Created(address from, uint256 projectId);
 
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
         _disableInitializers();
     }
 
-    function initialize(address _mpManager, address _auctionsManager)
-        public
-        initializer
-    {
+    function initialize(
+        address _mpManager,
+        address _auctionsManager,
+        address _mpRoyaltiesReceiver
+    ) public initializer {
         __Pausable_init();
         __AccessControl_init();
         __UUPSUpgradeable_init();
@@ -48,6 +50,7 @@ contract MoonpageFactory is
 
         moonpageManager = IMoonpageManager(_mpManager);
         auctionsManager = IAuctionsManager(_auctionsManager);
+        moonpageRoyaltiesReceiver = address(_mpRoyaltiesReceiver);
         isAllowlistOnly = true;
         projectsIndex = 1;
         firstEditionMin = 5;
@@ -80,7 +83,7 @@ contract MoonpageFactory is
             addressArgs,
             percentageArgs
         );
-        moonpageManager.setupDao(
+        moonpageManager.setupProject(
             msg.sender,
             address(royaltiesSplitter),
             projectsIndex,
@@ -91,7 +94,7 @@ contract MoonpageFactory is
             _firstEditionAmount
         );
         emit Created(msg.sender, projectsIndex);
-        auctionsManager.setupAuctionSettings(projectsIndex, msg.sender);
+        auctionsManager.setupAuctions(projectsIndex, msg.sender);
         projectsIndex++;
     }
 

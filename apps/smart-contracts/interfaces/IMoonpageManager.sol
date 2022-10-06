@@ -2,7 +2,7 @@
 pragma solidity ^0.8.9;
 
 interface IMoonpageManager {
-    function setupDao(
+    function setupProject(
         address _caller,
         address _royaltiesSplitter,
         uint256 _projectId,

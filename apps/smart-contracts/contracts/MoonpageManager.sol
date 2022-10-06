@@ -165,7 +165,7 @@ contract MoonpageManager is
     // Write functions for creators
     // ------------------
 
-    function setupDao(
+    function setupProject(
         address _caller,
         address _royaltiesSplitter,
         uint256 _projectId,

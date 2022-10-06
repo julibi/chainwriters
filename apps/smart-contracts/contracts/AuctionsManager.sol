@@ -62,7 +62,7 @@ contract AuctionsManager is
     // -----------------
 
     // only called by factory
-    function setupAuctionSettings(uint256 _projectId, address _creatorAddress)
+    function setupAuctions(uint256 _projectId, address _creatorAddress)
         external
         whenNotPaused
     {
