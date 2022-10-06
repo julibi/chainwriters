@@ -1,7 +1,7 @@
 import React, { ChangeEvent, FormEvent } from 'react';
 import Image from 'next/image';
 import styled from 'styled-components';
-import { ButtonsWrapper, FadeIn, InputName, Wrapper } from '../../pages/create';
+import { ButtonsWrapper, FadeIn, Wrapper } from '../../pages/create';
 import {
   BASE_BORDER_RADIUS,
   BG_NORMAL,

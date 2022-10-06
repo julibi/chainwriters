@@ -52,6 +52,7 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
     }: ConfigureProjectArgs) => {
       try {
         setConfigureStatus('confirming');
+
         imgHash = imgHash.length ? imgHash : DEFAULT_COVER_IMAGE_IPFS_HASH;
         const Tx = await mpManager.configureProjectDetails(
           projectId,
