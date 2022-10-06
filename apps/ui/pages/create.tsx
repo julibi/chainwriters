@@ -390,7 +390,7 @@ const Create = () => {
       await startAuctions({
         projectId,
         amountForCreator: authorMintInput,
-        initialMintPrice: BigNumber.from(firstEdMaxAmount.toString()),
+        initialMintPrice: parseEther(firstEdMintPrice),
         onSuccess: () => router.push(`projects/${projectId}`),
       });
     },
