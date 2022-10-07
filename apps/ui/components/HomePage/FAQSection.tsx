@@ -32,7 +32,24 @@ const FAQSection = () => {
       <MoreDetailsWrapper>
         <MoreDetails title={'When will Moonpage launch?'}>
           <>
-            <p>The Mainnet launch is planned for the end of September 2022.</p>
+            <p>
+              The launch on Polygon Pos is planned for the beginning of October
+              2022.
+            </p>
+          </>
+        </MoreDetails>
+        <br></br>
+        <MoreDetails
+          title={
+            'When will the NFT creation be publicly available to everyone?'
+          }
+        >
+          <>
+            <p>
+              Currently only addresses on the whitelist can create projects.
+              Join us on telegram to get on it! We plan to make the Moonpage NFT
+              creation publicly available for everyone end of October 2022.
+            </p>
           </>
         </MoreDetails>
         <br></br>
@@ -61,25 +78,6 @@ const FAQSection = () => {
                 Coinbase
               </LinkWrapper>
               .
-            </p>
-          </>
-        </MoreDetails>
-        <br></br>
-        <MoreDetails title={'What are NFTs?'}>
-          <>
-            <p>
-              If you haven't heard of NFTs yet,{' '}
-              <LinkWrapper url="https://www.theverge.com/22310188/nft-explainer-what-is-blockchain-crypto-art-faq">
-                this
-              </LinkWrapper>{' '}
-              is a great introduction.
-              <br />
-              If you like a slightly more in depth technical introduction, we
-              comment{' '}
-              <LinkWrapper url="https://blog.opensea.io/guides/non-fungible-tokens/">
-                this
-              </LinkWrapper>{' '}
-              read.
             </p>
           </>
         </MoreDetails>

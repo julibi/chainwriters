@@ -155,8 +155,8 @@ const About = () => {
         </QAWrapper>
         <QAWrapper>
           <SubHeader>Why Moonpage?</SubHeader>
-          <Text>{`Using Moonpage is easy – there’s a simple creation flow and we also guide you through the steps. If you’re a literal bookworm and don’t know the web3 space so well, no worries, we got ya! It‘s the only all-text NFT launchpad that empowers you to create and sell, all in one place.`}</Text>
-          <Text>{`And you’ll be among kindred spirits – we want to build a strong community since writing can be a very lonely business. So don’t be shy, visit our Discord and Twitter Channel and get connected to other poets, literature lovers and collectors. `}</Text>
+          <Text>{`Using Moonpage is easy – there’s a simple creation flow and we also guide you through the steps. If you’re a literal bookworm and don’t know the web3 space so well, no worries, we got ya! It‘s one of the first all-text NFT launchpads that empowers you to create and sell, all in one place.`}</Text>
+          <Text>{`And you’ll be among kindred spirits – we want to build a strong community since writing can be a very lonely business. So don’t be shy, visit our Telegram and Twitter Channel and get connected to other poets, literature lovers and collectors. `}</Text>
           <Text>{`This is just the beginning of this community. In the future we want to find more innovative ways to connect writers, readers and blockchain technology. Stay tuned and please don't sleep on it!`}</Text>
         </QAWrapper>
         <QAWrapper>
