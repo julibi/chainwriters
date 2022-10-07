@@ -2,6 +2,7 @@ import React from 'react';
 import Image from 'next/image';
 import styled from 'styled-components';
 import { BG_DARK, PLAIN_WHITE, INTER_BOLD, DISABLED_WHITE } from '../themes';
+import LinkWrapper from './LinkWrapper';
 
 const Root = styled.div`
   display: flex;
@@ -53,6 +54,12 @@ const Copyright = styled.div`
 
 const Blockspan = styled.span`
   display: inline-block;
+`;
+
+const GreyWrapper = styled.span`
+  margin-block-start: 1rem;
+  color: ${DISABLED_WHITE};
+  line-break: anywhere;
 `;
 
 const Footer = () => {
@@ -125,6 +132,14 @@ const Footer = () => {
           priority
         />
         <Blockspan>Copyright 2022 By Moonpage</Blockspan>
+        <GreyWrapper>
+          <LinkWrapper
+            url="https://polygonscan.com/address/0x0eC473B1BD821D386cd7209203Ba6826Fd653B96#code"
+            underline={false}
+          >
+            {'Moonpage Collection: 0x0eC473B1BD821D386cd7209203Ba6826Fd653B96'}
+          </LinkWrapper>
+        </GreyWrapper>
       </Copyright>
     </Root>
   );

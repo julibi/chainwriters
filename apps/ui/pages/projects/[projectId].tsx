@@ -30,6 +30,7 @@ import {
   BaseButton,
   INTER_BOLD,
 } from '../../themes';
+import { MOONPAGE_DEV_ADDRESS } from '../../../constants';
 
 const Root = styled.div`
   display: flex;
@@ -529,9 +530,7 @@ const ProjectDetailView = () => {
               <Share>
                 <ShareTitle>Moonpage</ShareTitle>
                 <ShareAddress>
-                  {/* TODO */}
-                  {/* {truncateAddress(project.factory)} */}
-                  replace me
+                  {truncateAddress(MOONPAGE_DEV_ADDRESS)}
                 </ShareAddress>
                 <SharePercentage>15 %</SharePercentage>
               </Share>
