@@ -6,7 +6,7 @@ dataSources:
     name: MoonpageManager
     network: mumbai
     source:
-      address: '0x0ffab0dE416A0ED309dF1E492a9D6aF8EDE2b9cD'
+      address: '0xb506F8587cdb61CE205FA88BdCCcfBd90c588A6e'
       abi: MoonpageManager
       startBlock: 28481928
     mapping:
@@ -58,7 +58,7 @@ dataSources:
     name: MoonpageCollection
     network: mumbai
     source:
-      address: '0xc0702467e7f4160AD747cA59E80DFC9FedA87D1b'
+      address: '0x0eC473B1BD821D386cd7209203Ba6826Fd653B96'
       abi: MoonpageCollection
       startBlock: 28481928
     mapping:
