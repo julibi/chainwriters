@@ -36,9 +36,7 @@ contract MoonpageCollection is
         uint256 tokenId
     );
 
-    constructor() ERC721("Moonpage", "MP") {
-        moonpageDev = msg.sender;
-    }
+    constructor() ERC721("Moonpage", "MP") {}
 
     modifier noNullAddress(address _address) {
         require(_address != address(0), "Invalid 0 address");

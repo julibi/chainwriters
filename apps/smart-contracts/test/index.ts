@@ -1,7 +1,8 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { ethers, upgrades, waffle } from "hardhat";
+import { ethers, waffle } from "hardhat";
+import upgrades from "@openzeppelin/upgrades-core";
 import { expect } from "chai";
-import { formatEther, parseUnits } from "@ethersproject/units";
+import { formatEther } from "@ethersproject/units";
 import {
   MoonpageManager,
   MoonpageManagerTestingV2,
@@ -10,7 +11,6 @@ import {
   BallotsFactory,
   Ballot,
   AuctionsManager,
-  PaymentSplitter,
 } from "../typechain";
 import { BigNumber } from "ethers";
 

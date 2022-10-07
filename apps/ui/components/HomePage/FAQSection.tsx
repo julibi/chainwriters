@@ -46,7 +46,7 @@ const FAQSection = () => {
         >
           <>
             <p>
-              Currently only addresses on the whitelist can create projects.
+              Currently only addresses on the allowlist can create projects.
               Join us on telegram to get on it! We plan to make the Moonpage NFT
               creation publicly available for everyone end of October 2022.
             </p>

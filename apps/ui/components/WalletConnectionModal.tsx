@@ -51,7 +51,8 @@ const ConnectorName = styled.span`
 `;
 
 const WalletConnectionModal = ({ onClose }: WalletConnectionModalProps) => {
-  const [selectedNetwork, setSelectedNetwork] = useState(80001);
+  const isProd = process.env.NX_PUBLIC_ENVIRONMENT !== 'DEV';
+  const [selectedNetwork, setSelectedNetwork] = useState(isProd ? 137 : 80001);
   const { activate, chainId } = useWeb3React();
 
   const setupNetwork = async (chainId: number, onSuccess: () => void) => {
@@ -138,6 +139,7 @@ const WalletConnectionModal = ({ onClose }: WalletConnectionModalProps) => {
         value: chain.name,
         img: chain.icon,
         onSelect: (network: number) => {
+          console.log({ network });
           setSelectedNetwork(network);
         },
       };
@@ -151,8 +153,8 @@ const WalletConnectionModal = ({ onClose }: WalletConnectionModalProps) => {
         <SubHeader>Network</SubHeader>
         <DropdownWrapper>
           <Dropdown
-            preselected={networkDropdownItems[0]}
-            options={networkDropdownItems}
+            preselected={networkDropdownItems[isProd ? 0 : 1]}
+            options={[networkDropdownItems[isProd ? 0 : 1]]}
             width={'100%'}
           />
         </DropdownWrapper>
