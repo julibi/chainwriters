@@ -2,10 +2,8 @@ import { InjectedConnector } from '@web3-react/injected-connector';
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector';
 
 export const RPC_URLS: { [chainId: number]: string } = {
-  1: process.env.NEXT_PUBLIC_ETHEREUM_RPC,
-  42: process.env.NEXT_PUBLIC_RINKEBY_RPC,
-  137: process.env.NEXT_PUBLIC_POLYGON_RPC,
-  80001: process.env.NEXT_PUBLIC_MUMBAI_RPC,
+  137: process.env.NEXT_PUBLIC_RPC_URL_POLYGON_MAINNET_INFURA,
+  80001: process.env.NEXT_PUBLIC_RPC_URL_POLYGON_MUMBAI_INFURA,
 };
 
 export const supportedChainIds = [137, 80001];

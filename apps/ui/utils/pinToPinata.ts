@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const url = process.env.NX_PUBLIC_PINATA_API_URL;
+const url = process.env.NEXT_PUBLIC_PINATA_API_URL;
 const API_KEY = process.env.NEXT_PUBLIC_PINATA_API_KEY;
 const API_SECRET = process.env.NEXT_PUBLIC_PINATA_API_SECRET;
 
