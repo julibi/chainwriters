@@ -2,7 +2,6 @@ import { useMemo } from 'react';
 import { gql, useQuery } from '@apollo/client';
 import { BigNumber } from 'ethers';
 import { ProjectsResult } from '../../providers/projects-provider/projects-provider.types';
-import { DEFAULT_COVER_IMAGE_IPFS_HASH } from '../../constants';
 
 export const GET_ALL_PROJECTS = gql`
   query allProjects {
@@ -51,10 +50,7 @@ export function useGetAllProjects() {
       currentId: BigNumber.from(project.currentId),
       initialMintPrice: BigNumber.from(project.initialMintPrice),
       premintedByAuthor: BigNumber.from(project.premintedByAuthor),
-      imgIpfsHash:
-        project.imgIpfsHash === DEFAULT_COVER_IMAGE_IPFS_HASH
-          ? null
-          : project.imgIpfsHash,
+      imgIpfsHash: project.imgIpfsHash,
     }));
     return formatted;
   }, [data]);
