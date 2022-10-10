@@ -51,7 +51,7 @@ const ConnectorName = styled.span`
 `;
 
 const WalletConnectionModal = ({ onClose }: WalletConnectionModalProps) => {
-  const isProd = process.env.NX_PUBLIC_ENVIRONMENT !== 'DEV';
+  const isProd = process.env.NX_PUBLIC_ENVIRONMENT === 'PROD';
   const [selectedNetwork, setSelectedNetwork] = useState(isProd ? 137 : 80001);
   const { activate, chainId } = useWeb3React();
 
