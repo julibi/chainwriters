@@ -271,6 +271,10 @@ export const ModalText = styled.span`
   display: inline-block;
   margin-block: 1rem 2rem;
   text-align: center;
+
+  @media (max-width: 900px) {
+    margin-block: 1rem 0rem;
+  }
 `;
 
 export const CTAWrapper = styled.div`
