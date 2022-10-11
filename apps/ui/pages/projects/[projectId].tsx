@@ -257,6 +257,10 @@ export const ContentWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  @media (max-width: 900px) {
+    margin: 0;
+  }
 `;
 
 export const ModalHeader = styled.h2`
