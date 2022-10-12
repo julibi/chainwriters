@@ -128,6 +128,7 @@ const PunchLine = styled.span`
 const Name = styled.span`
   display: inline-block;
   font-family: ${INTER_BOLD};
+  color: ${PINK};
 `;
 
 const Field = styled.span`
@@ -213,13 +214,7 @@ const About = () => {
                 />
               </CoFounderImgWrapper>
               <FounderDescription>
-                <StyledLink
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  href="https://www.linkedin.com/in/hyun-kyung-yi-b31448138/"
-                >
-                  <Name>Hyun-Kyung</Name>
-                </StyledLink>
+                <Name>Juli</Name>
                 <Field>Software Engineer</Field>
                 <Field>Founder</Field>
                 <Introduction>
@@ -251,22 +246,20 @@ const About = () => {
                 />
               </CoFounderImgWrapper>
               <FounderDescription>
-                <StyledLink
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  href="https://www.linkedin.com/in/olivia-kuderewski-1a1884173/"
-                >
-                  <Name>Olivia</Name>
-                </StyledLink>
-                <Field>Marketing & Community Manager</Field>
+                <Name>Olivia</Name>
+                <Field>Marketing</Field>
                 <Introduction>
-                  {`Novelist and editor. Her novel `}
+                  Novelist and editor. Her novel{' '}
                   <LinkWrapper url="https://www.amazon.com/-/de/dp/B08S1SKVTB/ref=sr_1_1?__mk_de_DE=%C3%85M%C3%85%C5%BD%C3%95%C3%91&crid=DYX2ZZ93KK68&keywords=lux+olivia+kuderewski&qid=1658173221&sprefix=lux+olivia+kuderewski%2Caps%2C140&sr=8-1">
-                    {'Lux'}
-                  </LinkWrapper>
-                  {` was awarded the Klaus Michael Kühne Prize for the best
-                  German-language debut in 2021. In 2022, her second novel "Haha
-                  Heartbreak" will be published by Voland & Quist.`}
+                    Lux
+                  </LinkWrapper>{' '}
+                  was awarded the Prize of the Harbour Front Literature Festival
+                  for the best German-language debut in 2021. In 2022, her
+                  second novel{' '}
+                  <LinkWrapper url="https://www.amazon.com/-/de/dp/B0B9T2H2ZQ/ref=sr_1_5?keywords=haha+heartbreak&qid=1665576640&qu=eyJxc2MiOiItMC4wMSIsInFzYSI6IjAuMDAiLCJxc3AiOiIwLjAwIn0%3D&sprefix=haha+heart%2Caps%2C161&sr=8-5">
+                    Haha Heartbreak
+                  </LinkWrapper>{' '}
+                  was published by Voland & Quist.
                 </Introduction>
               </FounderDescription>
             </CoFounder>
