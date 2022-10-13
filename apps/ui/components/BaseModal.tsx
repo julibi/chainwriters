@@ -1,4 +1,5 @@
 import { ReactChild } from 'react';
+import { FocusOn } from 'react-focus-on';
 import styled from 'styled-components';
 import {
   BASE_BOX_SHADOW,
@@ -38,7 +39,9 @@ const Root = styled.div`
 const Content = styled.div`
   position: relative;
   border-radius: ${BASE_BORDER_RADIUS};
+  overflow-y: auto;
   max-width: 600px;
+  max-height: 800px;
   background-color: ${BG_NORMAL};
   padding: 1em;
   opacity: 1;
@@ -82,18 +85,21 @@ export interface BaseModalProps {
   children: ReactChild;
 }
 
+// TODO: on outside click
 const BaseModal = ({ children, onClose }: BaseModalProps) => {
   return (
-    <Root>
-      <Content>
-        {onClose && (
-          <CloseButton onClick={onClose}>
-            <CloseCross />
-          </CloseButton>
-        )}
-        {children}
-      </Content>
-    </Root>
+    <FocusOn onEscapeKey={onClose}>
+      <Root>
+        <Content>
+          {onClose && (
+            <CloseButton onClick={onClose}>
+              <CloseCross />
+            </CloseButton>
+          )}
+          {children}
+        </Content>
+      </Root>
+    </FocusOn>
   );
 };
 

@@ -132,6 +132,7 @@ const MintSection = ({
       />
       {showLegalModal && (
         <MintLegalModal
+          amount={amount}
           handleClick={handleMint}
           onClose={() => setShowLegalModal(false)}
           mintStatus={mintStatus}

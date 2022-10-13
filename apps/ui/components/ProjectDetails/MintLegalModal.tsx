@@ -20,6 +20,7 @@ const Wrapper = styled.div`
 `;
 
 type MintLegalModalProps = {
+  amount: number;
   price: BigNumber;
   handleClick: () => void;
   onClose: () => void;
@@ -27,6 +28,7 @@ type MintLegalModalProps = {
 };
 
 const MintLegalModal = ({
+  amount,
   handleClick,
   onClose,
   mintStatus,
@@ -45,7 +47,7 @@ const MintLegalModal = ({
     >
       <Wrapper>
         <Title color={PINK} size="s" padding="0 0 0 1rem">
-          {`Total: ${formatNumber(price)} Matic`}
+          {`Total: ${formatNumber(price)} Matic (Amount: ${amount})`}
         </Title>
         <Checkbox onChange={toggleChecked} check={agreed} readonly={false}>
           <span>
