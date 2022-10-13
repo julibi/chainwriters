@@ -31,6 +31,7 @@ import {
   INTER_BOLD,
 } from '../../themes';
 import { MOONPAGE_DEV_ADDRESS } from '../../../constants';
+import { toast } from 'react-toastify';
 
 const Root = styled.div`
   display: flex;
@@ -383,14 +384,18 @@ const ProjectDetailView = () => {
 
   const fetchCurrentPrice = async () => {
     setIsGettingCurentPrice(true);
-    const price = await auctionsManager.getPrice(
-      projectId,
-      project?.initialMintPrice
-    );
-
-    setCurrentPrice(price);
+    let price: BigInt | undefined;
+    try {
+      price = await auctionsManager.getPrice(
+        projectId,
+        project?.initialMintPrice
+      );
+      setCurrentPrice(price);
+      setShowBuyModal(true);
+    } catch (e) {
+      toast.error(e?.message);
+    }
     setIsGettingCurentPrice(false);
-    setShowBuyModal(true);
   };
 
   const handleClickBuy = useCallback(async () => {
