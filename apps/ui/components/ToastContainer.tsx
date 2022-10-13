@@ -89,7 +89,6 @@ export default styled(ToastContainer)`
   @media only screen and (max-width: 480px) {
     .Toastify__toast {
       margin-bottom: 0;
-      border-radius: 0;
     }
   }
   .Toastify__close-button {
