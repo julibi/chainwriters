@@ -98,6 +98,7 @@ const WalletConnectionModal = ({ onClose }: WalletConnectionModalProps) => {
       await activate(injected, undefined, true);
       onClose();
     } catch (e) {
+      console.log({ e });
       if (
         e.name === 'UnsupportedChainIdError' ||
         e.message.includes('Unsupported chain id:')
@@ -109,6 +110,7 @@ const WalletConnectionModal = ({ onClose }: WalletConnectionModalProps) => {
           onClose();
         });
       } else {
+        console.log({ e });
         toast.error(e.message);
       }
     }
@@ -145,7 +147,7 @@ const WalletConnectionModal = ({ onClose }: WalletConnectionModalProps) => {
       };
     }
   );
-
+  console.log('window?.ethereum: ', window?.ethereum);
   return (
     <BaseModal onClose={onClose}>
       <ContentWrapper>
