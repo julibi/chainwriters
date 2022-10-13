@@ -161,19 +161,20 @@ const WalletConnectionModal = ({ onClose }: WalletConnectionModalProps) => {
           />
         </DropdownWrapper>
         <SubHeader>Wallets</SubHeader>
-        <ConnectionButton onClick={handleMetaMaskClick}>
-          <ConnectorName>METAMASK</ConnectorName>
-          <div>
-            <Image
-              src={'/MetaMask.png'}
-              width={45}
-              height={45}
-              alt="Metamask icon"
-              priority
-            />
-          </div>
-        </ConnectionButton>
-
+        {window?.ethereum && (
+          <ConnectionButton onClick={handleMetaMaskClick}>
+            <ConnectorName>METAMASK</ConnectorName>
+            <div>
+              <Image
+                src={'/MetaMask.png'}
+                width={45}
+                height={45}
+                alt="Metamask icon"
+                priority
+              />
+            </div>
+          </ConnectionButton>
+        )}
         <ConnectionButton onClick={handleWalletConnectClick}>
           <ConnectorName>WALLETCONNECT</ConnectorName>
           <div>

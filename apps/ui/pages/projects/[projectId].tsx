@@ -383,7 +383,7 @@ const ProjectDetailView = () => {
 
   const fetchCurrentPrice = async () => {
     setIsGettingCurentPrice(true);
-    console.log({ auctionsManager, project });
+    console.log({ auctionsManager, project, projectId });
     const price = await auctionsManager.getPrice(
       projectId,
       project?.initialMintPrice
