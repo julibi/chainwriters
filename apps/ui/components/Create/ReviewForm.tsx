@@ -75,19 +75,19 @@ const ReviewForm = ({
           <ReviewItem>{firstEdMintPrice}</ReviewItem>
         </ReviewItemWrapper>
         <CheckboxWrapper>
-          <Checkbox
-            label={`
-            By checking this box, I confirm that this work to be published (including the cover image) does not contain any hateful content,
-            potential copyright issue, plagiarism, illegal or illegitimate content (hereafter defined as "harmful content").
-            Moonpage can freeze the project if it detects any harmful content,
-            which will disable the distribution of any funds and will also disable further minting of the infringing project.
-            In the event of doubt, Moonpage may at its discretion denylist any involved wallet address.
-            Being denylisted prevents this wallet address from any further action on this platform.
-            Neither Moonpage, nor the NFT owners of a project hold any copyright. The copyright remains with the author. 
-            `}
-            onChange={onCheck}
-            check={agreed}
-          />
+          <Checkbox onChange={onCheck} check={agreed}>
+            By checking this box, I confirm that this work to be published
+            (including the cover image) does not contain any hateful content,
+            potential copyright issue, plagiarism, illegal or illegitimate
+            content (hereafter defined as "harmful content"). Moonpage can
+            freeze the project if it detects any harmful content, which will
+            disable the distribution of any funds and will also disable further
+            minting of the infringing project. In the event of doubt, Moonpage
+            may at its discretion denylist any involved wallet address. Being
+            denylisted prevents this wallet address from any further action on
+            this platform. Neither Moonpage, nor the NFT owners of a project
+            hold any copyright. The copyright remains with the author.
+          </Checkbox>
         </CheckboxWrapper>
         <ActionButton
           disabled={!agreed || isPinPending}

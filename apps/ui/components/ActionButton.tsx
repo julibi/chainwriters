@@ -1,6 +1,8 @@
 import { useWeb3React } from '@web3-react/core';
 import React, { FormEvent, useState } from 'react';
+import { toast } from 'react-toastify';
 import styled from 'styled-components';
+import { injected, supportedChainIds } from '../connectors';
 import {
   BaseButton,
   BG_NORMAL,
@@ -8,6 +10,8 @@ import {
   INTER_BOLD,
   PINK,
 } from '../themes';
+import { isProd } from '../utils/isProd';
+import { switchNetwork } from '../utils/switchNetwork';
 import Loading from './Loading';
 import WalletConnectionModal from './WalletConnectionModal';
 
@@ -53,8 +57,9 @@ const ActionButton = ({
   color,
   web3Connectable,
 }: ActionButtonTypes) => {
-  const { account } = useWeb3React();
+  const { activate, account, chainId } = useWeb3React();
   const [showConnectModal, setShowConnectModal] = useState(false);
+
   if (web3Connectable && !account) {
     return (
       <>
@@ -72,18 +77,45 @@ const ActionButton = ({
         )}
       </>
     );
+  } else if (
+    web3Connectable &&
+    account &&
+    window?.ethereum &&
+    !supportedChainIds.includes(chainId)
+  ) {
+    return (
+      <RootButton
+        color={color}
+        onClick={() =>
+          switchNetwork(
+            isProd() ? 137 : 80001,
+            () => toast.error('Switching Network failed.'),
+            async () => {
+              // onSuccess reattempt connect and close modal
+              await activate(injected, undefined, true);
+            }
+          )
+        }
+        disabled={disabled}
+        margin={margin}
+        width={width}
+      >
+        {'Switch network'}
+      </RootButton>
+    );
+  } else {
+    return (
+      <RootButton
+        color={color}
+        onClick={onClick}
+        disabled={disabled}
+        margin={margin}
+        width={width}
+      >
+        {loading ? <Loading height={20} dotHeight={20} /> : text}
+      </RootButton>
+    );
   }
-  return (
-    <RootButton
-      color={color}
-      onClick={onClick}
-      disabled={disabled}
-      margin={margin}
-      width={width}
-    >
-      {loading ? <Loading height={20} dotHeight={20} /> : text}
-    </RootButton>
-  );
 };
 
 export default ActionButton;

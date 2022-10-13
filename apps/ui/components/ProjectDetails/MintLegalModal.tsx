@@ -8,6 +8,7 @@ import { BigNumber } from 'ethers';
 import { PINK } from '../../themes';
 import { WriteActionStatus } from '../../providers/manager-provider/manager-provider.types';
 import styled from 'styled-components';
+import NextLink from '../NextLink';
 
 const Wrapper = styled.div`
   margin: 2rem;
@@ -46,19 +47,13 @@ const MintLegalModal = ({
         <Title color={PINK} size="s" padding="0 0 0 1rem">
           {`Total: ${formatNumber(price)} Matic`}
         </Title>
-        <Checkbox
-          onChange={toggleChecked}
-          check={agreed}
-          readonly={false}
-          label={`
-          By checking this box, I confirm that Moonpage is not liable for the content of the NFTs on this platform.
-          I am aware that I am solely responsible for this purchase and that the content being represented by the NFT
-          can be changed by the creating wallet address or that the project can be paused or frozen by Moonpage.
-          I assure that I have done my own research and thus want to mint this NFT.
-          Neither Moonpage, nor me as prospective NFT owner hold any copyright. The copyright remains with the author.
-          I am in particular aware that the creator may further publish the content of this project.
-        `}
-        />
+        <Checkbox onChange={toggleChecked} check={agreed} readonly={false}>
+          <span>
+            I have read and understood the
+            <NextLink href="/termsofservice" name="terms of service" />
+            and want to mint this NFT.
+          </span>
+        </Checkbox>
         <ActionButton
           disabled={
             mintStatus === 'confirming' || mintStatus === 'waiting' || !agreed

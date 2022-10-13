@@ -32,6 +32,7 @@ import {
 } from '../../themes';
 import { MOONPAGE_DEV_ADDRESS } from '../../../constants';
 import { toast } from 'react-toastify';
+import NextLink from '../../components/NextLink';
 
 const Root = styled.div`
   display: flex;
@@ -578,19 +579,13 @@ const ProjectDetailView = () => {
               {`In a dutch auction the price keeps going down. Don't miss the
               chance and mint now!`}
             </ModalText>
-            <Checkbox
-              onChange={toggleChecked}
-              check={agreed}
-              readonly={false}
-              label={`
-                By checking this box, I confirm that Moonpage is not liable for the content of the NFTs on this platform.
-                I am aware that I am solely responsible for this purchase and that the content being represented by the NFT
-                can be changed by the creating wallet address or that the project can be paused or frozen by Moonpage.
-                I assure that I have done my own research and thus want to mint this NFT.
-                Neither Moonpage, nor me as prospective NFT owner hold any copyright. The copyright remains with the author.
-                I am in particular aware that the creator may further publish the content of this project.
-              `}
-            />
+            <Checkbox onChange={toggleChecked} check={agreed} readonly={false}>
+              <span>
+                I have read and understood the
+                <NextLink href="/termsofservice" name="terms of service" />
+                and want to mint this NFT.
+              </span>
+            </Checkbox>
             <ActionButton
               disabled={
                 buyStatus === 'confirming' || buyStatus === 'waiting' || !agreed

@@ -1,4 +1,4 @@
-import React, { ChangeEventHandler, useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { BG_NORMAL } from '../themes';
 
@@ -80,14 +80,14 @@ const BlockSpan = styled.span`
 interface CheckboxProps {
   readonly?: boolean;
   check: boolean;
-  label?: string;
+  children?: React.ReactChild;
   onChange?: () => void;
 }
 
 const Checkbox = ({
   readonly = false,
   check,
-  label,
+  children,
   onChange,
 }: CheckboxProps) => {
   const [checked, setChecked] = useState<boolean>(check);
@@ -107,7 +107,7 @@ const Checkbox = ({
           checked={checked}
         />
         <Indicator checked={checked} />
-        {label && <BlockSpan>{label}</BlockSpan>}
+        {children && <BlockSpan>{children}</BlockSpan>}
       </Label>
     </Wrapper>
   );

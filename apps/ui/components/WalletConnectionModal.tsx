@@ -5,7 +5,6 @@ import Image from 'next/image';
 import styled from 'styled-components';
 import {
   injected,
-  RPC_URLS,
   supportedChainIds,
   supportedChainMapping,
   walletconnect,
@@ -13,6 +12,7 @@ import {
 import BaseModal from './BaseModal';
 import { BaseButton, INTER_BOLD } from '../themes';
 import Dropdown from './Dropdown';
+import { switchNetwork } from '../utils/switchNetwork';
 
 type WalletConnectionModalProps = {
   onClose: () => void;
@@ -55,44 +55,6 @@ const WalletConnectionModal = ({ onClose }: WalletConnectionModalProps) => {
   const [selectedNetwork, setSelectedNetwork] = useState(isProd ? 137 : 80001);
   const { activate, chainId } = useWeb3React();
 
-  const setupNetwork = async (chainId: number, onSuccess: () => void) => {
-    //@ts-ignore
-    const provider = window.ethereum;
-    if (provider) {
-      try {
-        await provider.request({
-          method: 'wallet_switchEthereumChain',
-          params: [{ chainId: `0x${chainId.toString(16)}` }],
-        });
-        onSuccess();
-      } catch (switchError) {
-        // This error code indicates that the chain has not been added to MetaMask.
-        // @ts-ignore
-        if (switchError.code === 4902) {
-          try {
-            await provider.request({
-              method: 'wallet_addEthereumChain',
-              params: [
-                {
-                  chainId: `0x${chainId.toString(16)}`,
-                  chainName: supportedChainMapping[chainId].name,
-                  rpcUrls: [RPC_URLS[chainId]],
-                },
-              ],
-            });
-            onSuccess();
-          } catch (addError) {
-            console.error('Failed to setup the network in Metamask:', addError);
-          }
-        } else {
-          // if other than 4902
-          console.log(switchError);
-        }
-      }
-    } else {
-      toast.error('No provider found');
-    }
-  };
   const handleMetaMaskClick = async () => {
     try {
       await activate(injected, undefined, true);
@@ -103,11 +65,15 @@ const WalletConnectionModal = ({ onClose }: WalletConnectionModalProps) => {
         e.message.includes('Unsupported chain id:')
       ) {
         // TODO: close modal on success etc
-        setupNetwork(selectedNetwork, async () => {
-          // onSuccess reattempt connect and close modal
-          await activate(injected, undefined, true);
-          onClose();
-        });
+        switchNetwork(
+          selectedNetwork,
+          () => toast.error('Switching Network failed.'),
+          async () => {
+            // onSuccess reattempt connect and close modal
+            await activate(injected, undefined, true);
+            onClose();
+          }
+        );
       } else {
         toast.error(e.message);
       }
@@ -144,7 +110,7 @@ const WalletConnectionModal = ({ onClose }: WalletConnectionModalProps) => {
       };
     }
   );
-  console.log('window?.ethereum: ', window?.ethereum);
+
   return (
     <BaseModal onClose={onClose}>
       <ContentWrapper>

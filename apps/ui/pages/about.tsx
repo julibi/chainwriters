@@ -78,16 +78,6 @@ const Text = styled.p`
   }
 `;
 
-const MockText = `Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
-nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat,
-sed diam voluptua. At vero eos et accusam et justo duo dolores et ea
-rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem
-ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur
-sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et
-dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam
-et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea
-takimata sanctus est Lorem ipsum dolor sit amet.`;
-
 const CoFounderImgWrapper = styled.div`
   width: 300px;
   height: 300px;
@@ -110,13 +100,6 @@ const FounderDescription = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-`;
-
-const StyledLink = styled.a`
-  color: ${PINK};
-  text-decoration: none;
-  font-family: ${INTER_BOLD};
-  margin-block-end: 1rem;
 `;
 
 const PunchLine = styled.span`
