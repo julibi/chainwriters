@@ -566,7 +566,7 @@ const ProjectDetailView = () => {
             <Title size="m" padding="1rem 0 0 0">
               Current Price:
             </Title>
-            <Title color={PINK} size="m" padding="0 0 0 1rem">{`${formatNumber(
+            <Title color={PINK} size="s" padding="0 0 0 1rem">{`${formatNumber(
               currentPrice
             )} MATIC`}</Title>
             <ModalText>
