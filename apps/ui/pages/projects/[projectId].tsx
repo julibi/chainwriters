@@ -382,7 +382,7 @@ const ProjectDetailView = () => {
     setAgreed(!agreed);
   }, [agreed]);
 
-  const fetchCurrentPrice = async () => {
+  const fetchCurrentPrice = useCallback(async () => {
     setIsGettingCurentPrice(true);
     let price: BigInt | undefined;
     try {
@@ -396,7 +396,7 @@ const ProjectDetailView = () => {
       toast.error(e?.message);
     }
     setIsGettingCurentPrice(false);
-  };
+  }, [auctionsManager, projectId, project?.initialMintPrice]);
 
   const handleClickBuy = useCallback(async () => {
     if (!project?.initialMintPrice) return;
