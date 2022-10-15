@@ -11,7 +11,7 @@ const StyledTitle = styled.h1<TitleTypes>`
   margin: ${({ margin }) => margin ?? '0'};
   padding: ${({ padding }) => padding ?? '1rem'};
   width: ${({ width }) => width ?? '100%'};
-  line-break: anywhere;
+  line-break: lose;
 `;
 
 type TitleProps = {
