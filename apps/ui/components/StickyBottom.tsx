@@ -15,6 +15,10 @@ const Root = styled.div`
   z-index: 1;
 
   ${FadeInBaseAnimation};
+
+  @media (max-width: 900px) {
+    height: 150px;
+  }
 `;
 
 const CloseButton = styled.button`

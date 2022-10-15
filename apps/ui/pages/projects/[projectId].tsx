@@ -586,6 +586,48 @@ const ProjectDetailView = () => {
                 and want to mint this NFT.
               </span>
             </Checkbox>
+            <Checkbox onChange={toggleChecked} check={agreed} readonly={false}>
+              <span>
+                I have read and understood the
+                <NextLink href="/termsofservice" name="terms of service" />
+                and want to mint this NFT.
+              </span>
+            </Checkbox>
+            <Checkbox onChange={toggleChecked} check={agreed} readonly={false}>
+              <span>
+                I have read and understood the
+                <NextLink href="/termsofservice" name="terms of service" />
+                and want to mint this NFT.
+              </span>
+            </Checkbox>
+            <Checkbox onChange={toggleChecked} check={agreed} readonly={false}>
+              <span>
+                I have read and understood the
+                <NextLink href="/termsofservice" name="terms of service" />
+                and want to mint this NFT.
+              </span>
+            </Checkbox>{' '}
+            <Checkbox onChange={toggleChecked} check={agreed} readonly={false}>
+              <span>
+                I have read and understood the
+                <NextLink href="/termsofservice" name="terms of service" />
+                and want to mint this NFT.
+              </span>
+            </Checkbox>
+            <Checkbox onChange={toggleChecked} check={agreed} readonly={false}>
+              <span>
+                I have read and understood the
+                <NextLink href="/termsofservice" name="terms of service" />
+                and want to mint this NFT.
+              </span>
+            </Checkbox>
+            <Checkbox onChange={toggleChecked} check={agreed} readonly={false}>
+              <span>
+                I have read and understood the
+                <NextLink href="/termsofservice" name="terms of service" />
+                and want to mint this NFT.
+              </span>
+            </Checkbox>
             <ActionButton
               disabled={
                 buyStatus === 'confirming' || buyStatus === 'waiting' || !agreed
