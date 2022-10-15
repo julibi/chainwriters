@@ -442,6 +442,15 @@ const ProjectDetailView = () => {
     [project?.initialMintPrice, projectId, refetch, startAuctions]
   );
 
+  // TODO clean up this quickfix
+  // const showBlurb = () => {
+  //   if (typeof blurb === 'string') {
+  //     return
+  //   } else {
+
+  //   }
+  // };
+
   if (!project && !isProjectLoading) {
     return (
       <Root>
@@ -522,7 +531,7 @@ const ProjectDetailView = () => {
               )}
             </InfoRight>
           </MainInfoWrapper>
-          <DescriptionSection>
+          {/* <DescriptionSection>
             <Title>Blurb</Title>
             {blurb ? (
               <RichTextRead text={blurb as Node[]} />
@@ -531,7 +540,7 @@ const ProjectDetailView = () => {
                 <Loading height={20} dotHeight={20} />
               </Description>
             )}
-          </DescriptionSection>
+          </DescriptionSection> */}
           <ShareSection>
             <Title>Contributors</Title>
             <Shares>
