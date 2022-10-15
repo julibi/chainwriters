@@ -12,6 +12,10 @@ const StyledTitle = styled.h1<TitleTypes>`
   padding: ${({ padding }) => padding ?? '1rem'};
   width: ${({ width }) => width ?? '100%'};
   overflow-wrap: break-word;
+
+  @media (max-width: 900px) {
+    padding: 0;
+  }
 `;
 
 type TitleProps = {
