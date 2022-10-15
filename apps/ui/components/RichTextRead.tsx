@@ -5,10 +5,10 @@ import { Node, createEditor, Descendant } from 'slate';
 import { withHistory } from 'slate-history';
 
 const StyledEditable = styled(Editable)`
-  min-height: 500px !important;
-  font-size: 16px;
+  width: 100%;
+  overflow-wrap: break-word;
   margin-block-start: 1rem;
-  overflow-wrap: anywhere;
+  font-size: 16px;
   font-family: monospace;
 `;
 

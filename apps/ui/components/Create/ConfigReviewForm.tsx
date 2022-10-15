@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { Node } from 'slate';
 import Image from 'next/image';
 import {
   BlockSpan,
@@ -11,6 +12,7 @@ import {
 } from '../../pages/create';
 import ActionButton from '../ActionButton';
 import Title from '../Title';
+import RichTextRead from '../RichTextRead';
 
 const FlexContainer = styled.div`
   display: flex;
@@ -50,7 +52,7 @@ const CoverImageReview = styled.div`
 interface ConfigReviewFormProps {
   genre: string;
   subtitle: string;
-  blurb: string;
+  blurb: Node[];
   imgFile: Blob | MediaSource;
   loading: boolean;
   onSubmit: () => void;
@@ -97,7 +99,9 @@ const ConfigReviewForm = ({
             </ReviewItemWrapper>
             <ReviewItemWrapper>
               <BlockSpan>Blurb</BlockSpan>
-              <ReviewItem>{blurbIPFS ? blurb : 'None specified'}</ReviewItem>
+              <ReviewItem>
+                {blurbIPFS ? <RichTextRead text={blurb} /> : 'None specified'}
+              </ReviewItem>
             </ReviewItemWrapper>
           </ReviewItems>
         </FlexContainer>

@@ -1,19 +1,24 @@
-import React, { ChangeEvent } from 'react';
+import React from 'react';
+import styled from 'styled-components';
+import { Node } from 'slate';
 import {
   ButtonsWrapper,
   FadeIn,
   Wrapper,
-  InputName,
   InputDescription,
-  TextInput,
 } from '../../pages/create';
 import ActionButton from '../ActionButton';
 import { StyledInputError } from '../InputField';
 import Title from '../Title';
+import RichText from './RichText';
+
+const RichTextWrapper = styled.section`
+  margin-block-end: 3rem;
+`;
 
 interface BlurbFormProps {
-  blurb: string;
-  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  blurb: Node[];
+  onKeyDown: (val: Node[]) => void;
   onNextStep: () => void;
   onSubmit: () => void;
   pending: boolean;
@@ -22,7 +27,7 @@ interface BlurbFormProps {
 
 const BlurbForm = ({
   blurb,
-  onChange,
+  onKeyDown,
   onNextStep,
   onSubmit,
   pending,
@@ -36,14 +41,11 @@ const BlurbForm = ({
           E.G. short introduction to your project, a summary, the first few
           lines or description of the utility of your NFT.
         </InputDescription>
-        <TextInput
-          style={{ height: '200px' }}
-          value={blurb}
-          // @ts-ignore
-          onChange={onChange}
-        />
+        <RichTextWrapper>
+          <RichText onKeyDown={onKeyDown} />
+        </RichTextWrapper>
         <StyledInputError>
-          {blurb.length < 20 ? 'At least 20 characters.' : ' '}
+          {blurb?.length < 3 ? 'At bit short.' : ' '}
         </StyledInputError>
         <ButtonsWrapper>
           <ActionButton
@@ -59,7 +61,7 @@ const BlurbForm = ({
           />
           <ActionButton
             onClick={onSubmit}
-            disabled={blurb.length < 20 || pending}
+            disabled={!blurb?.length || pending}
             loading={pending}
             margin="2rem 0 0 1rem"
             text="Set Blurb"

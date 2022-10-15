@@ -203,7 +203,7 @@ const Create = () => {
   const [imgFile, setImgFile] = useState(null);
   const [isUploadingImage, setIsUploadingImage] = useState<boolean>(false);
   const [coverImgIPFS, setCoverImgIPFS] = useState<string>('');
-  const [blurb, setBlurb] = useState<string>('');
+  const [blurb, setBlurb] = useState<Node[] | undefined>();
   const [blurbIPFS, setBlurbIPFS] = useState<string>('');
   const [genre, setGenre] = useState('');
   const [subtitle, setSubtitle] = useState<string>('');
@@ -222,7 +222,7 @@ const Create = () => {
     if (
       !subtitle.trim().length &&
       !genre.trim().length &&
-      !blurb.trim().length &&
+      !blurb?.length &&
       !coverImgIPFS.trim().length
     )
       return true;
@@ -501,13 +501,11 @@ const Create = () => {
             {currentStep === 9 && (
               <BlurbForm
                 blurb={blurb}
-                onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                  setBlurb(e.target.value)
-                }
+                onKeyDown={(val: Node[]) => setBlurb(val)}
                 onNextStep={() => setCurrentStep(currentStep + 1)}
                 onSubmit={handleSetBlurb}
                 pending={isPinPending}
-                reset={() => setBlurb('')}
+                reset={() => setBlurb(undefined)}
               />
             )}
             {currentStep === 10 && (

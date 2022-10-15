@@ -75,6 +75,10 @@ const BlockSpan = styled.span`
   margin-inline-start: 1.5rem;
   color: gray;
   font-size: 14px;
+
+  @media (max-width: 900px) {
+    font-size: 10px;
+  }
 `;
 
 interface CheckboxProps {

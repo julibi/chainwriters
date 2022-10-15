@@ -62,7 +62,6 @@ const Flex = styled.div`
 `;
 
 interface AuthorSectionProps {
-  blurb: string;
   currentEdition?: Edition;
   projectData: Project;
   projectId: string;

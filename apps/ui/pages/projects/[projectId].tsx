@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { useWeb3React } from '@web3-react/core';
 import Image from 'next/image';
 import styled from 'styled-components';
+import { Node } from 'slate';
 import { BLURB_FETCH_ERROR } from '../../constants';
 import ActionButton from '../../components/ActionButton';
 import BaseModal from '../../components/BaseModal';
@@ -33,6 +34,7 @@ import {
 import { MOONPAGE_DEV_ADDRESS } from '../../../constants';
 import { toast } from 'react-toastify';
 import NextLink from '../../components/NextLink';
+import RichTextRead from '../../components/RichTextRead';
 
 const Root = styled.div`
   display: flex;
@@ -205,6 +207,7 @@ const Share = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
+  align-items: center;
 `;
 
 const ShareTitle = styled.h5`
@@ -302,7 +305,7 @@ const ProjectDetailView = () => {
     useState<boolean>(false);
   const [showBuyModal, setShowBuyModal] = useState<boolean>(false);
   const [currentPrice, setCurrentPrice] = useState(null);
-  const [blurb, setBlurb] = useState<null | string>(null);
+  const [blurb, setBlurb] = useState<Node[] | string | undefined>();
   const [agreed, setAgreed] = useState<boolean>(false);
 
   useEffect(() => {
@@ -318,7 +321,8 @@ const ProjectDetailView = () => {
           `https://ipfs.io/ipfs/${project.blurbIpfsHash}`
         );
         if (response.ok) {
-          const fetchedBlurb = await response.text();
+          let fetchedBlurb = await response.text();
+          fetchedBlurb = JSON.parse(fetchedBlurb);
           setBlurb(fetchedBlurb);
         } else {
           setBlurb(BLURB_FETCH_ERROR);
@@ -520,9 +524,13 @@ const ProjectDetailView = () => {
           </MainInfoWrapper>
           <DescriptionSection>
             <Title>Blurb</Title>
-            <Description>
-              {blurb ?? <Loading height={20} dotHeight={20} />}
-            </Description>
+            {blurb ? (
+              <RichTextRead text={blurb as Node[]} />
+            ) : (
+              <Description>
+                <Loading height={20} dotHeight={20} />
+              </Description>
+            )}
           </DescriptionSection>
           <ShareSection>
             <Title>Contributors</Title>
@@ -552,7 +560,6 @@ const ProjectDetailView = () => {
           </ShareSection>
           {isAuthor && (
             <AuthorSection
-              blurb={blurb}
               currentEdition={currentEdition}
               projectId={projectId}
               projectData={project}
