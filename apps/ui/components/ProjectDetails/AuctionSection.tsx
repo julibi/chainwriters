@@ -24,17 +24,19 @@ const InfoBlock = styled.div`
 
   @media (max-width: 900px) {
     width: 100%;
-    margin-block-end: 2rem;
+    margin-block: 2rem;
   }
 `;
 
 const FlexWrapper = styled.div`
   display: flex;
   justify-content: space-between;
-  margin-bottom: 2rem;
+  margin-block-end: 2rem;
 
   @media (max-width: 900px) {
     flex-direction: column;
+    margin-block-end: 0;
+    margin-block-start: 2rem;
   }
 `;
 

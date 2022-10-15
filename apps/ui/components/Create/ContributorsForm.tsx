@@ -42,6 +42,10 @@ const ContribInputContainer = styled.div`
   margin-block-end: 1rem;
   display: flex;
   flex-direction: column;
+
+  @media (max-width: 900px) {
+    width: 270px;
+  }
 `;
 
 const FlexContainer = styled.div`
