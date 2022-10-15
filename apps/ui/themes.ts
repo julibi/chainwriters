@@ -9,19 +9,11 @@ export const DISABLED_WHITE = '#808080';
 export const VALID_GREEN = '#19bdb4';
 
 export const BASE_BORDER_RADIUS = '.5em';
-// export const BASE_BOX_SHADOW = `
-//   -5px -6px 9px rgba(125,125,125,0.1),
-//   10px 10px 10px rgba(0,0,0,0.2);
-// `;
+
 export const BASE_BOX_SHADOW = `
   -4px -2px 4px 0px rgba(125,125,125,0.1),
   4px 2px 8px 0px rgba(0,0,0,0.7);
 `;
-
-// export const INSET_BASE_BOX_SHADOW = `
-//   inset -5px -6px 9px rgba(125,125,125,0.1),
-//   inset 10px 10px 10px rgba(0,0,0,0.2);
-// `;
 
 export const INTER_LIGHT = `
   'Inter Light', sans-serif;
@@ -112,6 +104,7 @@ export const BaseInput = styled.input`
   color: ${PLAIN_WHITE};
   background-color: ${BG_NORMAL};
   outline: none;
+  -webkit-box-shadow: ${INSET_BASE_BOX_SHADOW};
 
   ::-webkit-outer-spin-button,
   ::-webkit-inner-spin-button {

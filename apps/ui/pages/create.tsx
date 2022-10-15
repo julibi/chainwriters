@@ -394,7 +394,7 @@ const Create = () => {
         onSuccess: () => router.push(`projects/${projectId}`),
       });
     },
-    [firstEdMaxAmount, projectId, router, startAuctions]
+    [firstEdMintPrice, projectId, router, startAuctions]
   );
 
   return (
