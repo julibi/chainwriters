@@ -32,8 +32,8 @@ export const INTER_BLACK = `
 `;
 
 export const INSET_BASE_BOX_SHADOW = `
-  inset -4px -2px 4px 0px rgba(125,125,125,0.1),
-  inset 4px 2px 8px 0px rgba(0,0,0,0.7);
+  inset -4px -2px 4px 0px rgb(125 125 125 / 10%),
+  inset 4px 2px 8px 0px rgb(0 0 0 / 70%);
 `;
 
 interface BaseButtonProps {
@@ -104,7 +104,6 @@ export const BaseInput = styled.input`
   color: ${PLAIN_WHITE};
   background-color: ${BG_NORMAL};
   outline: none;
-  -webkit-box-shadow: ${INSET_BASE_BOX_SHADOW};
 
   ::-webkit-outer-spin-button,
   ::-webkit-inner-spin-button {
