@@ -55,7 +55,12 @@ export function CollectionProvider({ children }: CollectionProviderProps) {
           // we need a time, because the graph needs some time
           setTimeout(() => {
             setStartAuctionsStatus('success');
-            toast.info(<ToastLink message={'Success!'} />);
+            toast.info(
+              <ToastLink
+                message={'Success!'}
+                linkText="View your NFTs on Opensea"
+              />
+            );
             onSuccess?.();
           }, 10000);
         });
@@ -79,7 +84,12 @@ export function CollectionProvider({ children }: CollectionProviderProps) {
         const Tx = await collection.buy(projectId, { value: currentPrice });
         const { hash } = Tx;
         setBuyStatus('waiting');
-        toast.info(<ToastLink message={'Minting...'} />);
+        toast.info(
+          <ToastLink
+            message={'Minting...'}
+            linkText="View your NFT on Opensea"
+          />
+        );
 
         collection.provider.once(hash, (transaction) => {
           // we need a time, because the graph needs some time
@@ -111,7 +121,12 @@ export function CollectionProvider({ children }: CollectionProviderProps) {
           // we need a time, because the graph needs some time
           setTimeout(() => {
             setMintStatus('success');
-            toast.success(<ToastLink message={'Success!'} />);
+            toast.success(
+              <ToastLink
+                message={'Success!'}
+                linkText="View your NFTs on Opensea"
+              />
+            );
             onSuccess?.();
           }, 13000);
         });

@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import getPolygonScanLink from '../utils/getPolygonScanLink';
+import { isProd } from '../utils/isProd';
 
 export const Link = styled.a`
   color: #232630;
@@ -8,25 +8,25 @@ export const Link = styled.a`
 `;
 
 export interface ToastLinkTypes {
-  hash?: string;
-  chainId?: number | undefined;
   message: string;
-  linkText?: string
+  linkText?: string;
 }
 
-const ToastLink = ({hash, chainId, message, linkText}: ToastLinkTypes) => {
+const ToastLink = ({ message, linkText }: ToastLinkTypes) => {
   return (
     <>
       <p>{`${message}`}</p>
-      {hash && chainId &&<Link
-        rel="noreferrer"
-        target="_blank"
-        href={getPolygonScanLink(hash, chainId)}
-      >
-       { !linkText && 'View on Polygonscan ↗' } 
-      </Link>}
-  </>
-  )
-}
+      {linkText && (
+        <Link
+          rel="noreferrer"
+          target="_blank"
+          href={`https://${!isProd() && 'testnets.'}opensea.io/account`}
+        >
+          {linkText}
+        </Link>
+      )}
+    </>
+  );
+};
 
-export default ToastLink
+export default ToastLink;
