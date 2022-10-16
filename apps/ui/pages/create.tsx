@@ -42,6 +42,7 @@ import Title from '../components/Title';
 import pinToPinata from '../utils/pinToPinata';
 import { useCollection } from '../hooks/collection';
 import { useRouter } from 'next/router';
+import ConfettiCanon from '../components/ConfettiCanon';
 
 const Root = styled.div`
   display: flex;
@@ -208,6 +209,7 @@ const Create = () => {
   const [genre, setGenre] = useState('');
   const [subtitle, setSubtitle] = useState<string>('');
   const [isPinPending, setIsPinPending] = useState<boolean>(false);
+
   const { createProject } = useFactory();
   const {
     configureProject,
@@ -393,6 +395,7 @@ const Create = () => {
           <ProgressBar completed={currentStep ? (currentStep / 14) * 100 : 0} />
         </ProgressBarWrapper>
         <FormWrapper>
+          <ConfettiCanon show={!!projectId} />
           <Form>
             {currentStep === 0 && (
               <NameForm
