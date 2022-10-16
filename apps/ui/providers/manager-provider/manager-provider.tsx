@@ -14,6 +14,7 @@ import ToastLink from '../../components/ToastLink';
 import { Contributor } from '../projects-provider/projects-provider.types';
 import { BigNumber } from 'ethers';
 import { DEFAULT_COVER_IMAGE_IPFS_HASH } from '../../constants';
+import pinToPinata from '../../utils/pinToPinata';
 
 const defaultContext: ManagerApi = {
   configureProject: async () => undefined,
@@ -71,6 +72,12 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
           onSuccess?.();
         };
         mpManager.provider.once(hash, async (transaction) => {
+          try {
+            await pinToPinata(imgHash, projectId, 'image');
+            await pinToPinata(blurbHash, projectId, 'blurb');
+          } catch (e) {
+            // do nothing
+          }
           // we need a timeout, because the graph needs some time
           if (refetchWithTimeout) {
             setTimeout(() => {
@@ -163,7 +170,12 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
           toast.success(<ToastLink message={'Success!'} />);
           onSuccess?.();
         };
-        mpManager.provider.once(hash, (transaction) => {
+        mpManager.provider.once(hash, async (transaction) => {
+          try {
+            await pinToPinata(translationIpfsHash, projectId, 'translation');
+          } catch (e) {
+            // do nothing
+          }
           if (refetchWithTimeout) {
             // we need a timeout, because the graph needs some time
             setTimeout(() => {

@@ -3,9 +3,9 @@ import React, { ChangeEvent, useCallback, useState } from 'react';
 import Image from 'next/image';
 import styled from 'styled-components';
 import { toast } from 'react-toastify';
+import { Node } from 'slate';
 import BaseModal from '../BaseModal';
 import InputField from '../InputField';
-import { TextInput } from '../../pages/create';
 import {
   StyledImageForm,
   DragNDrop,
@@ -18,6 +18,7 @@ import ActionButton from '../ActionButton';
 import Dropdown from '../Dropdown';
 import { GENRES } from '../../constants';
 import Title from '../Title';
+import RichText from '../Create/RichText';
 
 const ContentWrapper = styled.div`
   margin: 2rem;
@@ -58,7 +59,7 @@ const ConfigureModal = ({
   const client = useIpfsClient();
   const [imgBuffer, setImgBuffer] = useState<null | Buffer>(null);
   const [imgFile, setImgFile] = useState(null);
-  const [blurb, setBlurb] = useState<string>('');
+  const [blurb, setBlurb] = useState<Node[] | undefined>();
   const [genre, setGenre] = useState('');
   const [subtitle, setSubtitle] = useState<string>('');
   const [uploadPending, setUploadPending] = useState<boolean>(false);
@@ -86,7 +87,9 @@ const ConfigureModal = ({
         coverImgCID = (await client.add(imgBuffer)).path;
       }
       if (blurb) {
-        blurbCID = (await client.add(blurb)).path;
+        const uploadContent =
+          typeof blurb === 'string' ? blurb : JSON.stringify(blurb);
+        blurbCID = (await client.add(uploadContent)).path;
       }
 
       onConfigure({
@@ -123,14 +126,7 @@ const ConfigureModal = ({
             <Dropdown options={genreOptions} placeholder="Genre" width="100%" />
           </DropdownWrapper>
           <Label>{'Blurb:'}</Label>
-          <TextInput
-            style={{ height: '200px' }}
-            value={blurb}
-            // @ts-ignore
-            onChange={(e: ChangeEvent<HTMLInputElement>) =>
-              setBlurb(e.target.value)
-            }
-          />
+          <RichText onKeyDown={(val: Node[]) => setBlurb(val)} />
           <StyledImageForm>
             <DragNDrop
               onDragOver={(e: any) => {

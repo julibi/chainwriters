@@ -230,32 +230,23 @@ const Create = () => {
   }, [subtitle, genre, blurb, coverImgIPFS]);
 
   const uploadText = useCallback(
-    async (
-      content: Node[] | string,
-      type: 'text' | 'translation' | 'blurb' | 'image'
-    ) => {
+    async (content: Node[] | string) => {
       try {
         const uploadContent =
           typeof content === 'string' ? content : JSON.stringify(content);
         // upload to IPFS
         const added = await client.add(uploadContent);
-
-        // pin data with pinata - for now it is fire and forget
-        if (added.path) {
-          await pinToPinata(added.path, projectId, type, title);
-        }
         return added.path;
       } catch (e) {
-        console.log({ e });
         toast.error('Something went wrong while uploading your text to ipfs.');
       }
     },
-    [client, projectId, title]
+    [client]
   );
 
   const handleCreateProject = useCallback(async () => {
     setIsPinPending(true);
-    const hash = await uploadText(text, 'text');
+    const hash = await uploadText(text);
     setIsPinPending(false);
 
     await createProject({
@@ -283,7 +274,7 @@ const Create = () => {
 
   const handleUpdateTranslation = useCallback(async () => {
     setIsPinPending(true);
-    const hash = await uploadText(translation, 'translation');
+    const hash = await uploadText(translation);
     setIsPinPending(false);
 
     await updateTranslation({
@@ -366,19 +357,16 @@ const Create = () => {
       event.preventDefault();
       const added = await client.add(imgBuffer);
 
-      if (added.path) {
-        await pinToPinata(added.path, projectId, 'image');
-      }
       setCoverImgIPFS(added.path);
       setCurrentStep(currentStep + 1);
       setIsUploadingImage(false);
     },
-    [client, imgBuffer, currentStep, projectId]
+    [client, imgBuffer, currentStep]
   );
 
   const handleSetBlurb = useCallback(async () => {
     setIsPinPending(true);
-    const hash = await uploadText(blurb, 'blurb');
+    const hash = await uploadText(blurb);
     setIsPinPending(false);
 
     setBlurbIPFS(hash);

@@ -258,7 +258,7 @@ const AuthorSection = ({
                   <Checkmark />
                 </Flex>
               ) : (
-                '2) Add Contributors'
+                '2) Add Contributors (Optional)'
               )
             }
             styles={{ marginBlockEnd: '1rem' }}

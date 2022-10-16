@@ -8,6 +8,7 @@ import { toast } from 'react-toastify';
 import ToastLink from '../../components/ToastLink';
 import { WriteActionStatus } from '../manager-provider/manager-provider.types';
 import useMoonpageFactoryContract from '../../hooks/useMoonpageFactoryContract';
+import pinToPinata from '../../utils/pinToPinata';
 
 const defaultContext: FactoryApi = {
   createProject: async () => undefined,
@@ -50,6 +51,11 @@ export function FactoryProvider({ children }: FactoryProviderProps) {
           );
           const projectId = Number(CreationEvent.args.projectId).toString();
 
+          try {
+            await pinToPinata(textIpfsHash, projectId, 'text', title);
+          } catch (e) {
+            // do nothing
+          }
           setCreateProjectStatus('success');
           toast.info(<ToastLink message={'Success!'} />);
           onSuccess?.(projectId);

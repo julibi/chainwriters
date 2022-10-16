@@ -306,6 +306,7 @@ const ProjectDetailView = () => {
   const [showBuyModal, setShowBuyModal] = useState<boolean>(false);
   const [currentPrice, setCurrentPrice] = useState(null);
   const [blurb, setBlurb] = useState<Node[] | string | undefined>();
+  const [isBlurbFetching, setIsBlurbFetching] = useState<boolean>(false);
   const [agreed, setAgreed] = useState<boolean>(false);
 
   useEffect(() => {
@@ -316,6 +317,7 @@ const ProjectDetailView = () => {
 
   const fetchBlurb = useCallback(async () => {
     if (project?.blurbIpfsHash) {
+      setIsBlurbFetching(true);
       try {
         const response = await fetch(
           `https://ipfs.io/ipfs/${project.blurbIpfsHash}`
@@ -324,15 +326,15 @@ const ProjectDetailView = () => {
           let fetchedBlurb = await response.text();
           fetchedBlurb = JSON.parse(fetchedBlurb);
           setBlurb(fetchedBlurb);
+          setIsBlurbFetching(false);
         } else {
           setBlurb(BLURB_FETCH_ERROR);
+          setIsBlurbFetching(false);
         }
       } catch (e) {
-        console.log({ e });
         setBlurb(BLURB_FETCH_ERROR);
+        setIsBlurbFetching(false);
       }
-    } else {
-      setBlurb(BLURB_FETCH_ERROR);
     }
   }, [project]);
 
@@ -442,14 +444,17 @@ const ProjectDetailView = () => {
     [project?.initialMintPrice, projectId, refetch, startAuctions]
   );
 
-  // TODO clean up this quickfix
-  // const showBlurb = () => {
-  //   if (typeof blurb === 'string') {
-  //     return
-  //   } else {
-
-  //   }
-  // };
+  const correctBlurb = () => {
+    if (!blurb) {
+      return null;
+      // the first two project blurbs are string, the rest are jsons
+      // TODO format the first two
+    } else if (['1', '2'].includes(projectId) || blurb === BLURB_FETCH_ERROR) {
+      return <Description>{blurb}</Description>;
+    } else {
+      return <RichTextRead text={blurb as Node[]} />;
+    }
+  };
 
   if (!project && !isProjectLoading) {
     return (
@@ -531,16 +536,18 @@ const ProjectDetailView = () => {
               )}
             </InfoRight>
           </MainInfoWrapper>
-          {/* <DescriptionSection>
-            <Title>Blurb</Title>
-            {blurb ? (
-              <RichTextRead text={blurb as Node[]} />
-            ) : (
-              <Description>
-                <Loading height={20} dotHeight={20} />
-              </Description>
-            )}
-          </DescriptionSection> */}
+          {project?.blurbIpfsHash && (
+            <DescriptionSection>
+              <Title>Blurb</Title>
+              {isBlurbFetching ? (
+                <Description>
+                  <Loading height={20} dotHeight={20} />
+                </Description>
+              ) : (
+                correctBlurb()
+              )}
+            </DescriptionSection>
+          )}
           <ShareSection>
             <Title>Contributors</Title>
             <Shares>
