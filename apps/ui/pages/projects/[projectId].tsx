@@ -21,6 +21,7 @@ import { useGetProject } from '../../hooks/projects/useGetProject';
 import { useGetProjectId } from '../../hooks/projects/useGetProjectId';
 import useAuctionsManager from '../../hooks/useAuctionsManager';
 import { formatNumber } from '../../utils/formatNumber';
+import { isJson } from '../../utils/isJSON';
 import {
   BASE_BORDER_RADIUS,
   BASE_BOX_SHADOW,
@@ -323,12 +324,13 @@ const ProjectDetailView = () => {
         const response = await fetch(
           `https://ipfs.io/ipfs/${project.blurbIpfsHash}`
         );
+
         if (response.ok) {
           let fetchedBlurb = await response.text();
-          fetchedBlurb =
-            typeof fetchedBlurb === 'string'
-              ? fetchedBlurb
-              : JSON.parse(fetchedBlurb);
+          fetchedBlurb = isJson(fetchedBlurb)
+            ? JSON.parse(fetchedBlurb)
+            : fetchedBlurb;
+
           setBlurb(fetchedBlurb);
           setIsBlurbFetching(false);
         } else {
@@ -448,8 +450,7 @@ const ProjectDetailView = () => {
     [project?.initialMintPrice, projectId, refetch, startAuctions]
   );
 
-  const correctBlurb = () => {
-    console.log({ blurb, projectId });
+  const correctBlurb = useCallback(() => {
     if (!blurb) {
       return null;
       // the first two project blurbs are string, the rest are jsons
@@ -459,7 +460,7 @@ const ProjectDetailView = () => {
     } else {
       return <RichTextRead text={blurb as Node[]} />;
     }
-  };
+  }, [blurb, projectId]);
 
   if (!project && !isProjectLoading) {
     return (
