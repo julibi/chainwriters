@@ -21,7 +21,7 @@ import { useGetProject } from '../../hooks/projects/useGetProject';
 import { useGetProjectId } from '../../hooks/projects/useGetProjectId';
 import useAuctionsManager from '../../hooks/useAuctionsManager';
 import { formatNumber } from '../../utils/formatNumber';
-import { isJson } from '../../utils/isJSON';
+import { isJson } from '../../utils/isJson';
 import {
   BASE_BORDER_RADIUS,
   BASE_BOX_SHADOW,
