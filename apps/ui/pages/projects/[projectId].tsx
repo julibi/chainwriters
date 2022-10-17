@@ -326,6 +326,7 @@ const ProjectDetailView = () => {
         console.log({ response });
         if (response.ok) {
           let fetchedBlurb = await response.text();
+          console.log({ fetchedBlurb });
           fetchedBlurb = JSON.parse(fetchedBlurb);
           setBlurb(fetchedBlurb);
           setIsBlurbFetching(false);
