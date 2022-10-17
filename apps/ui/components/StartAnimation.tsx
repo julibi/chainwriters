@@ -19,11 +19,12 @@ const Root = styled.div`
 
 const TypeWriterWrapper = styled.div`
   height: 100%;
-  min-height: 500px;
-  max-width: 600px;
+  max-width: 500px;
+  display: flex;
+  align-items: center;
 
   @media (max-width: 900px) {
-    min-height: 440px;
+    min-height: 300px;
   }
 `;
 
@@ -51,9 +52,7 @@ const StartAnimation = () => {
       <TypeWriterWrapper>
         {shouldStart && (
           <TypeWriter
-            text={
-              'Create and collect text NFTs. Start a literature movement on the blockchain. '
-            }
+            text={'Enter the future of text. Create and collect text NFTs.'}
             shouldErase={false}
             shouldLoop={false}
           />
