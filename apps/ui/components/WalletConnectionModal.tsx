@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useWeb3React } from '@web3-react/core';
 import Image from 'next/image';
@@ -10,9 +10,16 @@ import {
   walletconnect,
 } from '../connectors';
 import BaseModal from './BaseModal';
-import { BaseButton, INTER_BOLD } from '../themes';
+import {
+  BaseButton,
+  BASE_BORDER_RADIUS,
+  INSET_BASE_BOX_SHADOW,
+} from '../themes';
 import Dropdown from './Dropdown';
+import Title from './Title';
 import { switchNetwork } from '../utils/switchNetwork';
+import Checkbox from './Checkbox';
+import NextLink from './NextLink';
 
 type WalletConnectionModalProps = {
   onClose: () => void;
@@ -20,11 +27,10 @@ type WalletConnectionModalProps = {
 
 const ContentWrapper = styled.div`
   margin: 3rem;
-`;
 
-const Header = styled.h2`
-  font-family: ${INTER_BOLD};
-  text-align: center;
+  @media (max-width: 900px) {
+    margin: 1rem;
+  }
 `;
 
 const SubHeader = styled.h3`
@@ -36,6 +42,18 @@ const DropdownWrapper = styled.div`
   margin-block-end: 1.5rem;
 `;
 
+const TermsOfService = styled.div`
+  border-radius: ${BASE_BORDER_RADIUS};
+  box-shadow: ${INSET_BASE_BOX_SHADOW};
+  margin-block-end: 1rem;
+  padding: 1rem;
+
+  :disabled {
+    box-shadow: ${INSET_BASE_BOX_SHADOW};
+    pointer-events: none;
+  }
+`;
+
 const ConnectionButton = styled(BaseButton)`
   width: 100%;
   display: flex;
@@ -44,6 +62,10 @@ const ConnectionButton = styled(BaseButton)`
   height: 60px;
   margin-block-start: 1.5rem;
   padding: 1rem;
+
+  :disabled {
+    opacity: 0.5;
+  }
 `;
 
 const ConnectorName = styled.span`
@@ -53,7 +75,12 @@ const ConnectorName = styled.span`
 const WalletConnectionModal = ({ onClose }: WalletConnectionModalProps) => {
   const isProd = process.env.NX_PUBLIC_ENVIRONMENT === 'PROD';
   const [selectedNetwork, setSelectedNetwork] = useState(isProd ? 137 : 80001);
+  const [isTermsAccepted, setIsTermsAccepted] = useState(false);
   const { activate, chainId } = useWeb3React();
+
+  const toggleTermsAccepted = useCallback(() => {
+    setIsTermsAccepted(!isTermsAccepted);
+  }, [isTermsAccepted]);
 
   const handleMetaMaskClick = async () => {
     try {
@@ -114,10 +141,23 @@ const WalletConnectionModal = ({ onClose }: WalletConnectionModalProps) => {
   return (
     <BaseModal onClose={onClose}>
       <ContentWrapper>
-        <Header>Connect To Your Wallet</Header>
-        <SubHeader>Network</SubHeader>
+        <Title size="m">Connect To Your Wallet</Title>
+        <TermsOfService>
+          <Checkbox
+            onChange={toggleTermsAccepted}
+            check={isTermsAccepted}
+            readonly={false}
+          >
+            <span>
+              By connecting your wallet and using the Moonpage website, you
+              agree to our
+              <NextLink href="/termsofservice" name="Terms of Service." />
+            </span>
+          </Checkbox>
+        </TermsOfService>
         <DropdownWrapper>
           <Dropdown
+            isDisabled
             preselected={networkDropdownItems[isProd ? 0 : 1]}
             options={[networkDropdownItems[isProd ? 0 : 1]]}
             width={'100%'}
@@ -125,26 +165,32 @@ const WalletConnectionModal = ({ onClose }: WalletConnectionModalProps) => {
         </DropdownWrapper>
         <SubHeader>Wallets</SubHeader>
         {window?.ethereum && (
-          <ConnectionButton onClick={handleMetaMaskClick}>
+          <ConnectionButton
+            disabled={!isTermsAccepted}
+            onClick={handleMetaMaskClick}
+          >
             <ConnectorName>METAMASK</ConnectorName>
             <div>
               <Image
                 src={'/MetaMask.png'}
-                width={45}
-                height={45}
+                width={36}
+                height={36}
                 alt="Metamask icon"
                 priority
               />
             </div>
           </ConnectionButton>
         )}
-        <ConnectionButton onClick={handleWalletConnectClick}>
+        <ConnectionButton
+          disabled={!isTermsAccepted}
+          onClick={handleWalletConnectClick}
+        >
           <ConnectorName>WALLETCONNECT</ConnectorName>
           <div>
             <Image
               src={'/WalletConnect.png'}
-              width={50}
-              height={35}
+              width={40}
+              height={25}
               alt="Walletconnect icon"
               priority
             />

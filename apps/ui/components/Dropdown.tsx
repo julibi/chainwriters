@@ -82,9 +82,11 @@ interface DropdownProps {
   preselected?: OptionType;
   width?: string | number;
   placeholder?: string;
+  isDisabled?: boolean;
 }
 
 const Dropdown = ({
+  isDisabled,
   options,
   preselected,
   placeholder,
@@ -113,14 +115,19 @@ const Dropdown = ({
   }, []);
 
   return (
-    <Root onClick={toggleDropdown} ref={ref} width={width}>
+    <Root
+      disabled={isDisabled}
+      onClick={toggleDropdown}
+      ref={ref}
+      width={width}
+    >
       {selected ? (
         <FlexContainer>
           {selected.img && (
             <ImageWrapper>
               <Image
-                height={'12px'}
-                width={'16px'}
+                height={'16px'}
+                width={'20px'}
                 src={`/${selected.img}`}
                 alt={selected.value}
               />
@@ -131,14 +138,16 @@ const Dropdown = ({
       ) : (
         placeholder ?? 'Filter'
       )}
-      <ArrowDown>
-        <Image
-          height={'12px'}
-          width={'16px'}
-          src={'/ArrowDown.svg'}
-          alt={'ArrowDown'}
-        />
-      </ArrowDown>
+      {!isDisabled && (
+        <ArrowDown>
+          <Image
+            height={'12px'}
+            width={'16px'}
+            src={'/ArrowDown.svg'}
+            alt={'ArrowDown'}
+          />
+        </ArrowDown>
+      )}
       {showDropdown && (
         <Options>
           {options.map((opt) => (
@@ -152,8 +161,8 @@ const Dropdown = ({
               {opt.img && (
                 <ImageWrapper>
                   <Image
-                    height={'12px'}
-                    width={'16px'}
+                    height={'16px'}
+                    width={'20px'}
                     src={`/${opt.img}`}
                     alt={opt.value}
                   />

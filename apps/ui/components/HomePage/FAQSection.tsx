@@ -30,28 +30,12 @@ const FAQSection = () => {
       <Title>FAQ</Title>
       <br></br>
       <MoreDetailsWrapper>
-        <MoreDetails title={'When will Moonpage launch?'}>
+        <MoreDetails title={'When did Moonpage launch?'}>
           <>
-            <p>
-              The launch on Polygon Pos is planned for the beginning of October
-              2022.
-            </p>
+            <p>The launch on Polygon Pos was in October 17th 2022.</p>
           </>
         </MoreDetails>
         <br></br>
-        <MoreDetails
-          title={
-            'When will the NFT creation be publicly available to everyone?'
-          }
-        >
-          <>
-            <p>
-              Currently only addresses on the allowlist can create projects.
-              Join us on telegram to get on it! We plan to make the Moonpage NFT
-              creation publicly available for everyone end of October 2022.
-            </p>
-          </>
-        </MoreDetails>
         <br></br>
         <MoreDetails title={'What do I need to interact with the platform?'}>
           <>

@@ -131,7 +131,7 @@ const Footer = () => {
           alt="moonpage"
           priority
         />
-        <Blockspan>Copyright 2022 By Moonpage</Blockspan>
+        <Blockspan>© 2022 Moonpage. All rights reserved.</Blockspan>
         <GreyWrapper>
           <LinkWrapper
             url="https://polygonscan.com/address/0x0eC473B1BD821D386cd7209203Ba6826Fd653B96#code"
