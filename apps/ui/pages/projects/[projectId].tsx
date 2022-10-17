@@ -445,6 +445,7 @@ const ProjectDetailView = () => {
   );
 
   const correctBlurb = () => {
+    console.log({ blurb, projectId });
     if (!blurb) {
       return null;
       // the first two project blurbs are string, the rest are jsons
