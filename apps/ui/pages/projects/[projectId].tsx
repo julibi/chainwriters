@@ -318,10 +318,12 @@ const ProjectDetailView = () => {
   const fetchBlurb = useCallback(async () => {
     if (project?.blurbIpfsHash) {
       setIsBlurbFetching(true);
+      console.log(project.blurbIpfsHash);
       try {
         const response = await fetch(
           `https://ipfs.io/ipfs/${project.blurbIpfsHash}`
         );
+        console.log({ response });
         if (response.ok) {
           let fetchedBlurb = await response.text();
           fetchedBlurb = JSON.parse(fetchedBlurb);
@@ -332,6 +334,7 @@ const ProjectDetailView = () => {
           setIsBlurbFetching(false);
         }
       } catch (e) {
+        console.log({ e });
         setBlurb(BLURB_FETCH_ERROR);
         setIsBlurbFetching(false);
       }
