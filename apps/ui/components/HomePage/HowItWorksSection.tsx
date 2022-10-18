@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import ReactPlayer from 'react-player';
 import styled from 'styled-components';
+import Image from 'next/image';
 import {
   BaseButton,
   BASE_BORDER_RADIUS,
@@ -10,6 +10,7 @@ import {
   PINK,
   PLAIN_WHITE,
   INTER_BOLD,
+  StyledLink,
 } from '../../themes';
 import Title from '../Title';
 
@@ -115,15 +116,6 @@ const InstructionDescription = styled.span`
   }
 `;
 
-const VideoWrapper = styled.div`
-  width: 500px;
-  margin: 0 auto;
-
-  @media (max-width: 900px) {
-    width: 100%;
-  }
-`;
-
 interface InstructionCompProps {
   index: number;
   onClick: (number) => void;
@@ -131,16 +123,6 @@ interface InstructionCompProps {
   title: string;
   description: string[];
 }
-
-const Video = styled(ReactPlayer)`
-  width: 500px !important;
-  height: 100% !important;
-  display: inline-block;
-
-  @media (max-width: 900px) {
-    width: 100% !important;
-  }
-`;
 
 const Collectors = styled(Authors)`
   margin-inline-start: 2rem;
@@ -196,6 +178,18 @@ const HowItWorksSection = () => {
   return (
     <Root id="howitworks">
       <Title>How does it work?</Title>
+      <StyledLink href="https://docs.moonpage.io/moonpage-docs/tutorials">
+        <Title size="m">
+          {`Step by step guide   `}
+          <Image
+            height={'34px'}
+            width={'30px'}
+            src={'/Docs.svg'}
+            alt={'Team'}
+            priority
+          />
+        </Title>
+      </StyledLink>
       <Content>
         <NavButton disabled>Creators</NavButton>
         <Wrapper>
@@ -207,7 +201,6 @@ const HowItWorksSection = () => {
               title="Create Your Project"
               // you don't have a wallet yet?
               // don't have MATIC yet?
-              // why polygon? coz cheap, fast and secure - might launch on more networks in the future
               description={[
                 `After connecting your wallet, go to the Create tab. Set the title, the text and the amount of NFTs in your first edition (Genesis Edition) – we guide you through the process step by step. You will find your project under the "Bookshelf“ tab later.`,
               ]}

@@ -93,20 +93,20 @@ const Footer = () => {
           />
           <SocialMediaName>Telegram</SocialMediaName>
         </SocialMediaLinkWrapper>
-        {/* <SocialMediaLinkWrapper
+        <SocialMediaLinkWrapper
           target="_blank"
           rel="noopener noreferrer"
-          href="https://medium.com/moonpage"
+          href="https://docs.moonpage.io"
         >
           <Image
             height={'30px'}
             width={'28px'}
-            src={'/Medium.svg'}
+            src={'/Docs.svg'}
             alt={'Twitter'}
             priority
           />
-          <SocialMediaName>Medium</SocialMediaName>
-        </SocialMediaLinkWrapper> */}
+          <SocialMediaName>Docs</SocialMediaName>
+        </SocialMediaLinkWrapper>
         <SocialMediaLinkWrapper
           target="_self"
           rel="noopener noreferrer"

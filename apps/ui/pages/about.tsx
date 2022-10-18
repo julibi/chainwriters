@@ -1,7 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import styled from 'styled-components';
-import { PINK, INTER_BOLD } from '../themes';
+import { PINK, INTER_BOLD, StyledLink } from '../themes';
 import LinkWrapper from '../components/LinkWrapper';
 import Title from '../components/Title';
 
@@ -102,12 +102,6 @@ const FounderDescription = styled.div`
   align-items: center;
 `;
 
-const PunchLine = styled.span`
-  font-size: 24px;
-  text-align: left;
-  line-height: 2;
-`;
-
 const Name = styled.span`
   display: inline-block;
   font-family: ${INTER_BOLD};
@@ -130,6 +124,12 @@ const About = () => {
     <Root>
       <Title>About</Title>
       <Content>
+        <StyledLink href="https://docs.moonpage.io/">
+          <Title size="m" color={PINK}>
+            Read the Moonpage Light Paper
+          </Title>
+        </StyledLink>
+
         <QAWrapper>
           <SubHeader>Why Text NFTs?</SubHeader>
           <Text>{`What if you, as a writer, could publish your writings, earn the lion share, receive royalties and create communities around your work – all of this settled in a smart contract, where the rules are coded in an immutable ledger?`}</Text>
@@ -145,11 +145,6 @@ const About = () => {
         </QAWrapper>
         <QAWrapper>
           <SubHeader>Our Vision</SubHeader>
-          <Text>
-            {/* sehr beschränkt auf die Autoren */}
-            <PunchLine>The tokenization of literature</PunchLine>
-            <br />
-          </Text>
           <Text>{`As much as we love traditional books, we believe there are many
             forms in which literature can be explored. Publishing houses are
             doing a great job finding and forming talent and maintaining a high
