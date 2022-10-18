@@ -455,12 +455,12 @@ const ProjectDetailView = () => {
       return null;
       // the first two project blurbs are string, the rest are jsons
       // TODO format the first two
-    } else if (['1', '2'].includes(projectId) || blurb === BLURB_FETCH_ERROR) {
+    } else if (typeof blurb === 'string') {
       return <Description>{blurb}</Description>;
     } else {
       return <RichTextRead text={blurb as Node[]} />;
     }
-  }, [blurb, projectId]);
+  }, [blurb]);
 
   if (!project && !isProjectLoading) {
     return (
