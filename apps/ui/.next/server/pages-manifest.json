@@ -1,0 +1,14 @@
+{
+  "/404": "pages/404.html",
+  "/_app": "pages/_app.js",
+  "/_document": "pages/_document.js",
+  "/about": "pages/about.html",
+  "/create": "pages/create.html",
+  "/": "pages/index.html",
+  "/mybookshelf": "pages/mybookshelf.html",
+  "/projects": "pages/projects.html",
+  "/projects/[projectId]": "pages/projects/[projectId].html",
+  "/projects/[projectId]/read": "pages/projects/[projectId]/read.html",
+  "/termsofservice": "pages/termsofservice.html",
+  "/_error": "pages/_error.js"
+}

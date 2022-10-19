@@ -78,7 +78,9 @@ function CustomApp({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
-        <title>Moonpage</title>
+        <title>
+          Moonpage. The future of text. Create and collect text NFTs.
+        </title>
         <meta charSet="utf-8" />
         <meta property="og:locale" content="en_US" />
         <meta
@@ -86,11 +88,15 @@ function CustomApp({ Component, pageProps }: AppProps) {
           content="width=device-width, initial-scale=1, shrink-to-fit=no"
         />
         <meta name="theme-color" content="#1B1E28" />
+        <meta
+          name="description"
+          content="Enter the future of text. Create and collect text NFTs.  Moonpage is a launchpad where creators and writers can turn their projects into text NFTs."
+        ></meta>
         <meta property="og:site_name" content="Moonpage" />
         <meta property="og:title" content="Text NFTs" />
         <meta
           property="og:description"
-          content="Enter the future of text. Create and collect text NFTs. "
+          content="Enter the future of text. Create and collect text NFTs. Moonpage is a launchpad where creators and writers can turn their projects into text NFTs."
         />
         <meta
           property="og:image"
