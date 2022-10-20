@@ -3,7 +3,7 @@ User-agent: *
 Allow: /
 
 # Host
-Host: http://localhost:4200
+Host: https://moonpage.io
 
 # Sitemaps
-Sitemap: http://localhost:4200/sitemap.xml
+Sitemap: https://moonpage.io/sitemap.xml

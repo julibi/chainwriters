@@ -581,12 +581,10 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var styled_components__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(styled_components__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _pages_create__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(3082);
 /* harmony import */ var _ActionButton__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(8639);
-/* harmony import */ var _InputField__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(7289);
-/* harmony import */ var _Title__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(8217);
-/* harmony import */ var _RichText__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(5937);
+/* harmony import */ var _Title__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(8217);
+/* harmony import */ var _RichText__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(5937);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_pages_create__WEBPACK_IMPORTED_MODULE_3__, _ActionButton__WEBPACK_IMPORTED_MODULE_4__]);
 ([_pages_create__WEBPACK_IMPORTED_MODULE_3__, _ActionButton__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
-
 
 
 
@@ -598,10 +596,11 @@ const RichTextWrapper = (styled_components__WEBPACK_IMPORTED_MODULE_2___default(
   margin-block-end: 3rem;
 `;
 const BlurbForm = ({ blurb , onKeyDown , onNextStep , onSubmit , pending , reset  })=>{
+    var ref;
     return(/*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_pages_create__WEBPACK_IMPORTED_MODULE_3__.FadeIn, {
         children: /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)(_pages_create__WEBPACK_IMPORTED_MODULE_3__.Wrapper, {
             children: [
-                /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_Title__WEBPACK_IMPORTED_MODULE_6__/* ["default"] */ .Z, {
+                /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_Title__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z, {
                     size: "m",
                     children: "Blurb"
                 }),
@@ -609,12 +608,9 @@ const BlurbForm = ({ blurb , onKeyDown , onNextStep , onSubmit , pending , reset
                     children: "E.G. short introduction to your project, a summary, the first few lines or description of the utility of your NFT."
                 }),
                 /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(RichTextWrapper, {
-                    children: /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_RichText__WEBPACK_IMPORTED_MODULE_7__/* ["default"] */ .Z, {
+                    children: /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_RichText__WEBPACK_IMPORTED_MODULE_6__/* ["default"] */ .Z, {
                         onKeyDown: onKeyDown
                     })
-                }),
-                /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_InputField__WEBPACK_IMPORTED_MODULE_5__/* .StyledInputError */ .qZ, {
-                    children: (blurb === null || blurb === void 0 ? void 0 : blurb.length) < 3 ? 'At bit short.' : ' '
                 }),
                 /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)(_pages_create__WEBPACK_IMPORTED_MODULE_3__.ButtonsWrapper, {
                     children: [
@@ -631,7 +627,8 @@ const BlurbForm = ({ blurb , onKeyDown , onNextStep , onSubmit , pending , reset
                         }),
                         /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_ActionButton__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .Z, {
                             onClick: onSubmit,
-                            disabled: !(blurb === null || blurb === void 0 ? void 0 : blurb.length) || pending,
+                            // @ts-expect-error type does not exist on Node or Descendant
+                            disabled: !blurb || !((ref = blurb[0]) === null || ref === void 0 ? void 0 : ref.children[0].text.length) || pending,
                             loading: pending,
                             margin: "2rem 0 0 1rem",
                             text: "Set Blurb"
@@ -1876,7 +1873,7 @@ const ReviewForm = ({ agreed , createDao , language , title , text , firstEdMaxA
                             children: "Text"
                         }),
                         /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_pages_create__WEBPACK_IMPORTED_MODULE_3__.ReviewItem, {
-                            children: (0,_utils_serializeMarkdown__WEBPACK_IMPORTED_MODULE_6__/* .serialize */ .q)(text).substring(0, 100)
+                            children: `${(0,_utils_serializeMarkdown__WEBPACK_IMPORTED_MODULE_6__/* .serialize */ .q)(text).substring(0, 100)}...`
                         })
                     ]
                 }),
@@ -2333,7 +2330,7 @@ const SubtitleForm = ({ onChange , onNextStep , subtitle , reset  })=>{
                     children: "Subtitle"
                 }),
                 /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_InputField__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .ZP, {
-                    error: subtitle.length < 3 && 'At least 3 characters.',
+                    error: subtitle.length < 1 && 'At least 1 character.',
                     // @ts-ignore
                     onChange: onChange,
                     value: subtitle
@@ -2403,6 +2400,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_Act
 
 const RichTextWrapper = (styled_components__WEBPACK_IMPORTED_MODULE_2___default().section)`
   margin-block-end: 3rem;
+  width: 90%;
+
+  @media (max-width: 900px) {
+    width: 100%;
+  }
 `;
 const TextForm = ({ onSubmit , onKeyDown , text  })=>{
     return(/*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_pages_create__WEBPACK_IMPORTED_MODULE_4__.FadeIn, {
@@ -2476,6 +2478,7 @@ const FlexColumn = (styled_components__WEBPACK_IMPORTED_MODULE_3___default().div
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
 `;
 const FlexRow = (styled_components__WEBPACK_IMPORTED_MODULE_3___default().div)`
   display: flex;
@@ -2484,6 +2487,11 @@ const FlexRow = (styled_components__WEBPACK_IMPORTED_MODULE_3___default().div)`
 `;
 const RichTextWrapper = (styled_components__WEBPACK_IMPORTED_MODULE_3___default().section)`
   margin-block-start: 3rem;
+  width: 90%;
+
+  @media (max-width: 900px) {
+    width: 100%;
+  }
 `;
 const TranslationForm = ({ onKeyDown , onSubmit , onNextStep , reset , pending , translation  })=>{
     var ref;

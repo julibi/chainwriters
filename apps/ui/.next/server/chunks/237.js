@@ -983,7 +983,7 @@ const ToastLink = ({ message , linkText  })=>{
             linkText && /*#__PURE__*/ jsx_runtime_.jsx(Link, {
                 rel: "noreferrer",
                 target: "_blank",
-                href: `https://${!(0,isProd/* isProd */.B)() && 'testnets.'}opensea.io/account`,
+                href: `https://${(0,isProd/* isProd */.B)() ? '' : 'testnets.'}opensea.io/account`,
                 children: linkText
             })
         ]
@@ -1496,11 +1496,16 @@ function FactoryProvider({ children  }) {
             factory.provider.once(hash, async (transaction)=>{
                 var ref;
                 const receipt = await Tx.wait();
+                const latestProjectId = Number(await factory.projectsIndex()) - 1;
                 const CreationEvent = (ref = receipt.events) === null || ref === void 0 ? void 0 : ref.find((event)=>event.event === 'Created'
                 );
+                // we are fetching a fallback, because configuration fails
+                // guessing this is because the CreationEvent does not contain the project Id somehow
+                // not sure tho
                 const projectId = Number(CreationEvent.args.projectId).toString();
+                const project = projectId || (latestProjectId === null || latestProjectId === void 0 ? void 0 : latestProjectId.toString());
                 try {
-                    await utils_pinToPinata(textIpfsHash, projectId, 'text', title);
+                    await utils_pinToPinata(textIpfsHash, project, 'text', title);
                 } catch (e) {
                 // do nothing
                 }
@@ -1508,7 +1513,7 @@ function FactoryProvider({ children  }) {
                 external_react_toastify_.toast.info(/*#__PURE__*/ jsx_runtime_.jsx(components_ToastLink, {
                     message: 'Success!'
                 }));
-                onSuccess === null || onSuccess === void 0 ? void 0 : onSuccess(projectId);
+                onSuccess === null || onSuccess === void 0 ? void 0 : onSuccess(project);
             });
         } catch (e) {
             console.log({
