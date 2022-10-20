@@ -20,6 +20,7 @@ export const DragNDrop = styled.div`
   width: 100%;
   height: 300px;
   align-items: center;
+  border-radius: ${BASE_BORDER_RADIUS};
   box-shadow: ${INSET_BASE_BOX_SHADOW};
   margin: 0 0 2rem 0;
 

@@ -45,6 +45,10 @@ const DropdownWrapper = styled.div`
   margin-block-end: 3rem;
 `;
 
+const RichTextWrapper = styled.div`
+  margin-block-end: 3rem;
+`;
+
 interface ConfigureModalProps {
   onClose: () => void;
   onConfigure: ({ imgHash, animationHash, blurbHash, genre, subtitle }) => void;
@@ -126,7 +130,9 @@ const ConfigureModal = ({
             <Dropdown options={genreOptions} placeholder="Genre" width="100%" />
           </DropdownWrapper>
           <Label>{'Blurb:'}</Label>
-          <RichText onKeyDown={(val: Node[]) => setBlurb(val)} />
+          <RichTextWrapper>
+            <RichText onKeyDown={(val: Node[]) => setBlurb(val)} />
+          </RichTextWrapper>
           <StyledImageForm>
             <DragNDrop
               onDragOver={(e: any) => {
