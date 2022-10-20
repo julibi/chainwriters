@@ -11,6 +11,10 @@ const Root = styled.div`
   align-items: center;
   background-color: ${BG_DARK};
   padding: 3rem;
+
+  @media (max-width: 900px) {
+    padding: 2rem 1rem;
+  }
 `;
 
 const Content = styled.div`
@@ -93,6 +97,21 @@ const Footer = () => {
           />
           <SocialMediaName>Telegram</SocialMediaName>
         </SocialMediaLinkWrapper>
+        <SocialMediaLinkWrapper
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://www.instagram.com/moonpage.io/"
+        >
+          <Image
+            height={'30px'}
+            width={'30px'}
+            src={'/Instagram.svg'}
+            alt={'Instagram'}
+            priority
+          />
+          <SocialMediaName>Instagram</SocialMediaName>
+        </SocialMediaLinkWrapper>
+
         <SocialMediaLinkWrapper
           target="_blank"
           rel="noopener noreferrer"
