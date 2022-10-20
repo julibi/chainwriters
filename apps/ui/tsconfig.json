@@ -13,6 +13,6 @@
     "isolatedModules": true,
     "incremental": true
   },
-  "include": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx", "next-env.d.ts", "providers/projects-provider/projects-provider.types"],
+  "include": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx", "next-env.d.ts", "providers/projects-provider/projects-provider.types", "../../next-sitemap.config.js", "../../next-sitemap.js"],
   "exclude": ["node_modules"]
 }

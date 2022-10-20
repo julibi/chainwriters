@@ -20,7 +20,7 @@ const ToastLink = ({ message, linkText }: ToastLinkTypes) => {
         <Link
           rel="noreferrer"
           target="_blank"
-          href={`https://${!isProd() && 'testnets.'}opensea.io/account`}
+          href={`https://${isProd() ? '' : 'testnets.'}opensea.io/account`}
         >
           {linkText}
         </Link>

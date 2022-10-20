@@ -46,19 +46,23 @@ export function FactoryProvider({ children }: FactoryProviderProps) {
         toast.info(<ToastLink message={'Setting up project...'} />);
         factory.provider.once(hash, async (transaction) => {
           const receipt = await Tx.wait();
+          const latestProjectId = Number(await factory.projectsIndex()) - 1;
           const CreationEvent = receipt.events?.find(
             (event) => event.event === 'Created'
           );
+          // we are fetching a fallback, because configuration fails
+          // guessing this is because the CreationEvent does not contain the project Id somehow
+          // not sure tho
           const projectId = Number(CreationEvent.args.projectId).toString();
-
+          const project = projectId || latestProjectId?.toString();
           try {
-            await pinToPinata(textIpfsHash, projectId, 'text', title);
+            await pinToPinata(textIpfsHash, project, 'text', title);
           } catch (e) {
             // do nothing
           }
           setCreateProjectStatus('success');
           toast.info(<ToastLink message={'Success!'} />);
-          onSuccess?.(projectId);
+          onSuccess?.(project);
         });
       } catch (e) {
         console.log({ e });

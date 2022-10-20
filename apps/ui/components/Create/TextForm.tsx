@@ -10,6 +10,11 @@ import Title from '../Title';
 
 const RichTextWrapper = styled.section`
   margin-block-end: 3rem;
+  width: 90%;
+
+  @media (max-width: 900px) {
+    width: 100%;
+  }
 `;
 
 interface TextFormProps {

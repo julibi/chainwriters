@@ -44,9 +44,6 @@ const BlurbForm = ({
         <RichTextWrapper>
           <RichText onKeyDown={onKeyDown} />
         </RichTextWrapper>
-        <StyledInputError>
-          {blurb?.length < 3 ? 'At bit short.' : ' '}
-        </StyledInputError>
         <ButtonsWrapper>
           <ActionButton
             onClick={() => {
@@ -61,7 +58,8 @@ const BlurbForm = ({
           />
           <ActionButton
             onClick={onSubmit}
-            disabled={!blurb?.length || pending}
+            // @ts-expect-error type does not exist on Node or Descendant
+            disabled={!blurb || !blurb[0]?.children[0].text.length || pending}
             loading={pending}
             margin="2rem 0 0 1rem"
             text="Set Blurb"

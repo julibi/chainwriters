@@ -15,6 +15,7 @@ const FlexColumn = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
 `;
 
 const FlexRow = styled.div`
@@ -25,6 +26,11 @@ const FlexRow = styled.div`
 
 const RichTextWrapper = styled.section`
   margin-block-start: 3rem;
+  width: 90%;
+
+  @media (max-width: 900px) {
+    width: 100%;
+  }
 `;
 
 interface TranslationFormProps {

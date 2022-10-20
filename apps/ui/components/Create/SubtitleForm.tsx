@@ -22,7 +22,7 @@ const SubtitleForm = ({
       <Wrapper>
         <Title size="m">Subtitle</Title>
         <InputField
-          error={subtitle.length < 3 && 'At least 3 characters.'}
+          error={subtitle.length < 1 && 'At least 1 character.'}
           // @ts-ignore
           onChange={onChange}
           value={subtitle}

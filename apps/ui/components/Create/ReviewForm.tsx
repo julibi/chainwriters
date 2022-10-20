@@ -60,7 +60,7 @@ const ReviewForm = ({
         </ReviewItemWrapper>
         <ReviewItemWrapper>
           <BlockSpan>Text</BlockSpan>
-          <ReviewItem>{serialize(text).substring(0, 100)}</ReviewItem>
+          <ReviewItem>{`${serialize(text).substring(0, 100)}...`}</ReviewItem>
         </ReviewItemWrapper>
         <ReviewItemWrapper>
           <BlockSpan>Language</BlockSpan>
