@@ -11,7 +11,7 @@ const Root = styled.div`
   padding: 3rem;
 
   @media (max-width: 900px) {
-    padding: 0;
+    padding: 1rem;
   }
 `;
 

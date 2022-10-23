@@ -144,8 +144,8 @@ const Footer = () => {
       <Copyright>
         {' '}
         <Image
-          height={'100px'}
-          width={'100px'}
+          height={'130px'}
+          width={'130px'}
           src={`/logo/Logo.svg`}
           alt="moonpage"
           priority
@@ -158,6 +158,9 @@ const Footer = () => {
           >
             {'Moonpage Collection: 0x0eC473B1BD821D386cd7209203Ba6826Fd653B96'}
           </LinkWrapper>
+        </GreyWrapper>
+        <GreyWrapper>
+          <LinkWrapper url="/termsofservice">{'Terms Of Service'}</LinkWrapper>
         </GreyWrapper>
       </Copyright>
     </Root>
