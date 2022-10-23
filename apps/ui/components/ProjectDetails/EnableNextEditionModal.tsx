@@ -68,6 +68,7 @@ const EnableNextEditionModal = ({
             }}
             // TODO: read this from contract
             error={Number(nextEditionMintPrice) < 0.1 && 'Price too low.'}
+            type="number"
           />
           <ActionButton
             disabled={
@@ -78,6 +79,7 @@ const EnableNextEditionModal = ({
             }
             text="UNLOCK"
             loading={pending}
+            margin="1rem 0 0 0"
             onClick={(e) => {
               e.preventDefault();
               onEnableNextEdition(nextEditionMintPrice, nextEditionMaxAmount);

@@ -134,17 +134,14 @@ export function CollectionProvider({ children }: CollectionProviderProps) {
         const { hash } = tx;
         toast.info(<ToastLink message={'Minting...'} />);
         collection.provider.once(hash, (transaction) => {
-          // we need a time, because the graph needs some time
-          setTimeout(() => {
-            setMintStatus('success');
-            toast.success(
-              <ToastLink
-                message={'Success!'}
-                linkText="View your NFTs on Opensea"
-              />
-            );
-            onSuccess?.();
-          }, 13000);
+          setMintStatus('success');
+          toast.success(
+            <ToastLink
+              message={'Success!'}
+              linkText="View your NFTs on Opensea"
+            />
+          );
+          onSuccess?.();
         });
       } catch (e: unknown) {
         setMintStatus('error');

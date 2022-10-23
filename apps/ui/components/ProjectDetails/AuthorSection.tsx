@@ -63,14 +63,14 @@ const Flex = styled.div`
 
 interface AuthorSectionProps {
   currentEdition?: Edition;
-  projectData: Project;
+  project: Project;
   projectId: string;
   refetch: VoidFunction;
 }
 
 const AuthorSection = ({
   currentEdition,
-  projectData,
+  project,
   projectId,
   refetch,
 }: AuthorSectionProps) => {
@@ -93,18 +93,18 @@ const AuthorSection = ({
 
   const configured = useMemo(() => {
     let hasConfigured = false;
-    if (projectData) {
+    if (project) {
       if (
-        projectData.blurbIpfsHash ||
-        projectData.imgIpfsHash ||
-        projectData.genre ||
-        projectData.subtitle
+        project.blurbIpfsHash ||
+        project.imgIpfsHash ||
+        project.genre ||
+        project.subtitle
       ) {
         hasConfigured = true;
       }
     }
     return hasConfigured;
-  }, [projectData]);
+  }, [project]);
 
   const currentEndId = useMemo(
     () => (currentEdition ? Number(currentEdition.endId) : 0),
@@ -112,21 +112,21 @@ const AuthorSection = ({
   );
 
   const canTriggerNextEdition = useMemo(
-    () => Number(projectData.currentId) > currentEndId,
-    [currentEndId, projectData.currentId]
+    () => Number(project?.currentId) > currentEndId,
+    [currentEndId, project?.currentId]
   );
 
   const calculatedProgress = useMemo((): number => {
     let percentage = 0;
-    if (!projectData) return percentage;
+    if (!project) return percentage;
     if (configured) {
       percentage = 50;
     }
-    if (projectData.auctionsStarted) {
+    if (project.auctionsStarted) {
       percentage = 100;
     }
     return percentage;
-  }, [projectData, configured]);
+  }, [project, configured]);
 
   const calculatedProgressIndicationText = useMemo((): string => {
     let text = 'Next: Configure';
@@ -159,7 +159,6 @@ const AuthorSection = ({
           setShowConfigureModal(false);
           refetch();
         },
-        refetchWithTimeout: true,
       }),
     [projectId, refetch, configureProject]
   );
@@ -174,7 +173,6 @@ const AuthorSection = ({
           setShowContributorsModal(false);
           refetch();
         },
-        refetchWithTimeout: true,
       }),
     [projectId, refetch, setContributors]
   );
@@ -184,13 +182,13 @@ const AuthorSection = ({
       await startAuctions({
         projectId,
         amountForCreator,
-        initialMintPrice: projectData.initialMintPrice,
+        initialMintPrice: project.initialMintPrice,
         onSuccess: () => {
           setShowAuthorMintModal(false);
           refetch();
         },
       }),
-    [projectData.initialMintPrice, projectId, refetch, startAuctions]
+    [project.initialMintPrice, projectId, refetch, startAuctions]
   );
 
   const handleEnableNextEdition = useCallback(
@@ -222,7 +220,7 @@ const AuthorSection = ({
         <ActionItems>
           <MoreDetails
             title={
-              configured || projectData.auctionsStarted ? (
+              configured || project.auctionsStarted ? (
                 <Flex>
                   <span>{'1) Configure Project'}</span>
                   <Checkmark />
@@ -239,7 +237,7 @@ const AuthorSection = ({
                 your project more appealing and trustworthy.
               </p>
               <ActionButton
-                disabled={configured || projectData.auctionsStarted}
+                disabled={configured || project.auctionsStarted}
                 text="Configure Your Project"
                 loading={
                   configureStatus == 'confirming' ||
@@ -251,8 +249,7 @@ const AuthorSection = ({
           </MoreDetails>
           <MoreDetails
             title={
-              projectData.auctionsStarted ||
-              projectData.contributors?.length > 0 ? (
+              project.auctionsStarted || project.contributors?.length > 0 ? (
                 <Flex>
                   <span>{'2) Add Contributors'}</span>
                   <Checkmark />
@@ -273,8 +270,8 @@ const AuthorSection = ({
                 disabled={
                   setContributorsStatus === 'confirming' ||
                   setContributorsStatus === 'waiting' ||
-                  projectData.auctionsStarted ||
-                  !!projectData.contributors?.length
+                  project.auctionsStarted ||
+                  !!project.contributors?.length
                 }
                 text="Add Contributors"
                 loading={
@@ -287,11 +284,10 @@ const AuthorSection = ({
           </MoreDetails>
           <MoreDetails
             open={
-              Number(projectData.premintedByAuthor) > 0 &&
-              !projectData.auctionsStarted
+              Number(project.premintedByAuthor) > 0 && !project.auctionsStarted
             }
             title={
-              projectData.auctionsStarted ? (
+              project.auctionsStarted ? (
                 <Flex>
                   <span>{'3) Start Auctions'}</span>
                   <Checkmark />
@@ -311,8 +307,8 @@ const AuthorSection = ({
                 disabled={
                   startAuctionsStatus === 'confirming' ||
                   startAuctionsStatus === 'waiting' ||
-                  projectData.auctionsStarted ||
-                  !!Number(projectData.premintedByAuthor)
+                  project.auctionsStarted ||
+                  !!Number(project.premintedByAuthor)
                 }
                 text="Start Auctions"
                 loading={
@@ -331,7 +327,7 @@ const AuthorSection = ({
   return (
     <Root>
       <Title size="l">Project Settings</Title>
-      {!projectData.auctionsStarted && beforeAuction()}
+      {!project.auctionsStarted && beforeAuction()}
       <Title size="m" margin="3rem 0 3rem 0">
         Editions
       </Title>
@@ -400,7 +396,7 @@ const AuthorSection = ({
             enableNextEditionStatus === 'confirming' ||
             enableNextEditionStatus === 'waiting'
           }
-          project={projectData}
+          project={project}
         />
       )}
     </Root>

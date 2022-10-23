@@ -82,6 +82,16 @@ const MintSection = ({
     }
   }, [currentEdition, amount]);
 
+  const isMinting = useMemo(
+    () => ['confirming', 'waiting'].includes(mintStatus),
+    [mintStatus]
+  );
+
+  const isSoldOut = useMemo(
+    () => totalSupply.eq(maxSupply),
+    [maxSupply, totalSupply]
+  );
+
   const handleIncrement = useCallback(() => {
     setAmount(amount + 1);
   }, [amount]);
@@ -108,7 +118,10 @@ const MintSection = ({
       <Price>{`Price ${price ? formatEther(price) : 0} MATIC`}</Price>
       <PieChart part={Number(totalSupply) ?? 0} whole={Number(maxSupply)} />
       <ControlWrapper>
-        <StyledControl onClick={handleDecrement} disabled={amount === 1}>
+        <StyledControl
+          onClick={handleDecrement}
+          disabled={amount === 1 || isSoldOut}
+        >
           -
         </StyledControl>
         <StyledFakeInput>{amount}</StyledFakeInput>
@@ -117,17 +130,17 @@ const MintSection = ({
           disabled={
             amount === 10 ||
             amount === Number(maxSupply.sub(totalSupply)) ||
-            maxSupply === totalSupply
+            isSoldOut
           }
         >
           +
         </StyledControl>
       </ControlWrapper>
       <ActionButton
-        disabled={amount > Number(maxSupply.sub(totalSupply))}
+        disabled={amount > Number(maxSupply.sub(totalSupply)) || isMinting}
         onClick={() => setShowLegalModal(true)}
         text="MINT"
-        loading={mintStatus === 'confirming' || mintStatus === 'waiting'}
+        loading={isMinting}
         web3Connectable
       />
       {showLegalModal && (

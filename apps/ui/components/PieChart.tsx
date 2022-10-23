@@ -1,7 +1,7 @@
-import React from 'react'
-import styled from 'styled-components'
-import Circle from './Circle'
-import { BASE_BOX_SHADOW, INSET_BASE_BOX_SHADOW, PINK } from '../themes'
+import React from 'react';
+import styled from 'styled-components';
+import Circle from './Circle';
+import { BASE_BOX_SHADOW, INSET_BASE_BOX_SHADOW, PINK } from '../themes';
 
 const Pie = styled.div`
   width: 280px;
@@ -42,12 +42,12 @@ interface PieChart {
 const PieChart = ({ part, whole }: PieChart) => {
   return (
     <Pie>
-      <StyledCircle percentage={parseInt((part/whole * 100).toString())} />
+      <StyledCircle percentage={parseInt(((part / whole) * 100).toString())} />
       <PieHole>
         <PieHoleData>{`${part}/${whole} Minted`}</PieHoleData>
       </PieHole>
     </Pie>
   );
-}
+};
 
-export default PieChart
+export default PieChart;

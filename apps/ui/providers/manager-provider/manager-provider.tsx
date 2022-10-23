@@ -15,7 +15,7 @@ import { Contributor } from '../projects-provider/projects-provider.types';
 import { BigNumber } from 'ethers';
 import { DEFAULT_COVER_IMAGE_IPFS_HASH } from '../../constants';
 import pinToPinata from '../../utils/pinToPinata';
-import { getGasMargin } from 'apps/ui/utils/getGasMargin';
+import { getGasMargin } from '../../utils/getGasMargin';
 
 const defaultContext: ManagerApi = {
   configureProject: async () => undefined,
@@ -50,7 +50,6 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
       subtitle,
       onError,
       onSuccess,
-      refetchWithTimeout = false,
     }: ConfigureProjectArgs) => {
       try {
         setConfigureStatus('confirming');
@@ -90,14 +89,7 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
           } catch (e) {
             // do nothing
           }
-          // we need a timeout, because the graph needs some time
-          if (refetchWithTimeout) {
-            setTimeout(() => {
-              handleSuccess();
-            }, 10000);
-          } else {
-            handleSuccess();
-          }
+          handleSuccess();
         });
       } catch (e) {
         setConfigureStatus('error');
@@ -114,7 +106,6 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
       contributorsList,
       onError,
       onSuccess,
-      refetchWithTimeout = false,
     }: SetContributorsArgs) => {
       const addressesArray = [];
       const sharesArray = [];
@@ -150,14 +141,7 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
           onSuccess?.();
         };
         mpManager.provider.once(hash, (transaction) => {
-          // we need a timeout, because the graph needs some time
-          if (refetchWithTimeout) {
-            setTimeout(() => {
-              handleSuccess();
-            }, 10000);
-          } else {
-            handleSuccess();
-          }
+          handleSuccess();
         });
       } catch (e) {
         setSetContributorsStatus('error');
@@ -174,7 +158,6 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
       translationIpfsHash,
       onError,
       onSuccess,
-      refetchWithTimeout = false,
     }: UpdateTranslationHashArgs) => {
       try {
         setUpdateTranslationStatus('confirming');
@@ -203,14 +186,7 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
           } catch (e) {
             // do nothing
           }
-          if (refetchWithTimeout) {
-            // we need a timeout, because the graph needs some time
-            setTimeout(() => {
-              handleSuccess();
-            }, 10000);
-          } else {
-            handleSuccess();
-          }
+          handleSuccess();
         });
       } catch (e) {
         setUpdateTranslationStatus('error');
@@ -250,12 +226,9 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
         setEnableNextEditionStatus('waiting');
         toast.info(<ToastLink message={'Unlocking next edition...'} />);
         mpManager.provider.once(hash, (transaction) => {
-          // we need a time, because the graph needs some time
-          setTimeout(() => {
-            setEnableNextEditionStatus('success');
-            toast.success(<ToastLink message={'Success!'} />);
-            onSuccess?.();
-          }, 10000);
+          setEnableNextEditionStatus('success');
+          toast.success(<ToastLink message={'Success!'} />);
+          onSuccess?.();
         });
       } catch (e: unknown) {
         setEnableNextEditionStatus('error');

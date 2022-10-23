@@ -37,7 +37,12 @@ import { toast } from 'react-toastify';
 import NextLink from '../../components/NextLink';
 import RichTextRead from '../../components/RichTextRead';
 import useMoonpageManager from '../../hooks/useMoonpageManager';
-import { Project } from '../../providers/projects-provider/projects-provider.types';
+import {
+  Edition,
+  Project,
+} from '../../providers/projects-provider/projects-provider.types';
+import { parseUnits } from 'ethers/lib/utils';
+import { BigNumber } from 'ethers';
 
 const Root = styled.div`
   display: flex;
@@ -351,9 +356,10 @@ const ProjectDetailView = () => {
     }
   }, [project]);
 
-  const fetchAfterBuy = useCallback(async () => {
+  const refetchAuctionStateAndCount = useCallback(async () => {
     const auctionData = await auctionsManager.auctions(projectId);
     const editionData = await mpManager.editions(projectId);
+
     setUpdatedProject({
       ...project,
       auctionsStarted: auctionData.auctionsStarted,
@@ -362,6 +368,39 @@ const ProjectDetailView = () => {
       mintCount: project.mintCount.add(1),
     });
   }, [auctionsManager, mpManager, project, projectId]);
+
+  const refetchCount = useCallback(async () => {
+    const editionData = await mpManager.editions(projectId);
+    setUpdatedProject({
+      ...project,
+      currentId: editionData.currentTokenId,
+      mintCount: editionData.currentEdLastTokenId
+        .sub(editionData.currentTokenId)
+        .sub(1),
+    });
+  }, [mpManager, project, projectId]);
+
+  const refetchEdition = useCallback(async () => {
+    const editionData = await mpManager.editions(projectId);
+    const newEdition = project.editions.length + 1;
+
+    setUpdatedProject({
+      ...project,
+      currentId: editionData.currentTokenId,
+      mintCount: editionData.currentEdLastTokenId.sub(
+        editionData.currentTokenId
+      ),
+      editions: [
+        ...project.editions,
+        {
+          edition: BigNumber.from(newEdition.toString()),
+          startId: editionData.currentTokenId,
+          endId: editionData.currentEdLastTokenId,
+          mintPrice: editionData.mintPrice,
+        } as Edition,
+      ],
+    });
+  }, [mpManager, project, projectId]);
 
   const isAuthor = useMemo(() => {
     if (
@@ -386,15 +425,14 @@ const ProjectDetailView = () => {
     return result;
   }, [project]);
 
-  const currentEdition = useMemo(
-    () =>
-      project
-        ? project.editions.find(
-            (edition) => Number(edition.edition) === project.editions.length
-          )
-        : undefined,
-    [project]
-  );
+  const currentEdition = useMemo(() => {
+    return project
+      ? project.editions.find((edition) => {
+          console.log(Number(edition.edition), project.editions.length);
+          return Number(edition.edition) === project.editions.length;
+        })
+      : undefined;
+  }, [project]);
 
   useEffect(() => {
     if (project) {
@@ -439,11 +477,11 @@ const ProjectDetailView = () => {
       onSuccess: () => {
         setShowBuyModal(false);
         refetch();
-        fetchAfterBuy();
+        refetchAuctionStateAndCount();
         setAgreed(false);
       },
     });
-  }, [buy, project, projectId, refetch, fetchAfterBuy]);
+  }, [buy, project, projectId, refetch, refetchAuctionStateAndCount]);
 
   const handleRetriggerAuction = useCallback(async () => {
     await retriggerAuction({
@@ -547,7 +585,7 @@ const ProjectDetailView = () => {
                 <MintSection
                   currentEdition={currentEdition}
                   project={project}
-                  refetch={refetch}
+                  refetch={refetchCount}
                 />
               )}
               {project.editions?.length === 1 && (
@@ -604,8 +642,8 @@ const ProjectDetailView = () => {
             <AuthorSection
               currentEdition={currentEdition}
               projectId={projectId}
-              projectData={project}
-              refetch={refetch}
+              project={project}
+              refetch={refetchEdition}
             />
           )}
         </>

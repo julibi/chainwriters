@@ -286,7 +286,6 @@ const Create = () => {
         setCurrentStep(currentStep + 1);
       },
       onError: undefined,
-      refetchWithTimeout: false,
     });
   }, [currentStep, projectId, translation, updateTranslation, uploadText]);
 
@@ -302,7 +301,6 @@ const Create = () => {
       onSuccess: () => {
         setCurrentStep(currentStep + 1);
       },
-      refetchWithTimeout: false,
     });
   }, [
     blurbIPFS,
@@ -337,7 +335,6 @@ const Create = () => {
       onSuccess: () => {
         setCurrentStep(currentStep + 1);
       },
-      refetchWithTimeout: false,
     });
   }, [contributorsList, currentStep, projectId, setContributors]);
 
