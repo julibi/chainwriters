@@ -102,12 +102,9 @@ export function CollectionProvider({ children }: CollectionProviderProps) {
         toast.info(<ToastLink message={'Minting...'} />);
 
         collection.provider.once(hash, (transaction) => {
-          // we need a time, because the graph needs some time
-          setTimeout(() => {
-            setBuyStatus('success');
-            toast.success(<ToastLink message={'Success!'} />);
-            onSuccess?.();
-          }, 10000);
+          setBuyStatus('success');
+          toast.success(<ToastLink message={'Success!'} />);
+          onSuccess?.();
         });
       } catch (e: unknown) {
         setBuyStatus('error');

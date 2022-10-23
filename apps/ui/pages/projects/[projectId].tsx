@@ -36,6 +36,8 @@ import { MOONPAGE_DEV_ADDRESS } from '../../../constants';
 import { toast } from 'react-toastify';
 import NextLink from '../../components/NextLink';
 import RichTextRead from '../../components/RichTextRead';
+import useMoonpageManager from '../../hooks/useMoonpageManager';
+import { Project } from '../../providers/projects-provider/projects-provider.types';
 
 const Root = styled.div`
   display: flex;
@@ -293,23 +295,28 @@ const ProjectDetailView = () => {
   const { account } = useWeb3React();
   const projectId = useGetProjectId();
   const {
-    project,
+    project: fetchedProject,
     refetch,
     isLoading: isProjectLoading,
   } = useGetProject(projectId);
   const { buy, buyStatus, startAuctions } = useCollection();
   const auctionsManager = useAuctionsManager();
+  const mpManager = useMoonpageManager();
   const { retriggerAuction } = useAuctions();
   const { allowedToRead } = useShowText(projectId);
   const [coverImgLink, setCoverImgLink] = useState<string>(null);
   const [isGettingCurrentPrice, setIsGettingCurentPrice] =
     useState<boolean>(false);
+  const [updatedProject, setUpdatedProject] = useState<Project | null>(null);
   const [showBuyModal, setShowBuyModal] = useState<boolean>(false);
   const [currentPrice, setCurrentPrice] = useState(null);
   const [blurb, setBlurb] = useState<Node[] | string | undefined>();
   const [isBlurbFetching, setIsBlurbFetching] = useState<boolean>(false);
   const [agreed, setAgreed] = useState<boolean>(false);
-
+  const project = useMemo(
+    () => updatedProject || fetchedProject,
+    [fetchedProject, updatedProject]
+  );
   useEffect(() => {
     if (project?.imgIpfsHash) {
       setCoverImgLink(`https://ipfs.io/ipfs/${project.imgIpfsHash}`);
@@ -343,6 +350,18 @@ const ProjectDetailView = () => {
       }
     }
   }, [project]);
+
+  const fetchAfterBuy = useCallback(async () => {
+    const auctionData = await auctionsManager.auctions(projectId);
+    const editionData = await mpManager.editions(projectId);
+    setUpdatedProject({
+      ...project,
+      auctionsStarted: auctionData.auctionsStarted,
+      auctionsEnded: auctionData.auctionsEnded,
+      currentId: editionData.currentTokenId,
+      mintCount: project.mintCount.add(1),
+    });
+  }, [auctionsManager, mpManager, project, projectId]);
 
   const isAuthor = useMemo(() => {
     if (
@@ -420,10 +439,11 @@ const ProjectDetailView = () => {
       onSuccess: () => {
         setShowBuyModal(false);
         refetch();
+        fetchAfterBuy();
         setAgreed(false);
       },
     });
-  }, [buy, project, projectId, refetch]);
+  }, [buy, project, projectId, refetch, fetchAfterBuy]);
 
   const handleRetriggerAuction = useCallback(async () => {
     await retriggerAuction({
