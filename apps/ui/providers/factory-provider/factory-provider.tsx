@@ -9,6 +9,7 @@ import ToastLink from '../../components/ToastLink';
 import { WriteActionStatus } from '../manager-provider/manager-provider.types';
 import useMoonpageFactoryContract from '../../hooks/useMoonpageFactoryContract';
 import pinToPinata from '../../utils/pinToPinata';
+import { getGasMargin } from 'apps/ui/utils/getGasMargin';
 
 const defaultContext: FactoryApi = {
   createProject: async () => undefined,
@@ -34,12 +35,21 @@ export function FactoryProvider({ children }: FactoryProviderProps) {
     }: CreateArgs) => {
       try {
         setCreateProjectStatus('confirming');
-        const Tx = await factory.createProject(
+        const estimatedGas = await factory.estimateGas.createProject(
           title,
           textIpfsHash,
           originalLanguage,
           initialMintPrice,
           firstEditionAmount
+        );
+        const gasLimit = getGasMargin(estimatedGas);
+        const Tx = await factory.createProject(
+          title,
+          textIpfsHash,
+          originalLanguage,
+          initialMintPrice,
+          firstEditionAmount,
+          { gasLimit }
         );
         const { hash } = Tx;
         setCreateProjectStatus('waiting');

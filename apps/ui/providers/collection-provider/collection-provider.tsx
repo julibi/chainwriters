@@ -11,6 +11,7 @@ import { toast } from 'react-toastify';
 import ToastLink from '../../components/ToastLink';
 import { WriteActionStatus } from '../manager-provider/manager-provider.types';
 import useAuctionsManager from '../../hooks/useAuctionsManager';
+import { getGasMargin } from '../../utils/getGasMargin';
 
 const defaultContext: CollectionApi = {
   startAuctions: async () => undefined,
@@ -43,10 +44,17 @@ export function CollectionProvider({ children }: CollectionProviderProps) {
         setStartAuctionsStatus('confirming');
 
         const discountRate = Number(initialMintPrice.div(60 * 60 * 24));
-        const Tx = await collection.startAuctions(
+        const estimatedGas = await collection.estimateGas.startAuctions(
           projectId,
           amountForCreator,
           discountRate
+        );
+        const gasLimit = getGasMargin(estimatedGas);
+        const Tx = await collection.startAuctions(
+          projectId,
+          amountForCreator,
+          discountRate,
+          { gasLimit }
         );
         const { hash } = Tx;
         setStartAuctionsStatus('waiting');
@@ -81,15 +89,17 @@ export function CollectionProvider({ children }: CollectionProviderProps) {
           projectId,
           initialMintPrice
         );
-        const Tx = await collection.buy(projectId, { value: currentPrice });
+        const estimatedGas = await collection.estimateGas.buy(projectId, {
+          value: currentPrice,
+        });
+        const gasLimit = getGasMargin(estimatedGas);
+        const Tx = await collection.buy(projectId, {
+          value: currentPrice,
+          gasLimit,
+        });
         const { hash } = Tx;
         setBuyStatus('waiting');
-        toast.info(
-          <ToastLink
-            message={'Minting...'}
-            linkText="View your NFT on Opensea"
-          />
-        );
+        toast.info(<ToastLink message={'Minting...'} />);
 
         collection.provider.once(hash, (transaction) => {
           // we need a time, because the graph needs some time
@@ -112,8 +122,17 @@ export function CollectionProvider({ children }: CollectionProviderProps) {
     async ({ projectId, amount, price, onSuccess, onError }: MintArgs) => {
       try {
         setMintStatus('confirming');
+        const estimatedGas = await collection.estimateGas.publicMint(
+          projectId,
+          amount,
+          {
+            value: price,
+          }
+        );
+        const gasLimit = getGasMargin(estimatedGas);
         const tx = await collection.publicMint(projectId, amount, {
           value: price,
+          gasLimit,
         });
         const { hash } = tx;
         toast.info(<ToastLink message={'Minting...'} />);

@@ -8,12 +8,16 @@ import {
   InputDescription,
 } from '../../pages/create';
 import ActionButton from '../ActionButton';
-import { StyledInputError } from '../InputField';
 import Title from '../Title';
 import RichText from './RichText';
 
 const RichTextWrapper = styled.section`
   margin-block-end: 3rem;
+  width: 90%;
+
+  @media (max-width: 900px) {
+    width: 100%;
+  }
 `;
 
 interface BlurbFormProps {
