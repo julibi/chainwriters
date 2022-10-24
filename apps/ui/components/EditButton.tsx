@@ -1,5 +1,6 @@
 import React, { FormEvent } from 'react';
 import EditIcon from '@material-ui/icons/edit';
+import CloseIcon from '@material-ui/icons/close';
 import {
   BaseButton,
   BG_NORMAL,
@@ -10,7 +11,8 @@ import {
 import styled from 'styled-components';
 
 interface EditButtonTypes {
-  disabled: boolean;
+  disabled?: boolean;
+  isEditing: boolean;
   onClick?: (e?: FormEvent<HTMLButtonElement>) => void;
   margin?: string;
   width?: string;
@@ -25,6 +27,9 @@ interface ButtonTypes {
 }
 
 const RootButton = styled(BaseButton)<ButtonTypes>`
+  position: absolute;
+  top: 0;
+  right: 0;
   background-color: ${BG_NORMAL};
   color: ${({ color, disabled }) =>
     disabled ? DISABLED_WHITE : color ? color : PLAIN_WHITE};
@@ -39,21 +44,24 @@ const RootButton = styled(BaseButton)<ButtonTypes>`
 `;
 
 const EditButton = ({
+  isEditing,
   disabled = false,
   onClick,
   margin,
   width,
   color,
-}: EditButtonTypes) => (
-  <RootButton
-    color={color}
-    onClick={onClick}
-    disabled={disabled}
-    margin={margin}
-    width={width}
-  >
-    <EditIcon />
-  </RootButton>
-);
+}: EditButtonTypes) => {
+  return (
+    <RootButton
+      color={color}
+      onClick={onClick}
+      disabled={disabled}
+      margin={margin}
+      width={width}
+    >
+      {isEditing ? <CloseIcon /> : <EditIcon />}
+    </RootButton>
+  );
+};
 
 export default EditButton;

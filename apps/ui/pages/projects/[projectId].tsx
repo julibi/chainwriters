@@ -3,9 +3,6 @@ import { useRouter } from 'next/router';
 import { useWeb3React } from '@web3-react/core';
 import Image from 'next/image';
 import styled from 'styled-components';
-import { Node } from 'slate';
-
-import { BLURB_FETCH_ERROR } from '../../constants';
 import ActionButton from '../../components/ActionButton';
 import BaseModal from '../../components/BaseModal';
 import AuthorSection from '../../components/ProjectDetails/AuthorSection';
@@ -22,7 +19,6 @@ import { useGetProject } from '../../hooks/projects/useGetProject';
 import { useGetProjectId } from '../../hooks/projects/useGetProjectId';
 import useAuctionsManager from '../../hooks/useAuctionsManager';
 import { formatNumber } from '../../utils/formatNumber';
-import { isJson } from '../../utils/isJson';
 import {
   BASE_BORDER_RADIUS,
   BASE_BOX_SHADOW,
@@ -36,14 +32,14 @@ import {
 import { MOONPAGE_DEV_ADDRESS } from '../../../constants';
 import { toast } from 'react-toastify';
 import NextLink from '../../components/NextLink';
-import RichTextRead from '../../components/RichTextRead';
+
 import useMoonpageManager from '../../hooks/useMoonpageManager';
 import {
   Edition,
   Project,
 } from '../../providers/projects-provider/projects-provider.types';
 import { BigNumber } from 'ethers';
-import EditButton from 'apps/ui/components/IconButton';
+import Blurb from './Blurb';
 
 const Root = styled.div`
   display: flex;
@@ -233,39 +229,6 @@ const SharePercentage = styled.span`
   display: inline-block;
 `;
 
-const DescriptionSection = styled.section`
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 90%;
-  line-break: anywhere;
-  max-width: 1200px;
-  color: ${PLAIN_WHITE};
-  margin-block-end: 2rem;
-  padding: 2rem;
-  border-radius: ${BASE_BORDER_RADIUS};
-  box-shadow: ${BASE_BOX_SHADOW};
-
-  animation: fadein 2s;
-
-  @keyframes fadein {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-`;
-
-const Description = styled.p`
-  display: inline-block;
-
-  font-size: 14px;
-  line-height: 170%;
-`;
-
 export const ContentWrapper = styled.div`
   margin: 2rem;
   padding: 0.75rem;
@@ -317,8 +280,6 @@ const ProjectDetailView = () => {
   const [updatedProject, setUpdatedProject] = useState<Project | null>(null);
   const [showBuyModal, setShowBuyModal] = useState<boolean>(false);
   const [currentPrice, setCurrentPrice] = useState(null);
-  const [blurb, setBlurb] = useState<Node[] | string | undefined>();
-  const [isBlurbFetching, setIsBlurbFetching] = useState<boolean>(false);
   const [agreed, setAgreed] = useState<boolean>(false);
   const project = useMemo(
     () => updatedProject || fetchedProject,
@@ -327,34 +288,6 @@ const ProjectDetailView = () => {
   useEffect(() => {
     if (project?.imgIpfsHash) {
       setCoverImgLink(`https://ipfs.io/ipfs/${project.imgIpfsHash}`);
-    }
-  }, [project]);
-
-  const fetchBlurb = useCallback(async () => {
-    if (project?.blurbIpfsHash) {
-      setIsBlurbFetching(true);
-      // todo: cleanup, blurb will always be array of nodes in future
-      try {
-        const response = await fetch(
-          `https://ipfs.io/ipfs/${project.blurbIpfsHash}`
-        );
-
-        if (response.ok) {
-          let fetchedBlurb = await response.text();
-          fetchedBlurb = isJson(fetchedBlurb)
-            ? JSON.parse(fetchedBlurb)
-            : fetchedBlurb;
-
-          setBlurb(fetchedBlurb);
-          setIsBlurbFetching(false);
-        } else {
-          setBlurb(BLURB_FETCH_ERROR);
-          setIsBlurbFetching(false);
-        }
-      } catch (e) {
-        setBlurb(BLURB_FETCH_ERROR);
-        setIsBlurbFetching(false);
-      }
     }
   }, [project]);
 
@@ -430,17 +363,10 @@ const ProjectDetailView = () => {
   const currentEdition = useMemo(() => {
     return project
       ? project.editions.find((edition) => {
-          console.log(Number(edition.edition), project.editions.length);
           return Number(edition.edition) === project.editions.length;
         })
       : undefined;
   }, [project]);
-
-  useEffect(() => {
-    if (project) {
-      fetchBlurb();
-    }
-  }, [project, fetchBlurb]);
 
   const handleClickRead = useCallback(
     (e) => {
@@ -510,18 +436,6 @@ const ProjectDetailView = () => {
     [project?.initialMintPrice, projectId, refetch, startAuctions]
   );
 
-  const correctBlurb = useCallback(() => {
-    if (!blurb) {
-      return null;
-      // the first two project blurbs are string, the rest are jsons
-      // TODO format the first two
-    } else if (typeof blurb === 'string') {
-      return <Description>{blurb}</Description>;
-    } else {
-      return <RichTextRead text={blurb as Node[]} />;
-    }
-  }, [blurb]);
-
   if (!project && !isProjectLoading) {
     return (
       <Root>
@@ -529,6 +443,7 @@ const ProjectDetailView = () => {
       </Root>
     );
   }
+
   return (
     <Root>
       {isProjectLoading ? (
@@ -602,19 +517,13 @@ const ProjectDetailView = () => {
               )}
             </InfoRight>
           </MainInfoWrapper>
-          {project?.blurbIpfsHash && (
-            <DescriptionSection>
-              <Title>Blurb</Title>
-              <EditButton />
-              {isBlurbFetching ? (
-                <Description>
-                  <Loading height={20} dotHeight={20} />
-                </Description>
-              ) : (
-                correctBlurb()
-              )}
-            </DescriptionSection>
-          )}
+          <Blurb
+            blurbIpfsHash={project?.blurbIpfsHash}
+            projectId={projectId}
+            isAllowedToEdit={
+              project?.creator.toLowerCase() === account.toLowerCase()
+            }
+          />
           <ShareSection>
             <Title>Contributors</Title>
             <Shares>

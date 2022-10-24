@@ -16,7 +16,7 @@ import Loading from './Loading';
 import WalletConnectionModal from './WalletConnectionModal';
 
 interface ActionButtonTypes {
-  disabled: boolean;
+  disabled?: boolean;
   loading: boolean;
   onClick?: (e?: FormEvent<HTMLButtonElement>) => void;
   text: string;

@@ -7,6 +7,7 @@ import {
   ManagerProviderProps,
   SetContributorsArgs,
   UpdateTranslationHashArgs,
+  UpdateBlurbHashArgs,
   WriteActionStatus,
 } from './manager-provider.types';
 import { toast } from 'react-toastify';
@@ -26,6 +27,8 @@ const defaultContext: ManagerApi = {
   enableNextEditionStatus: 'idle',
   updateTranslation: async () => undefined,
   updateTranslationStatus: 'idle',
+  updateBlurb: async () => undefined,
+  updateBlurbStatus: 'idle',
 };
 
 export const ManagerContext = createContext(defaultContext);
@@ -36,6 +39,8 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
   const [setContributorsStatus, setSetContributorsStatus] =
     useState<WriteActionStatus>();
   const [updateTranslationStatus, setUpdateTranslationStatus] =
+    useState<WriteActionStatus>();
+  const [updateBlurbStatus, setUpdateBlurbStatus] =
     useState<WriteActionStatus>();
   const [enableNextEditionStatus, setEnableNextEditionStatus] =
     useState<WriteActionStatus>();
@@ -197,6 +202,51 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
     [mpManager]
   );
 
+  const updateBlurb = useCallback(
+    async ({
+      projectId,
+      blurbIpfsHash,
+      onError,
+      onSuccess,
+    }: UpdateBlurbHashArgs) => {
+      try {
+        setUpdateBlurbStatus('confirming');
+        const estimatedGas = await mpManager.estimateGas.updateBlurbIpfsHash(
+          projectId,
+          blurbIpfsHash
+        );
+        const gasLimit = getGasMargin(estimatedGas);
+        const Tx = await mpManager.updateBlurbIpfsHash(
+          projectId,
+          blurbIpfsHash,
+          { gasLimit }
+        );
+        const { hash } = Tx;
+        setUpdateBlurbStatus('waiting');
+        toast.info(<ToastLink message={'Updating Blurb...'} />);
+        const handleSuccess = () => {
+          setUpdateBlurbStatus('success');
+          toast.success(<ToastLink message={'Success!'} />);
+          onSuccess?.();
+        };
+        mpManager.provider.once(hash, async (transaction) => {
+          try {
+            // TODO! Undo the old pinning
+            await pinToPinata(blurbIpfsHash, projectId, 'blurb');
+          } catch (e) {
+            // do nothing
+          }
+          handleSuccess();
+        });
+      } catch (e) {
+        setUpdateBlurbStatus('error');
+        toast.error(<ToastLink message={'Something went wrong!'} />);
+        onError?.(e);
+      }
+    },
+    [mpManager]
+  );
+
   const enableNextEdition = useCallback(
     async ({
       projectId,
@@ -249,6 +299,8 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
       enableNextEditionStatus,
       updateTranslation,
       updateTranslationStatus,
+      updateBlurb,
+      updateBlurbStatus,
     }),
     [
       configureProject,
@@ -259,6 +311,8 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
       setContributorsStatus,
       updateTranslation,
       updateTranslationStatus,
+      updateBlurb,
+      updateBlurbStatus,
     ]
   );
 

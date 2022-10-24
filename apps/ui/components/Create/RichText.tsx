@@ -23,6 +23,7 @@ const StyledEditable = styled(Editable)`
   overflow-wrap: anywhere;
   font-family: monospace;
   font-size: 16px;
+  width: 100%;
 `;
 
 const LIST_TYPES = ['numbered-list', 'bulleted-list'];
@@ -37,15 +38,20 @@ const Toolbar = styled.div`
 
 interface RichTextProps {
   onKeyDown: (val: Node[]) => void;
+  text?: Node[];
 }
 
-const RichText = ({ onKeyDown }: RichTextProps) => {
+const RichText = ({ onKeyDown, text }: RichTextProps) => {
   const renderElement = useCallback((props) => <Element {...props} />, []);
   const renderLeaf = useCallback((props) => <Leaf {...props} />, []);
   const editor = useMemo(() => withHistory(withReact(createEditor())), []);
 
   return (
-    <Slate editor={editor} value={initialValue} onChange={onKeyDown}>
+    <Slate
+      editor={editor}
+      value={(text as Descendant[]) || initialValue}
+      onChange={onKeyDown}
+    >
       <Toolbar>
         <MarkButton format="bold" icon="format_bold" />
         <MarkButton format="italic" icon="format_italic" />
