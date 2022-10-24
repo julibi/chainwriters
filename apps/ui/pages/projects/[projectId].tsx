@@ -4,6 +4,7 @@ import { useWeb3React } from '@web3-react/core';
 import Image from 'next/image';
 import styled from 'styled-components';
 import { Node } from 'slate';
+
 import { BLURB_FETCH_ERROR } from '../../constants';
 import ActionButton from '../../components/ActionButton';
 import BaseModal from '../../components/BaseModal';
@@ -41,8 +42,8 @@ import {
   Edition,
   Project,
 } from '../../providers/projects-provider/projects-provider.types';
-import { parseUnits } from 'ethers/lib/utils';
 import { BigNumber } from 'ethers';
+import EditButton from 'apps/ui/components/IconButton';
 
 const Root = styled.div`
   display: flex;
@@ -233,6 +234,7 @@ const SharePercentage = styled.span`
 `;
 
 const DescriptionSection = styled.section`
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -603,6 +605,7 @@ const ProjectDetailView = () => {
           {project?.blurbIpfsHash && (
             <DescriptionSection>
               <Title>Blurb</Title>
+              <EditButton />
               {isBlurbFetching ? (
                 <Description>
                   <Loading height={20} dotHeight={20} />

@@ -10,7 +10,7 @@ const StyledTitle = styled.h1<TitleTypes>`
   color: ${({ color }) => color ?? PLAIN_WHITE};
   margin: ${({ margin }) => margin ?? '0'};
   padding: ${({ padding }) => padding ?? '1rem'};
-  width: ${({ width }) => width ?? '100%'};
+  width: ${({ width }) => width ?? 'auto'};
   overflow-wrap: break-word;
 
   @media (max-width: 900px) {
