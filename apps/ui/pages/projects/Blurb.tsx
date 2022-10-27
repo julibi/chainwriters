@@ -53,9 +53,6 @@ const RichTextWrapper = styled.div`
   width: 90%;
 `;
 
-// TODO
-// unpin when changing text
-
 const Blurb = ({ blurbIpfsHash, projectId, isAllowedToEdit }) => {
   const { uploadText } = useUploadTextToIpfs();
   const [originalBlurb, setOriginalBlurb] = useState<
@@ -110,8 +107,8 @@ const Blurb = ({ blurbIpfsHash, projectId, isAllowedToEdit }) => {
   }, [blurbIpfsHash, fetchBlurb]);
 
   const handleUpdateBlurb = useCallback(async () => {
+    if (!blurb || !blurbIpfsHash || !projectId) return null;
     const hash = await uploadText(blurb);
-
     await updateBlurb({
       projectId,
       blurbIpfsHash: hash,
@@ -154,7 +151,7 @@ const Blurb = ({ blurbIpfsHash, projectId, isAllowedToEdit }) => {
     }
   }, [blurb, handleUpdateBlurb, isAllowedToEdit, isEditing, updateBlurbStatus]);
 
-  if (!blurbIpfsHash) return;
+  if (!blurbIpfsHash) return null;
   return (
     <DescriptionSection>
       <Title>Blurb</Title>
