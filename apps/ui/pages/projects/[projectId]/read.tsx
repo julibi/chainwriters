@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { truncateAddress } from '../../../components/WalletIndicator';
 import useShowText from '../../../hooks/useShowText';
 import { useGetProjectId } from '../../../hooks/projects';
@@ -16,6 +16,8 @@ import Toggle from '../../../components/Toggle';
 
 import RichTextRead from '../../../components/RichTextRead';
 import Title from '../../../components/Title';
+import { useWeb3React } from '@web3-react/core';
+import RichText from '../../../components/Create/RichText';
 
 const animation = (animationseconds: number) => `
   animation: fadein ${animationseconds}s;
@@ -118,10 +120,20 @@ const ToggleWrapper = styled.div`
 
 const Read = () => {
   const router = useRouter();
+  const { account } = useWeb3React();
   const projectId = useGetProjectId();
   const { allowedToRead, project, text, pending, translation, hasTranslation } =
     useShowText(projectId);
   const [translationOn, setTranslationOn] = useState<boolean>(false);
+  const isAuthor = useMemo(() => {
+    if (
+      allowedToRead &&
+      account?.toLowerCase() === project.creator?.toLowerCase()
+    ) {
+      return true;
+    }
+    return false;
+  }, [allowedToRead, account, project?.creator]);
   const handleClickGoBack = useCallback(
     (e) => {
       e.preventDefault();
@@ -133,6 +145,22 @@ const Read = () => {
   const handleToggle = (checked: boolean) => {
     setTranslationOn(checked);
   };
+
+  const correctText = useCallback(() => {
+    if (text && !translationOn) {
+      if (isAuthor) {
+        return <RichText text={text} onKeyDown={() => {}} />;
+      }
+      return <RichTextRead text={text} />;
+    }
+
+    if (translation && translationOn) {
+      if (isAuthor) {
+        return <RichText text={translation} onKeyDown={() => {}} />;
+      }
+      return <RichTextRead text={translation} />;
+    }
+  }, [isAuthor, text, translation, translationOn]);
 
   if (pending) {
     return (
@@ -191,10 +219,7 @@ const Read = () => {
           )}
         </Wrapper>
       )}
-      <TextWrapper>
-        {text && !translationOn && <RichTextRead text={text} />}
-        {translation && translationOn && <RichTextRead text={translation} />}
-      </TextWrapper>
+      <TextWrapper>{correctText()}</TextWrapper>
     </Root>
   );
 };
