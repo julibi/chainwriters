@@ -521,7 +521,7 @@ const ProjectDetailView = () => {
             blurbIpfsHash={project?.blurbIpfsHash}
             projectId={projectId}
             isAllowedToEdit={
-              project?.creator.toLowerCase() === account.toLowerCase()
+              project?.creator.toLowerCase() === account?.toLowerCase()
             }
           />
           <ShareSection>

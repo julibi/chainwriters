@@ -54,20 +54,27 @@ const RichTextWrapper = styled.div`
 `;
 
 // TODO
-// What if blurb is changed but change not saved? - save two states
 // disable input when uploading
 // unpin when changing text
 
 const Blurb = ({ blurbIpfsHash, projectId, isAllowedToEdit }) => {
   const { uploadText } = useUploadTextToIpfs();
+  const [originalBlurb, setOriginalBlurb] = useState<
+    Node[] | string | undefined
+  >();
+  const [shouldResetToOriginal, setShouldResetToOriginal] =
+    useState<boolean>(true);
   const [blurb, setBlurb] = useState<Node[] | string | undefined>();
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [isBlurbFetching, setIsBlurbFetching] = useState<boolean>(false);
   const { updateBlurb, updateBlurbStatus } = useManager();
 
-  const toggleEditing = useCallback(() => {
+  const handleClickEditButton = useCallback(() => {
+    if (isEditing && shouldResetToOriginal) {
+      setBlurb(originalBlurb);
+    }
     setIsEditing(!isEditing);
-  }, [isEditing]);
+  }, [isEditing, originalBlurb, shouldResetToOriginal]);
 
   const fetchBlurb = useCallback(async () => {
     if (blurbIpfsHash) {
@@ -82,13 +89,16 @@ const Blurb = ({ blurbIpfsHash, projectId, isAllowedToEdit }) => {
             : fetchedBlurb;
 
           setBlurb(fetchedBlurb);
+          setOriginalBlurb(fetchedBlurb);
           setIsBlurbFetching(false);
         } else {
           setBlurb(BLURB_FETCH_ERROR);
+          setOriginalBlurb(BLURB_FETCH_ERROR);
           setIsBlurbFetching(false);
         }
       } catch (e) {
         setBlurb(BLURB_FETCH_ERROR);
+        setOriginalBlurb(BLURB_FETCH_ERROR);
         setIsBlurbFetching(false);
       }
     }
@@ -107,6 +117,7 @@ const Blurb = ({ blurbIpfsHash, projectId, isAllowedToEdit }) => {
       projectId,
       blurbIpfsHash: hash,
       onSuccess: () => {
+        setShouldResetToOriginal(false);
         setIsEditing(false);
       },
       onError: undefined,
@@ -116,8 +127,7 @@ const Blurb = ({ blurbIpfsHash, projectId, isAllowedToEdit }) => {
   const correctBlurb = useCallback(() => {
     if (!blurb) {
       return null;
-      // the first two project blurbs are string, the rest are jsons
-      // TODO format the first two
+      // TODO format the first two - they are strings
     } else if (typeof blurb === 'string') {
       return <Description>{blurb}</Description>;
     } else {
@@ -127,6 +137,7 @@ const Blurb = ({ blurbIpfsHash, projectId, isAllowedToEdit }) => {
             <RichText
               onKeyDown={(val: Node[]) => setBlurb(val)}
               text={blurb as Node[]}
+              isDisabled={['confirming', 'waiting'].includes(updateBlurbStatus)}
             />
             <ActionButton
               onClick={handleUpdateBlurb}
@@ -150,7 +161,7 @@ const Blurb = ({ blurbIpfsHash, projectId, isAllowedToEdit }) => {
       {isAllowedToEdit && (
         <EditButton
           disabled={isBlurbFetching || typeof blurb === 'string'}
-          onClick={toggleEditing}
+          onClick={handleClickEditButton}
           isEditing={isEditing}
         />
       )}

@@ -39,9 +39,10 @@ const Toolbar = styled.div`
 interface RichTextProps {
   onKeyDown: (val: Node[]) => void;
   text?: Node[];
+  isDisabled?: boolean;
 }
 
-const RichText = ({ onKeyDown, text }: RichTextProps) => {
+const RichText = ({ onKeyDown, text, isDisabled = false }: RichTextProps) => {
   const renderElement = useCallback((props) => <Element {...props} />, []);
   const renderLeaf = useCallback((props) => <Leaf {...props} />, []);
   const editor = useMemo(() => withHistory(withReact(createEditor())), []);
@@ -68,6 +69,7 @@ const RichText = ({ onKeyDown, text }: RichTextProps) => {
         <BlockButton format="justify" icon="format_align_justify" />
       </Toolbar>
       <StyledEditable
+        readOnly={isDisabled}
         renderElement={renderElement}
         renderLeaf={renderLeaf}
         placeholder="Enter some text…"
