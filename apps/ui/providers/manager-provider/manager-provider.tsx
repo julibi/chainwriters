@@ -17,6 +17,7 @@ import { BigNumber } from 'ethers';
 import { DEFAULT_COVER_IMAGE_IPFS_HASH } from '../../constants';
 import pinToPinata from '../../utils/pinToPinata';
 import { getGasMargin } from '../../utils/getGasMargin';
+import unpinFromPinata from '../../utils/unpinFromPinata';
 
 const defaultContext: ManagerApi = {
   configureProject: async () => undefined,
@@ -206,6 +207,7 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
     async ({
       projectId,
       blurbIpfsHash,
+      oldBlurbIpfsHash,
       onError,
       onSuccess,
     }: UpdateBlurbHashArgs) => {
@@ -231,7 +233,7 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
         };
         mpManager.provider.once(hash, async (transaction) => {
           try {
-            // TODO! Undo the old pinning
+            await unpinFromPinata(oldBlurbIpfsHash);
             await pinToPinata(blurbIpfsHash, projectId, 'blurb');
           } catch (e) {
             // do nothing

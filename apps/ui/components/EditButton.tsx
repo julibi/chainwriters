@@ -39,7 +39,7 @@ const RootButton = styled(BaseButton)<ButtonTypes>`
   padding: 1rem;
 
   @media (max-width: 900px) {
-    width: 100%;
+    width: 60px;
   }
 `;
 

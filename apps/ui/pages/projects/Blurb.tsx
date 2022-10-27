@@ -54,7 +54,6 @@ const RichTextWrapper = styled.div`
 `;
 
 // TODO
-// disable input when uploading
 // unpin when changing text
 
 const Blurb = ({ blurbIpfsHash, projectId, isAllowedToEdit }) => {
@@ -116,13 +115,14 @@ const Blurb = ({ blurbIpfsHash, projectId, isAllowedToEdit }) => {
     await updateBlurb({
       projectId,
       blurbIpfsHash: hash,
+      oldBlurbIpfsHash: blurbIpfsHash,
       onSuccess: () => {
         setShouldResetToOriginal(false);
         setIsEditing(false);
       },
       onError: undefined,
     });
-  }, [blurb, projectId, updateBlurb, uploadText]);
+  }, [blurb, blurbIpfsHash, projectId, updateBlurb, uploadText]);
 
   const correctBlurb = useCallback(() => {
     if (!blurb) {
