@@ -1,6 +1,6 @@
 import React, { FormEvent } from 'react';
-import EditIcon from '@material-ui/icons/edit';
-import CloseIcon from '@material-ui/icons/close';
+import EditIcon from '@material-ui/icons/Edit';
+import CloseIcon from '@material-ui/icons/Close';
 import {
   BaseButton,
   BG_NORMAL,
