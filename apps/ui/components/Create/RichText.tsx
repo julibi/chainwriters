@@ -17,10 +17,12 @@ const StyledEditable = styled(Editable)`
   box-shadow: ${INSET_BASE_BOX_SHADOW};
   // otherwise it shrinks to 24px height somehow
   min-height: 500px !important;
+  max-height: 1000px !important;
   margin-block-start: 1rem;
   padding: 1rem;
   border-radius: ${BASE_BORDER_RADIUS};
   overflow-wrap: anywhere;
+  overflow-y: auto;
   font-family: monospace;
   font-size: 16px;
   width: 100%;

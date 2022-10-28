@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import React, { useCallback, useMemo, useState } from 'react';
+import { Node } from 'slate';
 import { truncateAddress } from '../../../components/WalletIndicator';
 import useShowText from '../../../hooks/useShowText';
 import { useGetProjectId } from '../../../hooks/projects';
@@ -13,11 +14,14 @@ import {
   INTER_BOLD,
 } from '../../../themes';
 import Toggle from '../../../components/Toggle';
-
 import RichTextRead from '../../../components/RichTextRead';
 import Title from '../../../components/Title';
 import { useWeb3React } from '@web3-react/core';
 import RichText from '../../../components/Create/RichText';
+import EditButton from '../../../components/EditButton';
+import { useManager } from '../../../hooks/manager';
+import useUploadTextToIpfs from '../../../hooks/useUploadTextToIpfs';
+import ActionButton from '../../../components/ActionButton';
 
 const animation = (animationseconds: number) => `
   animation: fadein ${animationseconds}s;
@@ -112,28 +116,59 @@ const TextWrapper = styled.div`
   ${animation(4)};
 `;
 
+const EditButtonWrapper = styled.div`
+  position: relative;
+  width: 100%;
+  height: 90px;
+`;
+
 const Text = styled.p``;
 
 const ToggleWrapper = styled.div`
   width: 180px;
 `;
 
+const RichTextWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
 const Read = () => {
   const router = useRouter();
   const { account } = useWeb3React();
   const projectId = useGetProjectId();
-  const { allowedToRead, project, text, pending, translation, hasTranslation } =
-    useShowText(projectId);
+  const { uploadText } = useUploadTextToIpfs();
+  const { updateText, updateTextStatus } = useManager();
+  const {
+    allowedToRead,
+    project,
+    text,
+    textIpfsHash: originalTextIpfsHash,
+    pending,
+    translation,
+    hasTranslation,
+  } = useShowText(projectId);
   const [translationOn, setTranslationOn] = useState<boolean>(false);
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [currentText, setCurrentText] = useState<Node[] | undefined>();
+  const [shouldResetToOriginal, setShouldResetToOriginal] =
+    useState<boolean>(true);
+  const textShownInEditor = useMemo(
+    () => currentText ?? text,
+    [text, currentText]
+  );
+
   const isAuthor = useMemo(() => {
     if (
       allowedToRead &&
-      account?.toLowerCase() === project.creator?.toLowerCase()
+      account?.toLowerCase() === project?.creator?.toLowerCase()
     ) {
       return true;
     }
     return false;
   }, [allowedToRead, account, project?.creator]);
+
   const handleClickGoBack = useCallback(
     (e) => {
       e.preventDefault();
@@ -142,25 +177,81 @@ const Read = () => {
     [project, router]
   );
 
-  const handleToggle = (checked: boolean) => {
+  const handleToggleTranslation = (checked: boolean) => {
     setTranslationOn(checked);
   };
 
+  const handleToggleEditing = useCallback(() => {
+    if (isEditing && shouldResetToOriginal) {
+      setCurrentText(undefined);
+    }
+    setIsEditing(!isEditing);
+  }, [isEditing, shouldResetToOriginal]);
+
+  const handleUpdateText = useCallback(async () => {
+    if (!text || !originalTextIpfsHash || !projectId) return null;
+    const hash = await uploadText(currentText);
+    await updateText({
+      projectId,
+      textIpfsHash: hash,
+      oldTextIpfsHash: originalTextIpfsHash,
+      onSuccess: () => {
+        setShouldResetToOriginal(false);
+        setIsEditing(false);
+      },
+      onError: undefined,
+    });
+  }, [
+    currentText,
+    originalTextIpfsHash,
+    projectId,
+    text,
+    updateText,
+    uploadText,
+  ]);
+
   const correctText = useCallback(() => {
     if (text && !translationOn) {
-      if (isAuthor) {
-        return <RichText text={text} onKeyDown={() => {}} />;
+      if (isAuthor && isEditing) {
+        return (
+          <RichTextWrapper>
+            <RichText
+              text={textShownInEditor}
+              onKeyDown={(val: Node[]) => setCurrentText(val)}
+              isDisabled={['confirming', 'waiting'].includes(updateTextStatus)}
+            />
+            <ActionButton
+              onClick={handleUpdateText}
+              text="Update"
+              loading={['confirming', 'waiting'].includes(updateTextStatus)}
+              disabled={['confirming', 'waiting'].includes(updateTextStatus)}
+              margin="1rem 0 0 0"
+            />
+          </RichTextWrapper>
+        );
       }
-      return <RichTextRead text={text} />;
+      return (
+        <RichTextRead text={shouldResetToOriginal ? text : textShownInEditor} />
+      );
     }
 
     if (translation && translationOn) {
-      if (isAuthor) {
+      if (isAuthor && isEditing) {
         return <RichText text={translation} onKeyDown={() => {}} />;
       }
       return <RichTextRead text={translation} />;
     }
-  }, [isAuthor, text, translation, translationOn]);
+  }, [
+    handleUpdateText,
+    isAuthor,
+    isEditing,
+    shouldResetToOriginal,
+    text,
+    textShownInEditor,
+    translation,
+    translationOn,
+    updateTextStatus,
+  ]);
 
   if (pending) {
     return (
@@ -212,14 +303,25 @@ const Read = () => {
             <ToggleWrapper>
               <Toggle
                 label="Translation"
-                onChange={handleToggle}
+                onChange={handleToggleTranslation}
                 isChecked={translationOn}
               />
             </ToggleWrapper>
           )}
         </Wrapper>
       )}
-      <TextWrapper>{correctText()}</TextWrapper>
+      <TextWrapper>
+        {isAuthor && (
+          <EditButtonWrapper>
+            <EditButton
+              disabled={!text || pending}
+              onClick={handleToggleEditing}
+              isEditing={isEditing}
+            />
+          </EditButtonWrapper>
+        )}
+        {correctText()}
+      </TextWrapper>
     </Root>
   );
 };

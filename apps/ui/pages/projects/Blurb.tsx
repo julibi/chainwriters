@@ -152,6 +152,7 @@ const Blurb = ({ blurbIpfsHash, projectId, isAllowedToEdit }) => {
   }, [blurb, handleUpdateBlurb, isAllowedToEdit, isEditing, updateBlurbStatus]);
 
   if (!blurbIpfsHash) return null;
+
   return (
     <DescriptionSection>
       <Title>Blurb</Title>

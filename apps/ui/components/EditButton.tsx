@@ -40,6 +40,7 @@ const RootButton = styled(BaseButton)<ButtonTypes>`
 
   @media (max-width: 900px) {
     width: 60px;
+    margin: 0;
   }
 `;
 
