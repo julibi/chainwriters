@@ -9,7 +9,7 @@ import ToastLink from '../../components/ToastLink';
 import { WriteActionStatus } from '../manager-provider/manager-provider.types';
 import useMoonpageFactoryContract from '../../hooks/useMoonpageFactoryContract';
 import pinToPinata from '../../utils/pinToPinata';
-import { getGasMargin } from 'apps/ui/utils/getGasMargin';
+import { getGasMargin } from '../../utils/getGasMargin';
 
 const defaultContext: FactoryApi = {
   createProject: async () => undefined,
