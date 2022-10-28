@@ -7,6 +7,8 @@ import {
   ManagerProviderProps,
   SetContributorsArgs,
   UpdateTranslationHashArgs,
+  UpdateBlurbHashArgs,
+  UpdateTextHashArgs,
   WriteActionStatus,
 } from './manager-provider.types';
 import { toast } from 'react-toastify';
@@ -16,6 +18,7 @@ import { BigNumber } from 'ethers';
 import { DEFAULT_COVER_IMAGE_IPFS_HASH } from '../../constants';
 import pinToPinata from '../../utils/pinToPinata';
 import { getGasMargin } from '../../utils/getGasMargin';
+import unpinFromPinata from '../../utils/unpinFromPinata';
 
 const defaultContext: ManagerApi = {
   configureProject: async () => undefined,
@@ -26,6 +29,10 @@ const defaultContext: ManagerApi = {
   enableNextEditionStatus: 'idle',
   updateTranslation: async () => undefined,
   updateTranslationStatus: 'idle',
+  updateBlurb: async () => undefined,
+  updateBlurbStatus: 'idle',
+  updateText: async () => undefined,
+  updateTextStatus: 'idle',
 };
 
 export const ManagerContext = createContext(defaultContext);
@@ -37,6 +44,9 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
     useState<WriteActionStatus>();
   const [updateTranslationStatus, setUpdateTranslationStatus] =
     useState<WriteActionStatus>();
+  const [updateBlurbStatus, setUpdateBlurbStatus] =
+    useState<WriteActionStatus>();
+  const [updateTextStatus, setUpdateTextStatus] = useState<WriteActionStatus>();
   const [enableNextEditionStatus, setEnableNextEditionStatus] =
     useState<WriteActionStatus>();
 
@@ -197,6 +207,100 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
     [mpManager]
   );
 
+  const updateBlurb = useCallback(
+    async ({
+      projectId,
+      blurbIpfsHash,
+      oldBlurbIpfsHash,
+      onError,
+      onSuccess,
+    }: UpdateBlurbHashArgs) => {
+      try {
+        setUpdateBlurbStatus('confirming');
+        const estimatedGas = await mpManager.estimateGas.updateBlurbIpfsHash(
+          projectId,
+          blurbIpfsHash
+        );
+        const gasLimit = getGasMargin(estimatedGas);
+        const Tx = await mpManager.updateBlurbIpfsHash(
+          projectId,
+          blurbIpfsHash,
+          { gasLimit }
+        );
+        const { hash } = Tx;
+        setUpdateBlurbStatus('waiting');
+        toast.info(<ToastLink message={'Updating Blurb...'} />);
+        const handleSuccess = () => {
+          setUpdateBlurbStatus('success');
+          toast.success(<ToastLink message={'Success!'} />);
+          onSuccess?.();
+        };
+        mpManager.provider.once(hash, async (transaction) => {
+          try {
+            // TODO: find a way to only unpin the first all other than the last one.
+            // Because we want to show the user the latest change made.
+            // await unpinFromPinata(oldBlurbIpfsHash);
+            await pinToPinata(blurbIpfsHash, projectId, 'blurb');
+          } catch (e) {
+            // do nothing
+          }
+          handleSuccess();
+        });
+      } catch (e) {
+        setUpdateBlurbStatus('error');
+        toast.error(<ToastLink message={'Something went wrong!'} />);
+        onError?.(e);
+      }
+    },
+    [mpManager]
+  );
+
+  const updateText = useCallback(
+    async ({
+      projectId,
+      textIpfsHash,
+      oldTextIpfsHash,
+      onError,
+      onSuccess,
+    }: UpdateTextHashArgs) => {
+      try {
+        setUpdateTextStatus('confirming');
+        const estimatedGas = await mpManager.estimateGas.updateTextIpfsHash(
+          projectId,
+          textIpfsHash
+        );
+        const gasLimit = getGasMargin(estimatedGas);
+        const Tx = await mpManager.updateTextIpfsHash(projectId, textIpfsHash, {
+          gasLimit,
+        });
+        const { hash } = Tx;
+        setUpdateTextStatus('waiting');
+        toast.info(<ToastLink message={'Updating Text...'} />);
+        const handleSuccess = () => {
+          setUpdateTextStatus('success');
+          toast.success(<ToastLink message={'Success!'} />);
+          onSuccess?.();
+        };
+        mpManager.provider.once(hash, async (transaction) => {
+          try {
+            // TODO: find a way to only unpin the first all other than the last one.
+            // Because we want to show the user the latest change made.
+            // await unpinFromPinata(oldTextIpfsHash);
+            await pinToPinata(textIpfsHash, projectId, 'text');
+          } catch (e) {
+            // do nothing
+          }
+          handleSuccess();
+        });
+      } catch (e) {
+        setUpdateTextStatus('error');
+        toast.error(<ToastLink message={'Something went wrong!'} />);
+        onError?.(e);
+      }
+    },
+    [mpManager]
+  );
+
   const enableNextEdition = useCallback(
     async ({
       projectId,
@@ -249,6 +353,10 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
       enableNextEditionStatus,
       updateTranslation,
       updateTranslationStatus,
+      updateBlurb,
+      updateBlurbStatus,
+      updateText,
+      updateTextStatus,
     }),
     [
       configureProject,
@@ -259,6 +367,10 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
       setContributorsStatus,
       updateTranslation,
       updateTranslationStatus,
+      updateBlurb,
+      updateBlurbStatus,
+      updateText,
+      updateTextStatus,
     ]
   );
 

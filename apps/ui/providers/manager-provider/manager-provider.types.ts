@@ -21,6 +21,10 @@ export type ManagerApi = {
   enableNextEditionStatus: WriteActionStatus;
   updateTranslation: (x: UpdateTranslationHashArgs) => Promise<void>;
   updateTranslationStatus: WriteActionStatus;
+  updateBlurb: (x: UpdateBlurbHashArgs) => Promise<void>;
+  updateBlurbStatus: WriteActionStatus;
+  updateText: (x: UpdateTextHashArgs) => Promise<void>;
+  updateTextStatus: WriteActionStatus;
 };
 
 export type NewConfiguration = {
@@ -47,6 +51,22 @@ export interface SetContributorsArgs {
 export interface UpdateTranslationHashArgs {
   projectId: string;
   translationIpfsHash: string;
+  onSuccess?: () => void;
+  onError?: (e: any) => void;
+}
+
+export interface UpdateBlurbHashArgs {
+  projectId: string;
+  oldBlurbIpfsHash: string;
+  blurbIpfsHash: string;
+  onSuccess?: () => void;
+  onError?: (e: any) => void;
+}
+
+export interface UpdateTextHashArgs {
+  projectId: string;
+  oldTextIpfsHash: string;
+  textIpfsHash: string;
   onSuccess?: () => void;
   onError?: (e: any) => void;
 }

@@ -55,6 +55,7 @@ const useShowText = (projectId: string) => {
       const response = await fetch(
         `https://ipfs.io/ipfs/${project?.textIpfsHash}`
       );
+
       if (response.ok) {
         const fetchedText = await response.text();
         const formatted = JSON.parse(fetchedText);
@@ -114,6 +115,7 @@ const useShowText = (projectId: string) => {
       translation,
       hasTranslation,
       fetchTranslation,
+      textIpfsHash: project?.textIpfsHash,
     }),
     [
       allowedToRead,

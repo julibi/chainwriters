@@ -6,7 +6,6 @@ import React, {
   useState,
 } from 'react';
 import styled from 'styled-components';
-import { toast } from 'react-toastify';
 import { parseEther } from 'ethers/lib/utils';
 import { Node } from 'slate';
 import ProgressBar from '../components/ProgressBar';
@@ -39,10 +38,10 @@ import { useManager } from '../hooks/manager';
 import LanguageForm from '../components/Create/LanguageForm';
 import TranslationForm from '../components/Create/TranslationForm';
 import Title from '../components/Title';
-import pinToPinata from '../utils/pinToPinata';
 import { useCollection } from '../hooks/collection';
 import { useRouter } from 'next/router';
 import ConfettiCanon from '../components/ConfettiCanon';
+import useUploadTextToIpfs from '../hooks/useUploadTextToIpfs';
 
 const Root = styled.div`
   display: flex;
@@ -189,10 +188,11 @@ export interface Contributor {
 
 const Create = () => {
   const client = useIpfsClient();
+  const { uploadText } = useUploadTextToIpfs();
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(0);
   const [title, setTitle] = useState('');
-  const [text, setText] = useState<Node[] | undefined>();
+  const [text, setText] = useState<Node[] | string | undefined>();
   const [language, setLanguage] = useState<string>('');
   const [translation, setTranslation] = useState<Node[] | undefined>();
   // const [textIPFS, setTextIPFS] = useState<null | string>(null);
@@ -230,21 +230,6 @@ const Create = () => {
       return true;
     return false;
   }, [subtitle, genre, blurb, coverImgIPFS]);
-
-  const uploadText = useCallback(
-    async (content: Node[] | string) => {
-      try {
-        const uploadContent =
-          typeof content === 'string' ? content : JSON.stringify(content);
-        // upload to IPFS
-        const added = await client.add(uploadContent);
-        return added.path;
-      } catch (e) {
-        toast.error('Something went wrong while uploading your text to ipfs.');
-      }
-    },
-    [client]
-  );
 
   const handleCreateProject = useCallback(async () => {
     setIsPinPending(true);

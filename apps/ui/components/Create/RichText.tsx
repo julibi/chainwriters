@@ -17,12 +17,15 @@ const StyledEditable = styled(Editable)`
   box-shadow: ${INSET_BASE_BOX_SHADOW};
   // otherwise it shrinks to 24px height somehow
   min-height: 500px !important;
+  max-height: 1000px !important;
   margin-block-start: 1rem;
   padding: 1rem;
   border-radius: ${BASE_BORDER_RADIUS};
   overflow-wrap: anywhere;
+  overflow-y: auto;
   font-family: monospace;
   font-size: 16px;
+  width: 100%;
 `;
 
 const LIST_TYPES = ['numbered-list', 'bulleted-list'];
@@ -37,15 +40,21 @@ const Toolbar = styled.div`
 
 interface RichTextProps {
   onKeyDown: (val: Node[]) => void;
+  text?: Node[];
+  isDisabled?: boolean;
 }
 
-const RichText = ({ onKeyDown }: RichTextProps) => {
+const RichText = ({ onKeyDown, text, isDisabled = false }: RichTextProps) => {
   const renderElement = useCallback((props) => <Element {...props} />, []);
   const renderLeaf = useCallback((props) => <Leaf {...props} />, []);
   const editor = useMemo(() => withHistory(withReact(createEditor())), []);
 
   return (
-    <Slate editor={editor} value={initialValue} onChange={onKeyDown}>
+    <Slate
+      editor={editor}
+      value={(text as Descendant[]) || initialValue}
+      onChange={onKeyDown}
+    >
       <Toolbar>
         <MarkButton format="bold" icon="format_bold" />
         <MarkButton format="italic" icon="format_italic" />
@@ -62,6 +71,7 @@ const RichText = ({ onKeyDown }: RichTextProps) => {
         <BlockButton format="justify" icon="format_align_justify" />
       </Toolbar>
       <StyledEditable
+        readOnly={isDisabled}
         renderElement={renderElement}
         renderLeaf={renderLeaf}
         placeholder="Enter some text…"
