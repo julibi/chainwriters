@@ -392,7 +392,7 @@ const Create = () => {
               <TextForm
                 onKeyDown={(val: Node[]) => setText(val)}
                 onSubmit={() => setCurrentStep(currentStep + 1)}
-                text={text}
+                text={text as Node[]}
               />
             )}
             {currentStep === 2 && (
