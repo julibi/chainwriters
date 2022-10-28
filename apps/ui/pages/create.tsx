@@ -427,7 +427,7 @@ const Create = () => {
                 agreed={agreed}
                 language={language}
                 title={title}
-                text={text}
+                text={text as Node[]}
                 firstEdMaxAmount={firstEdMaxAmount}
                 firstEdMintPrice={firstEdMintPrice}
                 onCheck={() => setAgreed(!agreed)}
