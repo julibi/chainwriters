@@ -4,16 +4,14 @@ import WalletIndicator from './WalletIndicator';
 import WalletConnectionModal from './WalletConnectionModal';
 
 const WalletConnection = () => {
-  const { account, chainId } = useWeb3React();
+  const { chainId } = useWeb3React();
   const [showConnectModal, setShowConnectModal] = useState(false);
 
   return (
     <div>
       <WalletIndicator
-        address={account}
         chain={chainId}
-        handleClick={() => setShowConnectModal(true)}
-        showLoading={false}
+        handleClickGenericConnection={() => setShowConnectModal(true)}
       />
       {showConnectModal && (
         <WalletConnectionModal onClose={() => setShowConnectModal(false)} />

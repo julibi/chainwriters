@@ -20,6 +20,7 @@ import {
   ManagerProvider,
   ProjectsProvider,
   UserProvider,
+  AccountsProvider,
 } from '../providers';
 
 const GlobalStyle = createGlobalStyle`
@@ -112,21 +113,23 @@ function CustomApp({ Component, pageProps }: AppProps) {
         <ApolloProvider client={client}>
           <ToastContainer />
           <ProjectsProvider>
-            <UserProvider>
-              <ManagerProvider>
-                <AuctionsProvider>
-                  <CollectionProvider>
-                    <FactoryProvider>
-                      <main className="app">
-                        <Layout>
-                          <Component {...pageProps} />
-                        </Layout>
-                      </main>
-                    </FactoryProvider>
-                  </CollectionProvider>
-                </AuctionsProvider>
-              </ManagerProvider>
-            </UserProvider>
+            <AccountsProvider>
+              <UserProvider>
+                <ManagerProvider>
+                  <AuctionsProvider>
+                    <CollectionProvider>
+                      <FactoryProvider>
+                        <main className="app">
+                          <Layout>
+                            <Component {...pageProps} />
+                          </Layout>
+                        </main>
+                      </FactoryProvider>
+                    </CollectionProvider>
+                  </AuctionsProvider>
+                </ManagerProvider>
+              </UserProvider>
+            </AccountsProvider>
           </ProjectsProvider>
         </ApolloProvider>
       </Web3ReactProvider>

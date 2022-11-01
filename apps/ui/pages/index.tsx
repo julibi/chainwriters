@@ -7,6 +7,7 @@ import MainSellingPointsSection from '../components/HomePage/MainSellingPointsSe
 import FAQSection from '../components/HomePage/FAQSection';
 import StartAnimation from '../components/StartAnimation';
 import HowItWorksSection from '../components/HomePage/HowItWorksSection';
+import { useAccounts } from '../hooks/accounts';
 
 const Root = styled.section``;
 
@@ -33,6 +34,8 @@ export function Index() {
   const { account, chainId } = useWeb3React();
   const isMobile = useDeviceDetect();
   const [showMainPoints, setShowMainPoints] = useState<boolean>(false);
+  const { evmAddress, solanaAddress } = useAccounts();
+  console.log({ evmAddress, solanaAddress });
 
   // const hasTried = useEagerConnect();
 

@@ -20,6 +20,7 @@ import Title from './Title';
 import { switchNetwork } from '../utils/switchNetwork';
 import Checkbox from './Checkbox';
 import NextLink from './NextLink';
+import { useAccounts } from '../hooks/accounts';
 
 type WalletConnectionModalProps = {
   onClose: () => void;
@@ -74,7 +75,10 @@ const ConnectorName = styled.span`
 
 const WalletConnectionModal = ({ onClose }: WalletConnectionModalProps) => {
   const isProd = process.env.NX_PUBLIC_ENVIRONMENT === 'PROD';
-  const [selectedNetwork, setSelectedNetwork] = useState(isProd ? 137 : 80001);
+  const { evmAddress, solanaAddress } = useAccounts();
+  const [selectedNetwork, setSelectedNetwork] = useState<number | string>(
+    isProd ? 137 : 80001
+  );
   const [isTermsAccepted, setIsTermsAccepted] = useState(false);
   const { activate, chainId } = useWeb3React();
 
@@ -116,6 +120,23 @@ const WalletConnectionModal = ({ onClose }: WalletConnectionModalProps) => {
     }
   };
 
+  const handlePhantomWalletClick = async () => {
+    const { solana } = window;
+
+    if (solana) {
+      try {
+        const response = await solana.connect();
+        console.log(
+          'Connected with Public Key:',
+          response.publicKey.toString()
+        );
+        onClose();
+      } catch (e) {
+        toast.error(e.message);
+      }
+    }
+  };
+
   useEffect(() => {
     if (chainId) {
       const isSupported = supportedChainIds.includes(chainId);
@@ -124,6 +145,7 @@ const WalletConnectionModal = ({ onClose }: WalletConnectionModalProps) => {
       }
     }
   }, [chainId]);
+
   const networkDropdownItems = Object.values(supportedChainMapping).map(
     (chain, idx) => {
       return {
@@ -131,7 +153,6 @@ const WalletConnectionModal = ({ onClose }: WalletConnectionModalProps) => {
         value: chain.name,
         img: chain.icon,
         onSelect: (network: number) => {
-          console.log({ network });
           setSelectedNetwork(network);
         },
       };
@@ -157,16 +178,28 @@ const WalletConnectionModal = ({ onClose }: WalletConnectionModalProps) => {
         </TermsOfService>
         <DropdownWrapper>
           <Dropdown
-            isDisabled
             preselected={networkDropdownItems[isProd ? 0 : 1]}
-            options={[networkDropdownItems[isProd ? 0 : 1]]}
+            options={[
+              networkDropdownItems[isProd ? 0 : 1],
+              {
+                id: 'SOLANA',
+                value: 'Solana',
+                img: 'Solana.svg',
+                onSelect: () => {
+                  setSelectedNetwork('Solana');
+                },
+              },
+            ]}
             width={'100%'}
           />
         </DropdownWrapper>
         <SubHeader>Wallets</SubHeader>
         {window?.ethereum && (
           <ConnectionButton
-            disabled={!isTermsAccepted}
+            disabled={
+              !isTermsAccepted ||
+              ![137, 80001].includes(selectedNetwork as number)
+            }
             onClick={handleMetaMaskClick}
           >
             <ConnectorName>METAMASK</ConnectorName>
@@ -182,7 +215,10 @@ const WalletConnectionModal = ({ onClose }: WalletConnectionModalProps) => {
           </ConnectionButton>
         )}
         <ConnectionButton
-          disabled={!isTermsAccepted}
+          disabled={
+            !isTermsAccepted ||
+            ![137, 80001].includes(selectedNetwork as number)
+          }
           onClick={handleWalletConnectClick}
         >
           <ConnectorName>WALLETCONNECT</ConnectorName>
@@ -192,6 +228,21 @@ const WalletConnectionModal = ({ onClose }: WalletConnectionModalProps) => {
               width={40}
               height={25}
               alt="Walletconnect icon"
+              priority
+            />
+          </div>
+        </ConnectionButton>
+        <ConnectionButton
+          disabled={!isTermsAccepted || selectedNetwork !== 'Solana'}
+          onClick={handlePhantomWalletClick}
+        >
+          <ConnectorName>Phantom Wallet</ConnectorName>
+          <div>
+            <Image
+              src={'/Phantom.svg'}
+              width={40}
+              height={25}
+              alt="Phantom icon"
               priority
             />
           </div>

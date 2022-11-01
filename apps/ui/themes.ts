@@ -1,10 +1,10 @@
 import styled from 'styled-components';
 
 export const BG_LIGHT = '#222632';
-export const BG_NORMAL = '#1B1E28';
-export const BG_DARK = '#161820';
+export const BG_NORMAL = '#C9D5F1';
+export const BG_DARK = '#4E576C';
 export const PLAIN_WHITE = '#FFF';
-export const PINK = '#F50A48';
+export const PINK = '#FA983C';
 export const DISABLED_WHITE = '#808080';
 export const VALID_GREEN = '#19bdb4';
 
