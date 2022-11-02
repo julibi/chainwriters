@@ -21,7 +21,7 @@ const StartAuctionsModal = ({
   onStartAuctions,
   pending,
 }: StartAuctionsModalProps) => {
-  const [authorMintInput, setAuthorMintInput] = useState<number>(0);
+  const [authorMintInput, setAuthorMintInput] = useState<number | undefined>(1);
 
   const isValidInput = (amount: number) =>
     amount >= 1 && amount <= MAX_MINTABLE_BY_CREATOR;
@@ -36,6 +36,7 @@ const StartAuctionsModal = ({
         </ModalText>
         <ModalText>
           <Title size="xs" padding="0">{`You: ${authorMintInput}`}</Title>
+          <br />
           <Title size="xs" padding="0">
             {'Moonpage: 1'}
           </Title>
@@ -46,6 +47,9 @@ const StartAuctionsModal = ({
             onChange={(e: ChangeEvent<HTMLInputElement>) => {
               if (isValidInput(Number(e.target.value))) {
                 setAuthorMintInput(Number(e.target.value));
+              } else {
+                // to enable the user to delete everything
+                setAuthorMintInput(undefined);
               }
             }}
             error={!isValidInput(authorMintInput) && 'Incorrect amount.'}

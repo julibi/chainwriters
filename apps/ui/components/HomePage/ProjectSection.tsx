@@ -6,6 +6,12 @@ import Loading from '../Loading';
 import { ProjectItem } from '../ProjectItem';
 import Title from '../Title';
 
+const Root = styled.section`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
 export const SectionTitleWrapper = styled.div`
   display: flex;
   justify-content: center;
@@ -39,7 +45,7 @@ const ProjectList = styled.section`
 const ProjectSection = () => {
   const { topProjects: data, areTopProjectsLoading: loading } = useProjects();
   return (
-    <>
+    <Root>
       <Title>Top Projects</Title>
       {loading && !data && <Loading height={530} />}
       <ProjectList>
@@ -61,7 +67,7 @@ const ProjectSection = () => {
           )
         )}
       </ProjectList>
-    </>
+    </Root>
   );
 };
 
