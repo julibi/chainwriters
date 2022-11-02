@@ -35,7 +35,7 @@ const StartAuctionsModal = ({
         Edition NFTs for yourself. One will always go to the Moonpage Project.`}
         </ModalText>
         <ModalText>
-          <Title size="xs" padding="0">{`You: ${authorMintInput}`}</Title>
+          <Title size="xs" padding="0">{`You: ${authorMintInput ?? ''}`}</Title>
           <br />
           <Title size="xs" padding="0">
             {'Moonpage: 1'}

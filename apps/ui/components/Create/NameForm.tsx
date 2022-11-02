@@ -36,7 +36,6 @@ const NameForm = ({ onChange, onSubmit, title }: NameFormProps) => {
           loading={false}
           text="Continue"
           margin="1rem 0 0 0"
-          web3Connectable
         />
       </Wrapper>
     </FadeIn>

@@ -11,7 +11,7 @@ export const GENRES = [
   'Horror',
   'Idea',
   'Lyrics',
-  'Nonction',
+  'Non-Fiction',
   'Paper',
   'Poetry',
   'Proposal',
