@@ -4,6 +4,7 @@ declare global {
   interface Window {
     // solana?: AnchorWallet;
     ethereum?: any;
+    gtag: any;
   }
 }
 

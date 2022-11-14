@@ -1,6 +1,7 @@
 import { AppProps } from 'next/app';
 import Head from 'next/head';
 import { useEffect } from 'react';
+import { useRouter } from 'next/router';
 import { ApolloProvider } from '@apollo/client';
 import { Web3ReactProvider } from '@web3-react/core';
 import {
@@ -23,6 +24,7 @@ import {
   ProjectsProvider,
   UserProvider,
 } from '../providers';
+import * as gtag from '../utils/ga';
 
 const GlobalStyle = createGlobalStyle`
 html{
@@ -77,12 +79,23 @@ function getLibrary(
 }
 
 function CustomApp({ Component, pageProps }: AppProps) {
+  const router = useRouter();
   useEffect(() => {
     hotjar.initialize(
       Number(process.env.NEXT_PUBLIC_HOTJAR_ID),
       Number(process.env.NEXT_PUBLIC_HOTJAR_SV)
     );
   }, []);
+
+  useEffect(() => {
+    const handleRouteChange = (url) => {
+      gtag.pageview(url);
+    };
+    router.events.on('routeChangeComplete', handleRouteChange);
+    return () => {
+      router.events.off('routeChangeComplete', handleRouteChange);
+    };
+  }, [router.events]);
 
   return (
     <>
@@ -115,6 +128,19 @@ function CustomApp({ Component, pageProps }: AppProps) {
         <meta property="og:url" content="http://www.moonpage.io" />
         <meta property="og:type" content="website" />
         <meta property="og:locale" content="en_US" />
+        <script
+          async
+          src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NX_PUBLIC_GA_ID}`}
+        ></script>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', ${process.env.NX_PUBLIC_GA_ID});`,
+          }}
+        ></script>
       </Head>
       <GlobalStyle />
       <Web3ReactProvider getLibrary={getLibrary}>
