@@ -1,5 +1,6 @@
 import { AppProps } from 'next/app';
 import Head from 'next/head';
+import { useEffect } from 'react';
 import { ApolloProvider } from '@apollo/client';
 import { Web3ReactProvider } from '@web3-react/core';
 import {
@@ -8,6 +9,7 @@ import {
   Web3Provider,
 } from '@ethersproject/providers';
 import { createGlobalStyle } from 'styled-components';
+import { hotjar } from 'react-hotjar';
 import Layout from '../components/Layout';
 import { BG_NORMAL, PLAIN_WHITE } from '../themes';
 import './styles.css';
@@ -75,6 +77,13 @@ function getLibrary(
 }
 
 function CustomApp({ Component, pageProps }: AppProps) {
+  useEffect(() => {
+    hotjar.initialize(
+      Number(process.env.NEXT_PUBLIC_HOTJAR_ID),
+      Number(process.env.NEXT_PUBLIC_HOTJAR_SV)
+    );
+  }, []);
+
   return (
     <>
       <Head>
