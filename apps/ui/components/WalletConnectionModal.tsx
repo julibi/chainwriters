@@ -151,7 +151,10 @@ const WalletConnectionModal = ({ onClose }: WalletConnectionModalProps) => {
             <span>
               By connecting your wallet and using the Moonpage website, you
               agree to our
-              <NextLink href="/termsofservice" name="Terms of Service." />
+              <NextLink
+                href="https://moonpage.gitbook.io/moonpage-terms-of-service/"
+                name="Terms of Service (Last updated: 14.11.2022)."
+              />
             </span>
           </Checkbox>
         </TermsOfService>

@@ -30,6 +30,11 @@ exports.modules = {
 
 
 
+const Root = (styled_components__WEBPACK_IMPORTED_MODULE_2___default().section)`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
 const SectionTitleWrapper = (styled_components__WEBPACK_IMPORTED_MODULE_2___default().div)`
   display: flex;
   justify-content: center;
@@ -59,7 +64,7 @@ const ProjectList = (styled_components__WEBPACK_IMPORTED_MODULE_2___default().se
 `;
 const ProjectSection = ()=>{
     const { topProjects: data , areTopProjectsLoading: loading  } = (0,_hooks_projects__WEBPACK_IMPORTED_MODULE_3__/* .useProjects */ .Z)();
-    return(/*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.Fragment, {
+    return(/*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)(Root, {
         children: [
             /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_Title__WEBPACK_IMPORTED_MODULE_7__/* ["default"] */ .Z, {
                 children: "Top Projects"

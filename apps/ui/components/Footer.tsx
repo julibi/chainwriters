@@ -160,7 +160,9 @@ const Footer = () => {
           </LinkWrapper>
         </GreyWrapper>
         <GreyWrapper>
-          <LinkWrapper url="/termsofservice">{'Terms Of Service'}</LinkWrapper>
+          <LinkWrapper url="https://moonpage.gitbook.io/moonpage-terms-of-service/">
+            {'Terms Of Service'}
+          </LinkWrapper>
         </GreyWrapper>
       </Copyright>
     </Root>

@@ -32,7 +32,7 @@ const StyledTitle = (styled_components__WEBPACK_IMPORTED_MODULE_2___default().h1
 };
   padding: ${({ padding  })=>padding !== null && padding !== void 0 ? padding : '1rem'
 };
-  width: ${({ width  })=>width !== null && width !== void 0 ? width : '100%'
+  width: ${({ width  })=>width !== null && width !== void 0 ? width : 'auto'
 };
   overflow-wrap: break-word;
 

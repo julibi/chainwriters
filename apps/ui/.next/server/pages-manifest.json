@@ -7,8 +7,8 @@
   "/": "pages/index.html",
   "/mybookshelf": "pages/mybookshelf.html",
   "/projects": "pages/projects.html",
+  "/projects/Blurb": "pages/projects/Blurb.html",
   "/projects/[projectId]": "pages/projects/[projectId].html",
   "/projects/[projectId]/read": "pages/projects/[projectId]/read.html",
-  "/termsofservice": "pages/termsofservice.html",
   "/_error": "pages/_error.js"
 }

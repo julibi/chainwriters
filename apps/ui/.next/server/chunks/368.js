@@ -1,6 +1,6 @@
 "use strict";
-exports.id = 237;
-exports.ids = [237];
+exports.id = 368;
+exports.ids = [368];
 exports.modules = {
 
 /***/ 2391:
@@ -329,7 +329,7 @@ const GENRES = [
     'Horror',
     'Idea',
     'Lyrics',
-    'Nonction',
+    'Non-Fiction',
     'Paper',
     'Poetry',
     'Proposal',
@@ -355,8 +355,8 @@ __webpack_require__.d(__webpack_exports__, {
 
 // EXTERNAL MODULE: external "react"
 var external_react_ = __webpack_require__(6689);
-// EXTERNAL MODULE: ./providers/index.ts + 17 modules
-var providers = __webpack_require__(381);
+// EXTERNAL MODULE: ./providers/index.ts + 16 modules
+var providers = __webpack_require__(7000);
 ;// CONCATENATED MODULE: ./hooks/projects/useProjects.ts
 
 
@@ -476,7 +476,46 @@ const useContract = ({ address , abi  })=>{
 
 /***/ }),
 
-/***/ 381:
+/***/ 7920:
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+
+// EXPORTS
+__webpack_require__.d(__webpack_exports__, {
+  "Z": () => (/* binding */ hooks_useMoonpageManager)
+});
+
+// EXTERNAL MODULE: external "react"
+var external_react_ = __webpack_require__(6689);
+;// CONCATENATED MODULE: ./abis/MoonpageManager.json
+const MoonpageManager_namespaceObject = JSON.parse('[{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"previousAdmin","type":"address"},{"indexed":false,"internalType":"address","name":"newAdmin","type":"address"}],"name":"AdminChanged","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"projectId","type":"uint256"},{"indexed":false,"internalType":"string","name":"newIpfsHash","type":"string"}],"name":"AnimationUpdated","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"projectId","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"BalanceDecreased","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"projectId","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"BalanceIncreased","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"projectId","type":"uint256"},{"indexed":false,"internalType":"bool","name":"frozen","type":"bool"}],"name":"BaseDataFrozen","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"beacon","type":"address"}],"name":"BeaconUpgraded","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"projectId","type":"uint256"},{"indexed":false,"internalType":"string","name":"newIpfsHash","type":"string"}],"name":"BlurbUpdated","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"projectId","type":"uint256"},{"indexed":false,"internalType":"string","name":"imgHash","type":"string"},{"indexed":false,"internalType":"string","name":"animationHash","type":"string"},{"indexed":false,"internalType":"string","name":"blurbHash","type":"string"},{"indexed":false,"internalType":"string","name":"newGenre","type":"string"},{"indexed":false,"internalType":"string","name":"newSubtitle","type":"string"}],"name":"Configured","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"projectId","type":"uint256"},{"indexed":false,"internalType":"address","name":"contributor","type":"address"},{"indexed":false,"internalType":"uint256","name":"share","type":"uint256"},{"indexed":false,"internalType":"string","name":"role","type":"string"}],"name":"ContributorAdded","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"projectId","type":"uint256"},{"indexed":false,"internalType":"bool","name":"isCurated","type":"bool"}],"name":"Curated","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"projectId","type":"uint256"},{"indexed":false,"internalType":"string","name":"newIpfsHash","type":"string"}],"name":"ImageUpdated","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint8","name":"version","type":"uint8"}],"name":"Initialized","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"projectId","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"editionId","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"maxSupply","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"mintPrice","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"startId","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"endId","type":"uint256"}],"name":"NextEditionEnabled","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"account","type":"address"}],"name":"Paused","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"projectId","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"PremintedByAuthor","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"creator","type":"address"},{"indexed":false,"internalType":"address","name":"royaltiesSplitter","type":"address"},{"indexed":false,"internalType":"uint256","name":"projectId","type":"uint256"},{"indexed":false,"internalType":"string","name":"title","type":"string"},{"indexed":false,"internalType":"string","name":"textIpfsHash","type":"string"},{"indexed":false,"internalType":"string","name":"originalLanguage","type":"string"},{"indexed":false,"internalType":"uint256","name":"initialMintPrice","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"firstEditionAmount","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"startId","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"endId","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"currentEdLastId","type":"uint256"}],"name":"ProjectCreated","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"projectId","type":"uint256"},{"indexed":false,"internalType":"bool","name":"isPaused","type":"bool"}],"name":"ProjectPaused","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"role","type":"bytes32"},{"indexed":true,"internalType":"bytes32","name":"previousAdminRole","type":"bytes32"},{"indexed":true,"internalType":"bytes32","name":"newAdminRole","type":"bytes32"}],"name":"RoleAdminChanged","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"role","type":"bytes32"},{"indexed":true,"internalType":"address","name":"account","type":"address"},{"indexed":true,"internalType":"address","name":"sender","type":"address"}],"name":"RoleGranted","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"role","type":"bytes32"},{"indexed":true,"internalType":"address","name":"account","type":"address"},{"indexed":true,"internalType":"address","name":"sender","type":"address"}],"name":"RoleRevoked","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"projectId","type":"uint256"},{"indexed":false,"internalType":"string","name":"newIpfsHash","type":"string"}],"name":"TextUpdated","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"projectId","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"TokenIdIncreased","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"projectId","type":"uint256"},{"indexed":false,"internalType":"string","name":"newIpfsHash","type":"string"}],"name":"TranslationUpdated","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"account","type":"address"}],"name":"Unpaused","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"implementation","type":"address"}],"name":"Upgraded","type":"event"},{"inputs":[],"name":"DEFAULT_ADMIN_ROLE","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"PAUSER_ROLE","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"UPGRADER_ROLE","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_projectId","type":"uint256"},{"internalType":"address[]","name":"_contributors","type":"address[]"},{"internalType":"uint256[]","name":"_shares","type":"uint256[]"},{"internalType":"string[]","name":"_roles","type":"string[]"}],"name":"addContributors","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"authorShares","outputs":[{"internalType":"uint256","name":"share","type":"uint256"},{"internalType":"uint256","name":"shareInMatic","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"baseDatas","outputs":[{"internalType":"string","name":"title","type":"string"},{"internalType":"string","name":"subtitle","type":"string"},{"internalType":"string","name":"genre","type":"string"},{"internalType":"address","name":"creatorAddress","type":"address"},{"internalType":"address","name":"royaltiesSplitter","type":"address"},{"internalType":"string","name":"textIpfsHash","type":"string"},{"internalType":"string","name":"imgIpfsHash","type":"string"},{"internalType":"string","name":"animationIpfsHash","type":"string"},{"internalType":"string","name":"blurbIpfsHash","type":"string"},{"internalType":"string","name":"originalLanguage","type":"string"},{"internalType":"uint256","name":"premintedByCreator","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"collection","outputs":[{"internalType":"contract IMoonpageCollection","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_projectId","type":"uint256"},{"internalType":"string","name":"_imgHash","type":"string"},{"internalType":"string","name":"_animationHash","type":"string"},{"internalType":"string","name":"_blurbHash","type":"string"},{"internalType":"string","name":"_genre","type":"string"},{"internalType":"string","name":"_subtitle","type":"string"}],"name":"configureProjectDetails","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"uint256","name":"","type":"uint256"}],"name":"contributions","outputs":[{"internalType":"address","name":"shareRecipient","type":"address"},{"internalType":"string","name":"role","type":"string"},{"internalType":"uint256","name":"share","type":"uint256"},{"internalType":"uint256","name":"shareInMatic","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"contributionsIndeces","outputs":[{"internalType":"uint8","name":"","type":"uint8"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"curatedProjectIds","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_projectId","type":"uint256"}],"name":"distributeShares","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_projectId","type":"uint256"},{"internalType":"uint256","name":"_tokenId","type":"uint256"}],"name":"editionOfToken","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"uint256","name":"","type":"uint256"}],"name":"editionRanges","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"editions","outputs":[{"internalType":"uint256","name":"current","type":"uint256"},{"internalType":"uint256","name":"mintPrice","type":"uint256"},{"internalType":"uint256","name":"startTokenId","type":"uint256"},{"internalType":"uint256","name":"currentTokenId","type":"uint256"},{"internalType":"uint256","name":"lastGenEdTokenId","type":"uint256"},{"internalType":"uint256","name":"currentEdLastTokenId","type":"uint256"},{"internalType":"uint256","name":"endTokenId","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_to","type":"address"}],"name":"emergencyWithdraw","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_projectId","type":"uint256"},{"internalType":"uint256","name":"_newEdAmount","type":"uint256"},{"internalType":"uint256","name":"_newEdMintPrice","type":"uint256"}],"name":"enableNextEdition","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"existingProjectIds","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_projectId","type":"uint256"}],"name":"exists","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"factory","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"fee","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"frozenProjectIds","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"}],"name":"getRoleAdmin","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"grantRole","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"hasRole","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_projectId","type":"uint256"},{"internalType":"uint256","name":"_amount","type":"uint256"}],"name":"increaseBalance","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_projectId","type":"uint256"}],"name":"increaseCurrentTokenId","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"initialize","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_projectId","type":"uint256"}],"name":"isPaused","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"maxAmountEdition","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"minPrice","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"moonpageDev","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"pause","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"paused","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"pausedProjectIds","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"projectBalances","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_tokenId","type":"uint256"}],"name":"projectIdOfToken","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"projectsLength","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"proxiableUUID","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_projectId","type":"uint256"}],"name":"readAuthorShare","outputs":[{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_projectId","type":"uint256"}],"name":"readBaseData","outputs":[{"internalType":"string","name":"","type":"string"},{"internalType":"string","name":"","type":"string"},{"internalType":"string","name":"","type":"string"},{"internalType":"address","name":"","type":"address"},{"internalType":"address","name":"","type":"address"},{"internalType":"string","name":"","type":"string"},{"internalType":"string","name":"","type":"string"},{"internalType":"string","name":"","type":"string"},{"internalType":"string","name":"","type":"string"},{"internalType":"string","name":"","type":"string"},{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_projectId","type":"uint256"},{"internalType":"uint256","name":"_index","type":"uint256"}],"name":"readContribution","outputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"string","name":"","type":"string"},{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_projectId","type":"uint256"}],"name":"readContributionIndex","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_projectId","type":"uint256"}],"name":"readEditionData","outputs":[{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"renounceRole","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"revokeRole","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"_collection","type":"address"},{"internalType":"address","name":"_factory","type":"address"},{"internalType":"address","name":"_mpDev","type":"address"}],"name":"setAddresses","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_fee","type":"uint256"}],"name":"setFee","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_projectId","type":"uint256"}],"name":"setIsBaseDataFrozen","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_projectId","type":"uint256"},{"internalType":"bool","name":"_state","type":"bool"}],"name":"setIsCurated","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_projectId","type":"uint256"},{"internalType":"bool","name":"_state","type":"bool"}],"name":"setIsPaused","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_minPrice","type":"uint256"}],"name":"setMinPrice","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_projectId","type":"uint256"},{"internalType":"uint256","name":"_premintedByCreator","type":"uint256"}],"name":"setPremintedByCreator","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"_caller","type":"address"},{"internalType":"address","name":"_royaltiesSplitter","type":"address"},{"internalType":"uint256","name":"_projectId","type":"uint256"},{"internalType":"string","name":"_title","type":"string"},{"internalType":"string","name":"_textCID","type":"string"},{"internalType":"string","name":"_originalLanguage","type":"string"},{"internalType":"uint256","name":"_initialMintPrice","type":"uint256"},{"internalType":"uint256","name":"_firstEditionAmount","type":"uint256"}],"name":"setupProject","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes4","name":"interfaceId","type":"bytes4"}],"name":"supportsInterface","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"translationIpfsHashes","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"unpause","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_projectId","type":"uint256"},{"internalType":"string","name":"_ipfsHash","type":"string"}],"name":"updateAnimationIpfsHash","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_projectId","type":"uint256"},{"internalType":"string","name":"_ipfsHash","type":"string"}],"name":"updateBlurbIpfsHash","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_projectId","type":"uint256"},{"internalType":"string","name":"_ipfsHash","type":"string"}],"name":"updateImgIpfsHash","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_projectId","type":"uint256"},{"internalType":"string","name":"_ipfsHash","type":"string"}],"name":"updateTextIpfsHash","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_projectId","type":"uint256"},{"internalType":"string","name":"_ipfsHash","type":"string"}],"name":"updateTranslationIpfsHash","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"newImplementation","type":"address"}],"name":"upgradeTo","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"newImplementation","type":"address"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"upgradeToAndCall","outputs":[],"stateMutability":"payable","type":"function"},{"stateMutability":"payable","type":"receive"}]');
+// EXTERNAL MODULE: ../constants.ts
+var constants = __webpack_require__(2391);
+// EXTERNAL MODULE: ./hooks/useContract.ts
+var useContract = __webpack_require__(9214);
+;// CONCATENATED MODULE: ./hooks/useMoonpageManager.ts
+
+
+
+
+const useMoonpageManager = ()=>{
+    const address = process.env.NX_PUBLIC_ENVIRONMENT === 'PROD' ? constants/* MOONPAGE_MANAGER_ADDRESS */.op : constants/* MOONPAGE_MANAGER_ADDRESS_DEV */.$g;
+    const MoonpageManager = (0,useContract/* default */.Z)({
+        address,
+        abi: MoonpageManager_namespaceObject
+    });
+    const MoonpageManagerContract = (0,external_react_.useMemo)(()=>MoonpageManager
+    , [
+        MoonpageManager
+    ]);
+    return MoonpageManagerContract;
+};
+/* harmony default export */ const hooks_useMoonpageManager = (useMoonpageManager);
+
+
+/***/ }),
+
+/***/ 7000:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 
@@ -937,27 +976,8 @@ const UserProvider = ({ children  })=>{
     }));
 };
 
-;// CONCATENATED MODULE: ./abis/MoonpageManager.json
-const MoonpageManager_namespaceObject = JSON.parse('[{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"previousAdmin","type":"address"},{"indexed":false,"internalType":"address","name":"newAdmin","type":"address"}],"name":"AdminChanged","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"projectId","type":"uint256"},{"indexed":false,"internalType":"string","name":"newIpfsHash","type":"string"}],"name":"AnimationUpdated","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"projectId","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"BalanceDecreased","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"projectId","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"BalanceIncreased","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"projectId","type":"uint256"},{"indexed":false,"internalType":"bool","name":"frozen","type":"bool"}],"name":"BaseDataFrozen","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"beacon","type":"address"}],"name":"BeaconUpgraded","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"projectId","type":"uint256"},{"indexed":false,"internalType":"string","name":"newIpfsHash","type":"string"}],"name":"BlurbUpdated","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"projectId","type":"uint256"},{"indexed":false,"internalType":"string","name":"imgHash","type":"string"},{"indexed":false,"internalType":"string","name":"animationHash","type":"string"},{"indexed":false,"internalType":"string","name":"blurbHash","type":"string"},{"indexed":false,"internalType":"string","name":"newGenre","type":"string"},{"indexed":false,"internalType":"string","name":"newSubtitle","type":"string"}],"name":"Configured","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"projectId","type":"uint256"},{"indexed":false,"internalType":"address","name":"contributor","type":"address"},{"indexed":false,"internalType":"uint256","name":"share","type":"uint256"},{"indexed":false,"internalType":"string","name":"role","type":"string"}],"name":"ContributorAdded","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"projectId","type":"uint256"},{"indexed":false,"internalType":"bool","name":"isCurated","type":"bool"}],"name":"Curated","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"projectId","type":"uint256"},{"indexed":false,"internalType":"string","name":"newIpfsHash","type":"string"}],"name":"ImageUpdated","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint8","name":"version","type":"uint8"}],"name":"Initialized","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"projectId","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"editionId","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"maxSupply","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"mintPrice","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"startId","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"endId","type":"uint256"}],"name":"NextEditionEnabled","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"account","type":"address"}],"name":"Paused","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"projectId","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"PremintedByAuthor","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"creator","type":"address"},{"indexed":false,"internalType":"address","name":"royaltiesSplitter","type":"address"},{"indexed":false,"internalType":"uint256","name":"projectId","type":"uint256"},{"indexed":false,"internalType":"string","name":"title","type":"string"},{"indexed":false,"internalType":"string","name":"textIpfsHash","type":"string"},{"indexed":false,"internalType":"string","name":"originalLanguage","type":"string"},{"indexed":false,"internalType":"uint256","name":"initialMintPrice","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"firstEditionAmount","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"startId","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"endId","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"currentEdLastId","type":"uint256"}],"name":"ProjectCreated","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"projectId","type":"uint256"},{"indexed":false,"internalType":"bool","name":"isPaused","type":"bool"}],"name":"ProjectPaused","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"role","type":"bytes32"},{"indexed":true,"internalType":"bytes32","name":"previousAdminRole","type":"bytes32"},{"indexed":true,"internalType":"bytes32","name":"newAdminRole","type":"bytes32"}],"name":"RoleAdminChanged","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"role","type":"bytes32"},{"indexed":true,"internalType":"address","name":"account","type":"address"},{"indexed":true,"internalType":"address","name":"sender","type":"address"}],"name":"RoleGranted","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"role","type":"bytes32"},{"indexed":true,"internalType":"address","name":"account","type":"address"},{"indexed":true,"internalType":"address","name":"sender","type":"address"}],"name":"RoleRevoked","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"projectId","type":"uint256"},{"indexed":false,"internalType":"string","name":"newIpfsHash","type":"string"}],"name":"TextUpdated","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"projectId","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"TokenIdIncreased","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"projectId","type":"uint256"},{"indexed":false,"internalType":"string","name":"newIpfsHash","type":"string"}],"name":"TranslationUpdated","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"account","type":"address"}],"name":"Unpaused","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"implementation","type":"address"}],"name":"Upgraded","type":"event"},{"inputs":[],"name":"DEFAULT_ADMIN_ROLE","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"PAUSER_ROLE","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"UPGRADER_ROLE","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_projectId","type":"uint256"},{"internalType":"address[]","name":"_contributors","type":"address[]"},{"internalType":"uint256[]","name":"_shares","type":"uint256[]"},{"internalType":"string[]","name":"_roles","type":"string[]"}],"name":"addContributors","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"authorShares","outputs":[{"internalType":"uint256","name":"share","type":"uint256"},{"internalType":"uint256","name":"shareInMatic","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"baseDatas","outputs":[{"internalType":"string","name":"title","type":"string"},{"internalType":"string","name":"subtitle","type":"string"},{"internalType":"string","name":"genre","type":"string"},{"internalType":"address","name":"creatorAddress","type":"address"},{"internalType":"address","name":"royaltiesSplitter","type":"address"},{"internalType":"string","name":"textIpfsHash","type":"string"},{"internalType":"string","name":"imgIpfsHash","type":"string"},{"internalType":"string","name":"animationIpfsHash","type":"string"},{"internalType":"string","name":"blurbIpfsHash","type":"string"},{"internalType":"string","name":"originalLanguage","type":"string"},{"internalType":"uint256","name":"premintedByCreator","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"collection","outputs":[{"internalType":"contract IMoonpageCollection","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_projectId","type":"uint256"},{"internalType":"string","name":"_imgHash","type":"string"},{"internalType":"string","name":"_animationHash","type":"string"},{"internalType":"string","name":"_blurbHash","type":"string"},{"internalType":"string","name":"_genre","type":"string"},{"internalType":"string","name":"_subtitle","type":"string"}],"name":"configureProjectDetails","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"uint256","name":"","type":"uint256"}],"name":"contributions","outputs":[{"internalType":"address","name":"shareRecipient","type":"address"},{"internalType":"string","name":"role","type":"string"},{"internalType":"uint256","name":"share","type":"uint256"},{"internalType":"uint256","name":"shareInMatic","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"contributionsIndeces","outputs":[{"internalType":"uint8","name":"","type":"uint8"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"curatedProjectIds","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_projectId","type":"uint256"}],"name":"distributeShares","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_projectId","type":"uint256"},{"internalType":"uint256","name":"_tokenId","type":"uint256"}],"name":"editionOfToken","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"uint256","name":"","type":"uint256"}],"name":"editionRanges","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"editions","outputs":[{"internalType":"uint256","name":"current","type":"uint256"},{"internalType":"uint256","name":"mintPrice","type":"uint256"},{"internalType":"uint256","name":"startTokenId","type":"uint256"},{"internalType":"uint256","name":"currentTokenId","type":"uint256"},{"internalType":"uint256","name":"lastGenEdTokenId","type":"uint256"},{"internalType":"uint256","name":"currentEdLastTokenId","type":"uint256"},{"internalType":"uint256","name":"endTokenId","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_to","type":"address"}],"name":"emergencyWithdraw","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_projectId","type":"uint256"},{"internalType":"uint256","name":"_newEdAmount","type":"uint256"},{"internalType":"uint256","name":"_newEdMintPrice","type":"uint256"}],"name":"enableNextEdition","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"existingProjectIds","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_projectId","type":"uint256"}],"name":"exists","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"factory","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"fee","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"frozenProjectIds","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"}],"name":"getRoleAdmin","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"grantRole","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"hasRole","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_projectId","type":"uint256"},{"internalType":"uint256","name":"_amount","type":"uint256"}],"name":"increaseBalance","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_projectId","type":"uint256"}],"name":"increaseCurrentTokenId","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"initialize","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_projectId","type":"uint256"}],"name":"isPaused","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"maxAmountEdition","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"minPrice","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"moonpageDev","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"pause","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"paused","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"pausedProjectIds","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"projectBalances","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_tokenId","type":"uint256"}],"name":"projectIdOfToken","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"projectsLength","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"proxiableUUID","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_projectId","type":"uint256"}],"name":"readAuthorShare","outputs":[{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_projectId","type":"uint256"}],"name":"readBaseData","outputs":[{"internalType":"string","name":"","type":"string"},{"internalType":"string","name":"","type":"string"},{"internalType":"string","name":"","type":"string"},{"internalType":"address","name":"","type":"address"},{"internalType":"address","name":"","type":"address"},{"internalType":"string","name":"","type":"string"},{"internalType":"string","name":"","type":"string"},{"internalType":"string","name":"","type":"string"},{"internalType":"string","name":"","type":"string"},{"internalType":"string","name":"","type":"string"},{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_projectId","type":"uint256"},{"internalType":"uint256","name":"_index","type":"uint256"}],"name":"readContribution","outputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"string","name":"","type":"string"},{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_projectId","type":"uint256"}],"name":"readContributionIndex","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_projectId","type":"uint256"}],"name":"readEditionData","outputs":[{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"renounceRole","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"revokeRole","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"_collection","type":"address"},{"internalType":"address","name":"_factory","type":"address"},{"internalType":"address","name":"_mpDev","type":"address"}],"name":"setAddresses","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_fee","type":"uint256"}],"name":"setFee","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_projectId","type":"uint256"}],"name":"setIsBaseDataFrozen","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_projectId","type":"uint256"},{"internalType":"bool","name":"_state","type":"bool"}],"name":"setIsCurated","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_projectId","type":"uint256"},{"internalType":"bool","name":"_state","type":"bool"}],"name":"setIsPaused","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_minPrice","type":"uint256"}],"name":"setMinPrice","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_projectId","type":"uint256"},{"internalType":"uint256","name":"_premintedByCreator","type":"uint256"}],"name":"setPremintedByCreator","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"_caller","type":"address"},{"internalType":"address","name":"_royaltiesSplitter","type":"address"},{"internalType":"uint256","name":"_projectId","type":"uint256"},{"internalType":"string","name":"_title","type":"string"},{"internalType":"string","name":"_textCID","type":"string"},{"internalType":"string","name":"_originalLanguage","type":"string"},{"internalType":"uint256","name":"_initialMintPrice","type":"uint256"},{"internalType":"uint256","name":"_firstEditionAmount","type":"uint256"}],"name":"setupProject","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes4","name":"interfaceId","type":"bytes4"}],"name":"supportsInterface","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"translationIpfsHashes","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"unpause","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_projectId","type":"uint256"},{"internalType":"string","name":"_ipfsHash","type":"string"}],"name":"updateAnimationIpfsHash","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_projectId","type":"uint256"},{"internalType":"string","name":"_ipfsHash","type":"string"}],"name":"updateBlurbIpfsHash","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_projectId","type":"uint256"},{"internalType":"string","name":"_ipfsHash","type":"string"}],"name":"updateImgIpfsHash","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_projectId","type":"uint256"},{"internalType":"string","name":"_ipfsHash","type":"string"}],"name":"updateTextIpfsHash","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_projectId","type":"uint256"},{"internalType":"string","name":"_ipfsHash","type":"string"}],"name":"updateTranslationIpfsHash","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"newImplementation","type":"address"}],"name":"upgradeTo","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"newImplementation","type":"address"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"upgradeToAndCall","outputs":[],"stateMutability":"payable","type":"function"},{"stateMutability":"payable","type":"receive"}]');
-;// CONCATENATED MODULE: ./hooks/useMoonpageManager.ts
-
-
-
-
-const useMoonpageManager = ()=>{
-    const address = process.env.NX_PUBLIC_ENVIRONMENT === 'PROD' ? constants/* MOONPAGE_MANAGER_ADDRESS */.op : constants/* MOONPAGE_MANAGER_ADDRESS_DEV */.$g;
-    const MoonpageManager = (0,useContract/* default */.Z)({
-        address,
-        abi: MoonpageManager_namespaceObject
-    });
-    const MoonpageManagerContract = (0,external_react_.useMemo)(()=>MoonpageManager
-    , [
-        MoonpageManager
-    ]);
-    return MoonpageManagerContract;
-};
-/* harmony default export */ const hooks_useMoonpageManager = (useMoonpageManager);
-
+// EXTERNAL MODULE: ./hooks/useMoonpageManager.ts + 1 modules
+var useMoonpageManager = __webpack_require__(7920);
 // EXTERNAL MODULE: external "react-toastify"
 var external_react_toastify_ = __webpack_require__(1187);
 // EXTERNAL MODULE: external "styled-components"
@@ -1029,7 +1049,15 @@ const pinToPinata = async (hash, projectId, type, title)=>{
 };
 /* harmony default export */ const utils_pinToPinata = (pinToPinata);
 
+;// CONCATENATED MODULE: ./utils/getGasMargin.ts
+
+// add 15%
+const getGasMargin = (value)=>{
+    return value.mul(external_ethers_.BigNumber.from(10000).add(external_ethers_.BigNumber.from(1500))).div(external_ethers_.BigNumber.from(10000));
+};
+
 ;// CONCATENATED MODULE: ./providers/manager-provider/manager-provider.tsx
+
 
 
 
@@ -1050,20 +1078,32 @@ const manager_provider_defaultContext = {
     enableNextEditionStatus: 'idle',
     updateTranslation: async ()=>undefined
     ,
-    updateTranslationStatus: 'idle'
+    updateTranslationStatus: 'idle',
+    updateBlurb: async ()=>undefined
+    ,
+    updateBlurbStatus: 'idle',
+    updateText: async ()=>undefined
+    ,
+    updateTextStatus: 'idle'
 };
 const ManagerContext = /*#__PURE__*/ (0,external_react_.createContext)(manager_provider_defaultContext);
 function ManagerProvider({ children  }) {
-    const mpManager = hooks_useMoonpageManager();
+    const mpManager = (0,useMoonpageManager/* default */.Z)();
     const { 0: configureStatus , 1: setConfigureStatus  } = (0,external_react_.useState)();
     const { 0: setContributorsStatus , 1: setSetContributorsStatus  } = (0,external_react_.useState)();
     const { 0: updateTranslationStatus , 1: setUpdateTranslationStatus  } = (0,external_react_.useState)();
+    const { 0: updateBlurbStatus , 1: setUpdateBlurbStatus  } = (0,external_react_.useState)();
+    const { 0: updateTextStatus , 1: setUpdateTextStatus  } = (0,external_react_.useState)();
     const { 0: enableNextEditionStatus , 1: setEnableNextEditionStatus  } = (0,external_react_.useState)();
-    const configureProject = (0,external_react_.useCallback)(async ({ projectId , imgHash , animationHash , blurbHash , genre , subtitle , onError , onSuccess , refetchWithTimeout =false  })=>{
+    const configureProject = (0,external_react_.useCallback)(async ({ projectId , imgHash , animationHash , blurbHash , genre , subtitle , onError , onSuccess  })=>{
         try {
             setConfigureStatus('confirming');
             imgHash = imgHash.length ? imgHash : constants_0/* DEFAULT_COVER_IMAGE_IPFS_HASH */.pq;
-            const Tx = await mpManager.configureProjectDetails(projectId, imgHash, animationHash, blurbHash, genre, subtitle);
+            const estimatedGas = await mpManager.estimateGas.configureProjectDetails(projectId, imgHash, animationHash, blurbHash, genre, subtitle);
+            const gasLimit = getGasMargin(estimatedGas);
+            const Tx = await mpManager.configureProjectDetails(projectId, imgHash, animationHash, blurbHash, genre, subtitle, {
+                gasLimit
+            });
             const { hash  } = Tx;
             setConfigureStatus('waiting');
             external_react_toastify_.toast.info(/*#__PURE__*/ jsx_runtime_.jsx(components_ToastLink, {
@@ -1083,14 +1123,7 @@ function ManagerProvider({ children  }) {
                 } catch (e) {
                 // do nothing
                 }
-                // we need a timeout, because the graph needs some time
-                if (refetchWithTimeout) {
-                    setTimeout(()=>{
-                        handleSuccess();
-                    }, 10000);
-                } else {
-                    handleSuccess();
-                }
+                handleSuccess();
             });
         } catch (e) {
             setConfigureStatus('error');
@@ -1102,7 +1135,7 @@ function ManagerProvider({ children  }) {
     }, [
         mpManager
     ]);
-    const setContributors = (0,external_react_.useCallback)(async ({ projectId , contributorsList , onError , onSuccess , refetchWithTimeout =false  })=>{
+    const setContributors = (0,external_react_.useCallback)(async ({ projectId , contributorsList , onError , onSuccess  })=>{
         const addressesArray = [];
         const sharesArray = [];
         const rolesArray = [];
@@ -1113,7 +1146,11 @@ function ManagerProvider({ children  }) {
         });
         try {
             setSetContributorsStatus('confirming');
-            const Tx = await mpManager.addContributors(projectId, addressesArray, sharesArray, rolesArray);
+            const estimatedGas = await mpManager.estimateGas.addContributors(projectId, addressesArray, sharesArray, rolesArray);
+            const gasLimit = getGasMargin(estimatedGas);
+            const Tx = await mpManager.addContributors(projectId, addressesArray, sharesArray, rolesArray, {
+                gasLimit
+            });
             const { hash  } = Tx;
             setSetContributorsStatus('waiting');
             external_react_toastify_.toast.info(/*#__PURE__*/ jsx_runtime_.jsx(components_ToastLink, {
@@ -1127,14 +1164,7 @@ function ManagerProvider({ children  }) {
                 onSuccess === null || onSuccess === void 0 ? void 0 : onSuccess();
             };
             mpManager.provider.once(hash, (transaction)=>{
-                // we need a timeout, because the graph needs some time
-                if (refetchWithTimeout) {
-                    setTimeout(()=>{
-                        handleSuccess();
-                    }, 10000);
-                } else {
-                    handleSuccess();
-                }
+                handleSuccess();
             });
         } catch (e) {
             setSetContributorsStatus('error');
@@ -1146,10 +1176,14 @@ function ManagerProvider({ children  }) {
     }, [
         mpManager
     ]);
-    const updateTranslation = (0,external_react_.useCallback)(async ({ projectId , translationIpfsHash , onError , onSuccess , refetchWithTimeout =false  })=>{
+    const updateTranslation = (0,external_react_.useCallback)(async ({ projectId , translationIpfsHash , onError , onSuccess  })=>{
         try {
             setUpdateTranslationStatus('confirming');
-            const Tx = await mpManager.updateTranslationIpfsHash(projectId, translationIpfsHash);
+            const estimatedGas = await mpManager.estimateGas.updateTranslationIpfsHash(projectId, translationIpfsHash);
+            const gasLimit = getGasMargin(estimatedGas);
+            const Tx = await mpManager.updateTranslationIpfsHash(projectId, translationIpfsHash, {
+                gasLimit
+            });
             const { hash  } = Tx;
             setUpdateTranslationStatus('waiting');
             external_react_toastify_.toast.info(/*#__PURE__*/ jsx_runtime_.jsx(components_ToastLink, {
@@ -1168,17 +1202,92 @@ function ManagerProvider({ children  }) {
                 } catch (e) {
                 // do nothing
                 }
-                if (refetchWithTimeout) {
-                    // we need a timeout, because the graph needs some time
-                    setTimeout(()=>{
-                        handleSuccess();
-                    }, 10000);
-                } else {
-                    handleSuccess();
-                }
+                handleSuccess();
             });
         } catch (e) {
             setUpdateTranslationStatus('error');
+            external_react_toastify_.toast.error(/*#__PURE__*/ jsx_runtime_.jsx(components_ToastLink, {
+                message: 'Something went wrong!'
+            }));
+            onError === null || onError === void 0 ? void 0 : onError(e);
+        }
+    }, [
+        mpManager
+    ]);
+    const updateBlurb = (0,external_react_.useCallback)(async ({ projectId , blurbIpfsHash , oldBlurbIpfsHash , onError , onSuccess  })=>{
+        try {
+            setUpdateBlurbStatus('confirming');
+            const estimatedGas = await mpManager.estimateGas.updateBlurbIpfsHash(projectId, blurbIpfsHash);
+            const gasLimit = getGasMargin(estimatedGas);
+            const Tx = await mpManager.updateBlurbIpfsHash(projectId, blurbIpfsHash, {
+                gasLimit
+            });
+            const { hash  } = Tx;
+            setUpdateBlurbStatus('waiting');
+            external_react_toastify_.toast.info(/*#__PURE__*/ jsx_runtime_.jsx(components_ToastLink, {
+                message: 'Updating Blurb...'
+            }));
+            const handleSuccess = ()=>{
+                setUpdateBlurbStatus('success');
+                external_react_toastify_.toast.success(/*#__PURE__*/ jsx_runtime_.jsx(components_ToastLink, {
+                    message: 'Success!'
+                }));
+                onSuccess === null || onSuccess === void 0 ? void 0 : onSuccess();
+            };
+            mpManager.provider.once(hash, async (transaction)=>{
+                try {
+                    // TODO: find a way to only unpin the first all other than the last one.
+                    // Because we want to show the user the latest change made.
+                    // await unpinFromPinata(oldBlurbIpfsHash);
+                    await utils_pinToPinata(blurbIpfsHash, projectId, 'blurb');
+                } catch (e) {
+                // do nothing
+                }
+                handleSuccess();
+            });
+        } catch (e) {
+            setUpdateBlurbStatus('error');
+            external_react_toastify_.toast.error(/*#__PURE__*/ jsx_runtime_.jsx(components_ToastLink, {
+                message: 'Something went wrong!'
+            }));
+            onError === null || onError === void 0 ? void 0 : onError(e);
+        }
+    }, [
+        mpManager
+    ]);
+    const updateText = (0,external_react_.useCallback)(async ({ projectId , textIpfsHash , oldTextIpfsHash , onError , onSuccess  })=>{
+        try {
+            setUpdateTextStatus('confirming');
+            const estimatedGas = await mpManager.estimateGas.updateTextIpfsHash(projectId, textIpfsHash);
+            const gasLimit = getGasMargin(estimatedGas);
+            const Tx = await mpManager.updateTextIpfsHash(projectId, textIpfsHash, {
+                gasLimit
+            });
+            const { hash  } = Tx;
+            setUpdateTextStatus('waiting');
+            external_react_toastify_.toast.info(/*#__PURE__*/ jsx_runtime_.jsx(components_ToastLink, {
+                message: 'Updating Text...'
+            }));
+            const handleSuccess = ()=>{
+                setUpdateTextStatus('success');
+                external_react_toastify_.toast.success(/*#__PURE__*/ jsx_runtime_.jsx(components_ToastLink, {
+                    message: 'Success!'
+                }));
+                onSuccess === null || onSuccess === void 0 ? void 0 : onSuccess();
+            };
+            mpManager.provider.once(hash, async (transaction)=>{
+                try {
+                    // TODO: find a way to only unpin the first all other than the last one.
+                    // Because we want to show the user the latest change made.
+                    // await unpinFromPinata(oldTextIpfsHash);
+                    await utils_pinToPinata(textIpfsHash, projectId, 'text');
+                } catch (e) {
+                // do nothing
+                }
+                handleSuccess();
+            });
+        } catch (e) {
+            setUpdateTextStatus('error');
             external_react_toastify_.toast.error(/*#__PURE__*/ jsx_runtime_.jsx(components_ToastLink, {
                 message: 'Something went wrong!'
             }));
@@ -1191,21 +1300,22 @@ function ManagerProvider({ children  }) {
         try {
             setEnableNextEditionStatus('confirming');
             const formattedPrice = external_ethers_.BigNumber.from((Number(price) * 1000000000000000000).toString());
-            const Tx = await mpManager.enableNextEdition(projectId, amount, formattedPrice);
+            const estimatedGas = await mpManager.estimateGas.enableNextEdition(projectId, amount, formattedPrice);
+            const gasLimit = getGasMargin(estimatedGas);
+            const Tx = await mpManager.enableNextEdition(projectId, amount, formattedPrice, {
+                gasLimit
+            });
             const { hash  } = Tx;
             setEnableNextEditionStatus('waiting');
             external_react_toastify_.toast.info(/*#__PURE__*/ jsx_runtime_.jsx(components_ToastLink, {
                 message: 'Unlocking next edition...'
             }));
             mpManager.provider.once(hash, (transaction)=>{
-                // we need a time, because the graph needs some time
-                setTimeout(()=>{
-                    setEnableNextEditionStatus('success');
-                    external_react_toastify_.toast.success(/*#__PURE__*/ jsx_runtime_.jsx(components_ToastLink, {
-                        message: 'Success!'
-                    }));
-                    onSuccess === null || onSuccess === void 0 ? void 0 : onSuccess();
-                }, 10000);
+                setEnableNextEditionStatus('success');
+                external_react_toastify_.toast.success(/*#__PURE__*/ jsx_runtime_.jsx(components_ToastLink, {
+                    message: 'Success!'
+                }));
+                onSuccess === null || onSuccess === void 0 ? void 0 : onSuccess();
             });
         } catch (e) {
             setEnableNextEditionStatus('error');
@@ -1225,7 +1335,11 @@ function ManagerProvider({ children  }) {
             enableNextEdition,
             enableNextEditionStatus,
             updateTranslation,
-            updateTranslationStatus
+            updateTranslationStatus,
+            updateBlurb,
+            updateBlurbStatus,
+            updateText,
+            updateTextStatus
         })
     , [
         configureProject,
@@ -1235,7 +1349,11 @@ function ManagerProvider({ children  }) {
         setContributors,
         setContributorsStatus,
         updateTranslation,
-        updateTranslationStatus, 
+        updateTranslationStatus,
+        updateBlurb,
+        updateBlurbStatus,
+        updateText,
+        updateTextStatus, 
     ]);
     return(/*#__PURE__*/ jsx_runtime_.jsx(ManagerContext.Provider, {
         value: api,
@@ -1246,6 +1364,7 @@ function ManagerProvider({ children  }) {
 // EXTERNAL MODULE: ./hooks/useAuctionsManager.ts + 1 modules
 var useAuctionsManager = __webpack_require__(5882);
 ;// CONCATENATED MODULE: ./providers/collection-provider/collection-provider.tsx
+
 
 
 
@@ -1274,7 +1393,11 @@ function CollectionProvider({ children  }) {
         try {
             setStartAuctionsStatus('confirming');
             const discountRate = Number(initialMintPrice.div(60 * 60 * 24));
-            const Tx = await collection.startAuctions(projectId, amountForCreator, discountRate);
+            const estimatedGas = await collection.estimateGas.startAuctions(projectId, amountForCreator, discountRate);
+            const gasLimit = getGasMargin(estimatedGas);
+            const Tx = await collection.startAuctions(projectId, amountForCreator, discountRate, {
+                gasLimit
+            });
             const { hash  } = Tx;
             setStartAuctionsStatus('waiting');
             external_react_toastify_.toast.info(/*#__PURE__*/ jsx_runtime_.jsx(components_ToastLink, {
@@ -1305,24 +1428,25 @@ function CollectionProvider({ children  }) {
         try {
             setBuyStatus('confirming');
             const currentPrice = await auctionsManager.getPrice(projectId, initialMintPrice);
-            const Tx = await collection.buy(projectId, {
+            const estimatedGas = await collection.estimateGas.buy(projectId, {
                 value: currentPrice
+            });
+            const gasLimit = getGasMargin(estimatedGas);
+            const Tx = await collection.buy(projectId, {
+                value: currentPrice,
+                gasLimit
             });
             const { hash  } = Tx;
             setBuyStatus('waiting');
             external_react_toastify_.toast.info(/*#__PURE__*/ jsx_runtime_.jsx(components_ToastLink, {
-                message: 'Minting...',
-                linkText: "View your NFT on Opensea"
+                message: 'Minting...'
             }));
             collection.provider.once(hash, (transaction)=>{
-                // we need a time, because the graph needs some time
-                setTimeout(()=>{
-                    setBuyStatus('success');
-                    external_react_toastify_.toast.success(/*#__PURE__*/ jsx_runtime_.jsx(components_ToastLink, {
-                        message: 'Success!'
-                    }));
-                    onSuccess === null || onSuccess === void 0 ? void 0 : onSuccess();
-                }, 10000);
+                setBuyStatus('success');
+                external_react_toastify_.toast.success(/*#__PURE__*/ jsx_runtime_.jsx(components_ToastLink, {
+                    message: 'Success!'
+                }));
+                onSuccess === null || onSuccess === void 0 ? void 0 : onSuccess();
             });
         } catch (e) {
             setBuyStatus('error');
@@ -1338,23 +1462,25 @@ function CollectionProvider({ children  }) {
     const mint = (0,external_react_.useCallback)(async ({ projectId , amount , price , onSuccess , onError  })=>{
         try {
             setMintStatus('confirming');
-            const tx = await collection.publicMint(projectId, amount, {
+            const estimatedGas = await collection.estimateGas.publicMint(projectId, amount, {
                 value: price
+            });
+            const gasLimit = getGasMargin(estimatedGas);
+            const tx = await collection.publicMint(projectId, amount, {
+                value: price,
+                gasLimit
             });
             const { hash  } = tx;
             external_react_toastify_.toast.info(/*#__PURE__*/ jsx_runtime_.jsx(components_ToastLink, {
                 message: 'Minting...'
             }));
             collection.provider.once(hash, (transaction)=>{
-                // we need a time, because the graph needs some time
-                setTimeout(()=>{
-                    setMintStatus('success');
-                    external_react_toastify_.toast.success(/*#__PURE__*/ jsx_runtime_.jsx(components_ToastLink, {
-                        message: 'Success!',
-                        linkText: "View your NFTs on Opensea"
-                    }));
-                    onSuccess === null || onSuccess === void 0 ? void 0 : onSuccess();
-                }, 13000);
+                setMintStatus('success');
+                external_react_toastify_.toast.success(/*#__PURE__*/ jsx_runtime_.jsx(components_ToastLink, {
+                    message: 'Success!',
+                    linkText: "View your NFTs on Opensea"
+                }));
+                onSuccess === null || onSuccess === void 0 ? void 0 : onSuccess();
             });
         } catch (e) {
             setMintStatus('error');
@@ -1395,6 +1521,7 @@ function CollectionProvider({ children  }) {
 
 
 
+
 const auctions_provider_defaultContext = {
     retriggerAuction: async ()=>undefined
     ,
@@ -1407,7 +1534,11 @@ function AuctionsProvider({ children  }) {
     const retriggerAuction = (0,external_react_.useCallback)(async ({ projectId , onSuccess , onError  })=>{
         try {
             setRetriggerAuctionStatus('confirming');
-            const Tx = await auctionsManager.retriggerAuction(external_ethers_.BigNumber.from(projectId));
+            const estimatedGas = await auctionsManager.estimateGas.retriggerAuction(external_ethers_.BigNumber.from(projectId));
+            const gasLimit = getGasMargin(estimatedGas);
+            const Tx = await auctionsManager.retriggerAuction(external_ethers_.BigNumber.from(projectId), {
+                gasLimit
+            });
             const { hash  } = Tx;
             setRetriggerAuctionStatus('waiting');
             external_react_toastify_.toast.info(/*#__PURE__*/ jsx_runtime_.jsx(components_ToastLink, {
@@ -1475,6 +1606,7 @@ const useMoonpageFactoryContract = ()=>{
 
 
 
+
 const factory_provider_defaultContext = {
     createProject: async ()=>undefined
     ,
@@ -1487,7 +1619,11 @@ function FactoryProvider({ children  }) {
     const createProject = (0,external_react_.useCallback)(async ({ title , textIpfsHash , originalLanguage , initialMintPrice , firstEditionAmount , onSuccess , onError  })=>{
         try {
             setCreateProjectStatus('confirming');
-            const Tx = await factory.createProject(title, textIpfsHash, originalLanguage, initialMintPrice, firstEditionAmount);
+            const estimatedGas = await factory.estimateGas.createProject(title, textIpfsHash, originalLanguage, initialMintPrice, firstEditionAmount);
+            const gasLimit = getGasMargin(estimatedGas);
+            const Tx = await factory.createProject(title, textIpfsHash, originalLanguage, initialMintPrice, firstEditionAmount, {
+                gasLimit
+            });
             const { hash  } = Tx;
             setCreateProjectStatus('waiting');
             external_react_toastify_.toast.info(/*#__PURE__*/ jsx_runtime_.jsx(components_ToastLink, {

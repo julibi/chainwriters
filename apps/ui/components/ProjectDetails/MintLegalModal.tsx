@@ -52,7 +52,10 @@ const MintLegalModal = ({
         <Checkbox onChange={toggleChecked} check={agreed} readonly={false}>
           <span>
             I have read and understood the
-            <NextLink href="/termsofservice" name="terms of service" />
+            <NextLink
+              href="https://moonpage.gitbook.io/moonpage-terms-of-service/"
+              name="Terms of Service (Last updated: 14.11.2022)."
+            />
             and want to mint this NFT.
           </span>
         </Checkbox>

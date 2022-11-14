@@ -2,7 +2,7 @@
 (() => {
 var exports = {};
 exports.id = 888;
-exports.ids = [888,417,153];
+exports.ids = [888,417,817,153];
 exports.modules = {
 
 /***/ 1641:
@@ -51,6 +51,10 @@ const Root = (styled_components__WEBPACK_IMPORTED_MODULE_3___default().div)`
   align-items: center;
   background-color: ${_themes__WEBPACK_IMPORTED_MODULE_4__/* .BG_DARK */ .aL};
   padding: 3rem;
+
+  @media (max-width: 900px) {
+    padding: 2rem 1rem;
+  }
 `;
 const Content = (styled_components__WEBPACK_IMPORTED_MODULE_3___default().div)`
   width: 80%;
@@ -135,6 +139,23 @@ const Footer = ()=>{
                     /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)(SocialMediaLinkWrapper, {
                         target: "_blank",
                         rel: "noopener noreferrer",
+                        href: "https://www.instagram.com/moonpage.io/",
+                        children: [
+                            /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(next_image__WEBPACK_IMPORTED_MODULE_2__["default"], {
+                                height: '30px',
+                                width: '30px',
+                                src: '/Instagram.svg',
+                                alt: 'Instagram',
+                                priority: true
+                            }),
+                            /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(SocialMediaName, {
+                                children: "Instagram"
+                            })
+                        ]
+                    }),
+                    /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)(SocialMediaLinkWrapper, {
+                        target: "_blank",
+                        rel: "noopener noreferrer",
                         href: "https://docs.moonpage.io",
                         children: [
                             /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(next_image__WEBPACK_IMPORTED_MODULE_2__["default"], {
@@ -172,8 +193,8 @@ const Footer = ()=>{
                 children: [
                     ' ',
                     /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(next_image__WEBPACK_IMPORTED_MODULE_2__["default"], {
-                        height: '100px',
-                        width: '100px',
+                        height: '130px',
+                        width: '130px',
                         src: `/logo/Logo.svg`,
                         alt: "moonpage",
                         priority: true
@@ -186,6 +207,12 @@ const Footer = ()=>{
                             url: "https://polygonscan.com/address/0x0eC473B1BD821D386cd7209203Ba6826Fd653B96#code",
                             underline: false,
                             children: 'Moonpage Collection: 0x0eC473B1BD821D386cd7209203Ba6826Fd653B96'
+                        })
+                    }),
+                    /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(GreyWrapper, {
+                        children: /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_LinkWrapper__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z, {
+                            url: "https://moonpage.gitbook.io/moonpage-terms-of-service/",
+                            children: 'Terms Of Service'
                         })
                     })
                 ]
@@ -1163,7 +1190,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _themes__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(5468);
 /* harmony import */ var _components_ToastContainer__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(8955);
 /* harmony import */ var _apolloclient__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(1641);
-/* harmony import */ var _providers__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(381);
+/* harmony import */ var _providers__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(7000);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_components_Layout__WEBPACK_IMPORTED_MODULE_6__]);
 _components_Layout__WEBPACK_IMPORTED_MODULE_6__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
 
@@ -1342,6 +1369,20 @@ module.exports = require("@ethersproject/providers");
 /***/ ((module) => {
 
 module.exports = require("@ethersproject/units");
+
+/***/ }),
+
+/***/ 7501:
+/***/ ((module) => {
+
+module.exports = require("@material-ui/icons/Close");
+
+/***/ }),
+
+/***/ 3365:
+/***/ ((module) => {
+
+module.exports = require("@material-ui/icons/Edit");
 
 /***/ }),
 
@@ -1604,7 +1645,7 @@ module.exports = require("styled-components");
 
 /***/ }),
 
-/***/ 7000:
+/***/ 2962:
 /***/ ((module) => {
 
 module.exports = import("ipfs-http-client");;
@@ -1618,7 +1659,7 @@ module.exports = import("ipfs-http-client");;
 var __webpack_require__ = require("../webpack-runtime.js");
 __webpack_require__.C(exports);
 var __webpack_exec__ = (moduleId) => (__webpack_require__(__webpack_require__.s = moduleId))
-var __webpack_exports__ = __webpack_require__.X(0, [577,274,97,217,237,325,639], () => (__webpack_exec__(5118)));
+var __webpack_exports__ = __webpack_require__.X(0, [577,274,97,217,368,639], () => (__webpack_exec__(5118)));
 module.exports = __webpack_exports__;
 
 })();

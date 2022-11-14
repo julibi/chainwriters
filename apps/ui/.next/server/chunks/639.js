@@ -594,6 +594,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_pag
 
 const RichTextWrapper = (styled_components__WEBPACK_IMPORTED_MODULE_2___default().section)`
   margin-block-end: 3rem;
+  width: 90%;
+
+  @media (max-width: 900px) {
+    width: 100%;
+  }
 `;
 const BlurbForm = ({ blurb , onKeyDown , onNextStep , onSubmit , pending , reset  })=>{
     var ref;
@@ -1149,6 +1154,7 @@ const DragNDrop = (styled_components__WEBPACK_IMPORTED_MODULE_3___default().div)
   width: 100%;
   height: 300px;
   align-items: center;
+  border-radius: ${_themes__WEBPACK_IMPORTED_MODULE_5__/* .BASE_BORDER_RADIUS */ .B};
   box-shadow: ${_themes__WEBPACK_IMPORTED_MODULE_5__/* .INSET_BASE_BOX_SHADOW */ .ux};
   margin: 0 0 2rem 0;
 
@@ -1719,8 +1725,7 @@ const NameForm = ({ onChange , onSubmit , title  })=>{
                     disabled: title.length < 1,
                     loading: false,
                     text: "Continue",
-                    margin: "1rem 0 0 0",
-                    web3Connectable: true
+                    margin: "1rem 0 0 0"
                 })
             ]
         })
@@ -1997,12 +2002,15 @@ const StyledEditable = external_styled_components_default()(external_slate_react
   box-shadow: ${themes/* INSET_BASE_BOX_SHADOW */.ux};
   // otherwise it shrinks to 24px height somehow
   min-height: 500px !important;
+  max-height: 1000px !important;
   margin-block-start: 1rem;
   padding: 1rem;
   border-radius: ${themes/* BASE_BORDER_RADIUS */.B};
   overflow-wrap: anywhere;
+  overflow-y: auto;
   font-family: monospace;
   font-size: 16px;
+  width: 100%;
 `;
 const LIST_TYPES = [
     'numbered-list',
@@ -2021,7 +2029,7 @@ const Toolbar = (external_styled_components_default()).div`
     justify-content: space-between;
   }
 `;
-const RichText = ({ onKeyDown  })=>{
+const RichText = ({ onKeyDown , text , isDisabled =false  })=>{
     const renderElement = (0,external_react_.useCallback)((props)=>/*#__PURE__*/ jsx_runtime_.jsx(Element, {
             ...props
         })
@@ -2034,7 +2042,7 @@ const RichText = ({ onKeyDown  })=>{
     , []);
     return(/*#__PURE__*/ (0,jsx_runtime_.jsxs)(external_slate_react_.Slate, {
         editor: editor,
-        value: initialValue,
+        value: text || initialValue,
         onChange: onKeyDown,
         children: [
             /*#__PURE__*/ (0,jsx_runtime_.jsxs)(Toolbar, {
@@ -2090,6 +2098,7 @@ const RichText = ({ onKeyDown  })=>{
                 ]
             }),
             /*#__PURE__*/ jsx_runtime_.jsx(StyledEditable, {
+                readOnly: isDisabled,
                 renderElement: renderElement,
                 renderLeaf: renderLeaf,
                 placeholder: "Enter some text…",
@@ -2742,6 +2751,63 @@ const Dropdown = ({ isDisabled , options , preselected , placeholder , width  })
 
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
+
+/***/ }),
+
+/***/ 9377:
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Z": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(997);
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6689);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _material_ui_icons_Edit__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3365);
+/* harmony import */ var _material_ui_icons_Edit__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_material_ui_icons_Edit__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _material_ui_icons_Close__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(7501);
+/* harmony import */ var _material_ui_icons_Close__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_material_ui_icons_Close__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _themes__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(5468);
+/* harmony import */ var styled_components__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(7518);
+/* harmony import */ var styled_components__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(styled_components__WEBPACK_IMPORTED_MODULE_5__);
+
+
+
+
+
+
+const RootButton = styled_components__WEBPACK_IMPORTED_MODULE_5___default()(_themes__WEBPACK_IMPORTED_MODULE_4__/* .BaseButton */ .Yd)`
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: ${_themes__WEBPACK_IMPORTED_MODULE_4__/* .BG_NORMAL */ .te};
+  color: ${({ color , disabled  })=>disabled ? _themes__WEBPACK_IMPORTED_MODULE_4__/* .DISABLED_WHITE */ .s0 : color ? color : _themes__WEBPACK_IMPORTED_MODULE_4__/* .PLAIN_WHITE */ ._I
+};
+  font-family: ${_themes__WEBPACK_IMPORTED_MODULE_4__/* .INTER_BOLD */ .UY};
+  width: ${({ width  })=>width !== null && width !== void 0 ? width : '60px'
+};
+  margin: ${({ margin  })=>margin !== null && margin !== void 0 ? margin : '1rem 1rem 0 0'
+};
+  padding: 1rem;
+
+  @media (max-width: 900px) {
+    width: 60px;
+    margin: 0;
+  }
+`;
+const EditButton = ({ isEditing , disabled =false , onClick , margin , width , color  })=>{
+    return(/*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(RootButton, {
+        color: color,
+        onClick: onClick,
+        disabled: disabled,
+        margin: margin,
+        width: width,
+        children: isEditing ? /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx((_material_ui_icons_Close__WEBPACK_IMPORTED_MODULE_3___default()), {}) : /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx((_material_ui_icons_Edit__WEBPACK_IMPORTED_MODULE_2___default()), {})
+    }));
+};
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (EditButton);
+
 
 /***/ }),
 
@@ -3519,7 +3585,7 @@ const Flex = (styled_components__WEBPACK_IMPORTED_MODULE_2___default().div)`
   justify-content: flex-start;
   align-items: center;
 `;
-const AuthorSection = ({ currentEdition , projectData , projectId , refetch  })=>{
+const AuthorSection = ({ currentEdition , project , projectId , refetch  })=>{
     const { configureProject , configureStatus , setContributors , setContributorsStatus , enableNextEdition , enableNextEditionStatus ,  } = (0,_hooks_manager__WEBPACK_IMPORTED_MODULE_10__/* .useManager */ .v)();
     const { startAuctions , startAuctionsStatus  } = (0,_hooks_collection__WEBPACK_IMPORTED_MODULE_13__/* .useCollection */ .K)();
     const { 0: showConfigureModal , 1: setShowConfigureModal  } = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(false);
@@ -3528,36 +3594,37 @@ const AuthorSection = ({ currentEdition , projectData , projectId , refetch  })=
     const { 0: showEnableNextEditionModal , 1: setShowEnableNextEditionModal  } = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(false);
     const configured = (0,react__WEBPACK_IMPORTED_MODULE_1__.useMemo)(()=>{
         let hasConfigured = false;
-        if (projectData) {
-            if (projectData.blurbIpfsHash || projectData.imgIpfsHash || projectData.genre || projectData.subtitle) {
+        if (project) {
+            if (project.blurbIpfsHash || project.imgIpfsHash || project.genre || project.subtitle) {
                 hasConfigured = true;
             }
         }
         return hasConfigured;
     }, [
-        projectData
+        project
     ]);
     const currentEndId = (0,react__WEBPACK_IMPORTED_MODULE_1__.useMemo)(()=>currentEdition ? Number(currentEdition.endId) : 0
     , [
         currentEdition
     ]);
-    const canTriggerNextEdition = (0,react__WEBPACK_IMPORTED_MODULE_1__.useMemo)(()=>Number(projectData.currentId) > currentEndId
-    , [
+    const canTriggerNextEdition = (0,react__WEBPACK_IMPORTED_MODULE_1__.useMemo)(()=>{
+        return Number(project === null || project === void 0 ? void 0 : project.currentId) > currentEndId;
+    }, [
         currentEndId,
-        projectData.currentId
+        project === null || project === void 0 ? void 0 : project.currentId
     ]);
     const calculatedProgress = (0,react__WEBPACK_IMPORTED_MODULE_1__.useMemo)(()=>{
         let percentage = 0;
-        if (!projectData) return percentage;
+        if (!project) return percentage;
         if (configured) {
             percentage = 50;
         }
-        if (projectData.auctionsStarted) {
+        if (project.auctionsStarted) {
             percentage = 100;
         }
         return percentage;
     }, [
-        projectData,
+        project,
         configured
     ]);
     const calculatedProgressIndicationText = (0,react__WEBPACK_IMPORTED_MODULE_1__.useMemo)(()=>{
@@ -3587,8 +3654,7 @@ const AuthorSection = ({ currentEdition , projectData , projectId , refetch  })=
             onSuccess: ()=>{
                 setShowConfigureModal(false);
                 refetch();
-            },
-            refetchWithTimeout: true
+            }
         })
     , [
         projectId,
@@ -3602,8 +3668,7 @@ const AuthorSection = ({ currentEdition , projectData , projectId , refetch  })=
             onSuccess: ()=>{
                 setShowContributorsModal(false);
                 refetch();
-            },
-            refetchWithTimeout: true
+            }
         })
     , [
         projectId,
@@ -3613,14 +3678,14 @@ const AuthorSection = ({ currentEdition , projectData , projectId , refetch  })=
     const handleStartAuctions = (0,react__WEBPACK_IMPORTED_MODULE_1__.useCallback)(async (amountForCreator)=>await startAuctions({
             projectId,
             amountForCreator,
-            initialMintPrice: projectData.initialMintPrice,
+            initialMintPrice: project.initialMintPrice,
             onSuccess: ()=>{
                 setShowAuthorMintModal(false);
                 refetch();
             }
         })
     , [
-        projectData.initialMintPrice,
+        project.initialMintPrice,
         projectId,
         refetch,
         startAuctions
@@ -3667,7 +3732,7 @@ const AuthorSection = ({ currentEdition , projectData , projectId , refetch  })=
                 /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)(ActionItems, {
                     children: [
                         /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_MoreDetails__WEBPACK_IMPORTED_MODULE_6__/* ["default"] */ .Z, {
-                            title: configured || projectData.auctionsStarted ? /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)(Flex, {
+                            title: configured || project.auctionsStarted ? /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)(Flex, {
                                 children: [
                                     /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("span", {
                                         children: '1) Configure Project'
@@ -3684,7 +3749,7 @@ const AuthorSection = ({ currentEdition , projectData , projectId , refetch  })=
                                         children: "Save more information about this work in the contract, to make your project more appealing and trustworthy."
                                     }),
                                     /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_ActionButton__WEBPACK_IMPORTED_MODULE_11__/* ["default"] */ .Z, {
-                                        disabled: configured || projectData.auctionsStarted,
+                                        disabled: configured || project.auctionsStarted,
                                         text: "Configure Your Project",
                                         loading: configureStatus == 'confirming' || configureStatus == 'waiting',
                                         onClick: ()=>setShowConfigureModal(true)
@@ -3693,7 +3758,7 @@ const AuthorSection = ({ currentEdition , projectData , projectId , refetch  })=
                             })
                         }),
                         /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_MoreDetails__WEBPACK_IMPORTED_MODULE_6__/* ["default"] */ .Z, {
-                            title: projectData.auctionsStarted || ((ref = projectData.contributors) === null || ref === void 0 ? void 0 : ref.length) > 0 ? /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)(Flex, {
+                            title: project.auctionsStarted || ((ref = project.contributors) === null || ref === void 0 ? void 0 : ref.length) > 0 ? /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)(Flex, {
                                 children: [
                                     /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("span", {
                                         children: '2) Add Contributors'
@@ -3710,7 +3775,7 @@ const AuthorSection = ({ currentEdition , projectData , projectId , refetch  })=
                                         children: "This is optional. You can specify what share of the fund contributors to your project will receive. This action can only be done before triggering the auctions."
                                     }),
                                     /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_ActionButton__WEBPACK_IMPORTED_MODULE_11__/* ["default"] */ .Z, {
-                                        disabled: setContributorsStatus === 'confirming' || setContributorsStatus === 'waiting' || projectData.auctionsStarted || !!((ref1 = projectData.contributors) === null || ref1 === void 0 ? void 0 : ref1.length),
+                                        disabled: setContributorsStatus === 'confirming' || setContributorsStatus === 'waiting' || project.auctionsStarted || !!((ref1 = project.contributors) === null || ref1 === void 0 ? void 0 : ref1.length),
                                         text: "Add Contributors",
                                         loading: setContributorsStatus === 'confirming' || setContributorsStatus === 'waiting',
                                         onClick: ()=>setShowContributorsModal(true)
@@ -3719,8 +3784,8 @@ const AuthorSection = ({ currentEdition , projectData , projectId , refetch  })=
                             })
                         }),
                         /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_MoreDetails__WEBPACK_IMPORTED_MODULE_6__/* ["default"] */ .Z, {
-                            open: Number(projectData.premintedByAuthor) > 0 && !projectData.auctionsStarted,
-                            title: projectData.auctionsStarted ? /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)(Flex, {
+                            open: Number(project.premintedByAuthor) > 0 && !project.auctionsStarted,
+                            title: project.auctionsStarted ? /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)(Flex, {
                                 children: [
                                     /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("span", {
                                         children: '3) Start Auctions'
@@ -3737,7 +3802,7 @@ const AuthorSection = ({ currentEdition , projectData , projectId , refetch  })=
                                         children: "Start the auctions for your Genesis Edition. Make sure to claim an amount of NFTs for yourself. At least 1 and max 4."
                                     }),
                                     /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_ActionButton__WEBPACK_IMPORTED_MODULE_11__/* ["default"] */ .Z, {
-                                        disabled: startAuctionsStatus === 'confirming' || startAuctionsStatus === 'waiting' || projectData.auctionsStarted || !!Number(projectData.premintedByAuthor),
+                                        disabled: startAuctionsStatus === 'confirming' || startAuctionsStatus === 'waiting' || project.auctionsStarted || !!Number(project.premintedByAuthor),
                                         text: "Start Auctions",
                                         loading: startAuctionsStatus === 'confirming' || startAuctionsStatus === 'waiting',
                                         onClick: ()=>setShowAuthorMintModal(true)
@@ -3756,7 +3821,7 @@ const AuthorSection = ({ currentEdition , projectData , projectId , refetch  })=
                 size: "l",
                 children: "Project Settings"
             }),
-            !projectData.auctionsStarted && beforeAuction(),
+            !project.auctionsStarted && beforeAuction(),
             /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_Title__WEBPACK_IMPORTED_MODULE_15__/* ["default"] */ .Z, {
                 size: "m",
                 margin: "3rem 0 3rem 0",
@@ -3807,7 +3872,7 @@ const AuthorSection = ({ currentEdition , projectData , projectId , refetch  })=
                 ,
                 onEnableNextEdition: handleEnableNextEdition,
                 pending: enableNextEditionStatus === 'confirming' || enableNextEditionStatus === 'waiting',
-                project: projectData
+                project: project
             })
         ]
     }));
@@ -3879,6 +3944,9 @@ const Label = (styled_components__WEBPACK_IMPORTED_MODULE_3___default().label)`
   margin-block-end: 0.5rem;
 `;
 const DropdownWrapper = (styled_components__WEBPACK_IMPORTED_MODULE_3___default().div)`
+  margin-block-end: 3rem;
+`;
+const RichTextWrapper = (styled_components__WEBPACK_IMPORTED_MODULE_3___default().div)`
   margin-block-end: 3rem;
 `;
 const ConfigureModal = ({ onConfigure , onClose , pending  })=>{
@@ -3964,8 +4032,10 @@ const ConfigureModal = ({ onConfigure , onClose , pending  })=>{
                         /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(Label, {
                             children: 'Blurb:'
                         }),
-                        /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_Create_RichText__WEBPACK_IMPORTED_MODULE_12__/* ["default"] */ .Z, {
-                            onKeyDown: (val)=>setBlurb(val)
+                        /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(RichTextWrapper, {
+                            children: /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_Create_RichText__WEBPACK_IMPORTED_MODULE_12__/* ["default"] */ .Z, {
+                                onKeyDown: (val)=>setBlurb(val)
+                            })
                         }),
                         /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)(_Create_CoverImageForm__WEBPACK_IMPORTED_MODULE_7__/* .StyledImageForm */ .j9, {
                             children: [
@@ -4191,12 +4261,14 @@ const EnableNextEditionModal = ({ onClose , onEnableNextEdition , pending , proj
                                 setMextEditionMintPrice(e.target.value);
                             },
                             // TODO: read this from contract
-                            error: Number(nextEditionMintPrice) < 0.1 && 'Price too low.'
+                            error: Number(nextEditionMintPrice) < 0.1 && 'Price too low.',
+                            type: "number"
                         }),
                         /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_ActionButton__WEBPACK_IMPORTED_MODULE_3__/* ["default"] */ .Z, {
                             disabled: pending || Number(nextEditionMaxAmount) < 1 || Number(nextEditionMaxAmount) > maxPossibleAmount || Number(nextEditionMintPrice) < 0.01,
                             text: "UNLOCK",
                             loading: pending,
+                            margin: "1rem 0 0 0",
                             onClick: (e)=>{
                                 e.preventDefault();
                                 onEnableNextEdition(nextEditionMintPrice, nextEditionMaxAmount);
@@ -4282,8 +4354,8 @@ const MintLegalModal = ({ amount , handleClick , onClose , mintStatus , price  }
                         children: [
                             "I have read and understood the",
                             /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_NextLink__WEBPACK_IMPORTED_MODULE_9__/* ["default"] */ .Z, {
-                                href: "/termsofservice",
-                                name: "terms of service"
+                                href: "https://moonpage.gitbook.io/moonpage-terms-of-service/",
+                                name: "Terms of Service (Last updated: 14.11.2022)."
                             }),
                             "and want to mint this NFT."
                         ]
@@ -4401,6 +4473,18 @@ const MintSection = ({ currentEdition , project , refetch  })=>{
         currentEdition,
         amount
     ]);
+    const isMinting = (0,react__WEBPACK_IMPORTED_MODULE_1__.useMemo)(()=>[
+            'confirming',
+            'waiting'
+        ].includes(mintStatus)
+    , [
+        mintStatus
+    ]);
+    const isSoldOut = (0,react__WEBPACK_IMPORTED_MODULE_1__.useMemo)(()=>totalSupply.eq(maxSupply)
+    , [
+        maxSupply,
+        totalSupply
+    ]);
     const handleIncrement = (0,react__WEBPACK_IMPORTED_MODULE_1__.useCallback)(()=>{
         setAmount(amount + 1);
     }, [
@@ -4445,7 +4529,7 @@ const MintSection = ({ currentEdition , project , refetch  })=>{
                 children: [
                     /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(StyledControl, {
                         onClick: handleDecrement,
-                        disabled: amount === 1,
+                        disabled: amount === 1 || isSoldOut,
                         children: "-"
                     }),
                     /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(StyledFakeInput, {
@@ -4453,17 +4537,17 @@ const MintSection = ({ currentEdition , project , refetch  })=>{
                     }),
                     /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(StyledControl, {
                         onClick: handleIncrement,
-                        disabled: amount === 10 || amount === Number(maxSupply.sub(totalSupply)) || maxSupply === totalSupply,
+                        disabled: amount === 10 || amount === Number(maxSupply.sub(totalSupply)) || isSoldOut,
                         children: "+"
                     })
                 ]
             }),
             /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_ActionButton__WEBPACK_IMPORTED_MODULE_9__/* ["default"] */ .Z, {
-                disabled: amount > Number(maxSupply.sub(totalSupply)),
+                disabled: amount > Number(maxSupply.sub(totalSupply)) || isMinting,
                 onClick: ()=>setShowLegalModal(true)
                 ,
                 text: "MINT",
-                loading: mintStatus === 'confirming' || mintStatus === 'waiting',
+                loading: isMinting,
                 web3Connectable: true
             }),
             showLegalModal && /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_MintLegalModal__WEBPACK_IMPORTED_MODULE_10__/* ["default"] */ .Z, {
@@ -4512,7 +4596,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_pag
 
 
 const StartAuctionsModal = ({ onClose , onStartAuctions , pending  })=>{
-    const { 0: authorMintInput , 1: setAuthorMintInput  } = (0,react__WEBPACK_IMPORTED_MODULE_2__.useState)(0);
+    const { 0: authorMintInput , 1: setAuthorMintInput  } = (0,react__WEBPACK_IMPORTED_MODULE_2__.useState)(1);
     const isValidInput = (amount)=>amount >= 1 && amount <= _constants__WEBPACK_IMPORTED_MODULE_7__/* .MAX_MINTABLE_BY_CREATOR */ .WB
     ;
     return(/*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_BaseModal__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .Z, {
@@ -4532,8 +4616,9 @@ const StartAuctionsModal = ({ onClose , onStartAuctions , pending  })=>{
                         /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_Title__WEBPACK_IMPORTED_MODULE_6__/* ["default"] */ .Z, {
                             size: "xs",
                             padding: "0",
-                            children: `You: ${authorMintInput}`
+                            children: `You: ${authorMintInput !== null && authorMintInput !== void 0 ? authorMintInput : ''}`
                         }),
+                        /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("br", {}),
                         /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_Title__WEBPACK_IMPORTED_MODULE_6__/* ["default"] */ .Z, {
                             size: "xs",
                             padding: "0",
@@ -4548,6 +4633,9 @@ const StartAuctionsModal = ({ onClose , onStartAuctions , pending  })=>{
                             onChange: (e)=>{
                                 if (isValidInput(Number(e.target.value))) {
                                     setAuthorMintInput(Number(e.target.value));
+                                } else {
+                                    // to enable the user to delete everything
+                                    setAuthorMintInput(undefined);
                                 }
                             },
                             error: !isValidInput(authorMintInput) && 'Incorrect amount.',
@@ -4574,6 +4662,146 @@ const StartAuctionsModal = ({ onClose , onStartAuctions , pending  })=>{
 
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
+
+/***/ }),
+
+/***/ 4930:
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Z": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(997);
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6689);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var styled_components__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(7518);
+/* harmony import */ var styled_components__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(styled_components__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var slate_react__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(9811);
+/* harmony import */ var slate_react__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(slate_react__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var slate__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(370);
+/* harmony import */ var slate__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(slate__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var slate_history__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(9116);
+/* harmony import */ var slate_history__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(slate_history__WEBPACK_IMPORTED_MODULE_5__);
+
+
+
+
+
+
+const StyledEditable = styled_components__WEBPACK_IMPORTED_MODULE_2___default()(slate_react__WEBPACK_IMPORTED_MODULE_3__.Editable)`
+  width: 100%;
+  overflow-wrap: break-word;
+  margin-block-start: 1rem;
+  font-size: 16px;
+  font-family: monospace;
+`;
+const RichText = ({ text  })=>{
+    const renderElement = (0,react__WEBPACK_IMPORTED_MODULE_1__.useCallback)((props)=>/*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(Element, {
+            ...props
+        })
+    , []);
+    const renderLeaf = (0,react__WEBPACK_IMPORTED_MODULE_1__.useCallback)((props)=>/*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(Leaf, {
+            ...props
+        })
+    , []);
+    const editor = (0,react__WEBPACK_IMPORTED_MODULE_1__.useMemo)(()=>(0,slate_history__WEBPACK_IMPORTED_MODULE_5__.withHistory)((0,slate_react__WEBPACK_IMPORTED_MODULE_3__.withReact)((0,slate__WEBPACK_IMPORTED_MODULE_4__.createEditor)()))
+    , []);
+    if (!text) return;
+    return(/*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(slate_react__WEBPACK_IMPORTED_MODULE_3__.Slate, {
+        editor: editor,
+        value: text,
+        children: /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(StyledEditable, {
+            renderElement: renderElement,
+            renderLeaf: renderLeaf,
+            disabled: true
+        })
+    }));
+};
+const Element = ({ children , element  })=>{
+    const attributes = {
+        contentEditable: false
+    };
+    const style = {
+        textAlign: element.align
+    };
+    switch(element.type){
+        case 'block-quote':
+            return(/*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("blockquote", {
+                style: style,
+                ...attributes,
+                children: children
+            }));
+        case 'bulleted-list':
+            return(/*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("ul", {
+                style: style,
+                ...attributes,
+                children: children
+            }));
+        case 'heading-one':
+            return(/*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("h1", {
+                style: {
+                    fontSize: '36px'
+                },
+                ...attributes,
+                children: children
+            }));
+        case 'heading-two':
+            return(/*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("h2", {
+                style: {
+                    fontSize: '24px'
+                },
+                ...attributes,
+                children: children
+            }));
+        case 'list-item':
+            return(/*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("li", {
+                style: style,
+                ...attributes,
+                children: children
+            }));
+        case 'numbered-list':
+            return(/*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("ol", {
+                style: style,
+                ...attributes,
+                children: children
+            }));
+        default:
+            return(/*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("p", {
+                style: style,
+                ...attributes,
+                children: children
+            }));
+    }
+};
+const Leaf = ({ children , leaf  })=>{
+    if (leaf.bold) {
+        children = /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("strong", {
+            children: children
+        });
+    }
+    if (leaf.code) {
+        children = /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("code", {
+            children: children
+        });
+    }
+    if (leaf.italic) {
+        children = /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("em", {
+            children: children
+        });
+    }
+    if (leaf.underline) {
+        children = /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("u", {
+            children: children
+        });
+    }
+    return(/*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("span", {
+        contentEditable: false,
+        children: children
+    }));
+};
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (RichText);
+
 
 /***/ }),
 
@@ -4736,8 +4964,8 @@ const WalletConnectionModal = ({ onClose  })=>{
                             children: [
                                 "By connecting your wallet and using the Moonpage website, you agree to our",
                                 /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_NextLink__WEBPACK_IMPORTED_MODULE_13__/* ["default"] */ .Z, {
-                                    href: "/termsofservice",
-                                    name: "Terms of Service."
+                                    href: "https://moonpage.gitbook.io/moonpage-terms-of-service/",
+                                    name: "Terms of Service (Last updated: 14.11.2022)."
                                 })
                             ]
                         })
@@ -4814,8 +5042,8 @@ __webpack_require__.d(__webpack_exports__, {
 
 // EXTERNAL MODULE: external "react"
 var external_react_ = __webpack_require__(6689);
-// EXTERNAL MODULE: ./providers/index.ts + 17 modules
-var providers = __webpack_require__(381);
+// EXTERNAL MODULE: ./providers/index.ts + 16 modules
+var providers = __webpack_require__(7000);
 ;// CONCATENATED MODULE: ./hooks/auctions/useAuctions.ts
 
 
@@ -4844,8 +5072,8 @@ __webpack_require__.d(__webpack_exports__, {
 
 // EXTERNAL MODULE: external "react"
 var external_react_ = __webpack_require__(6689);
-// EXTERNAL MODULE: ./providers/index.ts + 17 modules
-var providers = __webpack_require__(381);
+// EXTERNAL MODULE: ./providers/index.ts + 16 modules
+var providers = __webpack_require__(7000);
 ;// CONCATENATED MODULE: ./hooks/collection/useCollection.ts
 
 
@@ -4874,8 +5102,8 @@ __webpack_require__.d(__webpack_exports__, {
 
 // EXTERNAL MODULE: external "react"
 var external_react_ = __webpack_require__(6689);
-// EXTERNAL MODULE: ./providers/index.ts + 17 modules
-var providers = __webpack_require__(381);
+// EXTERNAL MODULE: ./providers/index.ts + 16 modules
+var providers = __webpack_require__(7000);
 ;// CONCATENATED MODULE: ./hooks/factory/useFactory.ts
 
 
@@ -4904,8 +5132,8 @@ __webpack_require__.d(__webpack_exports__, {
 
 // EXTERNAL MODULE: external "react"
 var external_react_ = __webpack_require__(6689);
-// EXTERNAL MODULE: ./providers/index.ts + 17 modules
-var providers = __webpack_require__(381);
+// EXTERNAL MODULE: ./providers/index.ts + 16 modules
+var providers = __webpack_require__(7000);
 ;// CONCATENATED MODULE: ./hooks/manager/useManager.ts
 
 
@@ -5041,7 +5269,7 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "c": () => (/* binding */ useIpfsClient)
 /* harmony export */ });
-/* harmony import */ var ipfs_http_client__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(7000);
+/* harmony import */ var ipfs_http_client__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2962);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([ipfs_http_client__WEBPACK_IMPORTED_MODULE_0__]);
 ipfs_http_client__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
 
@@ -5063,6 +5291,227 @@ const useIpfsClient = ()=>{
 
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
+
+/***/ }),
+
+/***/ 3262:
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Z": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* unused harmony export GET_PROJECT */
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6689);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _apollo_client__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(9114);
+/* harmony import */ var _apollo_client__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_apollo_client__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _web3_react_core__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(8054);
+/* harmony import */ var _web3_react_core__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_web3_react_core__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _user_useUser__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(7402);
+
+
+
+
+const GET_PROJECT = _apollo_client__WEBPACK_IMPORTED_MODULE_1__.gql`
+  query oneProjectQuery($id: String!) {
+    project(id: $id) {
+      createdAt
+      creator
+      genre
+      id
+      originalLanguage
+      subtitle
+      textIpfsHash
+      translationIpfsHash
+      title
+    }
+  }
+`;
+const useShowText = (projectId)=>{
+    const { account  } = (0,_web3_react_core__WEBPACK_IMPORTED_MODULE_2__.useWeb3React)();
+    const { detailedNfts  } = (0,_user_useUser__WEBPACK_IMPORTED_MODULE_3__/* .useUser */ .a)();
+    const allowedToRead = (0,react__WEBPACK_IMPORTED_MODULE_0__.useMemo)(()=>{
+        return !!(detailedNfts === null || detailedNfts === void 0 ? void 0 : detailedNfts.find((nft)=>nft.projectId === Number(projectId)
+        ));
+    }, [
+        detailedNfts,
+        projectId
+    ]);
+    const { 0: text , 1: setText  } = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)();
+    const { 0: translation , 1: setTranslation  } = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)();
+    const { 0: pending , 1: setPending  } = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(true);
+    const { loading: isLoading , error , data ,  } = (0,_apollo_client__WEBPACK_IMPORTED_MODULE_1__.useQuery)(GET_PROJECT, {
+        variables: {
+            id: projectId
+        }
+    });
+    const project = (0,react__WEBPACK_IMPORTED_MODULE_0__.useMemo)(()=>{
+        return data === null || data === void 0 ? void 0 : data.project;
+    }, [
+        data
+    ]);
+    const fetchTextData = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(async ()=>{
+        setPending(true);
+        if (!project || !account || error) {
+            return null;
+        }
+        try {
+            const response = await fetch(`https://ipfs.io/ipfs/${project === null || project === void 0 ? void 0 : project.textIpfsHash}`);
+            if (response.ok) {
+                const fetchedText = await response.text();
+                const formatted = JSON.parse(fetchedText);
+                setText(formatted);
+                setPending(false);
+            }
+        } catch (e) {
+            console.log({
+                e
+            });
+            setPending(false);
+        }
+    }, [
+        project,
+        account,
+        error
+    ]);
+    const fetchTranslation = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(async ()=>{
+        setPending(true);
+        if (!(project === null || project === void 0 ? void 0 : project.translationIpfsHash) || !account || error) {
+            return null;
+        }
+        try {
+            const response = await fetch(`https://ipfs.io/ipfs/${project === null || project === void 0 ? void 0 : project.translationIpfsHash}`);
+            if (response.ok) {
+                const fetchedTranslation = await response.text();
+                const formatted = JSON.parse(fetchedTranslation);
+                setTranslation(formatted);
+                setPending(false);
+            }
+        } catch (e) {
+            console.log({
+                e
+            });
+            setPending(false);
+        }
+    }, [
+        account,
+        error,
+        project
+    ]);
+    const hasTranslation = (0,react__WEBPACK_IMPORTED_MODULE_0__.useMemo)(()=>{
+        var ref;
+        return (project === null || project === void 0 ? void 0 : (ref = project.translationIpfsHash) === null || ref === void 0 ? void 0 : ref.length) > 0;
+    }, [
+        project
+    ]);
+    (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(()=>{
+        if (account && allowedToRead) {
+            fetchTextData();
+        }
+    }, [
+        account,
+        allowedToRead,
+        fetchTextData
+    ]);
+    (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(()=>{
+        if (account && hasTranslation) {
+            fetchTranslation();
+        }
+    }, [
+        account,
+        allowedToRead,
+        fetchTextData,
+        fetchTranslation,
+        hasTranslation
+    ]);
+    return (0,react__WEBPACK_IMPORTED_MODULE_0__.useMemo)(()=>{
+        return {
+            allowedToRead,
+            pending: pending || isLoading,
+            project,
+            text,
+            translation,
+            hasTranslation,
+            fetchTranslation,
+            textIpfsHash: project === null || project === void 0 ? void 0 : project.textIpfsHash
+        };
+    }, [
+        allowedToRead,
+        fetchTranslation,
+        hasTranslation,
+        isLoading,
+        pending,
+        project,
+        text,
+        translation, 
+    ]);
+};
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (useShowText);
+
+
+/***/ }),
+
+/***/ 3869:
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Z": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6689);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var react_toastify__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1187);
+/* harmony import */ var react_toastify__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_toastify__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _useIpfsClient__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(5441);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_useIpfsClient__WEBPACK_IMPORTED_MODULE_2__]);
+_useIpfsClient__WEBPACK_IMPORTED_MODULE_2__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
+
+
+
+const useUploadTextToIpfs = ()=>{
+    const client = (0,_useIpfsClient__WEBPACK_IMPORTED_MODULE_2__/* .useIpfsClient */ .c)();
+    const uploadText = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(async (content)=>{
+        try {
+            const uploadContent = typeof content === 'string' ? content : JSON.stringify(content);
+            // upload to IPFS
+            const added = await client.add(uploadContent);
+            return added.path;
+        } catch (e) {
+            react_toastify__WEBPACK_IMPORTED_MODULE_1__.toast.error('Something went wrong while uploading your text to ipfs.');
+        }
+    }, [
+        client
+    ]);
+    return {
+        uploadText
+    };
+};
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (useUploadTextToIpfs);
+
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ }),
+
+/***/ 7402:
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "a": () => (/* binding */ useUser)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6689);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _providers__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(7000);
+
+
+const useUser = ()=>{
+    const api = (0,react__WEBPACK_IMPORTED_MODULE_0__.useContext)(_providers__WEBPACK_IMPORTED_MODULE_1__/* .UserContext */ .St);
+    if (!api) {
+        throw new Error('useUser must be used within a UserProvider');
+    }
+    return api;
+};
+
 
 /***/ }),
 
@@ -5090,39 +5539,38 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var styled_components__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(7518);
 /* harmony import */ var styled_components__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(styled_components__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var react_toastify__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(1187);
-/* harmony import */ var react_toastify__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(react_toastify__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var ethers_lib_utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(2522);
-/* harmony import */ var ethers_lib_utils__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(ethers_lib_utils__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _components_ProgressBar__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(3998);
-/* harmony import */ var _themes__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(5468);
-/* harmony import */ var _components_Create_NameForm__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(5181);
-/* harmony import */ var _components_Create_TextForm__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(4744);
-/* harmony import */ var _components_Create_AmountForm__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(7024);
-/* harmony import */ var _components_Create_PriceForm__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(8909);
-/* harmony import */ var _components_Create_ReviewForm__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(6568);
-/* harmony import */ var _components_Create_Congrats__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(8105);
-/* harmony import */ var _components_Create_CoverImageForm__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(9019);
-/* harmony import */ var _components_Create_BlurbForm__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(7155);
-/* harmony import */ var _components_Create_GenreForm__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(8529);
-/* harmony import */ var _components_Create_SubtitleForm__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(4594);
-/* harmony import */ var _components_Create_ConfigReviewForm__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(6653);
-/* harmony import */ var _components_Create_ContributorsForm__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(9275);
-/* harmony import */ var _components_Create_Finished__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(5641);
-/* harmony import */ var _hooks_factory__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(7757);
-/* harmony import */ var _hooks_useIpfsClient__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(5441);
-/* harmony import */ var ethers__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(1982);
-/* harmony import */ var ethers__WEBPACK_IMPORTED_MODULE_22___default = /*#__PURE__*/__webpack_require__.n(ethers__WEBPACK_IMPORTED_MODULE_22__);
-/* harmony import */ var _hooks_manager__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(7563);
-/* harmony import */ var _components_Create_LanguageForm__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(5768);
-/* harmony import */ var _components_Create_TranslationForm__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(4652);
-/* harmony import */ var _components_Title__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(8217);
-/* harmony import */ var _hooks_collection__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(7268);
-/* harmony import */ var next_router__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(1853);
-/* harmony import */ var next_router__WEBPACK_IMPORTED_MODULE_28___default = /*#__PURE__*/__webpack_require__.n(next_router__WEBPACK_IMPORTED_MODULE_28__);
-/* harmony import */ var _components_ConfettiCanon__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__(7346);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_components_Create_NameForm__WEBPACK_IMPORTED_MODULE_7__, _components_Create_TextForm__WEBPACK_IMPORTED_MODULE_8__, _components_Create_AmountForm__WEBPACK_IMPORTED_MODULE_9__, _components_Create_PriceForm__WEBPACK_IMPORTED_MODULE_10__, _components_Create_ReviewForm__WEBPACK_IMPORTED_MODULE_11__, _components_Create_Congrats__WEBPACK_IMPORTED_MODULE_12__, _components_Create_CoverImageForm__WEBPACK_IMPORTED_MODULE_13__, _components_Create_BlurbForm__WEBPACK_IMPORTED_MODULE_14__, _components_Create_GenreForm__WEBPACK_IMPORTED_MODULE_15__, _components_Create_SubtitleForm__WEBPACK_IMPORTED_MODULE_16__, _components_Create_ConfigReviewForm__WEBPACK_IMPORTED_MODULE_17__, _components_Create_ContributorsForm__WEBPACK_IMPORTED_MODULE_18__, _components_Create_Finished__WEBPACK_IMPORTED_MODULE_19__, _hooks_useIpfsClient__WEBPACK_IMPORTED_MODULE_21__, _components_Create_LanguageForm__WEBPACK_IMPORTED_MODULE_24__, _components_Create_TranslationForm__WEBPACK_IMPORTED_MODULE_25__]);
-([_components_Create_NameForm__WEBPACK_IMPORTED_MODULE_7__, _components_Create_TextForm__WEBPACK_IMPORTED_MODULE_8__, _components_Create_AmountForm__WEBPACK_IMPORTED_MODULE_9__, _components_Create_PriceForm__WEBPACK_IMPORTED_MODULE_10__, _components_Create_ReviewForm__WEBPACK_IMPORTED_MODULE_11__, _components_Create_Congrats__WEBPACK_IMPORTED_MODULE_12__, _components_Create_CoverImageForm__WEBPACK_IMPORTED_MODULE_13__, _components_Create_BlurbForm__WEBPACK_IMPORTED_MODULE_14__, _components_Create_GenreForm__WEBPACK_IMPORTED_MODULE_15__, _components_Create_SubtitleForm__WEBPACK_IMPORTED_MODULE_16__, _components_Create_ConfigReviewForm__WEBPACK_IMPORTED_MODULE_17__, _components_Create_ContributorsForm__WEBPACK_IMPORTED_MODULE_18__, _components_Create_Finished__WEBPACK_IMPORTED_MODULE_19__, _hooks_useIpfsClient__WEBPACK_IMPORTED_MODULE_21__, _components_Create_LanguageForm__WEBPACK_IMPORTED_MODULE_24__, _components_Create_TranslationForm__WEBPACK_IMPORTED_MODULE_25__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var ethers_lib_utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(2522);
+/* harmony import */ var ethers_lib_utils__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(ethers_lib_utils__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _components_ProgressBar__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(3998);
+/* harmony import */ var _themes__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(5468);
+/* harmony import */ var _components_Create_NameForm__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(5181);
+/* harmony import */ var _components_Create_TextForm__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(4744);
+/* harmony import */ var _components_Create_AmountForm__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(7024);
+/* harmony import */ var _components_Create_PriceForm__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(8909);
+/* harmony import */ var _components_Create_ReviewForm__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(6568);
+/* harmony import */ var _components_Create_Congrats__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(8105);
+/* harmony import */ var _components_Create_CoverImageForm__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(9019);
+/* harmony import */ var _components_Create_BlurbForm__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(7155);
+/* harmony import */ var _components_Create_GenreForm__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(8529);
+/* harmony import */ var _components_Create_SubtitleForm__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(4594);
+/* harmony import */ var _components_Create_ConfigReviewForm__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(6653);
+/* harmony import */ var _components_Create_ContributorsForm__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(9275);
+/* harmony import */ var _components_Create_Finished__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(5641);
+/* harmony import */ var _hooks_factory__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(7757);
+/* harmony import */ var _hooks_useIpfsClient__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(5441);
+/* harmony import */ var ethers__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(1982);
+/* harmony import */ var ethers__WEBPACK_IMPORTED_MODULE_21___default = /*#__PURE__*/__webpack_require__.n(ethers__WEBPACK_IMPORTED_MODULE_21__);
+/* harmony import */ var _hooks_manager__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(7563);
+/* harmony import */ var _components_Create_LanguageForm__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(5768);
+/* harmony import */ var _components_Create_TranslationForm__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(4652);
+/* harmony import */ var _components_Title__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(8217);
+/* harmony import */ var _hooks_collection__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(7268);
+/* harmony import */ var next_router__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(1853);
+/* harmony import */ var next_router__WEBPACK_IMPORTED_MODULE_27___default = /*#__PURE__*/__webpack_require__.n(next_router__WEBPACK_IMPORTED_MODULE_27__);
+/* harmony import */ var _components_ConfettiCanon__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(7346);
+/* harmony import */ var _hooks_useUploadTextToIpfs__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__(3869);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_components_Create_NameForm__WEBPACK_IMPORTED_MODULE_6__, _components_Create_TextForm__WEBPACK_IMPORTED_MODULE_7__, _components_Create_AmountForm__WEBPACK_IMPORTED_MODULE_8__, _components_Create_PriceForm__WEBPACK_IMPORTED_MODULE_9__, _components_Create_ReviewForm__WEBPACK_IMPORTED_MODULE_10__, _components_Create_Congrats__WEBPACK_IMPORTED_MODULE_11__, _components_Create_CoverImageForm__WEBPACK_IMPORTED_MODULE_12__, _components_Create_BlurbForm__WEBPACK_IMPORTED_MODULE_13__, _components_Create_GenreForm__WEBPACK_IMPORTED_MODULE_14__, _components_Create_SubtitleForm__WEBPACK_IMPORTED_MODULE_15__, _components_Create_ConfigReviewForm__WEBPACK_IMPORTED_MODULE_16__, _components_Create_ContributorsForm__WEBPACK_IMPORTED_MODULE_17__, _components_Create_Finished__WEBPACK_IMPORTED_MODULE_18__, _hooks_useIpfsClient__WEBPACK_IMPORTED_MODULE_20__, _components_Create_LanguageForm__WEBPACK_IMPORTED_MODULE_23__, _components_Create_TranslationForm__WEBPACK_IMPORTED_MODULE_24__, _hooks_useUploadTextToIpfs__WEBPACK_IMPORTED_MODULE_29__]);
+([_components_Create_NameForm__WEBPACK_IMPORTED_MODULE_6__, _components_Create_TextForm__WEBPACK_IMPORTED_MODULE_7__, _components_Create_AmountForm__WEBPACK_IMPORTED_MODULE_8__, _components_Create_PriceForm__WEBPACK_IMPORTED_MODULE_9__, _components_Create_ReviewForm__WEBPACK_IMPORTED_MODULE_10__, _components_Create_Congrats__WEBPACK_IMPORTED_MODULE_11__, _components_Create_CoverImageForm__WEBPACK_IMPORTED_MODULE_12__, _components_Create_BlurbForm__WEBPACK_IMPORTED_MODULE_13__, _components_Create_GenreForm__WEBPACK_IMPORTED_MODULE_14__, _components_Create_SubtitleForm__WEBPACK_IMPORTED_MODULE_15__, _components_Create_ConfigReviewForm__WEBPACK_IMPORTED_MODULE_16__, _components_Create_ContributorsForm__WEBPACK_IMPORTED_MODULE_17__, _components_Create_Finished__WEBPACK_IMPORTED_MODULE_18__, _hooks_useIpfsClient__WEBPACK_IMPORTED_MODULE_20__, _components_Create_LanguageForm__WEBPACK_IMPORTED_MODULE_23__, _components_Create_TranslationForm__WEBPACK_IMPORTED_MODULE_24__, _hooks_useUploadTextToIpfs__WEBPACK_IMPORTED_MODULE_29__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 
 
@@ -5192,8 +5640,8 @@ const FormWrapper = (styled_components__WEBPACK_IMPORTED_MODULE_2___default().di
 const Form = (styled_components__WEBPACK_IMPORTED_MODULE_2___default().div)`
   width: 100%;
   max-width: 1200px;
-  border-radius: ${_themes__WEBPACK_IMPORTED_MODULE_6__/* .BASE_BORDER_RADIUS */ .B};
-  box-shadow: ${_themes__WEBPACK_IMPORTED_MODULE_6__/* .BASE_BOX_SHADOW */ .S0};
+  border-radius: ${_themes__WEBPACK_IMPORTED_MODULE_5__/* .BASE_BORDER_RADIUS */ .B};
+  box-shadow: ${_themes__WEBPACK_IMPORTED_MODULE_5__/* .BASE_BOX_SHADOW */ .S0};
   padding: 3rem;
   display: flex;
   flex-direction: column;
@@ -5207,7 +5655,7 @@ const BlockSpan = (styled_components__WEBPACK_IMPORTED_MODULE_2___default().span
 const ReviewItem = (styled_components__WEBPACK_IMPORTED_MODULE_2___default().p)`
   display: inline-block;
   font-style: italic;
-  color: ${_themes__WEBPACK_IMPORTED_MODULE_6__/* .PINK */ .hl};
+  color: ${_themes__WEBPACK_IMPORTED_MODULE_5__/* .PINK */ .hl};
 `;
 const TextInput = (styled_components__WEBPACK_IMPORTED_MODULE_2___default().textarea)`
   height: 600px;
@@ -5215,12 +5663,12 @@ const TextInput = (styled_components__WEBPACK_IMPORTED_MODULE_2___default().text
 
   font-size: 14px;
   line-height: 170%;
-  border-radius: ${_themes__WEBPACK_IMPORTED_MODULE_6__/* .BASE_BORDER_RADIUS */ .B};
-  box-shadow: ${_themes__WEBPACK_IMPORTED_MODULE_6__/* .INSET_BASE_BOX_SHADOW */ .ux};
+  border-radius: ${_themes__WEBPACK_IMPORTED_MODULE_5__/* .BASE_BORDER_RADIUS */ .B};
+  box-shadow: ${_themes__WEBPACK_IMPORTED_MODULE_5__/* .INSET_BASE_BOX_SHADOW */ .ux};
   margin-block-end: 2rem;
   padding: 1rem;
-  color: ${_themes__WEBPACK_IMPORTED_MODULE_6__/* .PLAIN_WHITE */ ._I};
-  background-color: ${_themes__WEBPACK_IMPORTED_MODULE_6__/* .BG_NORMAL */ .te};
+  color: ${_themes__WEBPACK_IMPORTED_MODULE_5__/* .PLAIN_WHITE */ ._I};
+  background-color: ${_themes__WEBPACK_IMPORTED_MODULE_5__/* .BG_NORMAL */ .te};
   outline: none;
 `;
 const FadeIn = (styled_components__WEBPACK_IMPORTED_MODULE_2___default().div)`
@@ -5251,8 +5699,8 @@ const Wrapper = (styled_components__WEBPACK_IMPORTED_MODULE_2___default().div)`
 `;
 const InputName = (styled_components__WEBPACK_IMPORTED_MODULE_2___default().h2)`
   text-align: center;
-  font-family: ${_themes__WEBPACK_IMPORTED_MODULE_6__/* .INTER_BOLD */ .UY};
-  border-radius: ${_themes__WEBPACK_IMPORTED_MODULE_6__/* .BASE_BORDER_RADIUS */ .B};
+  font-family: ${_themes__WEBPACK_IMPORTED_MODULE_5__/* .INTER_BOLD */ .UY};
+  border-radius: ${_themes__WEBPACK_IMPORTED_MODULE_5__/* .BASE_BORDER_RADIUS */ .B};
 
   padding: 1rem;
   display: inline-block;
@@ -5276,8 +5724,9 @@ const ButtonsWrapper = (styled_components__WEBPACK_IMPORTED_MODULE_2___default()
   justify-content: space-between;
 `;
 const Create = ()=>{
-    const client = (0,_hooks_useIpfsClient__WEBPACK_IMPORTED_MODULE_21__/* .useIpfsClient */ .c)();
-    const router = (0,next_router__WEBPACK_IMPORTED_MODULE_28__.useRouter)();
+    const client = (0,_hooks_useIpfsClient__WEBPACK_IMPORTED_MODULE_20__/* .useIpfsClient */ .c)();
+    const { uploadText  } = (0,_hooks_useUploadTextToIpfs__WEBPACK_IMPORTED_MODULE_29__/* ["default"] */ .Z)();
+    const router = (0,next_router__WEBPACK_IMPORTED_MODULE_27__.useRouter)();
     const { 0: currentStep , 1: setCurrentStep  } = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(0);
     const { 0: title , 1: setTitle  } = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)('');
     const { 0: text , 1: setText  } = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)();
@@ -5297,9 +5746,9 @@ const Create = ()=>{
     const { 0: genre , 1: setGenre  } = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)('');
     const { 0: subtitle , 1: setSubtitle  } = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)('');
     const { 0: isPinPending , 1: setIsPinPending  } = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(false);
-    const { createProject  } = (0,_hooks_factory__WEBPACK_IMPORTED_MODULE_20__/* .useFactory */ .r)();
-    const { configureProject , configureStatus , setContributors , setContributorsStatus , updateTranslation , updateTranslationStatus ,  } = (0,_hooks_manager__WEBPACK_IMPORTED_MODULE_23__/* .useManager */ .v)();
-    const { startAuctions  } = (0,_hooks_collection__WEBPACK_IMPORTED_MODULE_27__/* .useCollection */ .K)();
+    const { createProject  } = (0,_hooks_factory__WEBPACK_IMPORTED_MODULE_19__/* .useFactory */ .r)();
+    const { configureProject , configureStatus , setContributors , setContributorsStatus , updateTranslation , updateTranslationStatus ,  } = (0,_hooks_manager__WEBPACK_IMPORTED_MODULE_22__/* .useManager */ .v)();
+    const { startAuctions  } = (0,_hooks_collection__WEBPACK_IMPORTED_MODULE_26__/* .useCollection */ .K)();
     const nothingConfigured = (0,react__WEBPACK_IMPORTED_MODULE_1__.useMemo)(()=>{
         if (!subtitle.trim().length && !genre.trim().length && !(blurb === null || blurb === void 0 ? void 0 : blurb.length) && !coverImgIPFS.trim().length) return true;
         return false;
@@ -5309,18 +5758,6 @@ const Create = ()=>{
         blurb,
         coverImgIPFS
     ]);
-    const uploadText = (0,react__WEBPACK_IMPORTED_MODULE_1__.useCallback)(async (content)=>{
-        try {
-            const uploadContent = typeof content === 'string' ? content : JSON.stringify(content);
-            // upload to IPFS
-            const added = await client.add(uploadContent);
-            return added.path;
-        } catch (e) {
-            react_toastify__WEBPACK_IMPORTED_MODULE_3__.toast.error('Something went wrong while uploading your text to ipfs.');
-        }
-    }, [
-        client
-    ]);
     const handleCreateProject = (0,react__WEBPACK_IMPORTED_MODULE_1__.useCallback)(async ()=>{
         setIsPinPending(true);
         const hash = await uploadText(text);
@@ -5329,8 +5766,8 @@ const Create = ()=>{
             title,
             textIpfsHash: hash,
             originalLanguage: language,
-            initialMintPrice: (0,ethers_lib_utils__WEBPACK_IMPORTED_MODULE_4__.parseEther)(firstEdMintPrice),
-            firstEditionAmount: ethers__WEBPACK_IMPORTED_MODULE_22__.BigNumber.from(firstEdMaxAmount.toString()),
+            initialMintPrice: (0,ethers_lib_utils__WEBPACK_IMPORTED_MODULE_3__.parseEther)(firstEdMintPrice),
+            firstEditionAmount: ethers__WEBPACK_IMPORTED_MODULE_21__.BigNumber.from(firstEdMaxAmount.toString()),
             onSuccess: (newProjectId)=>{
                 setCurrentStep(currentStep + 1);
                 setProjectId(newProjectId);
@@ -5357,8 +5794,7 @@ const Create = ()=>{
             onSuccess: ()=>{
                 setCurrentStep(currentStep + 1);
             },
-            onError: undefined,
-            refetchWithTimeout: false
+            onError: undefined
         });
     }, [
         currentStep,
@@ -5378,8 +5814,7 @@ const Create = ()=>{
             subtitle,
             onSuccess: ()=>{
                 setCurrentStep(currentStep + 1);
-            },
-            refetchWithTimeout: false
+            }
         });
     }, [
         blurbIPFS,
@@ -5425,8 +5860,7 @@ const Create = ()=>{
             contributorsList,
             onSuccess: ()=>{
                 setCurrentStep(currentStep + 1);
-            },
-            refetchWithTimeout: false
+            }
         });
     }, [
         contributorsList,
@@ -5472,7 +5906,7 @@ const Create = ()=>{
         await startAuctions({
             projectId,
             amountForCreator: authorMintInput,
-            initialMintPrice: (0,ethers_lib_utils__WEBPACK_IMPORTED_MODULE_4__.parseEther)(firstEdMintPrice),
+            initialMintPrice: (0,ethers_lib_utils__WEBPACK_IMPORTED_MODULE_3__.parseEther)(firstEdMintPrice),
             onSuccess: ()=>router.push(`projects/${projectId}`)
         });
     }, [
@@ -5483,39 +5917,39 @@ const Create = ()=>{
     ]);
     return(/*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)(Root, {
         children: [
-            /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_Title__WEBPACK_IMPORTED_MODULE_26__/* ["default"] */ .Z, {
+            /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_Title__WEBPACK_IMPORTED_MODULE_25__/* ["default"] */ .Z, {
                 margin: "0 0 4rem 0",
                 children: "Create"
             }),
             /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)(Content, {
                 children: [
                     /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(ProgressBarWrapper, {
-                        children: /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_ProgressBar__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z, {
+                        children: /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_ProgressBar__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .Z, {
                             completed: currentStep ? currentStep / 14 * 100 : 0
                         })
                     }),
                     /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)(FormWrapper, {
                         children: [
-                            /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_ConfettiCanon__WEBPACK_IMPORTED_MODULE_29__/* ["default"] */ .Z, {
+                            /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_ConfettiCanon__WEBPACK_IMPORTED_MODULE_28__/* ["default"] */ .Z, {
                                 show: !!projectId
                             }),
                             /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)(Form, {
                                 children: [
-                                    currentStep === 0 && /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_Create_NameForm__WEBPACK_IMPORTED_MODULE_7__/* ["default"] */ .Z, {
+                                    currentStep === 0 && /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_Create_NameForm__WEBPACK_IMPORTED_MODULE_6__/* ["default"] */ .Z, {
                                         onChange: (e)=>setTitle(e.target.value)
                                         ,
                                         onSubmit: ()=>setCurrentStep(currentStep + 1)
                                         ,
                                         title: title
                                     }),
-                                    currentStep === 1 && /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_Create_TextForm__WEBPACK_IMPORTED_MODULE_8__/* ["default"] */ .Z, {
+                                    currentStep === 1 && /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_Create_TextForm__WEBPACK_IMPORTED_MODULE_7__/* ["default"] */ .Z, {
                                         onKeyDown: (val)=>setText(val)
                                         ,
                                         onSubmit: ()=>setCurrentStep(currentStep + 1)
                                         ,
                                         text: text
                                     }),
-                                    currentStep === 2 && /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_Create_LanguageForm__WEBPACK_IMPORTED_MODULE_24__/* ["default"] */ .Z, {
+                                    currentStep === 2 && /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_Create_LanguageForm__WEBPACK_IMPORTED_MODULE_23__/* ["default"] */ .Z, {
                                         onLanguageSet: (val)=>setLanguage(val)
                                         ,
                                         onSubmit: ()=>setCurrentStep(currentStep + 1)
@@ -5523,21 +5957,21 @@ const Create = ()=>{
                                         language: language,
                                         text: text
                                     }),
-                                    currentStep === 3 && /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_Create_AmountForm__WEBPACK_IMPORTED_MODULE_9__/* ["default"] */ .Z, {
+                                    currentStep === 3 && /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_Create_AmountForm__WEBPACK_IMPORTED_MODULE_8__/* ["default"] */ .Z, {
                                         onChange: (e)=>setFirstEdMaxAmount(Number(e.target.value))
                                         ,
                                         onSubmit: ()=>setCurrentStep(currentStep + 1)
                                         ,
                                         firstEdMaxAmount: firstEdMaxAmount
                                     }),
-                                    currentStep === 4 && /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_Create_PriceForm__WEBPACK_IMPORTED_MODULE_10__/* ["default"] */ .Z, {
+                                    currentStep === 4 && /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_Create_PriceForm__WEBPACK_IMPORTED_MODULE_9__/* ["default"] */ .Z, {
                                         onChange: (e)=>setFirstEdMintPrice(e.target.value)
                                         ,
                                         onSubmit: ()=>setCurrentStep(currentStep + 1)
                                         ,
                                         firstEdMintPrice: firstEdMintPrice
                                     }),
-                                    currentStep === 5 && /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_Create_ReviewForm__WEBPACK_IMPORTED_MODULE_11__/* ["default"] */ .Z, {
+                                    currentStep === 5 && /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_Create_ReviewForm__WEBPACK_IMPORTED_MODULE_10__/* ["default"] */ .Z, {
                                         agreed: agreed,
                                         language: language,
                                         title: title,
@@ -5549,7 +5983,7 @@ const Create = ()=>{
                                         isPinPending: isPinPending,
                                         createDao: handleCreateProject
                                     }),
-                                    currentStep === 6 && /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_Create_Congrats__WEBPACK_IMPORTED_MODULE_12__/* ["default"] */ .Z, {
+                                    currentStep === 6 && /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_Create_Congrats__WEBPACK_IMPORTED_MODULE_11__/* ["default"] */ .Z, {
                                         onSubmit: ()=>{
                                             if (language == 'English') {
                                                 setCurrentStep(currentStep + 2);
@@ -5558,7 +5992,7 @@ const Create = ()=>{
                                             }
                                         }
                                     }),
-                                    currentStep === 7 && /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_Create_TranslationForm__WEBPACK_IMPORTED_MODULE_25__/* ["default"] */ .Z, {
+                                    currentStep === 7 && /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_Create_TranslationForm__WEBPACK_IMPORTED_MODULE_24__/* ["default"] */ .Z, {
                                         onKeyDown: (val)=>setTranslation(val)
                                         ,
                                         onSubmit: handleUpdateTranslation,
@@ -5568,7 +6002,7 @@ const Create = ()=>{
                                         ,
                                         onNextStep: ()=>setCurrentStep(currentStep + 1)
                                     }),
-                                    currentStep === 8 && /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_Create_CoverImageForm__WEBPACK_IMPORTED_MODULE_13__/* ["default"] */ .ZP, {
+                                    currentStep === 8 && /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_Create_CoverImageForm__WEBPACK_IMPORTED_MODULE_12__/* ["default"] */ .ZP, {
                                         captureFile: captureFile,
                                         imgFile: imgFile,
                                         imgBuffer: imgBuffer,
@@ -5578,7 +6012,7 @@ const Create = ()=>{
                                         pending: isUploadingImage,
                                         reset: ()=>setCoverImgIPFS('')
                                     }),
-                                    currentStep === 9 && /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_Create_BlurbForm__WEBPACK_IMPORTED_MODULE_14__/* ["default"] */ .Z, {
+                                    currentStep === 9 && /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_Create_BlurbForm__WEBPACK_IMPORTED_MODULE_13__/* ["default"] */ .Z, {
                                         blurb: blurb,
                                         onKeyDown: (val)=>setBlurb(val)
                                         ,
@@ -5588,7 +6022,7 @@ const Create = ()=>{
                                         pending: isPinPending,
                                         reset: ()=>setBlurb(undefined)
                                     }),
-                                    currentStep === 10 && /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_Create_GenreForm__WEBPACK_IMPORTED_MODULE_15__/* ["default"] */ .Z, {
+                                    currentStep === 10 && /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_Create_GenreForm__WEBPACK_IMPORTED_MODULE_14__/* ["default"] */ .Z, {
                                         genre: genre,
                                         onGenreSet: (x)=>setGenre(x)
                                         ,
@@ -5596,7 +6030,7 @@ const Create = ()=>{
                                         ,
                                         reset: ()=>setGenre('')
                                     }),
-                                    currentStep === 11 && /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_Create_SubtitleForm__WEBPACK_IMPORTED_MODULE_16__/* ["default"] */ .Z, {
+                                    currentStep === 11 && /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_Create_SubtitleForm__WEBPACK_IMPORTED_MODULE_15__/* ["default"] */ .Z, {
                                         subtitle: subtitle,
                                         onChange: (e)=>setSubtitle(e.target.value)
                                         ,
@@ -5604,7 +6038,7 @@ const Create = ()=>{
                                         ,
                                         reset: ()=>setSubtitle('')
                                     }),
-                                    currentStep === 12 && /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_Create_ConfigReviewForm__WEBPACK_IMPORTED_MODULE_17__/* ["default"] */ .Z, {
+                                    currentStep === 12 && /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_Create_ConfigReviewForm__WEBPACK_IMPORTED_MODULE_16__/* ["default"] */ .Z, {
                                         genre: genre,
                                         subtitle: subtitle,
                                         blurb: blurb,
@@ -5613,7 +6047,7 @@ const Create = ()=>{
                                         blurbIPFS: blurbIPFS,
                                         onSubmit: handleConfigure
                                     }),
-                                    currentStep === 13 && /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_Create_ContributorsForm__WEBPACK_IMPORTED_MODULE_18__/* ["default"] */ .Z, {
+                                    currentStep === 13 && /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_Create_ContributorsForm__WEBPACK_IMPORTED_MODULE_17__/* ["default"] */ .Z, {
                                         contributors: contribs,
                                         contributorsList: contributorsList,
                                         loading: setContributorsStatus === 'confirming' || setContributorsStatus === 'waiting',
@@ -5629,7 +6063,7 @@ const Create = ()=>{
                                         ,
                                         onSubmit: handleSetContributors
                                     }),
-                                    currentStep === 14 && /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_Create_Finished__WEBPACK_IMPORTED_MODULE_19__/* ["default"] */ .Z, {
+                                    currentStep === 14 && /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_Create_Finished__WEBPACK_IMPORTED_MODULE_18__/* ["default"] */ .Z, {
                                         projectId: projectId,
                                         onStartAuctions: handleStartAuctions
                                     })
@@ -5643,6 +6077,232 @@ const Create = ()=>{
     }));
 };
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Create);
+
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ }),
+
+/***/ 1500:
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(997);
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _themes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(5468);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(6689);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var styled_components__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(7518);
+/* harmony import */ var styled_components__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(styled_components__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _utils_isJson__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(4553);
+/* harmony import */ var _components_Title__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(8217);
+/* harmony import */ var _components_EditButton__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(9377);
+/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(9826);
+/* harmony import */ var _components_RichTextRead__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(4930);
+/* harmony import */ var _components_Loading__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(8965);
+/* harmony import */ var _components_Create_RichText__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(5937);
+/* harmony import */ var _components_ActionButton__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(8639);
+/* harmony import */ var _hooks_manager__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(7563);
+/* harmony import */ var _hooks_useUploadTextToIpfs__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(3869);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_components_ActionButton__WEBPACK_IMPORTED_MODULE_9__, _hooks_useUploadTextToIpfs__WEBPACK_IMPORTED_MODULE_11__]);
+([_components_ActionButton__WEBPACK_IMPORTED_MODULE_9__, _hooks_useUploadTextToIpfs__WEBPACK_IMPORTED_MODULE_11__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const DescriptionSection = (styled_components__WEBPACK_IMPORTED_MODULE_3___default().section)`
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 90%;
+  line-break: anywhere;
+  max-width: 1200px;
+  color: ${_themes__WEBPACK_IMPORTED_MODULE_1__/* .PLAIN_WHITE */ ._I};
+  margin-block-end: 2rem;
+  padding: 2rem;
+  border-radius: ${_themes__WEBPACK_IMPORTED_MODULE_1__/* .BASE_BORDER_RADIUS */ .B};
+  box-shadow: ${_themes__WEBPACK_IMPORTED_MODULE_1__/* .BASE_BOX_SHADOW */ .S0};
+
+  animation: fadein 2s;
+
+  @keyframes fadein {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+`;
+const Description = (styled_components__WEBPACK_IMPORTED_MODULE_3___default().p)`
+  display: inline-block;
+
+  font-size: 14px;
+  line-height: 170%;
+`;
+const RichTextWrapper = (styled_components__WEBPACK_IMPORTED_MODULE_3___default().div)`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 90%;
+`;
+const Blurb = ({ blurbIpfsHash , projectId , isAllowedToEdit  })=>{
+    const { uploadText  } = (0,_hooks_useUploadTextToIpfs__WEBPACK_IMPORTED_MODULE_11__/* ["default"] */ .Z)();
+    const { 0: originalBlurb , 1: setOriginalBlurb  } = (0,react__WEBPACK_IMPORTED_MODULE_2__.useState)();
+    const { 0: shouldResetToOriginal , 1: setShouldResetToOriginal  } = (0,react__WEBPACK_IMPORTED_MODULE_2__.useState)(true);
+    const { 0: blurb , 1: setBlurb  } = (0,react__WEBPACK_IMPORTED_MODULE_2__.useState)();
+    const { 0: isEditing , 1: setIsEditing  } = (0,react__WEBPACK_IMPORTED_MODULE_2__.useState)(false);
+    const { 0: isBlurbFetching , 1: setIsBlurbFetching  } = (0,react__WEBPACK_IMPORTED_MODULE_2__.useState)(false);
+    const { updateBlurb , updateBlurbStatus  } = (0,_hooks_manager__WEBPACK_IMPORTED_MODULE_10__/* .useManager */ .v)();
+    const handleClickEditButton = (0,react__WEBPACK_IMPORTED_MODULE_2__.useCallback)(()=>{
+        if (isEditing && shouldResetToOriginal) {
+            setBlurb(originalBlurb);
+        }
+        setIsEditing(!isEditing);
+    }, [
+        isEditing,
+        originalBlurb,
+        shouldResetToOriginal
+    ]);
+    const fetchBlurb = (0,react__WEBPACK_IMPORTED_MODULE_2__.useCallback)(async ()=>{
+        if (blurbIpfsHash) {
+            setIsBlurbFetching(true);
+            // todo: cleanup, blurb will always be array of nodes in future
+            try {
+                const response = await fetch(`https://ipfs.io/ipfs/${blurbIpfsHash}`);
+                if (response.ok) {
+                    let fetchedBlurb = await response.text();
+                    fetchedBlurb = (0,_utils_isJson__WEBPACK_IMPORTED_MODULE_12__/* .isJson */ .s)(fetchedBlurb) ? JSON.parse(fetchedBlurb) : fetchedBlurb;
+                    setBlurb(fetchedBlurb);
+                    setOriginalBlurb(fetchedBlurb);
+                    setIsBlurbFetching(false);
+                } else {
+                    setBlurb(_constants__WEBPACK_IMPORTED_MODULE_13__/* .BLURB_FETCH_ERROR */ .yQ);
+                    setOriginalBlurb(_constants__WEBPACK_IMPORTED_MODULE_13__/* .BLURB_FETCH_ERROR */ .yQ);
+                    setIsBlurbFetching(false);
+                }
+            } catch (e) {
+                setBlurb(_constants__WEBPACK_IMPORTED_MODULE_13__/* .BLURB_FETCH_ERROR */ .yQ);
+                setOriginalBlurb(_constants__WEBPACK_IMPORTED_MODULE_13__/* .BLURB_FETCH_ERROR */ .yQ);
+                setIsBlurbFetching(false);
+            }
+        }
+    }, [
+        blurbIpfsHash
+    ]);
+    (0,react__WEBPACK_IMPORTED_MODULE_2__.useEffect)(()=>{
+        if (blurbIpfsHash) {
+            fetchBlurb();
+        }
+    }, [
+        blurbIpfsHash,
+        fetchBlurb
+    ]);
+    const handleUpdateBlurb = (0,react__WEBPACK_IMPORTED_MODULE_2__.useCallback)(async ()=>{
+        if (!blurb || !blurbIpfsHash || !projectId) return null;
+        const hash = await uploadText(blurb);
+        await updateBlurb({
+            projectId,
+            blurbIpfsHash: hash,
+            oldBlurbIpfsHash: blurbIpfsHash,
+            onSuccess: ()=>{
+                setShouldResetToOriginal(false);
+                setIsEditing(false);
+            },
+            onError: undefined
+        });
+    }, [
+        blurb,
+        blurbIpfsHash,
+        projectId,
+        updateBlurb,
+        uploadText
+    ]);
+    const correctBlurb = (0,react__WEBPACK_IMPORTED_MODULE_2__.useCallback)(()=>{
+        if (!blurb) {
+            return null;
+        // TODO format the first two - they are strings
+        } else if (typeof blurb === 'string') {
+            return(/*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(Description, {
+                children: blurb
+            }));
+        } else {
+            if (isEditing && isAllowedToEdit) {
+                return(/*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)(RichTextWrapper, {
+                    children: [
+                        /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_Create_RichText__WEBPACK_IMPORTED_MODULE_8__/* ["default"] */ .Z, {
+                            onKeyDown: (val)=>setBlurb(val)
+                            ,
+                            text: blurb,
+                            isDisabled: [
+                                'confirming',
+                                'waiting'
+                            ].includes(updateBlurbStatus)
+                        }),
+                        /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_ActionButton__WEBPACK_IMPORTED_MODULE_9__/* ["default"] */ .Z, {
+                            onClick: handleUpdateBlurb,
+                            text: "Update",
+                            loading: [
+                                'confirming',
+                                'waiting'
+                            ].includes(updateBlurbStatus),
+                            disabled: [
+                                'confirming',
+                                'waiting'
+                            ].includes(updateBlurbStatus),
+                            margin: "1rem 0 0 0"
+                        })
+                    ]
+                }));
+            } else {
+                return(/*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_RichTextRead__WEBPACK_IMPORTED_MODULE_6__/* ["default"] */ .Z, {
+                    text: blurb
+                }));
+            }
+        }
+    }, [
+        blurb,
+        handleUpdateBlurb,
+        isAllowedToEdit,
+        isEditing,
+        updateBlurbStatus
+    ]);
+    if (!blurbIpfsHash) return null;
+    return(/*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)(DescriptionSection, {
+        children: [
+            /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_Title__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .Z, {
+                children: "Blurb"
+            }),
+            isAllowedToEdit && /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_EditButton__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z, {
+                disabled: isBlurbFetching || typeof blurb === 'string',
+                onClick: handleClickEditButton,
+                isEditing: isEditing
+            }),
+            isBlurbFetching ? /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(Description, {
+                children: /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_Loading__WEBPACK_IMPORTED_MODULE_7__/* ["default"] */ .Z, {
+                    height: 20,
+                    dotHeight: 20
+                })
+            }) : correctBlurb()
+        ]
+    }));
+};
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Blurb);
 
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -5673,7 +6333,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var next_image__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(6577);
 /* harmony import */ var styled_components__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(7518);
 /* harmony import */ var styled_components__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(styled_components__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(9826);
 /* harmony import */ var _components_ActionButton__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(8639);
 /* harmony import */ var _components_BaseModal__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(8698);
 /* harmony import */ var _components_ProjectDetails_AuthorSection__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(1797);
@@ -5690,15 +6349,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _hooks_projects_useGetProjectId__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(3275);
 /* harmony import */ var _hooks_useAuctionsManager__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(5882);
 /* harmony import */ var _utils_formatNumber__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(5346);
-/* harmony import */ var _utils_isJson__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(4553);
 /* harmony import */ var _themes__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(5468);
 /* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(2391);
 /* harmony import */ var react_toastify__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(1187);
 /* harmony import */ var react_toastify__WEBPACK_IMPORTED_MODULE_23___default = /*#__PURE__*/__webpack_require__.n(react_toastify__WEBPACK_IMPORTED_MODULE_23__);
 /* harmony import */ var _components_NextLink__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(5369);
-/* harmony import */ var _components_RichTextRead__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(4930);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_components_ActionButton__WEBPACK_IMPORTED_MODULE_6__, _components_ProjectDetails_AuthorSection__WEBPACK_IMPORTED_MODULE_8__, _components_ProjectDetails_AuctionSection__WEBPACK_IMPORTED_MODULE_9__, _components_ProjectDetails_MintSection__WEBPACK_IMPORTED_MODULE_13__]);
-([_components_ActionButton__WEBPACK_IMPORTED_MODULE_6__, _components_ProjectDetails_AuthorSection__WEBPACK_IMPORTED_MODULE_8__, _components_ProjectDetails_AuctionSection__WEBPACK_IMPORTED_MODULE_9__, _components_ProjectDetails_MintSection__WEBPACK_IMPORTED_MODULE_13__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _hooks_useMoonpageManager__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(7920);
+/* harmony import */ var ethers__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(1982);
+/* harmony import */ var ethers__WEBPACK_IMPORTED_MODULE_26___default = /*#__PURE__*/__webpack_require__.n(ethers__WEBPACK_IMPORTED_MODULE_26__);
+/* harmony import */ var _Blurb__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(1500);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_components_ActionButton__WEBPACK_IMPORTED_MODULE_6__, _components_ProjectDetails_AuthorSection__WEBPACK_IMPORTED_MODULE_8__, _components_ProjectDetails_AuctionSection__WEBPACK_IMPORTED_MODULE_9__, _components_ProjectDetails_MintSection__WEBPACK_IMPORTED_MODULE_13__, _Blurb__WEBPACK_IMPORTED_MODULE_27__]);
+([_components_ActionButton__WEBPACK_IMPORTED_MODULE_6__, _components_ProjectDetails_AuthorSection__WEBPACK_IMPORTED_MODULE_8__, _components_ProjectDetails_AuctionSection__WEBPACK_IMPORTED_MODULE_9__, _components_ProjectDetails_MintSection__WEBPACK_IMPORTED_MODULE_13__, _Blurb__WEBPACK_IMPORTED_MODULE_27__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 
 
@@ -5900,36 +6561,6 @@ const ShareAddress = (styled_components__WEBPACK_IMPORTED_MODULE_5___default().s
 const SharePercentage = (styled_components__WEBPACK_IMPORTED_MODULE_5___default().span)`
   display: inline-block;
 `;
-const DescriptionSection = (styled_components__WEBPACK_IMPORTED_MODULE_5___default().section)`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 90%;
-  line-break: anywhere;
-  max-width: 1200px;
-  color: ${_themes__WEBPACK_IMPORTED_MODULE_22__/* .PLAIN_WHITE */ ._I};
-  margin-block-end: 2rem;
-  padding: 2rem;
-  border-radius: ${_themes__WEBPACK_IMPORTED_MODULE_22__/* .BASE_BORDER_RADIUS */ .B};
-  box-shadow: ${_themes__WEBPACK_IMPORTED_MODULE_22__/* .BASE_BOX_SHADOW */ .S0};
-
-  animation: fadein 2s;
-
-  @keyframes fadein {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-`;
-const Description = (styled_components__WEBPACK_IMPORTED_MODULE_5___default().p)`
-  display: inline-block;
-
-  font-size: 14px;
-  line-height: 170%;
-`;
 const ContentWrapper = (styled_components__WEBPACK_IMPORTED_MODULE_5___default().div)`
   margin: 2rem;
   padding: 0.75rem;
@@ -5962,18 +6593,23 @@ const ProjectDetailView = ()=>{
     const router = (0,next_router__WEBPACK_IMPORTED_MODULE_2__.useRouter)();
     const { account  } = (0,_web3_react_core__WEBPACK_IMPORTED_MODULE_3__.useWeb3React)();
     const projectId = (0,_hooks_projects_useGetProjectId__WEBPACK_IMPORTED_MODULE_19__/* .useGetProjectId */ .W)();
-    const { project , refetch , isLoading: isProjectLoading ,  } = (0,_hooks_projects_useGetProject__WEBPACK_IMPORTED_MODULE_18__/* .useGetProject */ .Y)(projectId);
+    const { project: fetchedProject , refetch , isLoading: isProjectLoading ,  } = (0,_hooks_projects_useGetProject__WEBPACK_IMPORTED_MODULE_18__/* .useGetProject */ .Y)(projectId);
     const { buy , buyStatus , startAuctions  } = (0,_hooks_collection__WEBPACK_IMPORTED_MODULE_16__/* .useCollection */ .K)();
     const auctionsManager = (0,_hooks_useAuctionsManager__WEBPACK_IMPORTED_MODULE_20__/* ["default"] */ .Z)();
+    const mpManager = (0,_hooks_useMoonpageManager__WEBPACK_IMPORTED_MODULE_25__/* ["default"] */ .Z)();
     const { retriggerAuction  } = (0,_hooks_auctions__WEBPACK_IMPORTED_MODULE_17__/* .useAuctions */ .x)();
     const { allowedToRead  } = (0,_hooks_useShowText__WEBPACK_IMPORTED_MODULE_15__/* ["default"] */ .Z)(projectId);
     const { 0: coverImgLink , 1: setCoverImgLink  } = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(null);
     const { 0: isGettingCurrentPrice , 1: setIsGettingCurentPrice  } = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(false);
+    const { 0: updatedProject , 1: setUpdatedProject  } = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(null);
     const { 0: showBuyModal , 1: setShowBuyModal  } = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(false);
     const { 0: currentPrice , 1: setCurrentPrice  } = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(null);
-    const { 0: blurb , 1: setBlurb  } = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)();
-    const { 0: isBlurbFetching , 1: setIsBlurbFetching  } = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(false);
     const { 0: agreed , 1: setAgreed  } = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(false);
+    const project = (0,react__WEBPACK_IMPORTED_MODULE_1__.useMemo)(()=>updatedProject || fetchedProject
+    , [
+        fetchedProject,
+        updatedProject
+    ]);
     (0,react__WEBPACK_IMPORTED_MODULE_1__.useEffect)(()=>{
         if (project === null || project === void 0 ? void 0 : project.imgIpfsHash) {
             setCoverImgLink(`https://ipfs.io/ipfs/${project.imgIpfsHash}`);
@@ -5981,28 +6617,55 @@ const ProjectDetailView = ()=>{
     }, [
         project
     ]);
-    const fetchBlurb = (0,react__WEBPACK_IMPORTED_MODULE_1__.useCallback)(async ()=>{
-        if (project === null || project === void 0 ? void 0 : project.blurbIpfsHash) {
-            setIsBlurbFetching(true);
-            // todo: cleanup, blurb will always be array of nodes in future
-            try {
-                const response = await fetch(`https://ipfs.io/ipfs/${project.blurbIpfsHash}`);
-                if (response.ok) {
-                    let fetchedBlurb = await response.text();
-                    fetchedBlurb = (0,_utils_isJson__WEBPACK_IMPORTED_MODULE_26__/* .isJson */ .s)(fetchedBlurb) ? JSON.parse(fetchedBlurb) : fetchedBlurb;
-                    setBlurb(fetchedBlurb);
-                    setIsBlurbFetching(false);
-                } else {
-                    setBlurb(_constants__WEBPACK_IMPORTED_MODULE_27__/* .BLURB_FETCH_ERROR */ .yQ);
-                    setIsBlurbFetching(false);
-                }
-            } catch (e) {
-                setBlurb(_constants__WEBPACK_IMPORTED_MODULE_27__/* .BLURB_FETCH_ERROR */ .yQ);
-                setIsBlurbFetching(false);
-            }
-        }
+    const refetchAuctionStateAndCount = (0,react__WEBPACK_IMPORTED_MODULE_1__.useCallback)(async ()=>{
+        const auctionData = await auctionsManager.auctions(projectId);
+        const editionData = await mpManager.editions(projectId);
+        setUpdatedProject({
+            ...project,
+            auctionsStarted: auctionData.auctionsStarted,
+            auctionsEnded: auctionData.auctionsEnded,
+            currentId: editionData.currentTokenId,
+            mintCount: project.mintCount.add(1)
+        });
     }, [
-        project
+        auctionsManager,
+        mpManager,
+        project,
+        projectId
+    ]);
+    const refetchCount = (0,react__WEBPACK_IMPORTED_MODULE_1__.useCallback)(async ()=>{
+        const editionData = await mpManager.editions(projectId);
+        setUpdatedProject({
+            ...project,
+            currentId: editionData.currentTokenId,
+            mintCount: editionData.currentEdLastTokenId.sub(editionData.currentTokenId).sub(1)
+        });
+    }, [
+        mpManager,
+        project,
+        projectId
+    ]);
+    const refetchEdition = (0,react__WEBPACK_IMPORTED_MODULE_1__.useCallback)(async ()=>{
+        const editionData = await mpManager.editions(projectId);
+        const newEdition = project.editions.length + 1;
+        setUpdatedProject({
+            ...project,
+            currentId: editionData.currentTokenId,
+            mintCount: editionData.currentEdLastTokenId.sub(editionData.currentTokenId),
+            editions: [
+                ...project.editions,
+                {
+                    edition: ethers__WEBPACK_IMPORTED_MODULE_26__.BigNumber.from(newEdition.toString()),
+                    startId: editionData.currentTokenId,
+                    endId: editionData.currentEdLastTokenId,
+                    mintPrice: editionData.mintPrice
+                }, 
+            ]
+        });
+    }, [
+        mpManager,
+        project,
+        projectId
     ]);
     const isAuthor = (0,react__WEBPACK_IMPORTED_MODULE_1__.useMemo)(()=>{
         var ref;
@@ -6027,18 +6690,12 @@ const ProjectDetailView = ()=>{
     }, [
         project
     ]);
-    const currentEdition = (0,react__WEBPACK_IMPORTED_MODULE_1__.useMemo)(()=>project ? project.editions.find((edition)=>Number(edition.edition) === project.editions.length
-        ) : undefined
-    , [
-        project
-    ]);
-    (0,react__WEBPACK_IMPORTED_MODULE_1__.useEffect)(()=>{
-        if (project) {
-            fetchBlurb();
-        }
+    const currentEdition = (0,react__WEBPACK_IMPORTED_MODULE_1__.useMemo)(()=>{
+        return project ? project.editions.find((edition)=>{
+            return Number(edition.edition) === project.editions.length;
+        }) : undefined;
     }, [
-        project,
-        fetchBlurb
+        project
     ]);
     const handleClickRead = (0,react__WEBPACK_IMPORTED_MODULE_1__.useCallback)((e)=>{
         e.preventDefault();
@@ -6077,6 +6734,7 @@ const ProjectDetailView = ()=>{
             onSuccess: ()=>{
                 setShowBuyModal(false);
                 refetch();
+                refetchAuctionStateAndCount();
                 setAgreed(false);
             }
         });
@@ -6084,7 +6742,8 @@ const ProjectDetailView = ()=>{
         buy,
         project,
         projectId,
-        refetch
+        refetch,
+        refetchAuctionStateAndCount
     ]);
     const handleRetriggerAuction = (0,react__WEBPACK_IMPORTED_MODULE_1__.useCallback)(async ()=>{
         await retriggerAuction({
@@ -6114,23 +6773,6 @@ const ProjectDetailView = ()=>{
         projectId,
         refetch,
         startAuctions
-    ]);
-    const correctBlurb = (0,react__WEBPACK_IMPORTED_MODULE_1__.useCallback)(()=>{
-        if (!blurb) {
-            return null;
-        // the first two project blurbs are string, the rest are jsons
-        // TODO format the first two
-        } else if (typeof blurb === 'string') {
-            return(/*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(Description, {
-                children: blurb
-            }));
-        } else {
-            return(/*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_RichTextRead__WEBPACK_IMPORTED_MODULE_25__/* ["default"] */ .Z, {
-                text: blurb
-            }));
-        }
-    }, [
-        blurb
     ]);
     if (!project && !isProjectLoading) {
         return(/*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(Root, {
@@ -6232,7 +6874,7 @@ const ProjectDetailView = ()=>{
                                     ((ref3 = project.editions) === null || ref3 === void 0 ? void 0 : ref3.length) > 1 && /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_ProjectDetails_MintSection__WEBPACK_IMPORTED_MODULE_13__/* ["default"] */ .Z, {
                                         currentEdition: currentEdition,
                                         project: project,
-                                        refetch: refetch
+                                        refetch: refetchCount
                                     }),
                                     ((ref1 = project.editions) === null || ref1 === void 0 ? void 0 : ref1.length) === 1 && /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_ProjectDetails_AuctionSection__WEBPACK_IMPORTED_MODULE_9__/* ["default"] */ .Z, {
                                         isAuthor: isAuthor,
@@ -6246,18 +6888,10 @@ const ProjectDetailView = ()=>{
                             })
                         ]
                     }),
-                    (project === null || project === void 0 ? void 0 : project.blurbIpfsHash) && /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)(DescriptionSection, {
-                        children: [
-                            /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_Title__WEBPACK_IMPORTED_MODULE_11__/* ["default"] */ .Z, {
-                                children: "Blurb"
-                            }),
-                            isBlurbFetching ? /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(Description, {
-                                children: /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_Loading__WEBPACK_IMPORTED_MODULE_12__/* ["default"] */ .Z, {
-                                    height: 20,
-                                    dotHeight: 20
-                                })
-                            }) : correctBlurb()
-                        ]
+                    /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_Blurb__WEBPACK_IMPORTED_MODULE_27__["default"], {
+                        blurbIpfsHash: project === null || project === void 0 ? void 0 : project.blurbIpfsHash,
+                        projectId: projectId,
+                        isAllowedToEdit: (project === null || project === void 0 ? void 0 : project.creator.toLowerCase()) === (account === null || account === void 0 ? void 0 : account.toLowerCase())
                     }),
                     /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)(ShareSection, {
                         children: [
@@ -6313,8 +6947,8 @@ const ProjectDetailView = ()=>{
                     isAuthor && /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_ProjectDetails_AuthorSection__WEBPACK_IMPORTED_MODULE_8__/* ["default"] */ .Z, {
                         currentEdition: currentEdition,
                         projectId: projectId,
-                        projectData: project,
-                        refetch: refetch
+                        project: project,
+                        refetch: refetchEdition
                     })
                 ]
             }),
@@ -6348,8 +6982,8 @@ const ProjectDetailView = ()=>{
                                 children: [
                                     "I have read and understood the",
                                     /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_NextLink__WEBPACK_IMPORTED_MODULE_24__/* ["default"] */ .Z, {
-                                        href: "/termsofservice",
-                                        name: "terms of service"
+                                        href: "https://moonpage.gitbook.io/moonpage-terms-of-service/",
+                                        name: "Terms of Service (Last updated: 14.11.2022)."
                                     }),
                                     "and want to mint this NFT."
                                 ]
