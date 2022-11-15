@@ -156,19 +156,6 @@ function CustomApp({ Component, pageProps }: AppProps) {
         <meta property="og:url" content="http://www.moonpage.io" />
         <meta property="og:type" content="website" />
         <meta property="og:locale" content="en_US" />
-        <script
-          async
-          src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NX_PUBLIC_GA_ID}`}
-        ></script>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', ${process.env.NX_PUBLIC_GA_ID});`,
-          }}
-        ></script>
       </Head>
       <GlobalStyle />
       <Web3ReactProvider getLibrary={getLibrary}>

@@ -9,6 +9,7 @@ import Document, {
 } from 'next/document';
 import React from 'react';
 import { ServerStyleSheet } from 'styled-components';
+import Script from 'next/script';
 
 type Props = {
   locale: string;
@@ -54,6 +55,20 @@ class MyDocument extends Document<DocumentRenderProps> {
             rel="stylesheet"
           />
           <link rel="shortcut icon" href="/logo/favicon.ico" />
+          <Script
+            async
+            src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`}
+          />
+          <Script
+            id="GoogleAnalyticsID"
+            dangerouslySetInnerHTML={{
+              __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', ${process.env.NEXT_PUBLIC_GA_ID});`,
+            }}
+          />
         </Head>
         <body>
           <Main />

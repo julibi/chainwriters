@@ -1,16 +1,14 @@
-import { useWeb3React } from '@web3-react/core';
-import { useState } from 'react';
 import styled from 'styled-components';
 import ProjectSection from '../components/HomePage/ProjectSection';
-import { useDeviceDetect } from '../hooks/useDeviceDetect';
 import MainSellingPointsSection from '../components/HomePage/MainSellingPointsSection';
 import FAQSection from '../components/HomePage/FAQSection';
-import StartAnimation from '../components/StartAnimation';
 import HowItWorksSection from '../components/HomePage/HowItWorksSection';
 import Title from '../components/Title';
-import { BG_DARK, MAIN_TEXT_COLOR, POP } from '../themes';
+import { MAIN_TEXT_COLOR, POP } from '../themes';
 import TypeWriter from '../components/TypeWriter';
 import BubbleAnimation from '../components/BubbleAnimation';
+import ActionButton from '../components/ActionButton';
+import { useRouter } from 'next/router';
 
 const Root = styled.section``;
 
@@ -27,14 +25,15 @@ const LandingHeader = styled.section`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-
-  margin: 8rem 6rem;
+  margin: 10rem 8rem 12rem 8rem;
 
   @media (max-width: 900px) {
     flex-direction: column;
     margin: 2rem;
   }
 `;
+
+const Buttons = styled.div``;
 
 const LandingAnimationWrapper = styled.section`
   flex: 1;
@@ -67,11 +66,12 @@ const Padding = styled.div`
 
 export function Index() {
   // const hasTried = useEagerConnect();
-
+  const router = useRouter();
   return (
     <Root>
       <Padding />
       <HeaderSection>
+        {/* move all this into a lander component */}
         <LandingHeader>
           <Title color={POP} size="s" textAlign="left">
             Text NFT Platform
@@ -82,19 +82,36 @@ export function Index() {
             size="xl"
             textAlign="left"
           >
-            <TypeWriter
-              text={
-                'The web3 literature lab. For the first writers on the moon.'
-              }
-              shouldErase={false}
-              shouldLoop={false}
-            />
+            The web3 literature lab.
           </Title>
-
+          <Title
+            color={POP}
+            padding="1rem 1rem 0 1rem"
+            size="xl"
+            textAlign="left"
+          >
+            For the first writers on the moon.
+          </Title>
           <Title color={MAIN_TEXT_COLOR} size="s" textAlign="left">
             Moonpage is a free and easy platform for turning your text into
             NFTs.
           </Title>
+          <Buttons>
+            <ActionButton
+              onClick={() => router.push('/create')}
+              loading={false}
+              text="Create"
+              margin="3rem 0 0 0"
+            />
+            <ActionButton
+              onClick={() => {}}
+              loading={false}
+              disabled
+              text="Watch Demo"
+              margin="3rem 0 0 2rem"
+              color={MAIN_TEXT_COLOR}
+            />
+          </Buttons>
         </LandingHeader>
         <LandingAnimationWrapper>
           <LandingAnimation>

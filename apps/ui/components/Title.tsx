@@ -15,7 +15,15 @@ const StyledTitle = styled.h1<TitleTypes>`
 
   @media (max-width: 900px) {
     padding: 0;
-    font-size: ${({ size }) => (size == '72px' ? '54px' : size)};
+    font-size: ${({ size }) => {
+      if (size == '72px') {
+        return '54px';
+      } else if (size === '54px') {
+        return '36px';
+      } else {
+        return size;
+      }
+    }};
   }
 `;
 
