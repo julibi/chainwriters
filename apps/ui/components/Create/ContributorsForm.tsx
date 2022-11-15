@@ -6,7 +6,7 @@ import validateAddress from '../../utils/validateAddress';
 import { truncateAddress } from '../WalletIndicator';
 import { Contributor } from '../../providers/projects-provider/projects-provider.types';
 import ActionButton from '../ActionButton';
-import { PINK } from '../../themes';
+import { POP } from '../../themes';
 import Title from '../Title';
 
 const ContribList = styled.ul`
@@ -28,7 +28,7 @@ const SpecialShare = styled.span`
 `;
 
 const ContribsError = styled.div`
-  color: ${PINK};
+  color: ${POP};
   margin-block-end: 2rem;
   text-align: center;
 `;

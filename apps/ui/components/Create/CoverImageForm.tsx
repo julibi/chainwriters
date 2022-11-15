@@ -6,7 +6,7 @@ import {
   BASE_BORDER_RADIUS,
   BG_NORMAL,
   INSET_BASE_BOX_SHADOW,
-  PLAIN_WHITE,
+  MAIN_TEXT_COLOR,
 } from '../../themes';
 import ActionButton from '../ActionButton';
 import Title from '../Title';
@@ -47,7 +47,7 @@ export const StyledFileInput = styled.input`
     border-width: 0;
     text-align: center;
     color: ${BG_NORMAL};
-    background-color: ${PLAIN_WHITE};
+    background-color: ${MAIN_TEXT_COLOR};
     border-radius: ${BASE_BORDER_RADIUS} !important;
     padding: 1rem;
 

@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { formatEther } from '@ethersproject/units';
-import { BASE_BORDER_RADIUS, INSET_BASE_BOX_SHADOW, PINK } from '../../themes';
+import { BASE_BORDER_RADIUS, INSET_BASE_BOX_SHADOW, POP } from '../../themes';
 import Countdown from '../Countdown';
 import PieChart from '../PieChart';
 import { Project } from '../../providers/projects-provider/projects-provider.types';
@@ -111,7 +111,7 @@ const AuctionSection = ({
         return (
           <InfoBlock>
             <Title size="xs">{'Auction ends in'}</Title>
-            <Title size="xs" color={PINK}>
+            <Title size="xs" color={POP}>
               <Countdown end={Number(currentAuctionExpiresAt)} />
             </Title>
           </InfoBlock>

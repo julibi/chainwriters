@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import Circle from './Circle';
-import { BASE_BOX_SHADOW, INSET_BASE_BOX_SHADOW, PINK } from '../themes';
+import { BASE_BOX_SHADOW, INSET_BASE_BOX_SHADOW, POP } from '../themes';
 
 const Pie = styled.div`
   width: 280px;
@@ -31,7 +31,7 @@ const PieHoleData = styled.div`
 `;
 
 const StyledCircle = styled(Circle)`
-  box-shadow: 0px 0px 50px 4px ${PINK};
+  box-shadow: 0px 0px 50px 4px ${POP};
 `;
 
 interface PieChart {

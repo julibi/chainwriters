@@ -2,9 +2,9 @@ import { useRouter } from 'next/router';
 import React from 'react';
 import styled from 'styled-components';
 import {
-  PINK,
-  INTER_BOLD,
-  INTER_LIGHT,
+  POP,
+  FONT_SERIF_BOLD,
+  FONT_SERIF_LIGHT,
   INSET_BASE_BOX_SHADOW,
 } from '../../themes';
 import ActionButton from '../ActionButton';
@@ -50,7 +50,7 @@ const Block = `
 
 const CreatorsBlock = styled.div`
   ${Block}
-  color: ${PINK};
+  color: ${POP};
 
   @media (max-width: 900px) {
     margin-block-end: 2rem;
@@ -62,7 +62,7 @@ const CollectorsBlock = styled.div`
 `;
 
 const Text = styled.p`
-  font-family: ${INTER_LIGHT};
+  font-family: ${FONT_SERIF_LIGHT};
   max-width: 1000px;
   display: inline-block;
   font-size: 24px;
@@ -77,7 +77,7 @@ const Text = styled.p`
 `;
 
 const SubHeader = styled.h3`
-  font-family: ${INTER_BOLD};
+  font-family: ${FONT_SERIF_BOLD};
   font-size: 24px;
   text-align: center;
   margin-block-start: 0;

@@ -5,7 +5,12 @@ import Link from 'next/link';
 import styled from 'styled-components';
 import WalletConnection from '../components/WalletConnection';
 import { useEagerConnect } from '../hooks/useEagerConnect';
-import { BG_NORMAL, StyledLink, INTER_BOLD, INTER_BLACK } from '../themes';
+import {
+  BG_NORMAL,
+  StyledLink,
+  FONT_SERIF_BOLD,
+  FONT_SERIF_BLACK,
+} from '../themes';
 import LinkWrapper from '../components/LinkWrapper';
 
 const Root = styled.div`
@@ -26,7 +31,7 @@ const LogoWrapper = styled.div`
 `;
 
 const LogoText = styled.p`
-  font-family: ${INTER_BLACK};
+  font-family: ${FONT_SERIF_BLACK};
   font-size: 24px;
   margin-left: 1rem;
 `;
@@ -51,7 +56,7 @@ const NavList = styled.ul`
   display: flex;
   margin: 2rem;
   align-items: center;
-  font-family: ${INTER_BOLD};
+  font-family: ${FONT_SERIF_BOLD};
 `;
 
 const NavListItem = styled.li`
@@ -100,7 +105,7 @@ const MobileNavMenu = styled.div`
 const MobileNavList = styled.ul`
   margin-block-start: 4rem;
   padding-inline-start: 0;
-  font-family: ${INTER_BOLD};
+  font-family: ${FONT_SERIF_BOLD};
 `;
 
 const MobileNavListItem = styled.li`
@@ -191,7 +196,7 @@ const Navbar = () => {
             <Image
               height={'80px'}
               width={'80px'}
-              src={`/logo/Logo.png`}
+              src={`/logo/Logo.svg`}
               alt="moonpage"
               priority
             />

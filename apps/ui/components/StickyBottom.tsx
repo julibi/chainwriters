@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Cross, FadeInBaseAnimation, PINK } from '../themes';
+import { Cross, FadeInBaseAnimation, POP } from '../themes';
 
 const Root = styled.div`
   position: fixed;
@@ -10,7 +10,7 @@ const Root = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: ${PINK};
+  background-color: ${POP};
   padding: 1rem;
   z-index: 1;
 
@@ -26,7 +26,7 @@ const CloseButton = styled.button`
   top: 1rem;
   right: 1rem;
   padding: 0.1rem;
-  background-color: ${PINK};
+  background-color: ${POP};
 
   :hover {
     cursor: pointer;

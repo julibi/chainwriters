@@ -5,7 +5,7 @@ import BaseModal from '../BaseModal';
 import Checkbox from '../Checkbox';
 import Title from '../Title';
 import { BigNumber } from 'ethers';
-import { PINK } from '../../themes';
+import { POP } from '../../themes';
 import { WriteActionStatus } from '../../providers/manager-provider/manager-provider.types';
 import styled from 'styled-components';
 import NextLink from '../NextLink';
@@ -46,7 +46,7 @@ const MintLegalModal = ({
       }}
     >
       <Wrapper>
-        <Title color={PINK} size="s" padding="0 0 0 1rem">
+        <Title color={POP} size="s" padding="0 0 0 1rem">
           {`Total: ${formatNumber(price)} Matic (Amount: ${amount})`}
         </Title>
         <Checkbox onChange={toggleChecked} check={agreed} readonly={false}>

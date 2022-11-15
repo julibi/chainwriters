@@ -5,7 +5,7 @@ import {
   BASE_BOX_SHADOW,
   BG_NORMAL,
   INSET_BASE_BOX_SHADOW,
-  PLAIN_WHITE,
+  MAIN_TEXT_COLOR,
 } from '../themes';
 import CSS from 'csstype';
 
@@ -33,7 +33,7 @@ const Header = styled.div`
 const Title = styled.h3`
   display: inline-block;
   font-size: 16px;
-  color: ${PLAIN_WHITE};
+  color: ${MAIN_TEXT_COLOR};
 `;
 
 const Content = styled.div`
@@ -80,7 +80,7 @@ interface ArrowProps {
 }
 
 export const Arrow = styled.i<ArrowProps>`
-  border: solid ${PLAIN_WHITE};
+  border: solid ${MAIN_TEXT_COLOR};
   border-width: 0 4px 4px 0;
   display: inline-block;
   padding: 3px;

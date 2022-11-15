@@ -49,7 +49,7 @@ const StartAnimation = () => {
 
   return (
     <Root>
-      <TypeWriterWrapper>
+      {/* <TypeWriterWrapper>
         {shouldStart && (
           <TypeWriter
             text={'Enter the future of text. Create and collect text NFTs.'}
@@ -57,7 +57,7 @@ const StartAnimation = () => {
             shouldLoop={false}
           />
         )}
-      </TypeWriterWrapper>
+      </TypeWriterWrapper> */}
       <BubbleWrapper>
         <BubbleAnimation />
       </BubbleWrapper>

@@ -6,7 +6,11 @@ import {
   SectionTitle,
   SectionTitleWrapper,
 } from '../components/HomePage/ProjectSection';
-import { BASE_BORDER_RADIUS, BASE_BOX_SHADOW, INTER_BOLD } from '../themes';
+import {
+  BASE_BORDER_RADIUS,
+  BASE_BOX_SHADOW,
+  FONT_SERIF_BOLD,
+} from '../themes';
 import Loading from '../components/Loading';
 import { useGetProjectsOfAccount } from '../hooks/user/useGetProjectsOfAccount';
 import BookshelfItem from '../components/Bookshelf/BookshelfItem';
@@ -47,7 +51,7 @@ const Section = styled.section`
 
 const SubHeader = styled.h3`
   display: inline-block;
-  font-family: ${INTER_BOLD};
+  font-family: ${FONT_SERIF_BOLD};
   text-align: center;
   border-radius: ${BASE_BORDER_RADIUS};
   box-shadow: ${BASE_BOX_SHADOW};

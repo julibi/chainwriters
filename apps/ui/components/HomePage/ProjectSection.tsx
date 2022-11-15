@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useProjects } from '../../hooks/projects';
-import { INTER_BLACK } from '../../themes';
+import { FONT_SERIF_BLACK, POP } from '../../themes';
 import Loading from '../Loading';
 import { ProjectItem } from '../ProjectItem';
 import Title from '../Title';
@@ -21,7 +21,8 @@ export const SectionTitleWrapper = styled.div`
 
 export const SectionTitle = styled.h1`
   text-align: center;
-  font-family: ${INTER_BLACK};
+  font-family: ${FONT_SERIF_BLACK};
+  color: ${POP};
   font-size: 54px;
   padding: 1rem;
 

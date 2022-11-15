@@ -10,8 +10,8 @@ import TypeWriter from '../../../components/TypeWriter';
 import {
   BASE_BORDER_RADIUS,
   BASE_BOX_SHADOW,
-  PLAIN_WHITE,
-  INTER_BOLD,
+  MAIN_TEXT_COLOR,
+  FONT_SERIF_BOLD,
 } from '../../../themes';
 import Toggle from '../../../components/Toggle';
 import RichTextRead from '../../../components/RichTextRead';
@@ -70,7 +70,7 @@ const BackArrow = styled.div`
 `;
 
 const Arrow = styled.i`
-  border: solid ${PLAIN_WHITE};
+  border: solid ${MAIN_TEXT_COLOR};
   border-width: 0 2px 2px 0;
   display: inline-block;
   margin-inline-start: 0.5rem;
@@ -81,7 +81,7 @@ const Arrow = styled.i`
 const TitleWrapper = styled.div`
   padding: 2rem;
   font-size: 42px;
-  font-family: ${INTER_BOLD};
+  font-family: ${FONT_SERIF_BOLD};
 `;
 
 const FlexWrapper = styled.div`
@@ -101,11 +101,11 @@ const Wrapper = styled.div`
 `;
 
 const SubTitle = styled.h3`
-  font-family: ${INTER_BOLD};
+  font-family: ${FONT_SERIF_BOLD};
 `;
 
 const Author = styled.h3`
-  font-family: ${INTER_BOLD};
+  font-family: ${FONT_SERIF_BOLD};
 `;
 
 const TextWrapper = styled.div`

@@ -1,7 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import styled from 'styled-components';
-import { PINK, INTER_BOLD, StyledLink } from '../themes';
+import { POP, FONT_SERIF_BOLD, StyledLink } from '../themes';
 import LinkWrapper from '../components/LinkWrapper';
 import Title from '../components/Title';
 
@@ -22,7 +22,7 @@ const Content = styled.div`
 `;
 
 const SubHeader = styled.h3`
-  font-family: ${INTER_BOLD};
+  font-family: ${FONT_SERIF_BOLD};
   text-align: center;
   font-size: 32px;
 `;
@@ -104,13 +104,13 @@ const FounderDescription = styled.div`
 
 const Name = styled.span`
   display: inline-block;
-  font-family: ${INTER_BOLD};
-  color: ${PINK};
+  font-family: ${FONT_SERIF_BOLD};
+  color: ${POP};
 `;
 
 const Field = styled.span`
   display: inline-block;
-  font-family: ${INTER_BOLD};
+  font-family: ${FONT_SERIF_BOLD};
 `;
 
 const Introduction = styled(Text)`
@@ -125,7 +125,7 @@ const About = () => {
       <Title>About</Title>
       <Content>
         <StyledLink href="https://docs.moonpage.io/">
-          <Title size="m" color={PINK}>
+          <Title size="m" color={POP}>
             Read the Moonpage Light Paper
           </Title>
         </StyledLink>

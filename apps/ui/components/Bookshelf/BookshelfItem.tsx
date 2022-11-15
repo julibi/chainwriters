@@ -6,7 +6,7 @@ import {
   BaseButton,
   BASE_BORDER_RADIUS,
   BASE_BOX_SHADOW,
-  PINK,
+  POP,
 } from '../../themes';
 
 interface BookshelfItemProps {
@@ -71,7 +71,7 @@ const DetailsButton = styled(BaseButton)`
 
 const ReadButton = styled(BaseButton)`
   margin-inline-start: 1rem;
-  background-color: ${PINK};
+  background-color: ${POP};
 
   @media (max-width: 900px) {
     padding: 0.5rem;

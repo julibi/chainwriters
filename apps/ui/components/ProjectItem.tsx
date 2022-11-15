@@ -5,10 +5,10 @@ import { useRouter } from 'next/router';
 import {
   BASE_BORDER_RADIUS,
   BASE_BOX_SHADOW,
-  PINK,
-  PLAIN_WHITE,
-  INTER_BOLD,
-  INTER_REGULAR,
+  POP,
+  MAIN_TEXT_COLOR,
+  FONT_SERIF_BOLD,
+  FONT_SERIF_LIGHT,
 } from '../themes';
 import { truncateAddress } from './WalletIndicator';
 
@@ -44,15 +44,15 @@ const ImageWrapper = styled.div`
 
 const InfoWrapper = styled.div`
   flex: 1;
-  font-family: ${INTER_REGULAR};
+  font-family: ${FONT_SERIF_LIGHT};
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 `;
 
 const Title = styled.h4`
-  color: ${PINK};
-  font-family: ${INTER_BOLD};
+  color: ${POP};
+  font-family: ${FONT_SERIF_BOLD};
   margin-block-end: 0;
 `;
 
@@ -62,7 +62,7 @@ const Flex = styled.div`
 `;
 
 const Label = styled.span`
-  color: ${PLAIN_WHITE};
+  color: ${MAIN_TEXT_COLOR};
 `;
 
 interface ProjectItemTypes {
@@ -110,7 +110,7 @@ const ProjectItem = ({
       <InfoWrapper>
         <Title>{title}</Title>
         <Flex>
-          <Label style={{ color: PINK }}>{subtitle ?? ''}</Label>
+          <Label style={{ color: POP }}>{subtitle ?? ''}</Label>
         </Flex>
         <Flex>
           <Label>Genre</Label>

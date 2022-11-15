@@ -2,8 +2,8 @@ import React, { FormEvent, ReactChild } from 'react';
 import styled from 'styled-components';
 import {
   BASE_BORDER_RADIUS,
-  INTER_BOLD,
-  PLAIN_WHITE,
+  FONT_SERIF_BOLD,
+  MAIN_TEXT_COLOR,
   BASE_BOX_SHADOW,
   INSET_BASE_BOX_SHADOW,
   BG_NORMAL,
@@ -16,9 +16,9 @@ type EditorToolButtonProps = {
 };
 
 export const Root = styled.button<EditorToolButtonProps>`
-  color: ${PLAIN_WHITE};
+  color: ${MAIN_TEXT_COLOR};
   background-color: ${BG_NORMAL} !important;
-  font-family: ${INTER_BOLD} !important;
+  font-family: ${FONT_SERIF_BOLD} !important;
   border-radius: ${BASE_BORDER_RADIUS} !important;
   padding: 10px;
   margin: 5px;

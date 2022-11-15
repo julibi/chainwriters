@@ -7,9 +7,9 @@ import {
   BASE_BOX_SHADOW,
   FadeInBaseAnimation,
   INSET_BASE_BOX_SHADOW,
-  PINK,
-  PLAIN_WHITE,
-  INTER_BOLD,
+  POP,
+  MAIN_TEXT_COLOR,
+  FONT_SERIF_BOLD,
   StyledLink,
 } from '../../themes';
 import Title from '../Title';
@@ -95,8 +95,8 @@ const InstructionStep = styled(BaseButton)<InstructionStepProps>`
 
 const InstructionHeader = styled.h5`
   display: inline-block;
-  color: ${PINK};
-  font-family: ${INTER_BOLD};
+  color: ${POP};
+  font-family: ${FONT_SERIF_BOLD};
   font-size: 18px;
   margin: 1rem;
 
@@ -108,7 +108,7 @@ const InstructionHeader = styled.h5`
 const InstructionDescription = styled.span`
   display: inline-block;
   margin: 0 1rem 1rem calc(50px + 1rem);
-  color: ${PLAIN_WHITE};
+  color: ${MAIN_TEXT_COLOR};
   ${FadeInBaseAnimation};
 
   @media (max-width: 900px) {

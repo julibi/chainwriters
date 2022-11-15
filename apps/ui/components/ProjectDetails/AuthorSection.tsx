@@ -1,6 +1,10 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { PLAIN_WHITE, BASE_BORDER_RADIUS, BASE_BOX_SHADOW } from '../../themes';
+import {
+  MAIN_TEXT_COLOR,
+  BASE_BORDER_RADIUS,
+  BASE_BOX_SHADOW,
+} from '../../themes';
 
 import Emoji from '../Emojis';
 import Checkmark from '../Checkmark';
@@ -25,7 +29,7 @@ const Root = styled.section`
   align-items: center;
   width: 90%;
   max-width: 1200px;
-  color: ${PLAIN_WHITE};
+  color: ${MAIN_TEXT_COLOR};
   margin-block-end: 2rem;
   padding: 2rem;
   border-radius: ${BASE_BORDER_RADIUS};

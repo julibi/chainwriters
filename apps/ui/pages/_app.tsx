@@ -12,7 +12,7 @@ import {
 import { createGlobalStyle } from 'styled-components';
 import { hotjar } from 'react-hotjar';
 import Layout from '../components/Layout';
-import { BG_NORMAL, PLAIN_WHITE } from '../themes';
+import { BG_NORMAL, MAIN_TEXT_COLOR } from '../themes';
 import './styles.css';
 import ToastContainer from '../components/ToastContainer';
 import client from '../apolloclient';
@@ -37,7 +37,7 @@ html{
 
   body{
     background-color: ${BG_NORMAL};
-    color: ${PLAIN_WHITE};
+    color: ${MAIN_TEXT_COLOR};
     font-family: 'Inter';
 
     @font-face {
@@ -64,6 +64,34 @@ html{
     @font-face {
       font-family: "Inter Black";
       src: url("/fonts/Inter/Inter-Black.ttf");
+      font-style: variable;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "Merriweather Light";
+      src: url("/fonts/Merriweather/Merriweather-Light.ttf");
+      font-style: variable;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "Merriweather";
+      src: url("/fonts/Merriweather/Merriweather-Regular.ttf");
+      font-style: variable;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "Merriweather Bold";
+      src: url("/fonts/Merriweather/Merriweather-Bold.ttf");
+      font-style: variable;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "Merriweather Black";
+      src: url("/fonts/Merriweather/Merriweather-Black.ttf");
       font-style: variable;
       font-display: swap;
     }

@@ -18,7 +18,7 @@ import {
   BaseInput,
   Cross,
   INSET_BASE_BOX_SHADOW,
-  INTER_BOLD,
+  FONT_SERIF_BOLD,
 } from '../themes';
 import Loading from '../components/Loading';
 
@@ -113,7 +113,7 @@ const NoResultsWrapper = styled.div`
 
 const NoResults = styled.h3`
   display: inline-block;
-  font-family: ${INTER_BOLD};
+  font-family: ${FONT_SERIF_BOLD};
 `;
 
 const ProjectItems = styled.div`

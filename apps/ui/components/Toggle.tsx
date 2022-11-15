@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { PINK } from '../themes';
+import { POP } from '../themes';
 import Title from './Title';
 
 const Root = styled.div`
@@ -41,7 +41,7 @@ const CheckBox = styled.input`
   height: 24px;
   cursor: pointer;
   &:checked + ${CheckBoxLabel} {
-    background: ${PINK};
+    background: ${POP};
     &::after {
       content: '';
       display: block;

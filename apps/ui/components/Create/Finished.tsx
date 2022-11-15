@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { FadeIn, Wrapper, InputDescription } from '../../pages/create';
 import ActionButton from '../ActionButton';
 import Title from '../Title';
-import { BASE_BORDER_RADIUS, INSET_BASE_BOX_SHADOW, PINK } from '../../themes';
+import { BASE_BORDER_RADIUS, INSET_BASE_BOX_SHADOW, POP } from '../../themes';
 import { useCollection } from '../../hooks/collection';
 import StartAuctionsModal from '../ProjectDetails/StartAuctionsModal';
 
@@ -47,7 +47,7 @@ const Text = styled.p`
 `;
 
 const TextPink = styled(Text)`
-  color: ${PINK};
+  color: ${POP};
 `;
 
 const Finished = ({ projectId, onStartAuctions }: FinishedProps) => {

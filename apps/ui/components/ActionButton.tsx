@@ -7,8 +7,8 @@ import {
   BaseButton,
   BG_NORMAL,
   DISABLED_WHITE,
-  INTER_BOLD,
-  PINK,
+  FONT_SERIF_BOLD,
+  POP,
 } from '../themes';
 import { isProd } from '../utils/isProd';
 import { switchNetwork } from '../utils/switchNetwork';
@@ -35,9 +35,8 @@ interface ButtonTypes {
 
 const RootButton = styled(BaseButton)<ButtonTypes>`
   background-color: ${BG_NORMAL};
-  color: ${({ color, disabled }) =>
-    disabled ? DISABLED_WHITE : color ?? PINK};
-  font-family: ${INTER_BOLD};
+  color: ${({ color, disabled }) => (disabled ? DISABLED_WHITE : color ?? POP)};
+  font-family: ${FONT_SERIF_BOLD};
   width: ${({ width }) => width ?? '230px'};
   margin: ${({ margin }) => margin ?? '1rem 1rem 0 0'};
   padding: 1rem;

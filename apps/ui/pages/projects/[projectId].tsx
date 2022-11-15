@@ -23,11 +23,12 @@ import {
   BASE_BORDER_RADIUS,
   BASE_BOX_SHADOW,
   DISABLED_WHITE,
-  PINK,
-  PLAIN_WHITE,
+  POP,
+  MAIN_TEXT_COLOR,
   PrimaryButton,
   BaseButton,
-  INTER_BOLD,
+  FONT_SERIF_BOLD,
+  FONT_SERIF_REGULAR,
 } from '../../themes';
 import { MOONPAGE_DEV_ADDRESS } from '../../../constants';
 import { toast } from 'react-toastify';
@@ -54,7 +55,7 @@ const MainInfoWrapper = styled.section`
   display: flex;
   width: 90%;
   max-width: 1200px;
-  color: ${PLAIN_WHITE};
+  color: ${MAIN_TEXT_COLOR};
   margin-block-end: 2rem;
 
   animation: fadein 2s;
@@ -78,7 +79,7 @@ const InfoRight = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  font-family: ${INTER_BOLD};
+  font-family: ${FONT_SERIF_BOLD};
 
   border-radius: ${BASE_BORDER_RADIUS};
   box-shadow: ${BASE_BOX_SHADOW};
@@ -108,8 +109,8 @@ const ReadIndicator = styled(BaseButton)`
   z-index: 10;
   top: 1rem;
   left: 1rem;
-  font-family: ${INTER_BOLD};
-  background-color: ${PINK};
+  font-family: ${FONT_SERIF_BOLD};
+  background-color: ${POP};
 
   animation: fadein 2s;
 
@@ -146,7 +147,7 @@ const Genre = styled.div`
 `;
 
 export const StyledPrimaryButton = styled(PrimaryButton)`
-  font-family: ${INTER_BOLD};
+  font-family: ${FONT_SERIF_BOLD};
   padding: 1rem;
   width: 209px;
 
@@ -183,9 +184,10 @@ const ShareSection = styled.section`
   align-items: center;
   width: 90%;
   max-width: 1200px;
-  color: ${PLAIN_WHITE};
+  color: ${MAIN_TEXT_COLOR};
   margin-block-end: 2rem;
   padding: 2rem;
+  font-family: ${FONT_SERIF_REGULAR};
   border-radius: ${BASE_BORDER_RADIUS};
   box-shadow: ${BASE_BOX_SHADOW};
 
@@ -452,7 +454,9 @@ const ProjectDetailView = () => {
         <>
           <MainInfoWrapper>
             <InfoLeft>
-              <Title padding="1rem 1rem 0 1rem">{project.title}</Title>
+              <Title padding="0 1rem 1rem 1rem" color={POP}>
+                {project.title}
+              </Title>
               {project.subtitle && (
                 <Title size="s" padding="0 1rem 1rem 1rem">
                   {project.subtitle}
@@ -571,7 +575,7 @@ const ProjectDetailView = () => {
             <Title size="m" padding="1rem 0 0 0">
               Current Price:
             </Title>
-            <Title color={PINK} size="s" padding="0 0 0 1rem">{`${formatNumber(
+            <Title color={POP} size="s" padding="0 0 0 1rem">{`${formatNumber(
               currentPrice
             )} MATIC`}</Title>
             <ModalText>

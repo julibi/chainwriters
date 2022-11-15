@@ -1,4 +1,8 @@
-import { BASE_BORDER_RADIUS, BASE_BOX_SHADOW, PLAIN_WHITE } from '../../themes';
+import {
+  BASE_BORDER_RADIUS,
+  BASE_BOX_SHADOW,
+  MAIN_TEXT_COLOR,
+} from '../../themes';
 import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Node } from 'slate';
@@ -21,7 +25,7 @@ const DescriptionSection = styled.section`
   width: 90%;
   line-break: anywhere;
   max-width: 1200px;
-  color: ${PLAIN_WHITE};
+  color: ${MAIN_TEXT_COLOR};
   margin-block-end: 2rem;
   padding: 2rem;
   border-radius: ${BASE_BORDER_RADIUS};

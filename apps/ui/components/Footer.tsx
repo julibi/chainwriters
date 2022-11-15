@@ -1,7 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import styled from 'styled-components';
-import { BG_DARK, PLAIN_WHITE, INTER_BOLD, DISABLED_WHITE } from '../themes';
+import { MAIN_TEXT_COLOR, FONT_SERIF_BOLD, DISABLED_WHITE } from '../themes';
 import LinkWrapper from './LinkWrapper';
 
 const Root = styled.div`
@@ -9,7 +9,7 @@ const Root = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: ${BG_DARK};
+  background-color: ${MAIN_TEXT_COLOR};
   padding: 3rem;
 
   @media (max-width: 900px) {
@@ -28,13 +28,14 @@ const SocialMediaLinkWrapper = styled.a`
   display: flex;
   flex-direction: column;
   text-decoration: none;
-  color: ${PLAIN_WHITE};
+  color: ${MAIN_TEXT_COLOR};
 `;
 
 const SocialMediaName = styled.span`
-  font-family: ${INTER_BOLD};
+  font-family: ${FONT_SERIF_BOLD};
   display: inline-block;
   margin-block-start: 1rem;
+  color: #fff;
 
   @media (max-width: 900px) {
     font-size: 12px;

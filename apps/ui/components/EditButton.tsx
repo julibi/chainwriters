@@ -5,8 +5,8 @@ import {
   BaseButton,
   BG_NORMAL,
   DISABLED_WHITE,
-  INTER_BOLD,
-  PLAIN_WHITE,
+  FONT_SERIF_BOLD,
+  MAIN_TEXT_COLOR,
 } from '../themes';
 import styled from 'styled-components';
 
@@ -32,8 +32,8 @@ const RootButton = styled(BaseButton)<ButtonTypes>`
   right: 0;
   background-color: ${BG_NORMAL};
   color: ${({ color, disabled }) =>
-    disabled ? DISABLED_WHITE : color ? color : PLAIN_WHITE};
-  font-family: ${INTER_BOLD};
+    disabled ? DISABLED_WHITE : color ? color : MAIN_TEXT_COLOR};
+  font-family: ${FONT_SERIF_BOLD};
   width: ${({ width }) => width ?? '60px'};
   margin: ${({ margin }) => margin ?? '1rem 1rem 0 0'};
   padding: 1rem;

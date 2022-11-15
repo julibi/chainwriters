@@ -14,9 +14,9 @@ import {
   BASE_BOX_SHADOW,
   BG_NORMAL,
   INSET_BASE_BOX_SHADOW,
-  PINK,
-  PLAIN_WHITE,
-  INTER_BOLD,
+  POP,
+  MAIN_TEXT_COLOR,
+  FONT_SERIF_BOLD,
 } from '../themes';
 import NameForm from '../components/Create/NameForm';
 import TextForm from '../components/Create/TextForm';
@@ -103,7 +103,7 @@ export const BlockSpan = styled.span`
 export const ReviewItem = styled.p`
   display: inline-block;
   font-style: italic;
-  color: ${PINK};
+  color: ${POP};
 `;
 
 export const TextInput = styled.textarea`
@@ -116,7 +116,7 @@ export const TextInput = styled.textarea`
   box-shadow: ${INSET_BASE_BOX_SHADOW};
   margin-block-end: 2rem;
   padding: 1rem;
-  color: ${PLAIN_WHITE};
+  color: ${MAIN_TEXT_COLOR};
   background-color: ${BG_NORMAL};
   outline: none;
 `;
@@ -152,7 +152,7 @@ export const Wrapper = styled.div`
 
 export const InputName = styled.h2`
   text-align: center;
-  font-family: ${INTER_BOLD};
+  font-family: ${FONT_SERIF_BOLD};
   border-radius: ${BASE_BORDER_RADIUS};
 
   padding: 1rem;
