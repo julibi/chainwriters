@@ -49,8 +49,8 @@ const Copyright = styled.div`
   margin-block-start: 2rem;
   padding-block-start: 2rem;
   text-align: center;
-  border-block-start: 1px ${DISABLED_WHITE} solid;
-  color: ${DISABLED_WHITE};
+  border-block-start: 1px #fff solid;
+  color: #fff;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -63,7 +63,7 @@ const Blockspan = styled.span`
 
 const GreyWrapper = styled.span`
   margin-block-start: 1rem;
-  color: ${DISABLED_WHITE};
+  color: #fff;
   line-break: anywhere;
 `;
 
@@ -145,9 +145,9 @@ const Footer = () => {
       <Copyright>
         {' '}
         <Image
-          height={'130px'}
-          width={'130px'}
-          src={`/logo/Logo.svg`}
+          height={'90px'}
+          width={'90px'}
+          src={`/logo/LogoWhite.svg`}
           alt="moonpage"
           priority
         />

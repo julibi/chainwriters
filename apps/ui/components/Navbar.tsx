@@ -10,6 +10,7 @@ import {
   StyledLink,
   FONT_SERIF_BOLD,
   FONT_SERIF_BLACK,
+  MAIN_TEXT_COLOR,
 } from '../themes';
 import LinkWrapper from '../components/LinkWrapper';
 
@@ -84,7 +85,7 @@ const BurgerButton = styled.button`
 const BurgerLine = styled.button`
   width: 35px;
   height: 4px;
-  background: #fff;
+  background: ${MAIN_TEXT_COLOR};
   border-radius: 5px;
   border: none;
   padding: 0;
@@ -135,7 +136,7 @@ const Navbar = () => {
           <Image
             height={'40px'}
             width={'40px'}
-            src={`/logo/Logo.png`}
+            src={`/logo/LogoDark.svg`}
             alt="moonpage"
             priority
           />
@@ -196,7 +197,7 @@ const Navbar = () => {
             <Image
               height={'80px'}
               width={'80px'}
-              src={`/logo/Logo.svg`}
+              src={`/logo/LogoDark.svg`}
               alt="moonpage"
               priority
             />
