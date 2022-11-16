@@ -5,6 +5,7 @@ import ActionButton from '../ActionButton';
 import BubbleAnimation from '../BubbleAnimation';
 import Title from '../Title';
 import { useRouter } from 'next/router';
+import TypeWriter from '../TypeWriter';
 
 const Root = styled.section`
   display: flex;
@@ -52,6 +53,22 @@ const LandingAnimation = styled.div`
   }
 `;
 
+const HeaderMobile = styled.div`
+  display: none;
+
+  @media (max-width: 900px) {
+    display: block;
+  }
+`;
+
+const HeaderDesktop = styled.div`
+  display: block;
+
+  @media (max-width: 900px) {
+    display: none;
+  }
+`;
+
 const HeaderSection = () => {
   const router = useRouter();
   return (
@@ -60,22 +77,39 @@ const HeaderSection = () => {
         <Title color={POP} size="s" textAlign="left">
           Text NFT Platform
         </Title>
-        <Title
-          color={POP}
-          padding="1rem 1rem 0 1rem"
-          size="xl"
-          textAlign="left"
-        >
-          The web3 literature lab.
-        </Title>
-        <Title
-          color={POP}
-          padding="1rem 1rem 0 1rem"
-          size="xl"
-          textAlign="left"
-        >
-          For the first writers on the moon.
-        </Title>
+        <HeaderMobile>
+          <Title
+            color={POP}
+            padding="1rem 1rem 0 1rem"
+            size="xl"
+            textAlign="left"
+          >
+            <TypeWriter
+              cursor
+              shouldErase={false}
+              shouldLoop={false}
+              text="The web3 literature lab. For the first writers on the moon."
+            />
+          </Title>
+        </HeaderMobile>
+        <HeaderDesktop>
+          <Title
+            color={POP}
+            padding="1rem 1rem 0 1rem"
+            size="xl"
+            textAlign="left"
+          >
+            The web3 literature lab.
+          </Title>
+          <Title
+            color={POP}
+            padding="1rem 1rem 0 1rem"
+            size="xl"
+            textAlign="left"
+          >
+            For the first writers on the moon.
+          </Title>
+        </HeaderDesktop>
         <Title color={MAIN_TEXT_COLOR} size="s" textAlign="left">
           Moonpage is a free and easy platform for turning your text into NFTs.
         </Title>
