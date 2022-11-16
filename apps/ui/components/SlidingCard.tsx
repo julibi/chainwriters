@@ -1,42 +1,28 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
+import { motion, useInView } from 'framer-motion';
 import InfoCard from './InfoCard';
-import useIsInViewport from '../hooks/useIsInViewport';
 import styled from 'styled-components';
-
-interface AnimationProps {
-  delay?: number;
-}
 
 const Root = styled.div``;
 
-const Animation = styled.div<AnimationProps>`
-  animation: slideIn 0.8s backwards;
-  animation-delay: ${({ delay }) => (delay ? delay / 2 : 0)}s;
-  transition-timing-function: cubic-bezier(0.1, 0.7, 1, 0.1);
-
-  @keyframes slideIn {
-    from {
-      opacity: 0;
-      transform: translate(5%, 10%);
-    }
-    to {
-      opacity: 1;
-      transform: translate(0%, 0%);
-    }
-  }
-`;
-
 const SlidingCard = ({ delay }) => {
   const refCard = useRef(null);
-  const isInViewport = useIsInViewport(refCard);
+  const isInView = useInView(refCard);
+  const [shouldAnimate, setShouldAnimate] = useState(true);
 
   return (
     <Root ref={refCard}>
-      {isInViewport && (
-        <Animation delay={delay}>
+      {isInView && shouldAnimate && (
+        <motion.div
+          initial={{ opacity: 0, x: 20, y: 20 }}
+          animate={{ opacity: 1, x: 0, y: 0 }}
+          transition={{ delay: delay / 3 }}
+          onAnimationComplete={() => setShouldAnimate(false)}
+        >
           <InfoCard />
-        </Animation>
+        </motion.div>
       )}
+      {isInView && !shouldAnimate && <InfoCard />}
     </Root>
   );
 };
