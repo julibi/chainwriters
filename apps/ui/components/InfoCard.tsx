@@ -14,6 +14,10 @@ const Root = styled.div`
   max-width: 280px;
   font-family: ${FONT_SERIF_REGULAR};
   padding: 2rem;
+
+  @media (max-width: 900px) {
+    max-width: none;
+  }
 `;
 
 const InfoCard = () => {

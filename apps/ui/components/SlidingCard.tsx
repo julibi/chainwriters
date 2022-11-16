@@ -22,7 +22,7 @@ const SlidingCard = ({ delay }) => {
           <InfoCard />
         </motion.div>
       )}
-      {isInView && !shouldAnimate && <InfoCard />}
+      {!shouldAnimate && <InfoCard />}
     </Root>
   );
 };

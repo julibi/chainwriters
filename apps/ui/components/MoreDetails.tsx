@@ -4,6 +4,7 @@ import {
   BASE_BORDER_RADIUS,
   BASE_BOX_SHADOW,
   BG_NORMAL,
+  FONT_SERIF_BOLD,
   INSET_BASE_BOX_SHADOW,
   MAIN_TEXT_COLOR,
 } from '../themes';
@@ -16,6 +17,7 @@ const Root = styled.div`
   padding: 1rem;
   box-shadow: ${BASE_BOX_SHADOW};
   border-radius: ${BASE_BORDER_RADIUS};
+  font-family: ${FONT_SERIF_BOLD};
 
   display: flex;
   justify-content: space-between;

@@ -11,6 +11,7 @@ import {
   MAIN_TEXT_COLOR,
   FONT_SERIF_BOLD,
   StyledLink,
+  FONT_SERIF_REGULAR,
 } from '../../themes';
 import Title from '../Title';
 
@@ -109,6 +110,7 @@ const InstructionDescription = styled.span`
   display: inline-block;
   margin: 0 1rem 1rem calc(50px + 1rem);
   color: ${MAIN_TEXT_COLOR};
+  font-family: ${FONT_SERIF_REGULAR};
   ${FadeInBaseAnimation};
 
   @media (max-width: 900px) {
@@ -177,7 +179,7 @@ const HowItWorksSection = () => {
   >(1);
   return (
     <Root id="howitworks">
-      <Title>How does it work?</Title>
+      <Title color={POP}>How does it work?</Title>
       <StyledLink href="https://docs.moonpage.io/moonpage-docs/tutorials">
         <Title size="m">
           {`Step by step guide   `}

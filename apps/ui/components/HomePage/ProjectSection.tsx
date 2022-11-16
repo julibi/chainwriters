@@ -47,7 +47,7 @@ const ProjectSection = () => {
   const { topProjects: data, areTopProjectsLoading: loading } = useProjects();
   return (
     <Root>
-      <Title>Top Projects</Title>
+      <Title color={POP}>Top Projects</Title>
       {loading && !data && <Loading height={530} />}
       <ProjectList>
         {data?.map(
