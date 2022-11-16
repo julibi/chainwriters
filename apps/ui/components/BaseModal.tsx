@@ -7,6 +7,7 @@ import {
   BaseButton,
   BG_NORMAL,
   Cross,
+  MAIN_TEXT_COLOR,
 } from '../themes';
 
 const Root = styled.div`

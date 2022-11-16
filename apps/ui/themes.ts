@@ -151,7 +151,7 @@ export const Cross = styled.div`
     content: ' ';
     height: 20px;
     width: 2px;
-    background-color: white;
+    background-color: ${MAIN_TEXT_COLOR};
   }
   :before {
     transform: rotate(45deg);

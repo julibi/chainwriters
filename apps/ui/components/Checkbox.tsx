@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { BG_NORMAL } from '../themes';
+import { BASE_BOX_SHADOW, BG_NORMAL, INSET_BASE_BOX_SHADOW } from '../themes';
 
 const Wrapper = styled.div`
   display: flex;
@@ -34,8 +34,7 @@ const Indicator = styled.div<IndicatorProps>`
   border-radius: 50%;
   min-height: 40px;
   min-width: 40px;
-  box-shadow: -4px -2px 4px 0px rgba(125, 125, 125, 0.1),
-    4px 2px 8px 0px rgba(0, 0, 0, 0.7);
+  box-shadow: ${BASE_BOX_SHADOW}
   overflow: hidden;
 
   ::before,
@@ -53,8 +52,7 @@ const Indicator = styled.div<IndicatorProps>`
     // with next line and the same in before or without? unsure
     display: ${({ checked }) => (checked ? 'block' : 'none')};
     background-color: ${BG_NORMAL};
-    box-shadow: -4px -2px 4px 0px rgba(125, 125, 125, 0.1),
-      4px 2px 8px 0px rgba(0, 0, 0, 0.7);
+    box-shadow: ${BASE_BOX_SHADOW};
     transform: ${({ checked }) =>
       checked
         ? 'scale3d(1, 1, 1)'
@@ -65,8 +63,7 @@ const Indicator = styled.div<IndicatorProps>`
 
   ::before {
     display: ${({ checked }) => (checked ? 'block' : 'none')};
-    box-shadow: -4px -2px 4px 0px rgba(0, 0, 0, 0.7),
-      4px 2px 8px 0px rgba(125, 125, 125, 0.1);
+    box-shadow: ${INSET_BASE_BOX_SHADOW};
   }
 `;
 
