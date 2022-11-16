@@ -6,6 +6,8 @@ import {
   BaseButton,
   BASE_BORDER_RADIUS,
   BASE_BOX_SHADOW,
+  FONT_SERIF_BLACK,
+  FONT_SERIF_REGULAR,
   POP,
 } from '../../themes';
 
@@ -25,6 +27,7 @@ const Item = styled.div`
   box-shadow: ${BASE_BOX_SHADOW};
   padding: 1rem;
   margin-block-end: 1rem;
+  font-family: ${FONT_SERIF_REGULAR};
 `;
 
 const BlockSpan = styled.span`
@@ -36,7 +39,7 @@ const Title = styled(BlockSpan)`
 `;
 
 const Bold = styled(BlockSpan)`
-  font-family: 'Inter Black';
+  font-family: ${FONT_SERIF_BLACK};
 `;
 
 const Edition = styled(BlockSpan)`

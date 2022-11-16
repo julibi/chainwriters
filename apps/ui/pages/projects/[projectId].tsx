@@ -251,6 +251,7 @@ export const ModalText = styled.span`
   display: inline-block;
   margin-block: 1rem 2rem;
   text-align: center;
+  font-family: ${FONT_SERIF_REGULAR};
 
   @media (max-width: 900px) {
     margin-block: 1rem 0rem;
@@ -539,7 +540,7 @@ const ProjectDetailView = () => {
               {project.contributors?.map((cntrb, i) => (
                 <Share key={i}>
                   <ShareTitle>
-                    {cntrb.role.length ? cntrb.role : 'Unknown role'}
+                    {cntrb.role?.length ? cntrb.role : 'Unknown role'}
                   </ShareTitle>
                   <ShareAddress>{truncateAddress(cntrb.address)}</ShareAddress>
                   <SharePercentage>{`${cntrb.sharePercentage} %`}</SharePercentage>

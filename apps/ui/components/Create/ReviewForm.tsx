@@ -5,8 +5,8 @@ import { Node } from 'slate';
 import {
   FadeIn,
   ReviewItemWrapper,
-  BlockSpan,
   ReviewItem,
+  BlockSpan,
 } from '../../pages/create';
 import Checkbox from '../Checkbox';
 import ActionButton from '../ActionButton';

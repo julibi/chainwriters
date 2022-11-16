@@ -4,7 +4,6 @@ import { isProd } from '../utils/isProd';
 
 export const Link = styled.a`
   color: #232630;
-  text-decoration: none;
 `;
 
 export interface ToastLinkTypes {

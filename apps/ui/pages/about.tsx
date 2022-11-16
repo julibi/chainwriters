@@ -1,7 +1,12 @@
 import React from 'react';
 import Image from 'next/image';
 import styled from 'styled-components';
-import { POP, FONT_SERIF_BOLD, StyledLink } from '../themes';
+import {
+  POP,
+  FONT_SERIF_BOLD,
+  StyledLink,
+  FONT_SERIF_REGULAR,
+} from '../themes';
 import LinkWrapper from '../components/LinkWrapper';
 import Title from '../components/Title';
 
@@ -11,10 +16,11 @@ const Root = styled.div`
   justify-content: center;
   align-items: center;
   margin-block-start: 3rem;
+  font-family: ${FONT_SERIF_REGULAR};
 `;
 
 const Content = styled.div`
-  padding: 3rem;
+  padding: 0 3rem 3rem 3rem;
 
   @media (max-width: 900px) {
     padding: 0;
@@ -123,13 +129,12 @@ const About = () => {
   return (
     <Root>
       <Title>About</Title>
+      <StyledLink href="https://docs.moonpage.io/">
+        <Title size="m" color={POP} textAlign="center">
+          Read the Moonpage Light Paper
+        </Title>
+      </StyledLink>
       <Content>
-        <StyledLink href="https://docs.moonpage.io/">
-          <Title size="m" color={POP}>
-            Read the Moonpage Light Paper
-          </Title>
-        </StyledLink>
-
         <QAWrapper>
           <SubHeader>Why Text NFTs?</SubHeader>
           <Text>{`What if you, as a writer, could publish your writings, earn the lion share, receive royalties and create communities around your work – all of this settled in a smart contract, where the rules are coded in an immutable ledger?`}</Text>
@@ -177,7 +182,9 @@ const About = () => {
           </Text>
         </QAWrapper>
         <CoFoundersWrapper>
-          <Title>Team</Title>
+          <Title textAlign="center" width="100%">
+            Team
+          </Title>
           <CoFounders id="founders">
             <CoFounderWithMarginBottom>
               <CoFounderImgWrapper>

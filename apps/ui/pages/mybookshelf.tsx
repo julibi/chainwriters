@@ -10,6 +10,7 @@ import {
   BASE_BORDER_RADIUS,
   BASE_BOX_SHADOW,
   FONT_SERIF_BOLD,
+  FONT_SERIF_REGULAR,
 } from '../themes';
 import Loading from '../components/Loading';
 import { useGetProjectsOfAccount } from '../hooks/user/useGetProjectsOfAccount';
@@ -36,6 +37,7 @@ const NotExist = styled.div`
 
 const NotExistText = styled.span`
   display: inline-block;
+  font-family: ${FONT_SERIF_REGULAR};
 `;
 
 const Section = styled.section`
@@ -58,10 +60,6 @@ const SubHeader = styled.h3`
   margin-block-end: 3rem;
   padding: 0.5rem;
   width: fit-content;
-`;
-
-const BlockSpan = styled.span`
-  display: inline-block;
 `;
 
 const MyBookShelf = () => {

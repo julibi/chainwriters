@@ -5,6 +5,7 @@ import { ButtonsWrapper, FadeIn, Wrapper } from '../../pages/create';
 import {
   BASE_BORDER_RADIUS,
   BG_NORMAL,
+  FONT_SERIF_REGULAR,
   INSET_BASE_BOX_SHADOW,
   MAIN_TEXT_COLOR,
 } from '../../themes';

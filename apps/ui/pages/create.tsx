@@ -17,6 +17,7 @@ import {
   POP,
   MAIN_TEXT_COLOR,
   FONT_SERIF_BOLD,
+  FONT_SERIF_REGULAR,
 } from '../themes';
 import NameForm from '../components/Create/NameForm';
 import TextForm from '../components/Create/TextForm';
@@ -95,15 +96,12 @@ const Form = styled.div`
   align-items: flex-start;
 `;
 
-export const BlockSpan = styled.span`
-  display: inline-block;
-  margin-block-end: 1rem;
-`;
-
 export const ReviewItem = styled.p`
   display: inline-block;
   font-style: italic;
   color: ${POP};
+  font-family: ${FONT_SERIF_REGULAR};
+  font-size: 16px;
 `;
 
 export const TextInput = styled.textarea`
@@ -138,7 +136,6 @@ export const FadeIn = styled.div`
 export const ReviewItemWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  text-transform: uppercase;
   margin-block-end: 2rem;
 `;
 
@@ -165,6 +162,7 @@ export const InputDescription = styled.p`
   display: inline-block;
   text-align: center;
   width: 75%;
+  font-family: ${FONT_SERIF_REGULAR};
 
   @media (max-width: 900px) {
     width: 100%;
@@ -178,6 +176,12 @@ export const FlexContainer = styled.div`
 export const ButtonsWrapper = styled.div`
   display: flex;
   justify-content: space-between;
+`;
+
+export const BlockSpan = styled.span`
+  display: inline-block;
+  margin-block-end: 1rem;
+  font-family: ${FONT_SERIF_REGULAR};
 `;
 
 export interface Contributor {
@@ -371,7 +375,9 @@ const Create = () => {
 
   return (
     <Root>
-      <Title margin="0 0 4rem 0">Create</Title>
+      <Title color={POP} margin="0 0 4rem 0">
+        Create
+      </Title>
       <Content>
         <ProgressBarWrapper>
           <ProgressBar completed={currentStep ? (currentStep / 14) * 100 : 0} />
