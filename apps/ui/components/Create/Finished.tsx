@@ -4,7 +4,8 @@ import styled from 'styled-components';
 import { FadeIn, Wrapper, InputDescription } from '../../pages/create';
 import ActionButton from '../ActionButton';
 import Title from '../Title';
-import { BASE_BORDER_RADIUS, INSET_BASE_BOX_SHADOW, POP } from '../../themes';
+import { BASE_BORDER_RADIUS, POP, ElementThemeProps } from '../../themes';
+import { useTheme } from '../../hooks/theme';
 import { useCollection } from '../../hooks/collection';
 import StartAuctionsModal from '../ProjectDetails/StartAuctionsModal';
 
@@ -22,14 +23,14 @@ const OptionsWrapper = styled.div`
   }
 `;
 
-const Option = styled.div`
+const Option = styled.div<ElementThemeProps>`
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
   padding: 2rem;
-  box-shadow: ${INSET_BASE_BOX_SHADOW};
+  box-shadow: ${({ theme }) => theme.INSET_BASE_BOX_SHADOW};
   border-radius: ${BASE_BORDER_RADIUS};
 `;
 
@@ -51,6 +52,7 @@ const TextPink = styled(Text)`
 `;
 
 const Finished = ({ projectId, onStartAuctions }: FinishedProps) => {
+  const theme = useTheme();
   const { startAuctionsStatus } = useCollection();
   const router = useRouter();
   const [showStartAuctionsModal, setShowStartAuctionsModal] = useState(false);
@@ -74,7 +76,7 @@ const Finished = ({ projectId, onStartAuctions }: FinishedProps) => {
           {`You have completed configuring your Project.`}
         </InputDescription>
         <OptionsWrapper>
-          <Option>
+          <Option theme={theme}>
             <Text>{`Wait with starting the auctions. Check the project first, and do some more marketing.`}</Text>
             <ActionButton
               onClick={() => router.push(`projects/${projectId}`)}
@@ -85,7 +87,7 @@ const Finished = ({ projectId, onStartAuctions }: FinishedProps) => {
               text="See Project"
             />
           </Option>
-          <OptionRight>
+          <OptionRight theme={theme}>
             <TextPink>{`Start the auctions now!`}</TextPink>
             <ActionButton
               onClick={() => {

@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
+import Emoji from '../Emojis';
 import { BASE_BORDER_RADIUS, ElementThemeProps } from '../../themes';
 import { useTheme } from '../../hooks/theme';
 import Checkmark from '../Checkmark';

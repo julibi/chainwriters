@@ -1,16 +1,17 @@
 import React from 'react';
 import styled from 'styled-components';
-import { BG_NORMAL, INSET_BASE_BOX_SHADOW, POP } from '../themes';
+import { POP, ElementThemeProps } from '../themes';
+import { useTheme } from '../hooks/theme';
 
 interface ProgressBarProps {
   completed: number;
 }
 
-const Root = styled.div`
+const Root = styled.div<ElementThemeProps>`
   height: 40px;
   width: 100%;
-  background-color: ${BG_NORMAL};
-  box-shadow: ${INSET_BASE_BOX_SHADOW};
+  background-color: ${({ theme }) => theme.BG_NORMAL};
+  box-shadow: ${({ theme }) => theme.INSET_BASE_BOX_SHADOW};
   border-radius: 50px;
   display: flex;
   align-items: center;
@@ -45,8 +46,9 @@ const ProgressTopLayer = styled.div`
 `;
 
 const ProgressBar = ({ completed }: ProgressBarProps) => {
+  const theme = useTheme();
   return (
-    <Root>
+    <Root theme={theme}>
       <Progress completed={completed}>
         <ProgressTopLayer />
       </Progress>

@@ -2,13 +2,8 @@ import React, { ChangeEvent, FormEvent } from 'react';
 import Image from 'next/image';
 import styled from 'styled-components';
 import { ButtonsWrapper, FadeIn, Wrapper } from '../../pages/create';
-import {
-  BASE_BORDER_RADIUS,
-  BG_NORMAL,
-  FONT_SERIF_REGULAR,
-  INSET_BASE_BOX_SHADOW,
-  MAIN_TEXT_COLOR,
-} from '../../themes';
+import { BASE_BORDER_RADIUS, ElementThemeProps } from '../../themes';
+import { useTheme } from '../../hooks/theme';
 import ActionButton from '../ActionButton';
 import Title from '../Title';
 
@@ -17,12 +12,12 @@ export const StyledImageForm = styled.form`
   flex-direction: column;
 `;
 
-export const DragNDrop = styled.div`
+export const DragNDrop = styled.div<ElementThemeProps>`
   width: 100%;
   height: 300px;
   align-items: center;
   border-radius: ${BASE_BORDER_RADIUS};
-  box-shadow: ${INSET_BASE_BOX_SHADOW};
+  box-shadow: ${({ theme }) => theme.INSET_BASE_BOX_SHADOW};
   margin: 0 0 2rem 0;
 
   > span {
@@ -39,7 +34,7 @@ export const UploadCTAWrapper = styled.div`
   margin-block-end: 2rem;
 `;
 
-export const StyledFileInput = styled.input`
+export const StyledFileInput = styled.input<ElementThemeProps>`
   color: transparent;
   margin-block: 1rem;
 
@@ -47,8 +42,8 @@ export const StyledFileInput = styled.input`
     width: 100%;
     border-width: 0;
     text-align: center;
-    color: ${BG_NORMAL};
-    background-color: ${MAIN_TEXT_COLOR};
+    color: ${({ theme }) => theme.BG_NORMAL};
+    background-color: ${({ theme }) => theme.MAIN_TEXT_COLOR};
     border-radius: ${BASE_BORDER_RADIUS} !important;
     padding: 1rem;
 
@@ -98,6 +93,8 @@ const CoverImageForm = ({
   pending,
   reset,
 }: CoverImageFormProps) => {
+  const theme = useTheme();
+
   return (
     <FadeIn>
       <Wrapper>
@@ -113,6 +110,7 @@ const CoverImageForm = ({
               const file = e.dataTransfer.files[0];
               captureFile(file);
             }}
+            theme={theme}
           >
             <Image
               src={
@@ -136,6 +134,7 @@ const CoverImageForm = ({
                 const file = e.target.files[0];
                 captureFile(file);
               }}
+              theme={theme}
             />
             <ButtonsWrapper>
               <ActionButton

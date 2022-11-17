@@ -107,7 +107,7 @@ const MoreDetails = ({ children, styles, title, open }: MoreDetailsProps) => {
   return (
     <Root style={styles} theme={theme}>
       <Header>
-        <Title>{title}</Title>
+        <Title theme={theme}>{title}</Title>
         {!up && <Content>{children}</Content>}
       </Header>
       <div>

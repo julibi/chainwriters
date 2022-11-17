@@ -14,6 +14,7 @@ import {
   Theme,
 } from '../../themes';
 import Title from '../Title';
+import { useDarkMode } from '../../hooks/useDarkMode';
 
 const Root = styled.section`
   display: flex;
@@ -176,6 +177,7 @@ const InstructionComp = ({
 };
 
 const HowItWorksSection = () => {
+  const isDarkMode = useDarkMode();
   const theme = useTheme();
   const [authorInstructionsStep, setAuthorInstructionsStep] = useState<
     1 | 2 | 3 | 4
@@ -192,7 +194,7 @@ const HowItWorksSection = () => {
           <Image
             height={'34px'}
             width={'30px'}
-            src={'/Docs.svg'}
+            src={isDarkMode ? '/DocsLight.svg' : '/DocsDark.svg'}
             alt={'Team'}
             priority
           />

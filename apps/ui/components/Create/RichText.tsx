@@ -10,11 +10,12 @@ import {
   Element as SlateElement,
 } from 'slate';
 import { withHistory } from 'slate-history';
-import { BASE_BORDER_RADIUS, INSET_BASE_BOX_SHADOW } from '../../themes';
+import { useTheme } from '../../hooks/theme';
+import { BASE_BORDER_RADIUS, ElementThemeProps } from '../../themes';
 import EditorToolButton from '../EditorToolButton';
 
-const StyledEditable = styled(Editable)`
-  box-shadow: ${INSET_BASE_BOX_SHADOW};
+const StyledEditable = styled(Editable)<ElementThemeProps>`
+  box-shadow: ${({ theme }) => theme.INSET_BASE_BOX_SHADOW};
   // otherwise it shrinks to 24px height somehow
   min-height: 500px !important;
   max-height: 1000px !important;
@@ -31,6 +32,9 @@ const StyledEditable = styled(Editable)`
 const LIST_TYPES = ['numbered-list', 'bulleted-list'];
 const TEXT_ALIGN_TYPES = ['left', 'center', 'right', 'justify'];
 const Toolbar = styled.div`
+  display: flex;
+  justify-content: center;
+
   @media (max-width: 900px) {
     display: flex;
     flex-wrap: wrap;
@@ -45,6 +49,7 @@ interface RichTextProps {
 }
 
 const RichText = ({ onKeyDown, text, isDisabled = false }: RichTextProps) => {
+  const theme = useTheme();
   const renderElement = useCallback((props) => <Element {...props} />, []);
   const renderLeaf = useCallback((props) => <Leaf {...props} />, []);
   const editor = useMemo(() => withHistory(withReact(createEditor())), []);
@@ -77,6 +82,7 @@ const RichText = ({ onKeyDown, text, isDisabled = false }: RichTextProps) => {
         placeholder="Enter some text…"
         spellCheck
         autoFocus
+        theme={theme}
         onKeyDown={(e) => {
           if (e.key === 'Enter' && e.shiftKey) {
             const selectedElement = Node.descendant(

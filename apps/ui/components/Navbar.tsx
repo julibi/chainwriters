@@ -1,18 +1,17 @@
-import React, { useState } from 'react';
-import { useWeb3React } from '@web3-react/core';
+import React, { useMemo, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import styled from 'styled-components';
 import WalletConnection from '../components/WalletConnection';
-import { useEagerConnect } from '../hooks/useEagerConnect';
 import {
-  BG_NORMAL,
   StyledLink,
   FONT_SERIF_BOLD,
   FONT_SERIF_BLACK,
-  MAIN_TEXT_COLOR,
+  ElementThemeProps,
 } from '../themes';
 import LinkWrapper from '../components/LinkWrapper';
+import { useTheme } from '../hooks/theme';
+import { useDarkMode } from '../hooks/useDarkMode';
 
 const Root = styled.div`
   display: block;
@@ -82,10 +81,10 @@ const BurgerButton = styled.button`
   padding: 0;
 `;
 
-const BurgerLine = styled.button`
+const BurgerLine = styled.button<ElementThemeProps>`
   width: 35px;
   height: 4px;
-  background: ${MAIN_TEXT_COLOR};
+  background: ${({ theme }) => theme.MAIN_TEXT_COLOR};
   border-radius: 5px;
   border: none;
   padding: 0;
@@ -93,14 +92,14 @@ const BurgerLine = styled.button`
 `;
 
 // TODO fade in out with styled components - find out how to use props with styled components
-const MobileNavMenu = styled.div`
+const MobileNavMenu = styled.div<ElementThemeProps>`
   position: absolute;
   top: 60px;
   left: 0;
   z-index: 20;
   width: 100%;
   height: 100%;
-  background-color: ${BG_NORMAL};
+  background-color: ${({ theme }) => theme.BG_NORMAL} !important;
 `;
 
 const MobileNavList = styled.ul`
@@ -124,9 +123,14 @@ const routes = [
 ];
 
 const Navbar = () => {
-  const { chainId } = useWeb3React();
-  const hasTried = useEagerConnect();
+  const theme = useTheme();
+  // const hasTried = useEagerConnect();
+  const isDarkMode = useDarkMode();
   const [isBurgerMenuOpen, setIsBurgerMenuOpen] = useState(false);
+  const logoPath = useMemo(
+    () => (isDarkMode ? '/logo/LogoLight.svg' : '/logo/LogoDark.svg'),
+    [isDarkMode]
+  );
 
   // TODO WALLET CONNECTION ON MOBILE!
   return (
@@ -134,9 +138,9 @@ const Navbar = () => {
       <RootMobile>
         <LinkWrapper url="/" target="_self" flex underline={false}>
           <Image
-            height={'40px'}
-            width={'40px'}
-            src={`/logo/LogoDark.svg`}
+            height={'50px'}
+            width={'50px'}
+            src={logoPath}
             alt="moonpage"
             priority
           />
@@ -152,6 +156,7 @@ const Navbar = () => {
                     }
                   : {}
               }
+              theme={theme}
             />
             <BurgerLine
               style={
@@ -162,6 +167,7 @@ const Navbar = () => {
                     }
                   : {}
               }
+              theme={theme}
             />
             <BurgerLine
               style={
@@ -171,11 +177,12 @@ const Navbar = () => {
                     }
                   : {}
               }
+              theme={theme}
             />
           </BurgerButton>
         </ActionsWrapper>
         {isBurgerMenuOpen && (
-          <MobileNavMenu>
+          <MobileNavMenu theme={theme}>
             <MobileNavList>
               {routes.map((route, idx) => (
                 <MobileNavListItem
@@ -195,9 +202,9 @@ const Navbar = () => {
         <LinkWrapper url="/" target="_self" flex underline={false}>
           <LogoWrapper>
             <Image
-              height={'80px'}
-              width={'80px'}
-              src={`/logo/LogoDark.svg`}
+              height={'100px'}
+              width={'100px'}
+              src={logoPath}
               alt="moonpage"
               priority
             />

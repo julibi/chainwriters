@@ -11,13 +11,10 @@ import { Node } from 'slate';
 import ProgressBar from '../components/ProgressBar';
 import {
   BASE_BORDER_RADIUS,
-  BASE_BOX_SHADOW,
-  BG_NORMAL,
-  INSET_BASE_BOX_SHADOW,
   POP,
-  MAIN_TEXT_COLOR,
   FONT_SERIF_BOLD,
   FONT_SERIF_REGULAR,
+  ElementThemeProps,
 } from '../themes';
 import NameForm from '../components/Create/NameForm';
 import TextForm from '../components/Create/TextForm';
@@ -36,6 +33,7 @@ import { useFactory } from '../hooks/factory';
 import { useIpfsClient } from '../hooks/useIpfsClient';
 import { BigNumber } from 'ethers';
 import { useManager } from '../hooks/manager';
+import { useTheme } from '../hooks/theme';
 import LanguageForm from '../components/Create/LanguageForm';
 import TranslationForm from '../components/Create/TranslationForm';
 import Title from '../components/Title';
@@ -84,39 +82,16 @@ const FormWrapper = styled.div`
   margin-block-start: 1rem;
 `;
 
-const Form = styled.div`
+const Form = styled.div<ElementThemeProps>`
   width: 100%;
   max-width: 1200px;
   border-radius: ${BASE_BORDER_RADIUS};
-  box-shadow: ${BASE_BOX_SHADOW};
+  box-shadow: ${({ theme }) => theme.BASE_BOX_SHADOW};
   padding: 3rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: flex-start;
-`;
-
-export const ReviewItem = styled.p`
-  display: inline-block;
-  font-style: italic;
-  color: ${POP};
-  font-family: ${FONT_SERIF_REGULAR};
-  font-size: 16px;
-`;
-
-export const TextInput = styled.textarea`
-  height: 600px;
-  width: 100%;
-
-  font-size: 14px;
-  line-height: 170%;
-  border-radius: ${BASE_BORDER_RADIUS};
-  box-shadow: ${INSET_BASE_BOX_SHADOW};
-  margin-block-end: 2rem;
-  padding: 1rem;
-  color: ${MAIN_TEXT_COLOR};
-  background-color: ${BG_NORMAL};
-  outline: none;
 `;
 
 export const FadeIn = styled.div`
@@ -131,6 +106,14 @@ export const FadeIn = styled.div`
       opacity: 1;
     }
   }
+`;
+
+export const ReviewItem = styled.p`
+  display: inline-block;
+  font-style: italic;
+  color: ${POP};
+  font-family: ${FONT_SERIF_REGULAR};
+  font-size: 16px;
 `;
 
 export const ReviewItemWrapper = styled.div`
@@ -191,6 +174,7 @@ export interface Contributor {
 }
 
 const Create = () => {
+  const theme = useTheme();
   const client = useIpfsClient();
   const { uploadText } = useUploadTextToIpfs();
   const router = useRouter();
@@ -384,7 +368,7 @@ const Create = () => {
         </ProgressBarWrapper>
         <FormWrapper>
           <ConfettiCanon show={!!projectId} />
-          <Form>
+          <Form theme={theme}>
             {currentStep === 0 && (
               <NameForm
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>

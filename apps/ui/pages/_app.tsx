@@ -148,7 +148,6 @@ function CustomApp({ Component, pageProps }: AppProps) {
           name="viewport"
           content="width=device-width, initial-scale=1, shrink-to-fit=no"
         />
-        <meta name="theme-color" content="#1B1E28" />
         <meta
           name="description"
           content="Enter the future of text. Create and collect text NFTs.  Moonpage is a launchpad where creators and writers can turn their projects into text NFTs."
