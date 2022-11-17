@@ -1,8 +1,4 @@
-import {
-  BASE_BORDER_RADIUS,
-  BASE_BOX_SHADOW,
-  MAIN_TEXT_COLOR,
-} from '../../themes';
+import { BASE_BORDER_RADIUS, ElementThemeProps } from '../../themes';
 import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Node } from 'slate';
@@ -16,8 +12,9 @@ import RichText from '../../components/Create/RichText';
 import ActionButton from '../../components/ActionButton';
 import { useManager } from '../../hooks/manager';
 import useUploadTextToIpfs from '../../hooks/useUploadTextToIpfs';
+import { useTheme } from '../../hooks/theme';
 
-const DescriptionSection = styled.section`
+const DescriptionSection = styled.section<ElementThemeProps>`
   position: relative;
   display: flex;
   flex-direction: column;
@@ -25,11 +22,11 @@ const DescriptionSection = styled.section`
   width: 90%;
   line-break: anywhere;
   max-width: 1200px;
-  color: ${MAIN_TEXT_COLOR};
+  color: ${({ theme }) => theme.MAIN_TEXT_COLOR};
   margin-block-end: 2rem;
   padding: 2rem;
   border-radius: ${BASE_BORDER_RADIUS};
-  box-shadow: ${BASE_BOX_SHADOW};
+  box-shadow: ${({ theme }) => theme.BASE_BOX_SHADOW};
 
   animation: fadein 2s;
 
@@ -58,6 +55,7 @@ const RichTextWrapper = styled.div`
 `;
 
 const Blurb = ({ blurbIpfsHash, projectId, isAllowedToEdit }) => {
+  const theme = useTheme();
   const { uploadText } = useUploadTextToIpfs();
   const [originalBlurb, setOriginalBlurb] = useState<
     Node[] | string | undefined
@@ -158,7 +156,7 @@ const Blurb = ({ blurbIpfsHash, projectId, isAllowedToEdit }) => {
   if (!blurbIpfsHash) return null;
 
   return (
-    <DescriptionSection>
+    <DescriptionSection theme={theme}>
       <Title>Blurb</Title>
       {isAllowedToEdit && (
         <EditButton

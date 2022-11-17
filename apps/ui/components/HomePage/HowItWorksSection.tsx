@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import Image from 'next/image';
+import { useTheme } from '../../hooks/theme';
 import {
   BaseButton,
   BASE_BORDER_RADIUS,
-  BASE_BOX_SHADOW,
   FadeInBaseAnimation,
-  INSET_BASE_BOX_SHADOW,
   POP,
-  MAIN_TEXT_COLOR,
   FONT_SERIF_BOLD,
   StyledLink,
   FONT_SERIF_REGULAR,
+  ElementThemeProps,
+  Theme,
 } from '../../themes';
 import Title from '../Title';
 
@@ -32,10 +32,10 @@ const Content = styled.div`
   align-items: center;
 `;
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<ElementThemeProps>`
   display: flex;
   border-radius: ${BASE_BORDER_RADIUS};
-  box-shadow: ${INSET_BASE_BOX_SHADOW};
+  box-shadow: ${({ theme }) => theme.INSET_BASE_BOX_SHADOW};
   margin-block-end: 3rem;
   padding: 2rem 2rem 0 2rem;
 
@@ -77,14 +77,15 @@ const Header = styled.div`
 
 interface InstructionStepProps {
   active: boolean;
+  theme: Theme;
 }
 
 const InstructionStep = styled(BaseButton)<InstructionStepProps>`
   height: 50px;
   width: 50px;
   border-radius: 50%;
-  box-shadow: ${({ active }) =>
-    active ? INSET_BASE_BOX_SHADOW : BASE_BOX_SHADOW};
+  box-shadow: ${({ active, theme }) =>
+    active ? theme.INSET_BASE_BOX_SHADOW : theme.BASE_BOX_SHADOW};
   padding: 0;
 
   @media (max-width: 900px) {
@@ -106,10 +107,10 @@ const InstructionHeader = styled.h5`
   }
 `;
 
-const InstructionDescription = styled.span`
+const InstructionDescription = styled.span<ElementThemeProps>`
   display: inline-block;
   margin: 0 1rem 1rem calc(50px + 1rem);
-  color: ${MAIN_TEXT_COLOR};
+  color: ${({ theme }) => theme.MAIN_TEXT_COLOR};
   font-family: ${FONT_SERIF_REGULAR};
   ${FadeInBaseAnimation};
 
@@ -134,7 +135,7 @@ const Collectors = styled(Authors)`
   }
 `;
 
-const CollectorsWrapper = styled(Wrapper)`
+const CollectorsWrapper = styled(Wrapper)<ElementThemeProps>`
   flex-direction: row-reverse;
 
   @media (max-width: 900px) {
@@ -150,6 +151,7 @@ const InstructionComp = ({
   title,
   description,
 }: InstructionCompProps) => {
+  const theme = useTheme();
   return (
     <Instruction>
       <Header>
@@ -157,6 +159,7 @@ const InstructionComp = ({
           active={currentStep === index}
           disabled={currentStep === index}
           onClick={() => onClick(index)}
+          theme={theme}
         >
           {index}
         </InstructionStep>
@@ -164,13 +167,16 @@ const InstructionComp = ({
       </Header>
       {currentStep === index &&
         description.map((text, idx) => (
-          <InstructionDescription key={idx}>{text}</InstructionDescription>
+          <InstructionDescription key={idx} theme={theme}>
+            {text}
+          </InstructionDescription>
         ))}
     </Instruction>
   );
 };
 
 const HowItWorksSection = () => {
+  const theme = useTheme();
   const [authorInstructionsStep, setAuthorInstructionsStep] = useState<
     1 | 2 | 3 | 4
   >(1);
@@ -194,7 +200,7 @@ const HowItWorksSection = () => {
       </StyledLink>
       <Content>
         <NavButton disabled>Creators</NavButton>
-        <Wrapper>
+        <Wrapper theme={theme}>
           <Authors>
             <InstructionComp
               index={1}
@@ -251,7 +257,7 @@ const HowItWorksSection = () => {
           </VideoWrapper> */}
         </Wrapper>
         <NavButton disabled>Collectors</NavButton>
-        <CollectorsWrapper>
+        <CollectorsWrapper theme={theme}>
           <Collectors>
             <InstructionComp
               index={1}

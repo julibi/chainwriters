@@ -21,18 +21,18 @@ import useAuctionsManager from '../../hooks/useAuctionsManager';
 import { formatNumber } from '../../utils/formatNumber';
 import {
   BASE_BORDER_RADIUS,
-  BASE_BOX_SHADOW,
   DISABLED_WHITE,
   POP,
-  MAIN_TEXT_COLOR,
   PrimaryButton,
   BaseButton,
   FONT_SERIF_BOLD,
   FONT_SERIF_REGULAR,
+  ElementThemeProps,
 } from '../../themes';
 import { MOONPAGE_DEV_ADDRESS } from '../../../constants';
 import { toast } from 'react-toastify';
 import NextLink from '../../components/NextLink';
+import { useTheme } from '../../hooks/theme';
 
 import useMoonpageManager from '../../hooks/useMoonpageManager';
 import {
@@ -51,11 +51,11 @@ const Root = styled.div`
   min-height: 700px;
 `;
 
-const MainInfoWrapper = styled.section`
+const MainInfoWrapper = styled.section<ElementThemeProps>`
   display: flex;
   width: 90%;
   max-width: 1200px;
-  color: ${MAIN_TEXT_COLOR};
+  color: ${({ theme }) => theme.MAIN_TEXT_COLOR};
   margin-block-end: 2rem;
 
   animation: fadein 2s;
@@ -74,7 +74,7 @@ const MainInfoWrapper = styled.section`
   }
 `;
 
-const InfoRight = styled.div`
+const InfoRight = styled.div<ElementThemeProps>`
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -82,7 +82,7 @@ const InfoRight = styled.div`
   font-family: ${FONT_SERIF_BOLD};
 
   border-radius: ${BASE_BORDER_RADIUS};
-  box-shadow: ${BASE_BOX_SHADOW};
+  box-shadow: ${({ theme }) => theme.BASE_BOX_SHADOW};
   padding: 2rem;
 
   @media (max-width: 900px) {
@@ -160,7 +160,7 @@ export const StyledPrimaryButton = styled(PrimaryButton)`
   }
 `;
 
-const InfoLeft = styled.div`
+const InfoLeft = styled.div<ElementThemeProps>`
   flex: 1;
   margin-inline-end: 2rem;
   display: flex;
@@ -169,7 +169,7 @@ const InfoLeft = styled.div`
   > div {
     padding: 2rem;
     border-radius: ${BASE_BORDER_RADIUS};
-    box-shadow: ${BASE_BOX_SHADOW};
+    box-shadow: ${({ theme }) => theme.BASE_BOX_SHADOW};
   }
 
   @media (max-width: 900px) {
@@ -178,18 +178,18 @@ const InfoLeft = styled.div`
   }
 `;
 
-const ShareSection = styled.section`
+const ShareSection = styled.section<ElementThemeProps>`
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 90%;
   max-width: 1200px;
-  color: ${MAIN_TEXT_COLOR};
+  color: ${({ theme }) => theme.MAIN_TEXT_COLOR};
   margin-block-end: 2rem;
   padding: 2rem;
   font-family: ${FONT_SERIF_REGULAR};
   border-radius: ${BASE_BORDER_RADIUS};
-  box-shadow: ${BASE_BOX_SHADOW};
+  box-shadow: ${({ theme }) => theme.BASE_BOX_SHADOW};
 
   animation: fadein 2s;
 
@@ -266,6 +266,7 @@ export const CTAWrapper = styled.div`
 const ProjectDetailView = () => {
   const router = useRouter();
   const { account } = useWeb3React();
+  const theme = useTheme();
   const projectId = useGetProjectId();
   const {
     project: fetchedProject,
@@ -453,8 +454,8 @@ const ProjectDetailView = () => {
         <Loading height={530} />
       ) : (
         <>
-          <MainInfoWrapper>
-            <InfoLeft>
+          <MainInfoWrapper theme={theme}>
+            <InfoLeft theme={theme}>
               <Title padding="0 1rem 1rem 1rem" color={POP}>
                 {project.title}
               </Title>
@@ -502,7 +503,7 @@ const ProjectDetailView = () => {
                 </Title>
               </Language>
             </InfoLeft>
-            <InfoRight>
+            <InfoRight theme={theme}>
               {project.editions?.length > 1 && (
                 <MintSection
                   currentEdition={currentEdition}
@@ -529,7 +530,7 @@ const ProjectDetailView = () => {
               project?.creator.toLowerCase() === account?.toLowerCase()
             }
           />
-          <ShareSection>
+          <ShareSection theme={theme}>
             <Title>Contributors</Title>
             <Shares>
               <Share>

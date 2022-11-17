@@ -5,7 +5,7 @@ import React, {
   useState,
 } from 'react';
 import Image from 'next/image';
-import styled from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 import {
   SectionTitleWrapper,
   SectionTitle,
@@ -13,13 +13,7 @@ import {
 import { ProjectItem } from '../components/ProjectItem';
 import { useProjects } from '../hooks/projects';
 // import Dropdown from '../components/Dropdown';
-import {
-  BaseButton,
-  BaseInput,
-  Cross,
-  INSET_BASE_BOX_SHADOW,
-  FONT_SERIF_BOLD,
-} from '../themes';
+import { BaseButton, BaseInput, Cross, FONT_SERIF_BOLD } from '../themes';
 import Loading from '../components/Loading';
 
 const Root = styled.div`
@@ -68,7 +62,7 @@ const SearchButton = styled(BaseButton)<ButtonProps>`
 
   :disabled {
     pointer-events: none;
-    box-shadow: ${INSET_BASE_BOX_SHADOW};
+    box-shadow: ${({ theme }) => theme.INSET_BASE_BOX_SHADOW};
   }
 
   @media (max-width: 900px) {
@@ -84,7 +78,7 @@ const ResetButton = styled(BaseButton)`
 
   :disabled {
     pointer-events: none;
-    box-shadow: ${INSET_BASE_BOX_SHADOW};
+    box-shadow: ${({ theme }) => theme.INSET_BASE_BOX_SHADOW};
   }
 
   @media (max-width: 900px) {
@@ -143,6 +137,7 @@ interface Project {
 }
 
 const Projects = () => {
+  const theme = useTheme();
   const [searchedProjects, setSearchedProjects] = useState<Project[] | null>(
     null
   );
@@ -211,6 +206,7 @@ const Projects = () => {
               disabled={
                 !projects || projects.length < 1 || searchInput.length < 1
               }
+              theme={theme}
             >
               <Image
                 src={'/SearchIcon.svg'}
@@ -222,6 +218,7 @@ const Projects = () => {
             <ResetButton
               onClick={reset}
               disabled={!searchedProjects && !hasSearched}
+              theme={theme}
             >
               Reset
             </ResetButton>

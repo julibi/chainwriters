@@ -12,7 +12,12 @@ import {
 import { createGlobalStyle } from 'styled-components';
 import { hotjar } from 'react-hotjar';
 import Layout from '../components/Layout';
-import { BG_NORMAL, MAIN_TEXT_COLOR } from '../themes';
+import {
+  BG_NORMAL_DARKMODE,
+  BG_NORMAL_LIGHTMODE,
+  MAIN_TEXT_COLOR_DARKMODE,
+  MAIN_TEXT_COLOR_LIGHTMODE,
+} from '../themes';
 import './styles.css';
 import ToastContainer from '../components/ToastContainer';
 import client from '../apolloclient';
@@ -23,6 +28,7 @@ import {
   ManagerProvider,
   ProjectsProvider,
   UserProvider,
+  ThemeProvider,
 } from '../providers';
 import * as gtag from '../utils/ga';
 
@@ -36,9 +42,14 @@ html{
 }
 
   body{
-    background-color: ${BG_NORMAL};
-    color: ${MAIN_TEXT_COLOR};
+    background-color: ${BG_NORMAL_LIGHTMODE};
+    color: ${MAIN_TEXT_COLOR_LIGHTMODE};
     font-family: 'Inter';
+
+    @media (prefers-color-scheme: dark) {
+      background-color: ${BG_NORMAL_DARKMODE};
+      color: ${MAIN_TEXT_COLOR_DARKMODE};
+    }
 
     @font-face {
       font-family: "Inter Light";
@@ -167,11 +178,13 @@ function CustomApp({ Component, pageProps }: AppProps) {
                 <AuctionsProvider>
                   <CollectionProvider>
                     <FactoryProvider>
-                      <main className="app">
-                        <Layout>
-                          <Component {...pageProps} />
-                        </Layout>
-                      </main>
+                      <ThemeProvider>
+                        <main className="app">
+                          <Layout>
+                            <Component {...pageProps} />
+                          </Layout>
+                        </main>
+                      </ThemeProvider>
                     </FactoryProvider>
                   </CollectionProvider>
                 </AuctionsProvider>

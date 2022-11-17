@@ -2,13 +2,12 @@ import { ReactChild } from 'react';
 import { FocusOn } from 'react-focus-on';
 import styled from 'styled-components';
 import {
-  BASE_BOX_SHADOW,
   BASE_BORDER_RADIUS,
   BaseButton,
-  BG_NORMAL,
   Cross,
-  MAIN_TEXT_COLOR,
+  ElementThemeProps,
 } from '../themes';
+import { useTheme } from '../hooks/theme';
 
 const Root = styled.div`
   position: fixed;
@@ -37,20 +36,20 @@ const Root = styled.div`
   }
 `;
 
-const Content = styled.div`
+const Content = styled.div<ElementThemeProps>`
   position: relative;
   border-radius: ${BASE_BORDER_RADIUS};
   overflow-y: auto;
   max-width: 600px;
   max-height: 800px;
-  background-color: ${BG_NORMAL};
+  background-color: ${({ theme }) => theme.BG_NORMAL};
   padding: 1em;
   opacity: 1;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  box-shadow: ${BASE_BOX_SHADOW};
+  box-shadow: ${({ theme }) => theme.BASE_BOX_SHADOW};
 
   @media (max-width: 900px) {
     border-radius: 0;
@@ -89,10 +88,11 @@ export interface BaseModalProps {
 
 // TODO: on outside click
 const BaseModal = ({ children, onClose }: BaseModalProps) => {
+  const theme = useTheme();
   return (
     <FocusOn onEscapeKey={onClose}>
       <Root>
-        <Content>
+        <Content theme={theme}>
           {onClose && (
             <CloseButton onClick={onClose}>
               <CloseCross />

@@ -1,15 +1,17 @@
 import React from 'react';
 import styled from 'styled-components';
-import {
-  BASE_BORDER_RADIUS,
-  BASE_BOX_SHADOW,
-  FONT_SERIF_REGULAR,
-} from '../themes';
+import { useTheme } from '../hooks/theme';
+import { Theme } from '../themes';
+import { BASE_BORDER_RADIUS, FONT_SERIF_REGULAR } from '../themes';
 import Title from './Title';
 
-const Root = styled.div`
+interface RootTypes {
+  theme: Theme;
+}
+
+const Root = styled.div<RootTypes>`
   border-radius: ${BASE_BORDER_RADIUS};
-  box-shadow: ${BASE_BOX_SHADOW};
+  box-shadow: ${({ theme }) => theme.BASE_BOX_SHADOW};
   width: fit-content;
   max-width: 280px;
   font-family: ${FONT_SERIF_REGULAR};
@@ -21,8 +23,9 @@ const Root = styled.div`
 `;
 
 const InfoCard = () => {
+  const theme = useTheme();
   return (
-    <Root>
+    <Root theme={theme}>
       <Title margin="0 1rem 1rem 0" padding="0" size="s" textAlign="left">
         Simple and flexible
       </Title>

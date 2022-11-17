@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { BASE_BOX_SHADOW, BG_NORMAL, INSET_BASE_BOX_SHADOW } from '../themes';
+import { Theme } from '../themes';
+import { useTheme } from '../hooks/theme';
 
 const Wrapper = styled.div`
   display: flex;
@@ -27,6 +28,7 @@ const Label = styled.label<LabelProps>`
 
 interface IndicatorProps {
   checked: boolean;
+  theme: Theme;
 }
 
 const Indicator = styled.div<IndicatorProps>`
@@ -34,7 +36,7 @@ const Indicator = styled.div<IndicatorProps>`
   border-radius: 50%;
   min-height: 40px;
   min-width: 40px;
-  box-shadow: ${BASE_BOX_SHADOW}
+  box-shadow: ${({ theme }) => theme.BASE_BOX_SHADOW}
   overflow: hidden;
 
   ::before,
@@ -51,8 +53,8 @@ const Indicator = styled.div<IndicatorProps>`
   ::after {
     // with next line and the same in before or without? unsure
     display: ${({ checked }) => (checked ? 'block' : 'none')};
-    background-color: ${BG_NORMAL};
-    box-shadow: ${BASE_BOX_SHADOW};
+    background-color: ${({ theme }) => theme.BG_NORMAL};
+    box-shadow: ${({ theme }) => theme.BASE_BOX_SHADOW};
     transform: ${({ checked }) =>
       checked
         ? 'scale3d(1, 1, 1)'
@@ -63,7 +65,7 @@ const Indicator = styled.div<IndicatorProps>`
 
   ::before {
     display: ${({ checked }) => (checked ? 'block' : 'none')};
-    box-shadow: ${INSET_BASE_BOX_SHADOW};
+    box-shadow: ${({ theme }) => theme.INSET_BASE_BOX_SHADOW};
   }
 `;
 
@@ -91,6 +93,7 @@ const Checkbox = ({
   children,
   onChange,
 }: CheckboxProps) => {
+  const theme = useTheme();
   const [checked, setChecked] = useState<boolean>(check);
   const toggleChecked = () => {
     setChecked(!checked);
@@ -107,7 +110,7 @@ const Checkbox = ({
           }}
           checked={checked}
         />
-        <Indicator checked={checked} />
+        <Indicator checked={checked} theme={theme} />
         {children && <BlockSpan>{children}</BlockSpan>}
       </Label>
     </Wrapper>

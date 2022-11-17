@@ -1,25 +1,26 @@
 import React from 'react';
 import styled from 'styled-components';
 import Circle from './Circle';
-import { BASE_BOX_SHADOW, INSET_BASE_BOX_SHADOW, POP } from '../themes';
+import { ElementThemeProps, POP } from '../themes';
+import { useTheme } from '../hooks/theme';
 
-const Pie = styled.div`
+const Pie = styled.div<ElementThemeProps>`
   width: 280px;
   height: 280px;
   border-radius: 50%;
   padding: 70px;
-  box-shadow: ${BASE_BOX_SHADOW};
+  box-shadow: ${({ theme }) => theme.BASE_BOX_SHADOW};
   position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
 `;
 
-const PieHole = styled.div`
+const PieHole = styled.div<ElementThemeProps>`
   width: 70px;
   height: 70px;
   border-radius: 50%;
-  box-shadow: ${INSET_BASE_BOX_SHADOW};
+  box-shadow: ${({ theme }) => theme.INSET_BASE_BOX_SHADOW};
   position: relative;
   display: flex;
   justify-content: center;
@@ -40,10 +41,11 @@ interface PieChart {
 }
 
 const PieChart = ({ part, whole }: PieChart) => {
+  const theme = useTheme();
   return (
-    <Pie>
+    <Pie theme={theme}>
       <StyledCircle percentage={parseInt(((part / whole) * 100).toString())} />
-      <PieHole>
+      <PieHole theme={theme}>
         <PieHoleData>{`${part}/${whole} Minted`}</PieHoleData>
       </PieHole>
     </Pie>

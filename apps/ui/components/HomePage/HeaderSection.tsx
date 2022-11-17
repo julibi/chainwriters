@@ -6,6 +6,7 @@ import BubbleAnimation from '../BubbleAnimation';
 import Title from '../Title';
 import { useRouter } from 'next/router';
 import TypeWriter from '../TypeWriter';
+import { useTheme } from 'apps/ui/hooks/theme';
 
 const Root = styled.section`
   display: flex;
@@ -71,6 +72,8 @@ const HeaderDesktop = styled.div`
 
 const HeaderSection = () => {
   const router = useRouter();
+  const theme = useTheme();
+
   return (
     <Root>
       <LandingHeader>
