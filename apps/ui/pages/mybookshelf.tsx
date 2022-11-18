@@ -121,7 +121,7 @@ const MyBookShelf = () => {
           <Section>
             <SubHeader>My Projects</SubHeader>
             {ownProjectsLoading && <Loading height={300} />}
-            {!ownProjectsLoading && !ownProjects.length && (
+            {!ownProjectsLoading && !ownProjects?.length && (
               <NotExist>
                 <NotExistText>{`You have not created any Moonpage subcollections.`}</NotExistText>
               </NotExist>
@@ -141,7 +141,7 @@ const MyBookShelf = () => {
           <Section>
             <SubHeader>My Contributions</SubHeader>
             {contributionsLoading && <Loading height={300} />}
-            {!contributionsLoading && !contributions.length && (
+            {!contributionsLoading && !contributions?.length && (
               <NotExist>
                 <NotExistText>{`You have not created any Moonpage subcollections.`}</NotExistText>
               </NotExist>
