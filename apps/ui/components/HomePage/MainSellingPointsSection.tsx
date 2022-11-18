@@ -1,4 +1,3 @@
-import { read } from 'fs';
 import React from 'react';
 import styled from 'styled-components';
 import { POP } from '../../themes';
@@ -40,7 +39,7 @@ const authorSellingPoints = [
   },
   {
     title: 'Earn the lion share and create a passive income stream.',
-    text: '85% of the earnings go to you. Each time an NFT of your project is being resold on a marketplace, you get 4,9% of royalties.',
+    text: '85% of the earnings go to you. Each time an NFT of your project is being resold on a marketplace, you get 4,9% of royalties. (Royalties coming soon.)',
   },
   {
     title: 'Not only Perfection – Experimentation.',
@@ -48,11 +47,11 @@ const authorSellingPoints = [
   },
   {
     title: 'Build an audience and a community.',
-    text: "Know your early supporters and engage with them. Start voting ballots regarding the NFT utility or the progression of your story and let your project's NFT holders vote!",
+    text: "Know your early supporters and engage with them. Start voting ballots regarding the NFT utility or the progression of your story and let your project's NFT holders vote! (Voting coming soon.)",
   },
   {
-    title: "It's decentralized",
-    text: 'Moonpage cannot take your text or NFTs away from you. Meaning that once an NFT is minted, it exists on the blockchain.',
+    title: "It's decentralized.",
+    text: 'Moonpage cannot take your text or NFTs away from you. Once an NFT is minted, it exists on the blockchain.',
   },
 ];
 
@@ -62,8 +61,8 @@ const readerSellingPoints = [
     text: 'You are an early adopter. By minting, you are directly supporting writers who may otherwise struggle to make a living off of their art.',
   },
   {
-    title: 'Find gems.',
-    text: '.',
+    title: 'Find text NFT gems.',
+    text: 'Go to the "Projects" tab and find the next cryptowriting gem. A poem? A novel? An article?',
   },
   {
     title: 'Unlock the current text behind the NFT.',
@@ -71,7 +70,7 @@ const readerSellingPoints = [
   },
   {
     title: 'Vote with your NFTs. Be part of a community.',
-    text: 'Writers can start votes regarding their project. Vote with yours! Like "Hey, what do you want to use this NFT for? a) Private online reading b) Signed copy of my published book c) Should Character X die in the next chapter?"',
+    text: 'Writers can start votes regarding their project. Vote with yours! Like "Hey, what do you want to use this NFT for? a) Private online reading b) Signed copy of my published book c) Should Character X die in the next chapter?" (Voting coming soon.)',
   },
   {
     title: 'Show them off.',
