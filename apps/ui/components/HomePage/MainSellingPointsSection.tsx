@@ -1,3 +1,4 @@
+import { read } from 'fs';
 import React from 'react';
 import styled from 'styled-components';
 import { POP } from '../../themes';
@@ -26,28 +27,59 @@ const Cards = styled.div`
 
 const authorSellingPoints = [
   {
-    title: 'You could be the first cryptowriting wunderkind',
+    title: 'You could be the first cryptowriting wunderkind.',
     text: 'You have written something. But you are having a hard time trying to get your work published? You want people to read your work and make a living from it? Does not have to be that way.',
   },
   {
-    title: "It's so simple",
-    text: "Write your text and we create NFTs out of it, so you can sell them. You don't need any technical knowledge. We do the heavy lifting for you.",
+    title: "It's so simple.",
+    text: "Write your text and we create NFTs out of it, so you can sell them. You don't need any technical knowledge. We do the heavy lifting for you. You only need a browser wallet. Don't have that and new to crypto? No worries, we gotcha.",
   },
   {
-    title: 'You are in full control',
-    text: "The copyright stays with you! You set the terms and configure your project freely. Moonpage project's are sold in editions. You set the price and amount for each edition and you determined when selling starts.",
+    title: 'You are in full control.',
+    text: 'The copyright stays with you! You set the terms and configure your project freely. Moonpage projects are sold in editions. You set the price and amount for each edition and you determine when selling starts.',
   },
   {
-    title: 'Earn the lion share',
-    text: '85% of the earnings go to you. Unless you determine contributors and assign how much they get. You can determine up to three. E.G. Co-Writers, Translators, Editors, Marketers or Cover-Artists. Each time an NFT of your project is being resold on a marketplace, you get 4,9% of royalties.',
+    title: 'Earn the lion share and create a passive income stream.',
+    text: '85% of the earnings go to you. Each time an NFT of your project is being resold on a marketplace, you get 4,9% of royalties.',
   },
   {
-    title: 'Not only Perfection – Experimentation',
-    text: 'Update the text as you go. No need to get it all right from the beginning. You can upload the first chapter, start selling and getting feedback. Seeing what works. You can add more chapters and fix typos. When you are done, "freeze" the data behind the NFT to signal the status to your readers.',
+    title: 'Not only Perfection – Experimentation.',
+    text: 'Update the text as you go. No need to get it all right from the beginning. You can upload the first chapter, start selling and getting feedback. You can add more chapters and fix typos. When you are done, "freeze" the data behind the NFT to signal the status to your readers.',
   },
   {
-    title: 'Build an audience and a community',
-    text: "Know your early supporters and interact with them. Start voting ballots regarding the NFT utility or the progression of your story and let your project's NFT holders vote!",
+    title: 'Build an audience and a community.',
+    text: "Know your early supporters and engage with them. Start voting ballots regarding the NFT utility or the progression of your story and let your project's NFT holders vote!",
+  },
+  {
+    title: "It's decentralized",
+    text: 'Moonpage cannot take your text or NFTs away from you. Meaning that once an NFT is minted, it exists on the blockchain.',
+  },
+];
+
+const readerSellingPoints = [
+  {
+    title: 'This is the future of content.',
+    text: 'You are an early adopter. By minting, you are directly supporting writers who may otherwise struggle to make a living off of their art.',
+  },
+  {
+    title: 'Find gems.',
+    text: '.',
+  },
+  {
+    title: 'Unlock the current text behind the NFT.',
+    text: 'Go to a project\'s page, if you own an according NFT, you see a READ button. Click on it to read. Also, you can find all your Moonpage NFTs under the "Bookshelf" tab.',
+  },
+  {
+    title: 'Vote with your NFTs. Be part of a community.',
+    text: 'Writers can start votes regarding their project. Vote with yours! Like "Hey, what do you want to use this NFT for? a) Private online reading b) Signed copy of my published book c) Should Character X die in the next chapter?"',
+  },
+  {
+    title: 'Show them off.',
+    text: "A big part of what made NFTs such a hit, is that people identify with the NFTs they buy and with the communities behind them. Maybe you don't feel represented by an expensive monkey profile picture NFT, but instead you'd rather express yourself online through the literature NFTs you own.",
+  },
+  {
+    title: 'More to come.',
+    text: 'This is just the beginning. We have more features and utilities coming up, so stay tuned.',
   },
 ];
 
@@ -82,10 +114,14 @@ const MainSellingPointsSection = () => {
         No, you’re not buying a digital book.
       </Title>
       <Cards>
-        <SlidingCard delay={0} />
-        <SlidingCard delay={1} />
-        <SlidingCard delay={2} />
-        <SlidingCard delay={3} />
+        {readerSellingPoints.map((point, index) => (
+          <SlidingCard
+            key={index}
+            delay={index}
+            title={point.title}
+            text={point.text}
+          />
+        ))}
       </Cards>
     </Root>
   );
