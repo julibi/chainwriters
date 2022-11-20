@@ -14,7 +14,7 @@ const Root = styled.div<ElementThemeProps>`
   border-radius: ${BASE_BORDER_RADIUS};
   box-shadow: ${({ theme }) => theme.BASE_BOX_SHADOW};
   width: fit-content;
-  height: 350px;
+  height: 400px;
   font-family: ${FONT_SERIF_REGULAR};
   padding: 2rem;
 

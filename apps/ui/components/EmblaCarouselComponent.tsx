@@ -24,29 +24,20 @@ const Container = styled.div`
 const Slide = styled.div`
   flex: 0 0 auto;
   width: 80%;
+  max-width: 1200px;
   position: relative;
-  padding-left: 1rem;
+  padding-inline-start: 1.5rem;
+  margin-block: 1.5rem;
   counter-increment: embla;
 `;
 
 const SlideInner = styled.div<ElementThemeProps>`
   position: relative;
-  border-radius: 0.5rem;
+  border-radius: ${BASE_BORDER_RADIUS};
   min-height: 200px;
   padding-bottom: 46%;
   font-size: 5rem;
   box-shadow: ${({ theme }) => theme.BASE_BOX_SHADOW};
-
-  &::before {
-    color: white;
-    font-weight: 300;
-    line-height: 1;
-    content: counter(embla);
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
 `;
 
 const Dots = styled.div`
@@ -71,7 +62,6 @@ const Dot = styled(BaseButton)<DotButtonProps>`
   display: flex;
   align-items: center;
   border-radius: 50%;
-
   box-shadow: ${({ active, theme }) => active && theme.INSET_BASE_BOX_SHADOW};
 `;
 

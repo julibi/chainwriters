@@ -43,7 +43,7 @@ const authorSellingPoints = [
   },
   {
     title: 'Not only Perfection – Experimentation.',
-    text: 'Update the text as you go. No need to get it all right from the beginning. You can upload the first chapter, start selling and getting feedback. You can add more chapters and fix typos. When you are done, "freeze" the data behind the NFT to signal the status to your readers.',
+    text: 'Update the text as you go. No need to get it all right from the beginning. You can upload the first chapter, start selling and get feedback. Add more chapters and fix typos. When you are done, "freeze" the data behind the NFT to signal the status to your readers.',
   },
   {
     title: 'Build an audience and a community.',
@@ -70,7 +70,7 @@ const readerSellingPoints = [
   },
   {
     title: 'Vote with your NFTs. Be part of a community.',
-    text: 'Writers can start votes regarding their project. Vote with yours! Like "Hey, what do you want to use this NFT for? a) Private online reading b) Signed copy of my published book c) Should Character X die in the next chapter?" (Voting coming soon.)',
+    text: 'Writers can start votes regarding their project. Like "Hey, what do you want to use this NFT for? a) Private online reading b) Signed copy of my published book c) Should Character X die in the next chapter?" So vote! (Voting coming soon.)',
   },
   {
     title: 'Show them off.',

@@ -71,7 +71,7 @@ export interface ElementThemeProps {
 export const POP = '#ff6f00';
 export const DISABLED_WHITE = '#808080';
 export const VALID_GREEN = '#19bdb4';
-export const BASE_BORDER_RADIUS = '.5em';
+export const BASE_BORDER_RADIUS = '.5rem';
 
 export const FONT_SERIF_LIGHT = `
   'Merriweather Light', sans-serif;
