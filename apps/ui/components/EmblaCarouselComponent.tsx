@@ -35,7 +35,6 @@ const SlideInner = styled.div<ElementThemeProps>`
   position: relative;
   border-radius: ${BASE_BORDER_RADIUS};
   min-height: 200px;
-  padding-bottom: 46%;
   font-size: 5rem;
   box-shadow: ${({ theme }) => theme.BASE_BOX_SHADOW};
 `;

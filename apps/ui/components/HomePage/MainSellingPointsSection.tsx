@@ -27,7 +27,7 @@ const Cards = styled.div`
 const authorSellingPoints = [
   {
     title: 'You could be the first cryptowriting wunderkind.',
-    text: 'You have written something. But you are having a hard time trying to get your work published? You want people to read your work and make a living from it? Does not have to be that way.',
+    text: 'You have written something. You want people to read your work and you want to make a living from it? But you are having a hard time trying to get it published?  Does not have to be that way.',
   },
   {
     title: "It's so simple.",
