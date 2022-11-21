@@ -29,6 +29,8 @@ const PieHole = styled.div<ElementThemeProps>`
 
 const PieHoleData = styled.div`
   text-align: center;
+  font-weight: bold;
+  font-size: 16px;
 `;
 
 const StyledCircle = styled(Circle)`
@@ -38,13 +40,17 @@ const StyledCircle = styled(Circle)`
 interface PieChart {
   part: number;
   whole: number;
+  colorStyle?: 'gradient' | 'simple';
 }
 
-const PieChart = ({ part, whole }: PieChart) => {
+const PieChart = ({ part, whole, colorStyle = 'gradient' }: PieChart) => {
   const theme = useTheme();
   return (
     <Pie theme={theme}>
-      <StyledCircle percentage={parseInt(((part / whole) * 100).toString())} />
+      <StyledCircle
+        percentage={parseInt(((part / whole) * 100).toString())}
+        colorStyle={colorStyle}
+      />
       <PieHole theme={theme}>
         <PieHoleData>{`${part}/${whole} Minted`}</PieHoleData>
       </PieHole>

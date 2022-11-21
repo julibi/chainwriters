@@ -3,7 +3,9 @@ import styled from 'styled-components';
 import Image from 'next/image';
 import {
   BASE_BORDER_RADIUS,
+  BG_NORMAL_LIGHTMODE,
   ElementThemeProps,
+  MAIN_TEXT_COLOR_LIGHTMODE,
   POP,
   StyledLink,
   Theme,
@@ -12,6 +14,8 @@ import EmblaCarouselComponent from '../EmblaCarouselComponent';
 import Title from '../Title';
 import ConceptExplanationSlide from '../HowItWorks/ConceptExplanationSlide';
 import { useTheme } from '../../hooks/theme';
+import PieChart from '../PieChart';
+import Countdown from '../Countdown';
 
 const Root = styled.section`
   display: flex;
@@ -50,7 +54,6 @@ const Project = styled.div<ElementThemeProps>`
   justify-content: center;
   border-radius: ${BASE_BORDER_RADIUS};
   border: 5px ${POP} solid;
-  color: ${POP};
   font-size: 24px;
 
   @media (max-width: 900px) {
@@ -66,7 +69,6 @@ const BlockSpan = styled.span`
 const Etc = styled.span`
   display: inline-block;
   height: fit-content;
-  color: ${POP};
   font-family: monospace;
   font-size: 24px;
 
@@ -79,6 +81,7 @@ const Ids = styled.span<ElementThemeProps>`
   display: inline-block;
   font-weight: 600;
   height: fit-content;
+  color: ${POP};
 `;
 
 const LockWrapper = styled.div`
@@ -185,14 +188,90 @@ const EditionInfoList = styled.ul`
 
 const DesktopListItem = styled.li`
   display: inline-block;
+  list-style: none;
 
   @media (max-width: 900px) {
     display: none;
   }
 `;
 
+const ListItem = styled.li`
+  list-style: none;
+`;
+
+const GenEdExample = styled.div`
+  font-family: monospace;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const ProjectTitleExample = styled.span`
+  display: inline-block;
+  font-size: 36px;
+  font-weight: bold;
+
+  @media (max-width: 900px) {
+    font-size: 24px;
+  }
+`;
+
+const ProjectExample = styled.div`
+  width: 100%;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: ${BASE_BORDER_RADIUS};
+  border: 5px solid;
+  font-size: 24px;
+
+  @media (max-width: 900px) {
+    border: 4px ${POP} solid;
+    font-size: 14px;
+  }
+`;
+
+const TimerExample = styled.div``;
+const StartingPrice = styled.div``;
+const Chart = styled.div<ElementThemeProps>`
+  position: relative;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background: repeating-conic-gradient(
+    from 0deg,
+    ${POP} 0deg 270deg,
+    ${({ theme }) => theme.BG_NORMAL} 270deg 360deg
+  );
+
+  @media (max-width: 900px) {
+    width: 80px;
+    height: 80px;
+  }
+`;
+
+const Hole = styled.div<ElementThemeProps>`
+  height: 50px;
+  width: 50px;
+  font-size: 16px;
+  font-weight: bold;
+
+  border-radius: 50%;
+
+  background-color: ${({ theme }) => theme.BG_NORMAL};
+`;
+
 const HowItWorksSection = () => {
   const theme = useTheme();
+  const TwentyFourHoursFromNow = Math.floor(
+    (new Date().getTime() + 24 * 60 * 60 * 1000) / 1000
+  );
 
   return (
     <Root id="howitworks">
@@ -225,7 +304,7 @@ const HowItWorksSection = () => {
               </ProjectWrapper>
               <ProjectWrapper>
                 <Project theme={theme}>
-                  <BlockSpan>Harry Plotter</BlockSpan>
+                  <BlockSpan>Harry Clutter</BlockSpan>
                   <Ids>NFTs 1001 - 2000</Ids>
                 </Project>
               </ProjectWrapper>
@@ -289,20 +368,37 @@ const HowItWorksSection = () => {
                 Genesis Edition
                 <EditionInfoList>
                   <DesktopListItem>Starting Price: 5 Matic</DesktopListItem>
-                  <li>10/10 Sold</li>
+                  <ListItem>10/10 Sold</ListItem>
                 </EditionInfoList>
                 2nd Edition
                 <EditionInfoList>
                   <DesktopListItem>Price: 12 Matic</DesktopListItem>
-                  <li>200/200 Sold</li>
+                  <ListItem>200/200 Sold</ListItem>
                 </EditionInfoList>
                 3rd Edition
                 <EditionInfoList>
                   <DesktopListItem>Price: 20 Matic</DesktopListItem>
-                  <li>73/270 Sold</li>
+                  <ListItem>73/270 Sold</ListItem>
                 </EditionInfoList>
               </EditionInfo>
             </div>
+          </ConceptExplanationSlide>
+          <ConceptExplanationSlide
+            title="Genesis Edition"
+            text="The first edition of each project is called Genesis Edition. In a Genesis Edition 1 NFT at a time is sold in a reverse auction. Every NFT starts at the starting price set by the writer and goes down to 0 within 24hours. All following editions of a project are sold with a fixed price. No auctions. People can buy multiple NFTs at once."
+          >
+            <GenEdExample>
+              <ProjectTitleExample>Harry Clutter</ProjectTitleExample>
+              <ProjectExample>
+                <TimerExample>
+                  Auction ends in <Countdown end={TwentyFourHoursFromNow} />
+                </TimerExample>
+                <Chart theme={theme}>
+                  <Hole theme={theme}>7/10 Minted</Hole>
+                </Chart>
+                <StartingPrice>Starting Price: 5 Matic</StartingPrice>
+              </ProjectExample>
+            </GenEdExample>
           </ConceptExplanationSlide>
         </EmblaCarouselComponent>
       </Content>

@@ -27,9 +27,10 @@ const MyCircle = styled.circle<{ percentage: number }>`
 
 interface CircleProps {
   percentage: number;
+  colorStyle?: 'gradient' | 'simple';
 }
 
-const Circle = ({ percentage }: CircleProps) => {
+const Circle = ({ percentage, colorStyle = 'gradient' }: CircleProps) => {
   return (
     <StyledSVG
       xmlns="http://www.w3.org/2000/svg"
@@ -39,7 +40,10 @@ const Circle = ({ percentage }: CircleProps) => {
     >
       <defs>
         <linearGradient id="GradientColor">
-          <stop offset="0%" stopColor="#673ab7" />
+          <stop
+            offset="0%"
+            stopColor={colorStyle === 'gradient' ? '#673ab7' : POP}
+          />
           <stop offset="100%" stopColor={POP} />
         </linearGradient>
       </defs>
