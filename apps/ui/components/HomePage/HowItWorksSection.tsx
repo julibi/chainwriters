@@ -267,6 +267,22 @@ const Hole = styled.div<ElementThemeProps>`
   background-color: ${({ theme }) => theme.BG_NORMAL};
 `;
 
+const CoinLockWrapper = styled.div`
+  position: relative;
+`;
+
+const CoinsWrapper = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+`;
+
+const SettingsWrapper = styled.div`
+  position: absolute;
+  top: 0;
+  left: 60px;
+`;
+
 const HowItWorksSection = () => {
   const theme = useTheme();
   const TwentyFourHoursFromNow = Math.floor(
@@ -399,6 +415,46 @@ const HowItWorksSection = () => {
                 <StartingPrice>Starting Price: 5 Matic</StartingPrice>
               </ProjectExample>
             </GenEdExample>
+          </ConceptExplanationSlide>
+          <ConceptExplanationSlide
+            title="Funds distribution on edition sell out"
+            text="The funds collected from minting only get distributed once an edition sells out. 85% to you, 15% to Moonpage.
+            And only then, can you unlock the next edition. After one edition sells out, the next edition can be unlocked."
+          >
+            <CoinLockWrapper>
+              <CoinsWrapper>
+                <Image
+                  height={'120px'}
+                  width={'120px'}
+                  src={'/Coins.svg'}
+                  alt={'Team'}
+                  priority
+                />
+              </CoinsWrapper>
+              <SettingsWrapper>
+                <Image
+                  height={'120px'}
+                  width={'120px'}
+                  src={'/Settings.svg'}
+                  alt={'Team'}
+                  priority
+                />
+              </SettingsWrapper>
+            </CoinLockWrapper>
+            <Image
+              height={'90px'}
+              width={'90px'}
+              src={'/Avatar.svg'}
+              alt={'Avatar'}
+              priority
+            />
+            <Image
+              height={'120px'}
+              width={'120px'}
+              src={'/logo/LogoPop.svg'}
+              alt={'Logo Pop'}
+              priority
+            />
           </ConceptExplanationSlide>
         </EmblaCarouselComponent>
       </Content>
