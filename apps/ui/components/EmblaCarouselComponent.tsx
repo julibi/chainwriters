@@ -2,8 +2,12 @@ import React, { useState, useEffect, useCallback } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
 import styled from 'styled-components';
 import { useTheme } from '../hooks/theme';
-import { BaseButton, BASE_BORDER_RADIUS, ElementThemeProps } from '../themes';
-import { Theme } from '@material-ui/core';
+import {
+  BaseButton,
+  BASE_BORDER_RADIUS,
+  ElementThemeProps,
+  Theme,
+} from '../themes';
 
 const Embla = styled.div`
   position: relative;

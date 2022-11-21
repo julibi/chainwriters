@@ -1,13 +1,14 @@
 import React, { ReactChildren } from 'react';
 import styled from 'styled-components';
-import { FONT_SERIF_BLACK, MAIN_TEXT_COLOR } from '../themes';
+import { useTheme } from '../hooks/theme';
+import { FONT_SERIF_BLACK, Theme } from '../themes';
 
 const StyledTitle = styled.h1<TitleTypes>`
   display: inline-block;
   text-align: ${({ textAlign }) => textAlign ?? 'center'};
   font-family: ${FONT_SERIF_BLACK};
   font-size: ${({ size }) => size};
-  color: ${({ color }) => color ?? MAIN_TEXT_COLOR};
+  color: ${({ color, theme }) => color ?? theme.MAIN_TEXT_COLOR};
   margin: ${({ margin }) => margin ?? '0'};
   padding: ${({ padding }) => padding ?? '1rem'};
   width: ${({ width }) => width ?? 'auto'};
@@ -20,6 +21,8 @@ const StyledTitle = styled.h1<TitleTypes>`
         return '54px';
       } else if (size === '54px') {
         return '36px';
+      } else if (size === '36px') {
+        return '24px';
       } else {
         return size;
       }
@@ -44,6 +47,7 @@ type TitleTypes = {
   size: string;
   color?: string;
   textAlign?: 'center' | 'left' | 'right';
+  theme: Theme;
 };
 
 // render differen ones depending on size
@@ -57,6 +61,7 @@ const Title = ({
   width,
   textAlign,
 }: TitleProps) => {
+  const theme = useTheme();
   switch (size) {
     case 'xl':
       return (
@@ -67,6 +72,7 @@ const Title = ({
           size={'72px'}
           textAlign={textAlign}
           width={width}
+          theme={theme}
         >
           {children}
         </StyledTitle>

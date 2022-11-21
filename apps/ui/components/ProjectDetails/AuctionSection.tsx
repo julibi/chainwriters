@@ -103,7 +103,7 @@ const AuctionSection = ({
     if (!project) return;
     if (auctionsEnded) {
       return (
-        <InfoBlock>
+        <InfoBlock theme={theme}>
           <Title size="xs">{'Auctions finished'}</Title>
         </InfoBlock>
       );
@@ -120,7 +120,7 @@ const AuctionSection = ({
         );
       } else {
         return (
-          <InfoBlock>
+          <InfoBlock theme={theme}>
             <Title size="xs">{'Auction expired'}</Title>
           </InfoBlock>
         );
@@ -135,7 +135,7 @@ const AuctionSection = ({
         text="Start Auctions"
       />
     ) : (
-      <InfoBlock>
+      <InfoBlock theme={theme}>
         <Title size="xs">{'Auction Has Not Started Yet'}</Title>
       </InfoBlock>
     );
