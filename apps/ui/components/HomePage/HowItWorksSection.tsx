@@ -16,6 +16,7 @@ import ConceptExplanationSlide from '../HowItWorks/ConceptExplanationSlide';
 import { useTheme } from '../../hooks/theme';
 import PieChart from '../PieChart';
 import Countdown from '../Countdown';
+import { Avatar } from '@material-ui/core';
 
 const Root = styled.section`
   display: flex;
@@ -267,6 +268,13 @@ const Hole = styled.div<ElementThemeProps>`
   background-color: ${({ theme }) => theme.BG_NORMAL};
 `;
 
+const DistributionIllustrationWrapper = styled.div`
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+`;
+
 const CoinLockWrapper = styled.div`
   position: relative;
 `;
@@ -274,14 +282,96 @@ const CoinLockWrapper = styled.div`
 const CoinsWrapper = styled.div`
   position: absolute;
   top: 0;
-  left: 0;
+  left: 35%;
 `;
 
 const SettingsWrapper = styled.div`
   position: absolute;
   top: 0;
-  left: 60px;
+  left: 50%;
 `;
+
+const ArrowsWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-block-start: 5rem;
+
+  @media (max-width: 900px) {
+    display: none;
+  }
+`;
+const ArrowLeft = styled.div<ElementThemeProps>`
+  display: block;
+  width: 25px;
+  height: 25px;
+  border-top: 5px solid ${({ theme }) => theme.MAIN_TEXT_COLOR};
+  border-left: 5px solid ${({ theme }) => theme.MAIN_TEXT_COLOR};
+  transform: rotate(270deg);
+
+  ::after {
+    content: '';
+    display: block;
+    width: 5px;
+    height: 45px;
+    background-color: ${({ theme }) => theme.MAIN_TEXT_COLOR};
+    transform: rotate(-45deg) translate(15px, 5px);
+    left: 0;
+    top: 0;
+  }
+`;
+
+const ArrowDivider = styled.div`
+  width: 150px;
+`;
+
+const ArrowRight = styled.div<ElementThemeProps>`
+  display: block;
+  width: 25px;
+  height: 25px;
+  border-top: 5px solid ${({ theme }) => theme.MAIN_TEXT_COLOR};
+  border-left: 5px solid ${({ theme }) => theme.MAIN_TEXT_COLOR};
+  transform: rotate(180deg);
+
+  ::after {
+    content: '';
+    display: block;
+    width: 5px;
+    height: 45px;
+    background-color: ${({ theme }) => theme.MAIN_TEXT_COLOR};
+    transform: rotate(-45deg) translate(15px, 5px);
+    left: 0;
+    top: 0;
+  }
+`;
+
+const FundReceiversWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
+
+const Avatar = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: monospace;
+  font-size: 14px;
+  font-weight: bold;
+`;
+
+const AvatarWrapper = styled.div``;
+
+const Logo = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: monospace;
+  font-size: 14px;
+  font-weight: bold;
+`;
+
+const LogoWrapper = styled.div``;
 
 const HowItWorksSection = () => {
   const theme = useTheme();
@@ -369,7 +459,7 @@ const HowItWorksSection = () => {
           </ConceptExplanationSlide>
           <ConceptExplanationSlide
             title="Selling in Editions"
-            text="Each project is sold in editions. You as the writer determine the amount and price of the NFTs for each edition. As mentioned, the maximum amount of NFTs per project is 1000."
+            text="Each project is sold in editions. You as the writer determine the amount and price of the NFTs for each edition. So it is up to you, how many editions there will be. As mentioned, the maximum amount of NFTs per project is 1000."
           >
             <div>
               <ProgressBar theme={theme}>
@@ -421,40 +511,59 @@ const HowItWorksSection = () => {
             text="The funds collected from minting only get distributed once an edition sells out. 85% to you, 15% to Moonpage.
             And only then, can you unlock the next edition. After one edition sells out, the next edition can be unlocked."
           >
-            <CoinLockWrapper>
-              <CoinsWrapper>
-                <Image
-                  height={'120px'}
-                  width={'120px'}
-                  src={'/Coins.svg'}
-                  alt={'Team'}
-                  priority
-                />
-              </CoinsWrapper>
-              <SettingsWrapper>
-                <Image
-                  height={'120px'}
-                  width={'120px'}
-                  src={'/Settings.svg'}
-                  alt={'Team'}
-                  priority
-                />
-              </SettingsWrapper>
-            </CoinLockWrapper>
-            <Image
-              height={'90px'}
-              width={'90px'}
-              src={'/Avatar.svg'}
-              alt={'Avatar'}
-              priority
-            />
-            <Image
-              height={'120px'}
-              width={'120px'}
-              src={'/logo/LogoPop.svg'}
-              alt={'Logo Pop'}
-              priority
-            />
+            <DistributionIllustrationWrapper>
+              <CoinLockWrapper>
+                <CoinsWrapper>
+                  <Image
+                    height={'90px'}
+                    width={'90px'}
+                    src={'/Coins.svg'}
+                    alt={'Team'}
+                    priority
+                  />
+                </CoinsWrapper>
+                <SettingsWrapper>
+                  <Image
+                    height={'90px'}
+                    width={'90px'}
+                    src={'/Settings.svg'}
+                    alt={'Team'}
+                    priority
+                  />
+                </SettingsWrapper>
+              </CoinLockWrapper>
+              <ArrowsWrapper>
+                <ArrowLeft theme={theme} />
+                <ArrowDivider />
+                <ArrowRight theme={theme} />
+              </ArrowsWrapper>
+              <FundReceiversWrapper>
+                <Avatar>
+                  <AvatarWrapper>
+                    <Image
+                      height={'80px'}
+                      width={'80px'}
+                      src={'/Avatar.svg'}
+                      alt={'Avatar'}
+                      priority
+                    />
+                  </AvatarWrapper>
+                  <BlockSpan>85%</BlockSpan>
+                </Avatar>
+                <Logo>
+                  <LogoWrapper>
+                    <Image
+                      height={'80px'}
+                      width={'80px'}
+                      src={'/logo/LogoPop.svg'}
+                      alt={'Logo Pop'}
+                      priority
+                    />
+                  </LogoWrapper>
+                  <BlockSpan>15%</BlockSpan>
+                </Logo>
+              </FundReceiversWrapper>
+            </DistributionIllustrationWrapper>
           </ConceptExplanationSlide>
         </EmblaCarouselComponent>
       </Content>
