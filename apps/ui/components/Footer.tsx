@@ -111,7 +111,7 @@ const Footer = () => {
           href="https://docs.moonpage.io"
           theme={theme}
         >
-          <SocialMediaName theme={theme}>Docs</SocialMediaName>
+          <SocialMediaName theme={theme}>Docs & Lightpaper</SocialMediaName>
         </SocialMediaLinkWrapper>
         <SocialMediaLinkWrapper
           target="_self"
