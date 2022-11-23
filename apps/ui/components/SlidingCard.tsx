@@ -22,7 +22,7 @@ const SlidingCard = ({ delay, title, text }: SlidiginCardProps) => {
         <motion.div
           initial={{ opacity: 0, x: 20, y: 20 }}
           animate={{ opacity: 1, x: 0, y: 0 }}
-          transition={{ delay: delay ? delay / 3 : 0 }}
+          transition={{ delay: delay ? delay / 10 : 0 }}
           onAnimationComplete={() => setShouldAnimate(false)}
         >
           <InfoCard title={title} text={text} />

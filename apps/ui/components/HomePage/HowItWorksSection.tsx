@@ -3,9 +3,7 @@ import styled from 'styled-components';
 import Image from 'next/image';
 import {
   BASE_BORDER_RADIUS,
-  BG_NORMAL_LIGHTMODE,
   ElementThemeProps,
-  MAIN_TEXT_COLOR_LIGHTMODE,
   POP,
   StyledLink,
   Theme,
@@ -14,9 +12,7 @@ import EmblaCarouselComponent from '../EmblaCarouselComponent';
 import Title from '../Title';
 import ConceptExplanationSlide from '../HowItWorks/ConceptExplanationSlide';
 import { useTheme } from '../../hooks/theme';
-import PieChart from '../PieChart';
 import Countdown from '../Countdown';
-import { Avatar } from '@material-ui/core';
 
 const Root = styled.section`
   display: flex;
@@ -425,7 +421,7 @@ const HowItWorksSection = () => {
           </ConceptExplanationSlide>
           <ConceptExplanationSlide
             title="Unlock text with NFT"
-            text="When you own an NFT, you can unlock the text. Go to a project's page. You see a READ button on the top right of the cover image – not visible without NFT. Or, you go to the Bookshelf tab and see a list of all your NFTs. Click on READ there."
+            text="When you own an NFT, you can unlock the text. Go to a project's page. You see a READ button on the top left corner of the cover image – not visible without NFT. Or, you go to the Bookshelf tab and see a list of all your NFTs. Click on READ there."
           >
             <>
               <TextBackground>
@@ -508,8 +504,8 @@ const HowItWorksSection = () => {
           </ConceptExplanationSlide>
           <ConceptExplanationSlide
             title="Funds distribution on edition sell out"
-            text="The funds collected from minting only get distributed once an edition sells out. 85% to you, 15% to Moonpage.
-            And only then, can you unlock the next edition. After one edition sells out, the next edition can be unlocked."
+            text="The funds collected from minting only get distributed once an edition sells out. 85% to the author, 15% to Moonpage. 
+            And only then, can you unlock the next edition. Again for the next edition: You as the author determine the amount & price and only when this edition sells out, will the funds be distributed. The distribution is done automatically by the smart contract."
           >
             <DistributionIllustrationWrapper>
               <CoinLockWrapper>

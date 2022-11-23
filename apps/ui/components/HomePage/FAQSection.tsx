@@ -35,14 +35,6 @@ const FAQSection = () => {
       <Title color={POP}>FAQ</Title>
       <br></br>
       <MoreDetailsWrapper>
-        <MoreDetails title={'When did Moonpage launch?'}>
-          <>
-            <FAQAnswer>
-              The launch on Polygon Pos was in October 17th 2022.
-            </FAQAnswer>
-          </>
-        </MoreDetails>
-        <br></br>
         <MoreDetails title={'What do I need to interact with the platform?'}>
           <>
             <FAQAnswer>

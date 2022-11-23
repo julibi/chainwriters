@@ -49,10 +49,6 @@ const authorSellingPoints = [
     title: 'Build an audience and a community.',
     text: "Know your early supporters and engage with them. Start voting ballots regarding the NFT utility or the progression of your story and let your project's NFT holders vote! (Voting coming soon.)",
   },
-  {
-    title: "It's decentralized.",
-    text: 'Moonpage cannot take your text or NFTs away from you. Once an NFT is minted, it exists on the blockchain.',
-  },
 ];
 
 const readerSellingPoints = [
