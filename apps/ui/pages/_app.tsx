@@ -119,8 +119,9 @@ function getLibrary(
 }
 
 function CustomApp({ Component, pageProps }: AppProps) {
-  const isEager = useEagerConnect();
+  const hasTried = useEagerConnect();
   const router = useRouter();
+
   useEffect(() => {
     hotjar.initialize(
       Number(process.env.NEXT_PUBLIC_HOTJAR_ID),

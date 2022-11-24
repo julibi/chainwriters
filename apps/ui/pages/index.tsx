@@ -5,6 +5,7 @@ import FAQSection from '../components/HomePage/FAQSection';
 import HowItWorksSection from '../components/HomePage/HowItWorksSection';
 import HeaderSection from '../components/HomePage/HeaderSection';
 import Roadmap from '../components/HomePage/Roadmap';
+import { useEagerConnect } from '../hooks/useEagerConnect';
 
 const Root = styled.section``;
 
@@ -17,7 +18,7 @@ const Padding = styled.div`
 `;
 
 export function Index() {
-  // const hasTried = useEagerConnect();
+  const hasTried = useEagerConnect();
 
   return (
     <Root>

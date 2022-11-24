@@ -71,32 +71,14 @@ const FAQSection = () => {
               NFTs are still a relatively new phenomenon. More areas can be
               explored with the power of NFTs.
               <br />
-              Let's take the example of a <i>literature NFT</i>: Text NFTs can
-              support writers financially and help them gather a community
-              around them. They can unlock exclusive content. But they can also
-              be collected and shown off in a digital bookshelf. They could even
-              give access to exclusive events, or a right to a DAO vote
-              concerning the project. <br />
+              Let's take the example of a text NFT:they can support writers
+              financially and help them gather a community around them. They can
+              unlock exclusive content. But they can also be collected and shown
+              off in a digital bookshelf. They could even give access to
+              exclusive events, or a right to a DAO vote concerning the project.{' '}
+              <br />
               Possibilities are endless! You are one of the pioneers exploring
               these possibilities and Moonpage is your tool.
-            </FAQAnswer>
-          </>
-        </MoreDetails>
-        <br></br>
-        <MoreDetails title={'Why Polygon?'}>
-          <>
-            <FAQAnswer>
-              Polygon is a popular Ethereum Layer 2 scaling solution, that
-              allows users to interact with dApps at low transaction fees
-              without compromising on security. This is why we chose it. Find
-              out more about{' '}
-              <LinkWrapper url="https://polygon.technology/">
-                Polygon
-              </LinkWrapper>
-              .
-              <br />
-              Moonpage will be brought to more networks in the future.
-              <br />
             </FAQAnswer>
           </>
         </MoreDetails>
@@ -106,17 +88,6 @@ const FAQSection = () => {
           <>
             <FAQAnswer>
               <LinkWrapper url="/about#founders">Us</LinkWrapper> :)
-            </FAQAnswer>
-          </>
-        </MoreDetails>
-        <br></br>
-        <MoreDetails title={'What is next?'}>
-          <>
-            <FAQAnswer>
-              The launch to Polygon Mainnet! We will soon publish a Roadmap
-              here. But you will be able to connect with the team on Discord and
-              Twitter. We are eager to hear what you like to see as the next
-              feature.
             </FAQAnswer>
           </>
         </MoreDetails>

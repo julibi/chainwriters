@@ -487,7 +487,7 @@ const HowItWorksSection = () => {
           </ConceptExplanationSlide>
           <ConceptExplanationSlide
             title="Genesis Edition"
-            text="The first edition of each project is called Genesis Edition. In a Genesis Edition 1 NFT at a time is sold in a reverse auction. Every NFT starts at the starting price set by the writer and goes down to 0 within 24hours. All following editions of a project are sold with a fixed price. No auctions. People can buy multiple NFTs at once."
+            text="The first edition of each project is called Genesis Edition. In a Genesis Edition 1 NFT at a time is sold in a reverse auction. Every NFT starts at the starting price set by the writer and goes down to 0 within 24 hours. All following editions of a project are sold with a fixed price. No auctions. People can buy multiple NFTs at once."
           >
             <GenEdExample>
               <ProjectTitleExample>Harry Clutter</ProjectTitleExample>
@@ -504,8 +504,8 @@ const HowItWorksSection = () => {
           </ConceptExplanationSlide>
           <ConceptExplanationSlide
             title="Funds distribution on edition sell out"
-            text="The funds collected from minting only get distributed once an edition sells out. 85% to the author, 15% to Moonpage. 
-            And only then, can you unlock the next edition. Again for the next edition: You as the author determine the amount & price and only when this edition sells out, will the funds be distributed. The distribution is done automatically by the smart contract."
+            text="The funds collected from minting are locked inside a smart contract and get automatically distributed once an edition sells out. 85% to the author, 15% to Moonpage. 
+            And only then, can you unlock the next edition. Again for the next edition: You as the author determine the amount & price."
           >
             <DistributionIllustrationWrapper>
               <CoinLockWrapper>

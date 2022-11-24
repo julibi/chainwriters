@@ -35,7 +35,7 @@ const authorSellingPoints = [
   },
   {
     title: 'You are in full control.',
-    text: 'The copyright stays with you! You set the terms and configure your project freely. Moonpage projects are sold in editions. You set the price and amount for each edition and you determine when selling starts.',
+    text: 'The copyright stays with you! You set the price and amount for each edition and determine when selling starts.',
   },
   {
     title: 'Earn the lion share and create a passive income stream.',
@@ -43,7 +43,7 @@ const authorSellingPoints = [
   },
   {
     title: 'Not only Perfection – Experimentation.',
-    text: 'Update the text as you go. No need to get it all right from the beginning. You can upload the first chapter, start selling and get feedback. Add more chapters and fix typos. When you are done, "freeze" the data behind the NFT to signal the status to your readers.',
+    text: 'Update the text as you go. You can upload the first chapter, start selling and get feedback. Add more chapters and fix typos. When you are done, "freeze" the data behind the NFT to signal the status to your readers.',
   },
   {
     title: 'Build an audience and a community.',
@@ -54,7 +54,7 @@ const authorSellingPoints = [
 const readerSellingPoints = [
   {
     title: 'This is the future of content.',
-    text: 'You are an early adopter. By minting, you are directly supporting writers who may otherwise struggle to make a living off of their art.',
+    text: 'By minting, you are directly supporting writers who may otherwise struggle to make a living off of their art.',
   },
   {
     title: 'Find text NFT gems.',
@@ -67,10 +67,6 @@ const readerSellingPoints = [
   {
     title: 'Vote with your NFTs. Be part of a community.',
     text: 'Writers can start votes regarding their project. Like "Hey, what do you want to use this NFT for? a) Private online reading b) Signed copy of my published book c) Should Character X die in the next chapter?" So vote! (Voting coming soon.)',
-  },
-  {
-    title: 'Show them off.',
-    text: "A big part of what made NFTs such a hit, is that people identify with the NFTs they buy and with the communities behind them. Maybe you don't feel represented by an expensive monkey profile picture NFT, but instead you'd rather express yourself online through the literature NFTs you own.",
   },
   {
     title: 'More to come.',
