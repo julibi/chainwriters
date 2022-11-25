@@ -9,8 +9,7 @@ import Loading from '../../../components/Loading';
 import TypeWriter from '../../../components/TypeWriter';
 import {
   BASE_BORDER_RADIUS,
-  BASE_BOX_SHADOW,
-  MAIN_TEXT_COLOR,
+  ElementThemeProps,
   FONT_SERIF_BOLD,
 } from '../../../themes';
 import Toggle from '../../../components/Toggle';
@@ -22,6 +21,7 @@ import EditButton from '../../../components/EditButton';
 import { useManager } from '../../../hooks/manager';
 import useUploadTextToIpfs from '../../../hooks/useUploadTextToIpfs';
 import ActionButton from '../../../components/ActionButton';
+import { useTheme } from '../../../hooks/theme';
 
 const animation = (animationseconds: number) => `
   animation: fadein ${animationseconds}s;
@@ -39,7 +39,7 @@ const Root = styled.div`
   flex-direction: column;
 
   border-radius: ${BASE_BORDER_RADIUS};
-  box-shadow: ${BASE_BOX_SHADOW};
+  box-shadow: ${({ theme }) => theme.BASE_BOX_SHADOW};
 
   @media (max-width: 900px) {
     margin: 2rem 2rem;
@@ -69,8 +69,8 @@ const BackArrow = styled.div`
   }
 `;
 
-const Arrow = styled.i`
-  border: solid ${MAIN_TEXT_COLOR};
+const Arrow = styled.i<ElementThemeProps>`
+  border: solid ${({ theme }) => theme.MAIN_TEXT_COLOR};
   border-width: 0 2px 2px 0;
   display: inline-block;
   margin-inline-start: 0.5rem;
@@ -137,6 +137,7 @@ const RichTextWrapper = styled.div`
 const Read = () => {
   const router = useRouter();
   const { account } = useWeb3React();
+  const theme = useTheme();
   const projectId = useGetProjectId();
   const { uploadText } = useUploadTextToIpfs();
   const { updateText, updateTextStatus } = useManager();
@@ -271,7 +272,7 @@ const Read = () => {
   }
 
   return (
-    <Root>
+    <Root theme={theme}>
       <TopRow>
         <TitleWrapper>
           <TypeWriter
@@ -283,7 +284,7 @@ const Read = () => {
         </TitleWrapper>
         <BackArrow onClick={handleClickGoBack}>
           Back to Project
-          <Arrow className="arrow" />
+          <Arrow className="arrow" theme={theme} />
         </BackArrow>
       </TopRow>
       <FlexWrapper>
