@@ -6,7 +6,12 @@ import {
   SectionTitle,
   SectionTitleWrapper,
 } from '../components/HomePage/ProjectSection';
-import { BASE_BORDER_RADIUS, BASE_BOX_SHADOW, INTER_BOLD } from '../themes';
+import {
+  BASE_BORDER_RADIUS,
+  BASE_BOX_SHADOW,
+  FONT_SERIF_BOLD,
+  FONT_SERIF_REGULAR,
+} from '../themes';
 import Loading from '../components/Loading';
 import { useGetProjectsOfAccount } from '../hooks/user/useGetProjectsOfAccount';
 import BookshelfItem from '../components/Bookshelf/BookshelfItem';
@@ -32,6 +37,7 @@ const NotExist = styled.div`
 
 const NotExistText = styled.span`
   display: inline-block;
+  font-family: ${FONT_SERIF_REGULAR};
 `;
 
 const Section = styled.section`
@@ -47,17 +53,13 @@ const Section = styled.section`
 
 const SubHeader = styled.h3`
   display: inline-block;
-  font-family: ${INTER_BOLD};
+  font-family: ${FONT_SERIF_BOLD};
   text-align: center;
   border-radius: ${BASE_BORDER_RADIUS};
   box-shadow: ${BASE_BOX_SHADOW};
   margin-block-end: 3rem;
   padding: 0.5rem;
   width: fit-content;
-`;
-
-const BlockSpan = styled.span`
-  display: inline-block;
 `;
 
 const MyBookShelf = () => {
@@ -119,7 +121,7 @@ const MyBookShelf = () => {
           <Section>
             <SubHeader>My Projects</SubHeader>
             {ownProjectsLoading && <Loading height={300} />}
-            {!ownProjectsLoading && !ownProjects.length && (
+            {!ownProjectsLoading && !ownProjects?.length && (
               <NotExist>
                 <NotExistText>{`You have not created any Moonpage subcollections.`}</NotExistText>
               </NotExist>
@@ -139,7 +141,7 @@ const MyBookShelf = () => {
           <Section>
             <SubHeader>My Contributions</SubHeader>
             {contributionsLoading && <Loading height={300} />}
-            {!contributionsLoading && !contributions.length && (
+            {!contributionsLoading && !contributions?.length && (
               <NotExist>
                 <NotExistText>{`You have not created any Moonpage subcollections.`}</NotExistText>
               </NotExist>

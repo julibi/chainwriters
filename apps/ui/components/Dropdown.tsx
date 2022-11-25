@@ -7,8 +7,8 @@ import {
   INSET_BASE_BOX_SHADOW,
   BaseButton,
   BASE_BOX_SHADOW,
-  PLAIN_WHITE,
-  INTER_BOLD,
+  MAIN_TEXT_COLOR,
+  FONT_SERIF_BOLD,
 } from '../themes';
 import { FlexContainer } from '../pages/create';
 
@@ -17,7 +17,7 @@ interface RootProps {
 }
 
 const Root = styled(BaseButton)<RootProps>`
-  font-family: ${INTER_BOLD};
+  font-family: ${FONT_SERIF_BOLD};
   padding: 1rem;
   display: flex;
   justify-content: space-between;
@@ -52,8 +52,8 @@ const Options = styled.div`
 `;
 
 const Option = styled(BaseButton)`
-  color: ${PLAIN_WHITE};
-  font-family: ${INTER_BOLD};
+  color: ${MAIN_TEXT_COLOR};
+  font-family: ${FONT_SERIF_BOLD};
   margin-block-end: 1rem;
   padding: 1rem;
 

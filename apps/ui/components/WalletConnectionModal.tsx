@@ -10,11 +10,8 @@ import {
   walletconnect,
 } from '../connectors';
 import BaseModal from './BaseModal';
-import {
-  BaseButton,
-  BASE_BORDER_RADIUS,
-  INSET_BASE_BOX_SHADOW,
-} from '../themes';
+import { BaseButton, BASE_BORDER_RADIUS, ElementThemeProps } from '../themes';
+import { useTheme } from '../hooks/theme';
 import Dropdown from './Dropdown';
 import Title from './Title';
 import { switchNetwork } from '../utils/switchNetwork';
@@ -42,14 +39,14 @@ const DropdownWrapper = styled.div`
   margin-block-end: 1.5rem;
 `;
 
-const TermsOfService = styled.div`
+const TermsOfService = styled.div<ElementThemeProps>`
   border-radius: ${BASE_BORDER_RADIUS};
-  box-shadow: ${INSET_BASE_BOX_SHADOW};
+  box-shadow: ${({ theme }) => theme.INSET_BASE_BOX_SHADOW};
   margin-block-end: 1rem;
   padding: 1rem;
 
   :disabled {
-    box-shadow: ${INSET_BASE_BOX_SHADOW};
+    box-shadow: ${({ theme }) => theme.INSET_BASE_BOX_SHADOW};
     pointer-events: none;
   }
 `;
@@ -73,6 +70,7 @@ const ConnectorName = styled.span`
 `;
 
 const WalletConnectionModal = ({ onClose }: WalletConnectionModalProps) => {
+  const theme = useTheme();
   const isProd = process.env.NX_PUBLIC_ENVIRONMENT === 'PROD';
   const [selectedNetwork, setSelectedNetwork] = useState(isProd ? 137 : 80001);
   const [isTermsAccepted, setIsTermsAccepted] = useState(false);
@@ -142,7 +140,7 @@ const WalletConnectionModal = ({ onClose }: WalletConnectionModalProps) => {
     <BaseModal onClose={onClose}>
       <ContentWrapper>
         <Title size="m">Connect To Your Wallet</Title>
-        <TermsOfService>
+        <TermsOfService theme={theme}>
           <Checkbox
             onChange={toggleTermsAccepted}
             check={isTermsAccepted}

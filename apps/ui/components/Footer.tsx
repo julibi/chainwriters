@@ -1,15 +1,16 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import Image from 'next/image';
 import styled from 'styled-components';
-import { BG_DARK, PLAIN_WHITE, INTER_BOLD, DISABLED_WHITE } from '../themes';
+import { FONT_SERIF_BOLD, ElementThemeProps } from '../themes';
+import { useTheme } from '../hooks/theme';
 import LinkWrapper from './LinkWrapper';
+import { useDarkMode } from '../hooks/useDarkMode';
 
-const Root = styled.div`
+const Root = styled.div<ElementThemeProps>`
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: ${BG_DARK};
   padding: 3rem;
 
   @media (max-width: 900px) {
@@ -24,17 +25,18 @@ const Content = styled.div`
   justify-content: space-evenly;
 `;
 
-const SocialMediaLinkWrapper = styled.a`
+const SocialMediaLinkWrapper = styled.a<ElementThemeProps>`
   display: flex;
   flex-direction: column;
   text-decoration: none;
-  color: ${PLAIN_WHITE};
+  color: ${({ theme }) => theme.MAIN_TEXT_COLOR};
 `;
 
-const SocialMediaName = styled.span`
-  font-family: ${INTER_BOLD};
+const SocialMediaName = styled.span<ElementThemeProps>`
+  font-family: ${FONT_SERIF_BOLD};
   display: inline-block;
   margin-block-start: 1rem;
+  color: ${({ theme }) => theme.MAIN_TEXT_COLOR};
 
   @media (max-width: 900px) {
     font-size: 12px;
@@ -43,13 +45,13 @@ const SocialMediaName = styled.span`
 
 const StyledLink = styled.a``;
 
-const Copyright = styled.div`
+const Copyright = styled.div<ElementThemeProps>`
   width: 80%;
   margin-block-start: 2rem;
   padding-block-start: 2rem;
   text-align: center;
-  border-block-start: 1px ${DISABLED_WHITE} solid;
-  color: ${DISABLED_WHITE};
+  border-block-start: 1px ${({ theme }) => theme.MAIN_TEXT_COLOR} solid;
+  color: ${({ theme }) => theme.MAIN_TEXT_COLOR};
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -62,91 +64,70 @@ const Blockspan = styled.span`
 
 const GreyWrapper = styled.span`
   margin-block-start: 1rem;
-  color: ${DISABLED_WHITE};
   line-break: anywhere;
 `;
 
 const Footer = () => {
+  const theme = useTheme();
+
+  const isDarkMode = useDarkMode();
+
+  const logoPath = useMemo(
+    () => (isDarkMode ? '/logo/LogoLight.svg' : '/logo/LogoDark.svg'),
+    [isDarkMode]
+  );
+
   return (
-    <Root>
+    <Root theme={theme}>
       <Content>
         <SocialMediaLinkWrapper
           target="_blank"
           rel="noopener noreferrer"
           href="https://mobile.twitter.com/moonpage_nft"
+          theme={theme}
         >
-          <Image
-            height={'30px'}
-            width={'30px'}
-            src={'/Twitter.svg'}
-            alt={'Twitter'}
-          />
-          <SocialMediaName>Twitter</SocialMediaName>
+          <SocialMediaName theme={theme}>Twitter</SocialMediaName>
         </SocialMediaLinkWrapper>
         <SocialMediaLinkWrapper
           target="_blank"
           rel="noopener noreferrer"
           href="https://t.me/moonpagedao"
+          theme={theme}
         >
-          <Image
-            height={'30px'}
-            width={'30px'}
-            src={'/Telegram.svg'}
-            alt={'Twitter'}
-            priority
-          />
-          <SocialMediaName>Telegram</SocialMediaName>
+          <SocialMediaName theme={theme}>Telegram</SocialMediaName>
         </SocialMediaLinkWrapper>
         <SocialMediaLinkWrapper
           target="_blank"
           rel="noopener noreferrer"
           href="https://www.instagram.com/moonpage.io/"
+          theme={theme}
         >
-          <Image
-            height={'30px'}
-            width={'30px'}
-            src={'/Instagram.svg'}
-            alt={'Instagram'}
-            priority
-          />
-          <SocialMediaName>Instagram</SocialMediaName>
+          <SocialMediaName theme={theme}>Instagram</SocialMediaName>
         </SocialMediaLinkWrapper>
 
         <SocialMediaLinkWrapper
           target="_blank"
           rel="noopener noreferrer"
           href="https://docs.moonpage.io"
+          theme={theme}
         >
-          <Image
-            height={'30px'}
-            width={'28px'}
-            src={'/Docs.svg'}
-            alt={'Twitter'}
-            priority
-          />
-          <SocialMediaName>Docs</SocialMediaName>
+          <SocialMediaName theme={theme}>Docs & Lightpaper</SocialMediaName>
         </SocialMediaLinkWrapper>
         <SocialMediaLinkWrapper
           target="_self"
           rel="noopener noreferrer"
           href="/about#founders"
+          theme={theme}
         >
-          <Image
-            height={'30px'}
-            width={'28px'}
-            src={'/Team.svg'}
-            alt={'Team'}
-            priority
-          />
-          <SocialMediaName>Team</SocialMediaName>
+          <SocialMediaName theme={theme}>Team</SocialMediaName>
         </SocialMediaLinkWrapper>
       </Content>
-      <Copyright>
+      <Copyright theme={theme}>
         {' '}
         <Image
-          height={'130px'}
-          width={'130px'}
-          src={`/logo/Logo.svg`}
+          height={'90px'}
+          width={'90px'}
+          src={logoPath}
           alt="moonpage"
           priority
         />

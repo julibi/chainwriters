@@ -2,17 +2,17 @@ import React, { ReactElement } from 'react';
 import styled from 'styled-components';
 import AccountAvatar from './AccountAvatar';
 import { supportedChainIds, supportedChainMapping } from '../connectors';
-import { PrimaryButton, INTER_BOLD } from '../themes';
+import { PrimaryButton, FONT_SERIF_BOLD } from '../themes';
 
 const Root = styled.div`
   display: flex;
   justify-content: space-evenly;
   max-width: 320px;
-  font-family: ${INTER_BOLD};
+  font-family: ${FONT_SERIF_BOLD};
 `;
 
 const ConnectionModalOpener = styled(PrimaryButton)`
-  font-family: ${INTER_BOLD};
+  font-family: ${FONT_SERIF_BOLD};
   padding: 1rem;
 
   @media (max-width: 900px) {

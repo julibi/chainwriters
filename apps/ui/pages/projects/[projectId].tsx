@@ -21,17 +21,18 @@ import useAuctionsManager from '../../hooks/useAuctionsManager';
 import { formatNumber } from '../../utils/formatNumber';
 import {
   BASE_BORDER_RADIUS,
-  BASE_BOX_SHADOW,
   DISABLED_WHITE,
-  PINK,
-  PLAIN_WHITE,
+  POP,
   PrimaryButton,
   BaseButton,
-  INTER_BOLD,
+  FONT_SERIF_BOLD,
+  FONT_SERIF_REGULAR,
+  ElementThemeProps,
 } from '../../themes';
 import { MOONPAGE_DEV_ADDRESS } from '../../../constants';
 import { toast } from 'react-toastify';
 import NextLink from '../../components/NextLink';
+import { useTheme } from '../../hooks/theme';
 
 import useMoonpageManager from '../../hooks/useMoonpageManager';
 import {
@@ -50,11 +51,11 @@ const Root = styled.div`
   min-height: 700px;
 `;
 
-const MainInfoWrapper = styled.section`
+const MainInfoWrapper = styled.section<ElementThemeProps>`
   display: flex;
   width: 90%;
   max-width: 1200px;
-  color: ${PLAIN_WHITE};
+  color: ${({ theme }) => theme.MAIN_TEXT_COLOR};
   margin-block-end: 2rem;
 
   animation: fadein 2s;
@@ -73,15 +74,15 @@ const MainInfoWrapper = styled.section`
   }
 `;
 
-const InfoRight = styled.div`
+const InfoRight = styled.div<ElementThemeProps>`
   flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  font-family: ${INTER_BOLD};
+  font-family: ${FONT_SERIF_BOLD};
 
   border-radius: ${BASE_BORDER_RADIUS};
-  box-shadow: ${BASE_BOX_SHADOW};
+  box-shadow: ${({ theme }) => theme.BASE_BOX_SHADOW};
   padding: 2rem;
 
   @media (max-width: 900px) {
@@ -108,8 +109,8 @@ const ReadIndicator = styled(BaseButton)`
   z-index: 10;
   top: 1rem;
   left: 1rem;
-  font-family: ${INTER_BOLD};
-  background-color: ${PINK};
+  font-family: ${FONT_SERIF_BOLD};
+  background-color: ${POP};
 
   animation: fadein 2s;
 
@@ -146,7 +147,7 @@ const Genre = styled.div`
 `;
 
 export const StyledPrimaryButton = styled(PrimaryButton)`
-  font-family: ${INTER_BOLD};
+  font-family: ${FONT_SERIF_BOLD};
   padding: 1rem;
   width: 209px;
 
@@ -159,7 +160,7 @@ export const StyledPrimaryButton = styled(PrimaryButton)`
   }
 `;
 
-const InfoLeft = styled.div`
+const InfoLeft = styled.div<ElementThemeProps>`
   flex: 1;
   margin-inline-end: 2rem;
   display: flex;
@@ -168,7 +169,7 @@ const InfoLeft = styled.div`
   > div {
     padding: 2rem;
     border-radius: ${BASE_BORDER_RADIUS};
-    box-shadow: ${BASE_BOX_SHADOW};
+    box-shadow: ${({ theme }) => theme.BASE_BOX_SHADOW};
   }
 
   @media (max-width: 900px) {
@@ -177,17 +178,18 @@ const InfoLeft = styled.div`
   }
 `;
 
-const ShareSection = styled.section`
+const ShareSection = styled.section<ElementThemeProps>`
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 90%;
   max-width: 1200px;
-  color: ${PLAIN_WHITE};
+  color: ${({ theme }) => theme.MAIN_TEXT_COLOR};
   margin-block-end: 2rem;
   padding: 2rem;
+  font-family: ${FONT_SERIF_REGULAR};
   border-radius: ${BASE_BORDER_RADIUS};
-  box-shadow: ${BASE_BOX_SHADOW};
+  box-shadow: ${({ theme }) => theme.BASE_BOX_SHADOW};
 
   animation: fadein 2s;
 
@@ -249,6 +251,7 @@ export const ModalText = styled.span`
   display: inline-block;
   margin-block: 1rem 2rem;
   text-align: center;
+  font-family: ${FONT_SERIF_REGULAR};
 
   @media (max-width: 900px) {
     margin-block: 1rem 0rem;
@@ -263,6 +266,7 @@ export const CTAWrapper = styled.div`
 const ProjectDetailView = () => {
   const router = useRouter();
   const { account } = useWeb3React();
+  const theme = useTheme();
   const projectId = useGetProjectId();
   const {
     project: fetchedProject,
@@ -450,9 +454,11 @@ const ProjectDetailView = () => {
         <Loading height={530} />
       ) : (
         <>
-          <MainInfoWrapper>
-            <InfoLeft>
-              <Title padding="1rem 1rem 0 1rem">{project.title}</Title>
+          <MainInfoWrapper theme={theme}>
+            <InfoLeft theme={theme}>
+              <Title padding="0 1rem 1rem 1rem" color={POP}>
+                {project.title}
+              </Title>
               {project.subtitle && (
                 <Title size="s" padding="0 1rem 1rem 1rem">
                   {project.subtitle}
@@ -497,7 +503,7 @@ const ProjectDetailView = () => {
                 </Title>
               </Language>
             </InfoLeft>
-            <InfoRight>
+            <InfoRight theme={theme}>
               {project.editions?.length > 1 && (
                 <MintSection
                   currentEdition={currentEdition}
@@ -524,7 +530,7 @@ const ProjectDetailView = () => {
               project?.creator.toLowerCase() === account?.toLowerCase()
             }
           />
-          <ShareSection>
+          <ShareSection theme={theme}>
             <Title>Contributors</Title>
             <Shares>
               <Share>
@@ -535,7 +541,7 @@ const ProjectDetailView = () => {
               {project.contributors?.map((cntrb, i) => (
                 <Share key={i}>
                   <ShareTitle>
-                    {cntrb.role.length ? cntrb.role : 'Unknown role'}
+                    {cntrb.role?.length ? cntrb.role : 'Unknown role'}
                   </ShareTitle>
                   <ShareAddress>{truncateAddress(cntrb.address)}</ShareAddress>
                   <SharePercentage>{`${cntrb.sharePercentage} %`}</SharePercentage>
@@ -571,7 +577,7 @@ const ProjectDetailView = () => {
             <Title size="m" padding="1rem 0 0 0">
               Current Price:
             </Title>
-            <Title color={PINK} size="s" padding="0 0 0 1rem">{`${formatNumber(
+            <Title color={POP} size="s" padding="0 0 0 1rem">{`${formatNumber(
               currentPrice
             )} MATIC`}</Title>
             <ModalText>

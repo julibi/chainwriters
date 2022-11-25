@@ -1,3 +1,4 @@
+import { FONT_SERIF_REGULAR, POP } from '../../themes';
 import React from 'react';
 import styled from 'styled-components';
 import LinkWrapper from '../LinkWrapper';
@@ -22,24 +23,21 @@ const MoreDetailsWrapper = styled.div`
   align-items: center;
 `;
 
+const FAQAnswer = styled.p`
+  font-family: ${FONT_SERIF_REGULAR};
+`;
+
 // add matic to your wallet
 
 const FAQSection = () => {
   return (
     <Root>
-      <Title>FAQ</Title>
+      <Title color={POP}>FAQ</Title>
       <br></br>
       <MoreDetailsWrapper>
-        <MoreDetails title={'When did Moonpage launch?'}>
-          <>
-            <p>The launch on Polygon Pos was in October 17th 2022.</p>
-          </>
-        </MoreDetails>
-        <br></br>
-        <br></br>
         <MoreDetails title={'What do I need to interact with the platform?'}>
           <>
-            <p>
+            <FAQAnswer>
               First off, you need a crypto wallet. We recommend{' '}
               <LinkWrapper url="https://metamask.io/download/">
                 MetaMask
@@ -62,64 +60,35 @@ const FAQSection = () => {
                 Coinbase
               </LinkWrapper>
               .
-            </p>
+            </FAQAnswer>
           </>
         </MoreDetails>
         <br></br>
         <MoreDetails title={'Why text NFTs?'}>
           <>
-            <p>
+            <FAQAnswer>
               PFP NFTs have already taken over the world in summer 2021. But
               NFTs are still a relatively new phenomenon. More areas can be
               explored with the power of NFTs.
               <br />
-              Let's take the example of a <i>literature NFT</i>: Text NFTs can
-              support writers financially and help them gather a community
-              around them. They can unlock exclusive content. But they can also
-              be collected and shown off in a digital bookshelf. They could even
-              give access to exclusive events, or a right to a DAO vote
-              concerning the project. <br />
+              Let's take the example of a text NFT:they can support writers
+              financially and help them gather a community around them. They can
+              unlock exclusive content. But they can also be collected and shown
+              off in a digital bookshelf. They could even give access to
+              exclusive events, or a right to a DAO vote concerning the project.{' '}
+              <br />
               Possibilities are endless! You are one of the pioneers exploring
               these possibilities and Moonpage is your tool.
-            </p>
-          </>
-        </MoreDetails>
-        <br></br>
-        <MoreDetails title={'Why Polygon?'}>
-          <>
-            <p>
-              Polygon is a popular Ethereum Layer 2 scaling solution, that
-              allows users to interact with dApps at low transaction fees
-              without compromising on security. This is why we chose it. Find
-              out more about{' '}
-              <LinkWrapper url="https://polygon.technology/">
-                Polygon
-              </LinkWrapper>
-              .
-              <br />
-              Moonpage will be brought to more networks in the future.
-              <br />
-            </p>
+            </FAQAnswer>
           </>
         </MoreDetails>
         <br></br>
 
         <MoreDetails title={'Who is building Moonpage?'}>
           <>
-            <p>
+            <FAQAnswer>
               <LinkWrapper url="/about#founders">Us</LinkWrapper> :)
-            </p>
-          </>
-        </MoreDetails>
-        <br></br>
-        <MoreDetails title={'What is next?'}>
-          <>
-            <p>
-              The launch to Polygon Mainnet! We will soon publish a Roadmap
-              here. But you will be able to connect with the team on Discord and
-              Twitter. We are eager to hear what you like to see as the next
-              feature.
-            </p>
+            </FAQAnswer>
           </>
         </MoreDetails>
       </MoreDetailsWrapper>

@@ -5,8 +5,8 @@ import { Node } from 'slate';
 import {
   FadeIn,
   ReviewItemWrapper,
-  BlockSpan,
   ReviewItem,
+  BlockSpan,
 } from '../../pages/create';
 import Checkbox from '../Checkbox';
 import ActionButton from '../ActionButton';
@@ -15,9 +15,11 @@ import Waiting from './Waiting';
 import { useFactory } from '../../hooks/factory';
 
 interface ReviewFormProps {
-  agreed: boolean;
+  agreedToTerm1: boolean;
+  agreedToTerm2: boolean;
   createDao: () => void;
-  onCheck: () => void;
+  onCheckTerm1: () => void;
+  onCheckTerm2: () => void;
   firstEdMaxAmount: number;
   firstEdMintPrice: string;
   language: string;
@@ -31,7 +33,8 @@ const CheckboxWrapper = styled.div`
 `;
 
 const ReviewForm = ({
-  agreed,
+  agreedToTerm1,
+  agreedToTerm2,
   createDao,
   language,
   title,
@@ -39,7 +42,8 @@ const ReviewForm = ({
   firstEdMaxAmount,
   firstEdMintPrice,
   isPinPending,
-  onCheck,
+  onCheckTerm1,
+  onCheckTerm2,
 }: ReviewFormProps) => {
   const { createProjectStatus } = useFactory();
   const creatingDao = useMemo(() => {
@@ -75,7 +79,7 @@ const ReviewForm = ({
           <ReviewItem>{firstEdMintPrice}</ReviewItem>
         </ReviewItemWrapper>
         <CheckboxWrapper>
-          <Checkbox onChange={onCheck} check={agreed}>
+          <Checkbox onChange={onCheckTerm1} check={agreedToTerm1}>
             By checking this box, I confirm that this work to be published
             (including the cover image) does not contain any hateful content,
             potential copyright issue, plagiarism, illegal or illegitimate
@@ -89,8 +93,15 @@ const ReviewForm = ({
             hold any copyright. The copyright remains with the author.
           </Checkbox>
         </CheckboxWrapper>
+        <CheckboxWrapper>
+          <Checkbox onChange={onCheckTerm2} check={agreedToTerm2}>
+            I am aware that I am making my text publicly available on IPFS, a
+            peer-to-peer network for storing and sharing data, but that the text
+            will be gated by an NFT on the Moonpage platform.
+          </Checkbox>
+        </CheckboxWrapper>
         <ActionButton
-          disabled={!agreed || isPinPending}
+          disabled={!agreedToTerm1 || !agreedToTerm2 || isPinPending}
           onClick={createDao}
           loading={isPinPending}
           text="Create Project"

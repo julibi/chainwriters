@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { INTER_BOLD } from '../themes';
+import { FONT_SERIF_BLACK, FONT_SERIF_BOLD } from '../themes';
 
 interface CursorProps {
   hasCursor: boolean;
@@ -12,7 +12,7 @@ interface RootProps {
 }
 
 const Root = styled.span<RootProps>`
-  font-family: ${INTER_BOLD};
+  font-family: ${FONT_SERIF_BLACK};
   font-size: ${({ fontSizeDesktop }) => fontSizeDesktop}px;
 
   @media (max-width: 900px) {
@@ -55,8 +55,8 @@ const TypeWriter = ({
   shouldErase = true,
   shouldLoop = true,
   speed = 100,
-  fontSizeDesktop = 54,
-  fontSizeMobile = 42,
+  fontSizeDesktop = 72,
+  fontSizeMobile = 54,
   text,
 }: TypeWriterProps) => {
   const [currentText, setCurrentText] = useState<string>('');

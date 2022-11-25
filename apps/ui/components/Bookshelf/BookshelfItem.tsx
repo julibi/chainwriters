@@ -5,9 +5,12 @@ import { OwnedUserNft } from '../../providers/user-provider/user-provider.types'
 import {
   BaseButton,
   BASE_BORDER_RADIUS,
-  BASE_BOX_SHADOW,
-  PINK,
+  FONT_SERIF_BLACK,
+  FONT_SERIF_REGULAR,
+  POP,
+  ElementThemeProps,
 } from '../../themes';
+import { useTheme } from '../../hooks/theme';
 
 interface BookshelfItemProps {
   group: OwnedUserNft[];
@@ -15,16 +18,17 @@ interface BookshelfItemProps {
   onClickRead: MouseEventHandler<HTMLButtonElement>;
 }
 
-const Item = styled.div`
+const Item = styled.div<ElementThemeProps>`
   width: 100%;
   max-width: 1200px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   border-radius: ${BASE_BORDER_RADIUS};
-  box-shadow: ${BASE_BOX_SHADOW};
+  box-shadow: ${({ theme }) => theme.BASE_BOX_SHADOW};
   padding: 1rem;
   margin-block-end: 1rem;
+  font-family: ${FONT_SERIF_REGULAR};
 `;
 
 const BlockSpan = styled.span`
@@ -36,7 +40,7 @@ const Title = styled(BlockSpan)`
 `;
 
 const Bold = styled(BlockSpan)`
-  font-family: 'Inter Black';
+  font-family: ${FONT_SERIF_BLACK};
 `;
 
 const Edition = styled(BlockSpan)`
@@ -71,7 +75,7 @@ const DetailsButton = styled(BaseButton)`
 
 const ReadButton = styled(BaseButton)`
   margin-inline-start: 1rem;
-  background-color: ${PINK};
+  background-color: ${POP};
 
   @media (max-width: 900px) {
     padding: 0.5rem;
@@ -83,8 +87,10 @@ const BookshelfItem = ({
   onClickDetails,
   onClickRead,
 }: BookshelfItemProps) => {
+  const theme = useTheme();
+
   return (
-    <Item>
+    <Item theme={theme}>
       <Title>
         <Bold>{group[0].title}</Bold>
         {group[0].creator && (

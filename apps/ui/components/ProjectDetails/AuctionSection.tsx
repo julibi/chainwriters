@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { formatEther } from '@ethersproject/units';
-import { BASE_BORDER_RADIUS, INSET_BASE_BOX_SHADOW, PINK } from '../../themes';
+import { BASE_BORDER_RADIUS, POP, ElementThemeProps } from '../../themes';
 import Countdown from '../Countdown';
 import PieChart from '../PieChart';
 import { Project } from '../../providers/projects-provider/projects-provider.types';
@@ -11,8 +11,9 @@ import ActionButton from '../ActionButton';
 import StartAuctionsModal from './StartAuctionsModal';
 import { useCollection } from '../../hooks/collection';
 import { useAuctions } from '../../hooks/auctions';
+import { useTheme } from '../../hooks/theme';
 
-const InfoBlock = styled.div`
+const InfoBlock = styled.div<ElementThemeProps>`
   width: 40%;
   display: flex;
   flex-direction: column;
@@ -20,7 +21,7 @@ const InfoBlock = styled.div`
   align-items: center;
   padding: 2rem;
   border-radius: ${BASE_BORDER_RADIUS};
-  box-shadow: ${INSET_BASE_BOX_SHADOW};
+  box-shadow: ${({ theme }) => theme.INSET_BASE_BOX_SHADOW};
 
   @media (max-width: 900px) {
     width: 100%;
@@ -63,6 +64,7 @@ const AuctionSection = ({
   onRetriggerAuction,
   onStartAuctions,
 }: AuctionSectionProps) => {
+  const theme = useTheme();
   const { startAuctionsStatus } = useCollection();
   const { retriggerAuctionStatus } = useAuctions();
   const [showStartAuctionsModal, setShowStartAuctionsModal] = useState(false);
@@ -101,7 +103,7 @@ const AuctionSection = ({
     if (!project) return;
     if (auctionsEnded) {
       return (
-        <InfoBlock>
+        <InfoBlock theme={theme}>
           <Title size="xs">{'Auctions finished'}</Title>
         </InfoBlock>
       );
@@ -109,16 +111,16 @@ const AuctionSection = ({
     if (auctionsStarted) {
       if (Number(currentAuctionExpiresAt) > now) {
         return (
-          <InfoBlock>
+          <InfoBlock theme={theme}>
             <Title size="xs">{'Auction ends in'}</Title>
-            <Title size="xs" color={PINK}>
+            <Title size="xs" color={POP}>
               <Countdown end={Number(currentAuctionExpiresAt)} />
             </Title>
           </InfoBlock>
         );
       } else {
         return (
-          <InfoBlock>
+          <InfoBlock theme={theme}>
             <Title size="xs">{'Auction expired'}</Title>
           </InfoBlock>
         );
@@ -133,7 +135,7 @@ const AuctionSection = ({
         text="Start Auctions"
       />
     ) : (
-      <InfoBlock>
+      <InfoBlock theme={theme}>
         <Title size="xs">{'Auction Has Not Started Yet'}</Title>
       </InfoBlock>
     );
@@ -150,7 +152,7 @@ const AuctionSection = ({
       <Title size="m">Auction</Title>
       <FlexWrapper>
         {showsAuctionText()}
-        <InfoBlock>
+        <InfoBlock theme={theme}>
           <Title size="xs">{`Starting Price ${formatEther(
             parseInt(project.editions[0].mintPrice._hex, 16).toString()
           )} MATIC`}</Title>
@@ -160,7 +162,7 @@ const AuctionSection = ({
         <PieChart part={Number(project.mintCount)} whole={Number(maxSupply)} />
       </PieChartWrapper>
       <FlexWrapper style={{ marginBlockEnd: '0' }}>
-        <InfoBlock>
+        <InfoBlock theme={theme}>
           <Title size="xs">{`Minted: ${Number(totalSupply)}`}</Title>
         </InfoBlock>
         {project.auctionsStarted && !project.auctionsEnded && (

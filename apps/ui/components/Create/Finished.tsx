@@ -4,7 +4,13 @@ import styled from 'styled-components';
 import { FadeIn, Wrapper, InputDescription } from '../../pages/create';
 import ActionButton from '../ActionButton';
 import Title from '../Title';
-import { BASE_BORDER_RADIUS, INSET_BASE_BOX_SHADOW, PINK } from '../../themes';
+import {
+  BASE_BORDER_RADIUS,
+  POP,
+  ElementThemeProps,
+  FONT_SERIF_REGULAR,
+} from '../../themes';
+import { useTheme } from '../../hooks/theme';
 import { useCollection } from '../../hooks/collection';
 import StartAuctionsModal from '../ProjectDetails/StartAuctionsModal';
 
@@ -16,20 +22,21 @@ interface FinishedProps {
 const OptionsWrapper = styled.div`
   display: flex;
   margin-block-end: 2rem;
+  font-family: ${FONT_SERIF_REGULAR};
 
   @media (max-width: 900px) {
     flex-direction: column;
   }
 `;
 
-const Option = styled.div`
+const Option = styled.div<ElementThemeProps>`
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
   padding: 2rem;
-  box-shadow: ${INSET_BASE_BOX_SHADOW};
+  box-shadow: ${({ theme }) => theme.INSET_BASE_BOX_SHADOW};
   border-radius: ${BASE_BORDER_RADIUS};
 `;
 
@@ -47,10 +54,11 @@ const Text = styled.p`
 `;
 
 const TextPink = styled(Text)`
-  color: ${PINK};
+  color: ${POP};
 `;
 
 const Finished = ({ projectId, onStartAuctions }: FinishedProps) => {
+  const theme = useTheme();
   const { startAuctionsStatus } = useCollection();
   const router = useRouter();
   const [showStartAuctionsModal, setShowStartAuctionsModal] = useState(false);
@@ -74,7 +82,7 @@ const Finished = ({ projectId, onStartAuctions }: FinishedProps) => {
           {`You have completed configuring your Project.`}
         </InputDescription>
         <OptionsWrapper>
-          <Option>
+          <Option theme={theme}>
             <Text>{`Wait with starting the auctions. Check the project first, and do some more marketing.`}</Text>
             <ActionButton
               onClick={() => router.push(`projects/${projectId}`)}
@@ -85,7 +93,7 @@ const Finished = ({ projectId, onStartAuctions }: FinishedProps) => {
               text="See Project"
             />
           </Option>
-          <OptionRight>
+          <OptionRight theme={theme}>
             <TextPink>{`Start the auctions now!`}</TextPink>
             <ActionButton
               onClick={() => {

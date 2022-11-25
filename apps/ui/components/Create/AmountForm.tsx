@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { FadeIn, Wrapper, InputDescription } from '../../pages/create';
 import ActionButton from '../ActionButton';
 import InputField from '../InputField';
-import { PINK } from '../../themes';
+import { POP } from '../../themes';
 import Title from '../Title';
 
 const InputWrapper = styled.div`
@@ -28,11 +28,11 @@ const AmountForm = ({
         <InputDescription>
           The first edition of a work is called Genesis Edition. Holders of a
           Genesis Edition will have special benefits. The Genesis Edition will
-          be sold over a Dutch Auction. Determine its total amount. Keep in mind
+          be sold in a reverse auction. Determine its total amount. Keep in mind
           that you can only trigger the sale of a subsequent edition after the
           Genesis Edition has sold out.
         </InputDescription>
-        <Title size="xs" color={PINK} margin="0 0 2rem 0" width="75%">
+        <Title size="xs" color={POP} margin="0 0 2rem 0" width="75%">
           Caution: The matic your project earns by selling the NFTs are only
           distributed after an edition sells out. Make sure you choose an amount
           you are confident of selling. Otherwise the matic earned stays locked

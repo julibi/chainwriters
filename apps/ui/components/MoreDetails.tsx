@@ -2,20 +2,22 @@ import React, { ReactChild, useState } from 'react';
 import styled from 'styled-components';
 import {
   BASE_BORDER_RADIUS,
-  BASE_BOX_SHADOW,
-  BG_NORMAL,
-  INSET_BASE_BOX_SHADOW,
-  PLAIN_WHITE,
+  FONT_SERIF_BOLD,
+  ElementThemeProps,
+  Theme,
 } from '../themes';
+import { useTheme } from '../hooks/theme';
+
 import CSS from 'csstype';
 
-const Root = styled.div`
+const Root = styled.div<ElementThemeProps>`
   width: 100%;
   max-width: 1200px;
   margin-bottom: 1rem;
   padding: 1rem;
-  box-shadow: ${BASE_BOX_SHADOW};
+  box-shadow: ${({ theme }) => theme.BASE_BOX_SHADOW};
   border-radius: ${BASE_BORDER_RADIUS};
+  font-family: ${FONT_SERIF_BOLD};
 
   display: flex;
   justify-content: space-between;
@@ -30,10 +32,10 @@ const Header = styled.div`
   flex-direction: column;
 `;
 
-const Title = styled.h3`
+const Title = styled.h3<ElementThemeProps>`
   display: inline-block;
   font-size: 16px;
-  color: ${PLAIN_WHITE};
+  color: ${({ theme }) => theme.MAIN_TEXT_COLOR};
 `;
 
 const Content = styled.div`
@@ -50,9 +52,9 @@ const Content = styled.div`
   }
 `;
 
-const ArrowWrapper = styled.button`
-  background-color: ${BG_NORMAL};
-  box-shadow: ${BASE_BOX_SHADOW};
+const ArrowWrapper = styled.button<ElementThemeProps>`
+  background-color: ${({ theme }) => theme.BG_NORMAL};
+  box-shadow: ${({ theme }) => theme.BASE_BOX_SHADOW};
   border-radius: 50%;
   height: 32px;
   width: 32px;
@@ -71,16 +73,17 @@ const ArrowWrapper = styled.button`
   }
 
   :active {
-    box-shadow: ${INSET_BASE_BOX_SHADOW};
+    box-shadow: ${({ theme }) => theme.INSET_BASE_BOX_SHADOW};
   }
 `;
 
 interface ArrowProps {
   up: boolean;
+  theme: Theme;
 }
 
 export const Arrow = styled.i<ArrowProps>`
-  border: solid ${PLAIN_WHITE};
+  border: solid ${({ theme }) => theme.MAIN_TEXT_COLOR};
   border-width: 0 4px 4px 0;
   display: inline-block;
   padding: 3px;
@@ -98,17 +101,18 @@ interface MoreDetailsProps {
 }
 
 const MoreDetails = ({ children, styles, title, open }: MoreDetailsProps) => {
+  const theme = useTheme();
   const [up, setUp] = useState(open ? false : true);
 
   return (
-    <Root style={styles}>
+    <Root style={styles} theme={theme}>
       <Header>
-        <Title>{title}</Title>
+        <Title theme={theme}>{title}</Title>
         {!up && <Content>{children}</Content>}
       </Header>
       <div>
-        <ArrowWrapper onClick={() => setUp(!up)}>
-          <Arrow className="arrow" up={!up} />
+        <ArrowWrapper onClick={() => setUp(!up)} theme={theme}>
+          <Arrow className="arrow" up={!up} theme={theme} />
         </ArrowWrapper>
       </div>
     </Root>

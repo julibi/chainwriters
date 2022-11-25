@@ -1,5 +1,7 @@
 import React, { ReactNode } from 'react';
 import styled from 'styled-components';
+import { useTheme } from '../hooks/theme';
+import { Theme } from '../themes';
 
 interface LinkWrapperProps {
   underline?: boolean;
@@ -11,9 +13,10 @@ interface LinkWrapperProps {
 type RootProps = {
   underline: LinkWrapperProps['underline'];
   flex: LinkWrapperProps['flex'];
+  theme: Theme;
 };
 const Root = styled.a<RootProps>`
-  color: inherit;
+  color: ${({ theme }) => theme.MAIN_TEXT_COLOR};
   display: ${({ flex }) => (flex ? 'flex' : 'inline-block')};
   text-decoration: ${({ underline }) => (underline ? 'underline' : 'none')};
 `;
@@ -25,6 +28,8 @@ const LinkWrapper = ({
   underline = true,
   flex = false,
 }: LinkWrapperProps) => {
+  const theme = useTheme();
+
   return (
     <Root
       underline={underline}
@@ -32,6 +37,7 @@ const LinkWrapper = ({
       target={target}
       rel="noopener noreferrer"
       href={url}
+      theme={theme}
     >
       {children}
     </Root>

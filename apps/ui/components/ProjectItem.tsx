@@ -4,15 +4,15 @@ import styled from 'styled-components';
 import { useRouter } from 'next/router';
 import {
   BASE_BORDER_RADIUS,
-  BASE_BOX_SHADOW,
-  PINK,
-  PLAIN_WHITE,
-  INTER_BOLD,
-  INTER_REGULAR,
+  POP,
+  FONT_SERIF_BOLD,
+  FONT_SERIF_LIGHT,
+  ElementThemeProps,
 } from '../themes';
+import { useTheme } from '../hooks/theme';
 import { truncateAddress } from './WalletIndicator';
 
-const Root = styled.div`
+const Root = styled.div<ElementThemeProps>`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -22,7 +22,7 @@ const Root = styled.div`
   padding: 1rem;
 
   border-radius: ${BASE_BORDER_RADIUS};
-  box-shadow: ${BASE_BOX_SHADOW};
+  box-shadow: ${({ theme }) => theme.BASE_BOX_SHADOW};
 
   :hover {
     cursor: pointer;
@@ -44,15 +44,15 @@ const ImageWrapper = styled.div`
 
 const InfoWrapper = styled.div`
   flex: 1;
-  font-family: ${INTER_REGULAR};
+  font-family: ${FONT_SERIF_LIGHT};
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 `;
 
 const Title = styled.h4`
-  color: ${PINK};
-  font-family: ${INTER_BOLD};
+  color: ${POP};
+  font-family: ${FONT_SERIF_BOLD};
   margin-block-end: 0;
 `;
 
@@ -61,8 +61,8 @@ const Flex = styled.div`
   justify-content: space-between;
 `;
 
-const Label = styled.span`
-  color: ${PLAIN_WHITE};
+const Label = styled.span<ElementThemeProps>`
+  color: ${({ theme }) => theme.MAIN_TEXT_COLOR};
 `;
 
 interface ProjectItemTypes {
@@ -85,6 +85,7 @@ const ProjectItem = ({
   genre,
 }: ProjectItemTypes) => {
   const router = useRouter();
+  const theme = useTheme();
   const handleClick = (e) => {
     e.preventDefault();
     router.push(`projects/${id}`);
@@ -93,7 +94,7 @@ const ProjectItem = ({
     'en-US'
   );
   return (
-    <Root onClick={handleClick}>
+    <Root onClick={handleClick} theme={theme}>
       <ImageWrapper>
         <Image
           src={
@@ -110,7 +111,7 @@ const ProjectItem = ({
       <InfoWrapper>
         <Title>{title}</Title>
         <Flex>
-          <Label style={{ color: PINK }}>{subtitle ?? ''}</Label>
+          <Label style={{ color: POP }}>{subtitle ?? ''}</Label>
         </Flex>
         <Flex>
           <Label>Genre</Label>
@@ -121,7 +122,7 @@ const ProjectItem = ({
           <div>{created}</div>
         </Flex>
         <Flex>
-          <Label>Author</Label>
+          <Label theme={theme}>Author</Label>
           <div>{truncateAddress(creator)}</div>
         </Flex>
       </InfoWrapper>

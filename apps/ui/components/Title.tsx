@@ -1,13 +1,14 @@
 import React, { ReactChildren } from 'react';
 import styled from 'styled-components';
-import { INTER_BLACK, PLAIN_WHITE } from '../themes';
+import { useTheme } from '../hooks/theme';
+import { FONT_SERIF_BLACK, Theme } from '../themes';
 
 const StyledTitle = styled.h1<TitleTypes>`
   display: inline-block;
-  text-align: center;
-  font-family: ${INTER_BLACK};
+  text-align: ${({ textAlign }) => textAlign ?? 'center'};
+  font-family: ${FONT_SERIF_BLACK};
   font-size: ${({ size }) => size};
-  color: ${({ color }) => color ?? PLAIN_WHITE};
+  color: ${({ color, theme }) => color ?? theme.MAIN_TEXT_COLOR};
   margin: ${({ margin }) => margin ?? '0'};
   padding: ${({ padding }) => padding ?? '1rem'};
   width: ${({ width }) => width ?? 'auto'};
@@ -15,6 +16,17 @@ const StyledTitle = styled.h1<TitleTypes>`
 
   @media (max-width: 900px) {
     padding: 0;
+    font-size: ${({ size }) => {
+      if (size == '72px') {
+        return '54px';
+      } else if (size === '54px') {
+        return '36px';
+      } else if (size === '36px') {
+        return '24px';
+      } else {
+        return size;
+      }
+    }};
   }
 `;
 
@@ -25,6 +37,7 @@ type TitleProps = {
   width?: string;
   color?: string;
   size?: 'xl' | 'l' | 'm' | 's' | 'xs';
+  textAlign?: 'center' | 'left' | 'right';
 };
 
 type TitleTypes = {
@@ -33,6 +46,8 @@ type TitleTypes = {
   width?: string;
   size: string;
   color?: string;
+  textAlign?: 'center' | 'left' | 'right';
+  theme: Theme;
 };
 
 // render differen ones depending on size
@@ -44,7 +59,9 @@ const Title = ({
   padding,
   size = 'l',
   width,
+  textAlign,
 }: TitleProps) => {
+  const theme = useTheme();
   switch (size) {
     case 'xl':
       return (
@@ -53,7 +70,9 @@ const Title = ({
           margin={margin}
           padding={padding}
           size={'72px'}
+          textAlign={textAlign}
           width={width}
+          theme={theme}
         >
           {children}
         </StyledTitle>
@@ -65,6 +84,7 @@ const Title = ({
           margin={margin}
           padding={padding}
           size={'54px'}
+          textAlign={textAlign}
           width={width}
         >
           {children}
@@ -77,6 +97,7 @@ const Title = ({
           margin={margin}
           padding={padding}
           size={'36px'}
+          textAlign={textAlign}
           width={width}
         >
           {children}
@@ -89,6 +110,7 @@ const Title = ({
           margin={margin}
           padding={padding}
           size={'24px'}
+          textAlign={textAlign}
           width={width}
         >
           {children}
@@ -101,6 +123,7 @@ const Title = ({
           margin={margin}
           padding={padding}
           size={'16px'}
+          textAlign={textAlign}
           width={width}
         >
           {children}

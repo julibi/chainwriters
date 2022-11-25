@@ -10,6 +10,7 @@ export const GENRES = [
   'Fiction',
   'Horror',
   'Idea',
+  'Invitation',
   'Lyrics',
   'Non-Fiction',
   'Paper',

@@ -3,12 +3,13 @@ import React, { FormEvent, useState } from 'react';
 import { toast } from 'react-toastify';
 import styled from 'styled-components';
 import { injected, supportedChainIds } from '../connectors';
+import { useTheme } from '../hooks/theme';
 import {
   BaseButton,
-  BG_NORMAL,
   DISABLED_WHITE,
-  INTER_BOLD,
-  PINK,
+  FONT_SERIF_BOLD,
+  POP,
+  Theme,
 } from '../themes';
 import { isProd } from '../utils/isProd';
 import { switchNetwork } from '../utils/switchNetwork';
@@ -27,6 +28,7 @@ interface ActionButtonTypes {
 }
 
 interface ButtonTypes {
+  theme: Theme;
   disabled: boolean;
   margin?: string;
   width?: string;
@@ -34,10 +36,10 @@ interface ButtonTypes {
 }
 
 const RootButton = styled(BaseButton)<ButtonTypes>`
-  background-color: ${BG_NORMAL};
-  color: ${({ color, disabled }) =>
-    disabled ? DISABLED_WHITE : color ?? PINK};
-  font-family: ${INTER_BOLD};
+  background-color: ${({ theme }) => theme.BG_NORMAL};
+  color: ${({ color, disabled, theme }) =>
+    disabled ? DISABLED_WHITE : color ?? POP};
+  font-family: ${FONT_SERIF_BOLD};
   width: ${({ width }) => width ?? '230px'};
   margin: ${({ margin }) => margin ?? '1rem 1rem 0 0'};
   padding: 1rem;
@@ -58,6 +60,7 @@ const ActionButton = ({
   web3Connectable,
 }: ActionButtonTypes) => {
   const { activate, account, chainId } = useWeb3React();
+  const theme = useTheme();
   const [showConnectModal, setShowConnectModal] = useState(false);
 
   if (web3Connectable && !account) {
@@ -69,6 +72,7 @@ const ActionButton = ({
           disabled={false}
           margin={margin}
           width={width}
+          theme={theme}
         >
           {`Connect to ${text}`}
         </RootButton>

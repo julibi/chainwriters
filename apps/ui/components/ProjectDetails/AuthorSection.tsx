@@ -1,8 +1,8 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { PLAIN_WHITE, BASE_BORDER_RADIUS, BASE_BOX_SHADOW } from '../../themes';
-
 import Emoji from '../Emojis';
+import { BASE_BORDER_RADIUS, ElementThemeProps } from '../../themes';
+import { useTheme } from '../../hooks/theme';
 import Checkmark from '../Checkmark';
 import MoreDetails from '../../components/MoreDetails';
 import ProgressBar from '../ProgressBar';
@@ -19,17 +19,17 @@ import { useCollection } from '../../hooks/collection';
 import EnableNextEditionModal from './EnableNextEditionModal';
 import Title from '../Title';
 
-const Root = styled.section`
+const Root = styled.section<ElementThemeProps>`
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 90%;
   max-width: 1200px;
-  color: ${PLAIN_WHITE};
+  color: ${({ theme }) => theme.MAIN_TEXT_COLOR};
   margin-block-end: 2rem;
   padding: 2rem;
   border-radius: ${BASE_BORDER_RADIUS};
-  box-shadow: ${BASE_BOX_SHADOW};
+  box-shadow: ${({ theme }) => theme.BASE_BOX_SHADOW};
 `;
 
 const ProgressBarWrapper = styled.div`
@@ -74,6 +74,7 @@ const AuthorSection = ({
   projectId,
   refetch,
 }: AuthorSectionProps) => {
+  const theme = useTheme();
   const {
     configureProject,
     configureStatus,
@@ -325,7 +326,7 @@ const AuthorSection = ({
   };
 
   return (
-    <Root>
+    <Root theme={theme}>
       <Title size="l">Project Settings</Title>
       {!project.auctionsStarted && beforeAuction()}
       <Title size="m" margin="3rem 0 3rem 0">

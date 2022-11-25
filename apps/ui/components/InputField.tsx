@@ -1,6 +1,6 @@
 import React, { FormEvent } from 'react';
 import styled from 'styled-components';
-import { BaseInput, PINK } from '../themes';
+import { BaseInput, POP } from '../themes';
 
 const Root = styled.div`
   display: flex;
@@ -19,7 +19,7 @@ export const StyledInput = styled(BaseInput)`
 `;
 
 export const StyledInputError = styled.span`
-  color: ${PINK};
+  color: ${POP};
   margin-block-end: 1rem;
   text-align: center;
   height: 24px;

@@ -1,11 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
-import { PINK } from '../themes';
+import { POP } from '../themes';
 
 const Root = styled.section`
   position: relative;
-  min-height: 400px;
-  min-width: 400px;
+  z-index: 1;
 
   @media (max-width: 900px) {
     min-height: 200px;
@@ -15,11 +14,10 @@ const Root = styled.section`
 
 const Circle = styled.div`
   position: absolute;
-  left: 0;
+  left: 20%;
   height: 400px;
   width: 400px;
   border-radius: 50%;
-  filter: blur(1.5rem);
   mix-blend-mode: lighten;
 
   @media (max-width: 900px) {
@@ -49,17 +47,21 @@ const createAnimation = (period, translateXs, translateYs) => {
 };
 
 const BubbleOne = styled(Circle)`
-  background-color: ${PINK};
+  background-color: ${POP};
 
   animation: blob 8s infinite;
   ${createAnimation(8, [30, -5], [-20, 20])}
 `;
 
 const BubbleTwo = styled(Circle)`
-  left: 20%;
+  left: 40%;
   background-color: #260099;
   animation: blob 8s infinite;
   ${createAnimation(10, [-40, -5], [-20, 10])}
+
+  @media (max-width: 900px) {
+    left: 0;
+  }
 `;
 
 const BubbleAnimation = () => {

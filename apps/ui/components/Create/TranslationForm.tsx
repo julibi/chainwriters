@@ -6,9 +6,11 @@ import ActionButton from '../ActionButton';
 import RichText from './RichText';
 import Title from '../Title';
 import { serialize } from '../../utils/serializeMarkdown';
+import { FONT_SERIF_REGULAR } from '../../themes';
 
 const Text = styled.p`
   display: inline-block;
+  font-family: ${FONT_SERIF_REGULAR};
 `;
 
 const FlexColumn = styled.div`

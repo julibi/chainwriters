@@ -9,7 +9,7 @@ import BaseModal from '../BaseModal';
 import InputField from '../InputField';
 import { Project } from '../../providers/projects-provider/projects-provider.types';
 import Title from '../Title';
-import { PINK } from '../../themes';
+import { POP } from '../../themes';
 
 interface EnableNextEditionModalProps {
   onClose: () => void;
@@ -38,7 +38,7 @@ const EnableNextEditionModal = ({
       <ContentWrapper>
         <Title size="m">{'Unlock Next Edition'}</Title>
         <ModalText>Specify the max amount and price per mint.</ModalText>
-        <Title size="xs" color={PINK} margin="0 0 2rem 0" width="75%">
+        <Title size="xs" color={POP} margin="0 0 2rem 0" width="75%">
           Caution: The matic your project earns by selling the NFTs are only
           distributed after an edition sells out. Make sure you choose an
           appropriate price and amount. If an edition does not sell out, the

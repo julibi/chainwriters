@@ -11,12 +11,10 @@ import { Node } from 'slate';
 import ProgressBar from '../components/ProgressBar';
 import {
   BASE_BORDER_RADIUS,
-  BASE_BOX_SHADOW,
-  BG_NORMAL,
-  INSET_BASE_BOX_SHADOW,
-  PINK,
-  PLAIN_WHITE,
-  INTER_BOLD,
+  POP,
+  FONT_SERIF_BOLD,
+  FONT_SERIF_REGULAR,
+  ElementThemeProps,
 } from '../themes';
 import NameForm from '../components/Create/NameForm';
 import TextForm from '../components/Create/TextForm';
@@ -35,6 +33,7 @@ import { useFactory } from '../hooks/factory';
 import { useIpfsClient } from '../hooks/useIpfsClient';
 import { BigNumber } from 'ethers';
 import { useManager } from '../hooks/manager';
+import { useTheme } from '../hooks/theme';
 import LanguageForm from '../components/Create/LanguageForm';
 import TranslationForm from '../components/Create/TranslationForm';
 import Title from '../components/Title';
@@ -83,42 +82,16 @@ const FormWrapper = styled.div`
   margin-block-start: 1rem;
 `;
 
-const Form = styled.div`
+const Form = styled.div<ElementThemeProps>`
   width: 100%;
   max-width: 1200px;
   border-radius: ${BASE_BORDER_RADIUS};
-  box-shadow: ${BASE_BOX_SHADOW};
+  box-shadow: ${({ theme }) => theme.BASE_BOX_SHADOW};
   padding: 3rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: flex-start;
-`;
-
-export const BlockSpan = styled.span`
-  display: inline-block;
-  margin-block-end: 1rem;
-`;
-
-export const ReviewItem = styled.p`
-  display: inline-block;
-  font-style: italic;
-  color: ${PINK};
-`;
-
-export const TextInput = styled.textarea`
-  height: 600px;
-  width: 100%;
-
-  font-size: 14px;
-  line-height: 170%;
-  border-radius: ${BASE_BORDER_RADIUS};
-  box-shadow: ${INSET_BASE_BOX_SHADOW};
-  margin-block-end: 2rem;
-  padding: 1rem;
-  color: ${PLAIN_WHITE};
-  background-color: ${BG_NORMAL};
-  outline: none;
 `;
 
 export const FadeIn = styled.div`
@@ -135,10 +108,17 @@ export const FadeIn = styled.div`
   }
 `;
 
+export const ReviewItem = styled.p`
+  display: inline-block;
+  font-style: italic;
+  color: ${POP};
+  font-family: ${FONT_SERIF_REGULAR};
+  font-size: 16px;
+`;
+
 export const ReviewItemWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  text-transform: uppercase;
   margin-block-end: 2rem;
 `;
 
@@ -152,7 +132,7 @@ export const Wrapper = styled.div`
 
 export const InputName = styled.h2`
   text-align: center;
-  font-family: ${INTER_BOLD};
+  font-family: ${FONT_SERIF_BOLD};
   border-radius: ${BASE_BORDER_RADIUS};
 
   padding: 1rem;
@@ -165,6 +145,7 @@ export const InputDescription = styled.p`
   display: inline-block;
   text-align: center;
   width: 75%;
+  font-family: ${FONT_SERIF_REGULAR};
 
   @media (max-width: 900px) {
     width: 100%;
@@ -180,6 +161,12 @@ export const ButtonsWrapper = styled.div`
   justify-content: space-between;
 `;
 
+export const BlockSpan = styled.span`
+  display: inline-block;
+  margin-block-end: 1rem;
+  font-family: ${FONT_SERIF_REGULAR};
+`;
+
 export interface Contributor {
   address: string;
   share: number;
@@ -187,6 +174,7 @@ export interface Contributor {
 }
 
 const Create = () => {
+  const theme = useTheme();
   const client = useIpfsClient();
   const { uploadText } = useUploadTextToIpfs();
   const router = useRouter();
@@ -196,7 +184,8 @@ const Create = () => {
   const [language, setLanguage] = useState<string>('');
   const [translation, setTranslation] = useState<Node[] | undefined>();
   // const [textIPFS, setTextIPFS] = useState<null | string>(null);
-  const [agreed, setAgreed] = useState(false);
+  const [agreedToTerm1, setAgreedToTerm1] = useState(false);
+  const [agreedToTerm2, setAgreedToTerm2] = useState(false);
   const [firstEdMintPrice, setFirstEdMintPrice] = useState<string>('0');
   const [firstEdMaxAmount, setFirstEdMaxAmount] = useState(0);
   const [projectId, setProjectId] = useState<string | null>(null);
@@ -371,14 +360,16 @@ const Create = () => {
 
   return (
     <Root>
-      <Title margin="0 0 4rem 0">Create</Title>
+      <Title color={POP} margin="0 0 4rem 0">
+        Create
+      </Title>
       <Content>
         <ProgressBarWrapper>
           <ProgressBar completed={currentStep ? (currentStep / 14) * 100 : 0} />
         </ProgressBarWrapper>
         <FormWrapper>
           <ConfettiCanon show={!!projectId} />
-          <Form>
+          <Form theme={theme}>
             {currentStep === 0 && (
               <NameForm
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
@@ -424,13 +415,15 @@ const Create = () => {
             {/* TODO: enable changing things here */}
             {currentStep === 5 && (
               <ReviewForm
-                agreed={agreed}
+                agreedToTerm1={agreedToTerm1}
+                agreedToTerm2={agreedToTerm2}
                 language={language}
                 title={title}
                 text={text as Node[]}
                 firstEdMaxAmount={firstEdMaxAmount}
                 firstEdMintPrice={firstEdMintPrice}
-                onCheck={() => setAgreed(!agreed)}
+                onCheckTerm1={() => setAgreedToTerm1(!agreedToTerm1)}
+                onCheckTerm2={() => setAgreedToTerm2(!agreedToTerm2)}
                 isPinPending={isPinPending}
                 createDao={handleCreateProject}
               />
