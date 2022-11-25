@@ -1,4 +1,4 @@
-import { MAIN_TEXT_COLOR, POP } from '../../themes';
+import { POP } from '../../themes';
 import React from 'react';
 import styled from 'styled-components';
 import ActionButton from '../ActionButton';
@@ -6,7 +6,7 @@ import BubbleAnimation from '../BubbleAnimation';
 import Title from '../Title';
 import { useRouter } from 'next/router';
 import TypeWriter from '../TypeWriter';
-import { useTheme } from 'apps/ui/hooks/theme';
+import { useTheme } from '../../hooks/theme';
 
 const Root = styled.section`
   display: flex;
@@ -113,7 +113,7 @@ const HeaderSection = () => {
             For the first writers on the moon.
           </Title>
         </HeaderDesktop>
-        <Title color={MAIN_TEXT_COLOR} size="s" textAlign="left">
+        <Title size="s" textAlign="left">
           Moonpage is a free and easy platform for turning your text into NFTs.
         </Title>
         <Buttons>
@@ -129,7 +129,7 @@ const HeaderSection = () => {
             disabled
             text="Watch Demo"
             margin="0"
-            color={MAIN_TEXT_COLOR}
+            color={theme.MAIN_TEXT_COLOR}
           />
         </Buttons>
       </LandingHeader>
