@@ -8,7 +8,7 @@ import {
 } from '../components/HomePage/ProjectSection';
 import {
   BASE_BORDER_RADIUS,
-  BASE_BOX_SHADOW,
+  ElementThemeProps,
   FONT_SERIF_BOLD,
   FONT_SERIF_REGULAR,
 } from '../themes';
@@ -17,6 +17,7 @@ import { useGetProjectsOfAccount } from '../hooks/user/useGetProjectsOfAccount';
 import BookshelfItem from '../components/Bookshelf/BookshelfItem';
 import { useGetContributionsOfAccount } from '../hooks/user/useGetContributionsOfAccount';
 import { useUser } from '../hooks/user/useUser';
+import { useTheme } from '../hooks/theme';
 
 const Root = styled.div`
   display: flex;
@@ -51,12 +52,12 @@ const Section = styled.section`
   }
 `;
 
-const SubHeader = styled.h3`
+const SubHeader = styled.h3<ElementThemeProps>`
   display: inline-block;
   font-family: ${FONT_SERIF_BOLD};
   text-align: center;
   border-radius: ${BASE_BORDER_RADIUS};
-  box-shadow: ${BASE_BOX_SHADOW};
+  box-shadow: ${({ theme }) => theme.BASE_BOX_SHADOW};
   margin-block-end: 3rem;
   padding: 0.5rem;
   width: fit-content;
@@ -64,6 +65,7 @@ const SubHeader = styled.h3`
 
 const MyBookShelf = () => {
   const router = useRouter();
+  const theme = useTheme();
   const { account } = useWeb3React();
   const { groupedNfts, isLoading: ownedNftsLoading } = useUser();
   const { projects: ownProjects, isLoading: ownProjectsLoading } =
@@ -99,7 +101,7 @@ const MyBookShelf = () => {
       ) : (
         <>
           <Section>
-            <SubHeader>My NFTs</SubHeader>
+            <SubHeader theme={theme}>My NFTs</SubHeader>
             {ownedNftsLoading && <Loading height={300} />}
             {!ownedNftsLoading && !groupedNfts && (
               <NotExist>
@@ -119,7 +121,7 @@ const MyBookShelf = () => {
               ))}
           </Section>
           <Section>
-            <SubHeader>My Projects</SubHeader>
+            <SubHeader theme={theme}>My Projects</SubHeader>
             {ownProjectsLoading && <Loading height={300} />}
             {!ownProjectsLoading && !ownProjects?.length && (
               <NotExist>
@@ -139,7 +141,7 @@ const MyBookShelf = () => {
               ))}
           </Section>
           <Section>
-            <SubHeader>My Contributions</SubHeader>
+            <SubHeader theme={theme}>My Contributions</SubHeader>
             {contributionsLoading && <Loading height={300} />}
             {!contributionsLoading && !contributions?.length && (
               <NotExist>
