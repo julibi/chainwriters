@@ -184,7 +184,8 @@ const Create = () => {
   const [language, setLanguage] = useState<string>('');
   const [translation, setTranslation] = useState<Node[] | undefined>();
   // const [textIPFS, setTextIPFS] = useState<null | string>(null);
-  const [agreed, setAgreed] = useState(false);
+  const [agreedToTerm1, setAgreedToTerm1] = useState(false);
+  const [agreedToTerm2, setAgreedToTerm2] = useState(false);
   const [firstEdMintPrice, setFirstEdMintPrice] = useState<string>('0');
   const [firstEdMaxAmount, setFirstEdMaxAmount] = useState(0);
   const [projectId, setProjectId] = useState<string | null>(null);
@@ -414,13 +415,15 @@ const Create = () => {
             {/* TODO: enable changing things here */}
             {currentStep === 5 && (
               <ReviewForm
-                agreed={agreed}
+                agreedToTerm1={agreedToTerm1}
+                agreedToTerm2={agreedToTerm2}
                 language={language}
                 title={title}
                 text={text as Node[]}
                 firstEdMaxAmount={firstEdMaxAmount}
                 firstEdMintPrice={firstEdMintPrice}
-                onCheck={() => setAgreed(!agreed)}
+                onCheckTerm1={() => setAgreedToTerm1(!agreedToTerm1)}
+                onCheckTerm2={() => setAgreedToTerm2(!agreedToTerm2)}
                 isPinPending={isPinPending}
                 createDao={handleCreateProject}
               />

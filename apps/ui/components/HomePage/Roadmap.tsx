@@ -92,8 +92,26 @@ const Roadmap = () => {
           <Title size="m" padding="0 0 2rem 0 !important">
             Funding
           </Title>
-          <RoadBlockText>Raise Funding through Grants and VC</RoadBlockText>
+          <RoadBlockText>Raise Funding through VCs</RoadBlockText>
           <RoadBlockDate>January 2023</RoadBlockDate>
+        </RoadBlock>
+        <RoadBlock>
+          <Title size="m" padding="0 0 2rem 0 !important">
+            Profile Pages
+          </Title>
+          <RoadBlockText>
+            Let writers create profile pages and link projects to them
+          </RoadBlockText>
+          <RoadBlockDate>February 2023</RoadBlockDate>
+        </RoadBlock>
+        <RoadBlock>
+          <Title size="m" padding="0 0 2rem 0 !important">
+            Royalties
+          </Title>
+          <RoadBlockText>
+            Enable claiming of royalties for writers.
+          </RoadBlockText>
+          <RoadBlockDate>March 2023</RoadBlockDate>
         </RoadBlock>
       </EmblaCarouselComponent>
     </Root>

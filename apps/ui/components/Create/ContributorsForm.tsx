@@ -6,13 +6,14 @@ import validateAddress from '../../utils/validateAddress';
 import { truncateAddress } from '../WalletIndicator';
 import { Contributor } from '../../providers/projects-provider/projects-provider.types';
 import ActionButton from '../ActionButton';
-import { POP } from '../../themes';
+import { FONT_SERIF_REGULAR, POP } from '../../themes';
 import Title from '../Title';
 
 const ContribList = styled.ul`
   padding: 0;
   list-style-type: none;
   width: 100%;
+  font-family: ${FONT_SERIF_REGULAR};
 `;
 
 const ContribItem = styled.li`
@@ -25,6 +26,7 @@ const SpecialShare = styled.span`
   justify-content: space-between;
   display: flex;
   margin-block-end: 1rem;
+  font-family: ${FONT_SERIF_REGULAR};
 `;
 
 const ContribsError = styled.div`
@@ -42,6 +44,7 @@ const ContribInputContainer = styled.div`
   margin-block-end: 1rem;
   display: flex;
   flex-direction: column;
+  font-family: ${FONT_SERIF_REGULAR};
 
   @media (max-width: 900px) {
     width: 270px;

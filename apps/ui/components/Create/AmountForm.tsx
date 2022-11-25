@@ -28,7 +28,7 @@ const AmountForm = ({
         <InputDescription>
           The first edition of a work is called Genesis Edition. Holders of a
           Genesis Edition will have special benefits. The Genesis Edition will
-          be sold over a Dutch Auction. Determine its total amount. Keep in mind
+          be sold in a reverse auction. Determine its total amount. Keep in mind
           that you can only trigger the sale of a subsequent edition after the
           Genesis Edition has sold out.
         </InputDescription>

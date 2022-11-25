@@ -4,7 +4,12 @@ import styled from 'styled-components';
 import { FadeIn, Wrapper, InputDescription } from '../../pages/create';
 import ActionButton from '../ActionButton';
 import Title from '../Title';
-import { BASE_BORDER_RADIUS, POP, ElementThemeProps } from '../../themes';
+import {
+  BASE_BORDER_RADIUS,
+  POP,
+  ElementThemeProps,
+  FONT_SERIF_REGULAR,
+} from '../../themes';
 import { useTheme } from '../../hooks/theme';
 import { useCollection } from '../../hooks/collection';
 import StartAuctionsModal from '../ProjectDetails/StartAuctionsModal';
@@ -17,6 +22,7 @@ interface FinishedProps {
 const OptionsWrapper = styled.div`
   display: flex;
   margin-block-end: 2rem;
+  font-family: ${FONT_SERIF_REGULAR};
 
   @media (max-width: 900px) {
     flex-direction: column;

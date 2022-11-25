@@ -27,11 +27,19 @@ const Cards = styled.div`
 const authorSellingPoints = [
   {
     title: 'You could be the first cryptowriting wunderkind.',
-    text: 'You have written something. You want people to read your work and you want to make a living from it? But you are having a hard time trying to get it published?  Does not have to be that way.',
+    text: 'You are a writer. You want people to read your work. You want to make a living from it. Having a hard time trying to get published? Need feedback and financial support? You came to the right place.',
+  },
+  {
+    title: 'Creative Process and Experimentation.',
+    text: 'Update the text as you go. You can upload the first chapter, start selling and get feedback. Add more chapters and fix typos. When you are done, "freeze" the data behind the NFT to signal the status to your readers.',
+  },
+  {
+    title: 'Slowly build a hype.',
+    text: 'On Moonpage, you are not just selling your text as 1 NFT. You are selling your work in editions. Up to 1000 NFTs are reserved for your project.',
   },
   {
     title: "It's so simple.",
-    text: "Write your text and we create NFTs out of it, so you can sell them. You don't need any technical knowledge. We do the heavy lifting for you. You only need a browser wallet. Don't have that and new to crypto? No worries, we gotcha.",
+    text: "Upload text and follow our beautiful flow. We create NFTs out of it, so you can sell them. You don't need any technical knowledge. We do the heavy lifting for you. You only need a browser wallet.",
   },
   {
     title: 'You are in full control.',
@@ -40,10 +48,6 @@ const authorSellingPoints = [
   {
     title: 'Earn the lion share and create a passive income stream.',
     text: '85% of the earnings go to you. Each time an NFT of your project is being resold on a marketplace, you get 4,9% of royalties. (Royalties coming soon.)',
-  },
-  {
-    title: 'Not only Perfection – Experimentation.',
-    text: 'Update the text as you go. You can upload the first chapter, start selling and get feedback. Add more chapters and fix typos. When you are done, "freeze" the data behind the NFT to signal the status to your readers.',
   },
   {
     title: 'Build an audience and a community.',
@@ -84,7 +88,7 @@ const MainSellingPointsSection = () => {
         size="l"
         textAlign="left"
       >
-        You deserve a place to unleash your creativity.
+        A place for your craft and creative process.
       </Title>
       <Cards>
         {authorSellingPoints.map((point, index) => (

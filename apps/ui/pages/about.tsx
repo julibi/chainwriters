@@ -136,36 +136,19 @@ const About = () => {
       </StyledLink>
       <Content>
         <QAWrapper>
-          <SubHeader>Why Text NFTs?</SubHeader>
-          <Text>{`What if you, as a writer, could publish your writings, earn the lion share, receive royalties and create communities around your work – all of this settled in a smart contract, where the rules are coded in an immutable ledger?`}</Text>
-          <Text>{`There is an insane amount of visual digital collectibles but text NFTs aren’t as common yet – the flashy avantgarde among writers has just started to use the blockchain to publish their art. `}</Text>
-          <Text>{`Instead of struggling with the traditional bookmarket and its gatekeepers you can experiment with new digital forms and keep total control over the whole process. Choose your own collaborators, price, number of copies and form of your texts and be part of a web3 literary movement.`}</Text>
-          <Text>{`And NFT collectors beware: you never know if there’s a hidden J.K. Rowling or Stephen King among these web3 poets … Browse projects, read brand new stuff, get your text NFTs of hidden future stars and see them moon! Who knows? You could be owning a next gen blue chip NFT.`}</Text>
-        </QAWrapper>
-        <QAWrapper>
           <SubHeader>Why Moonpage?</SubHeader>
-          <Text>{`Using Moonpage is easy – there’s a simple creation flow and we also guide you through the steps. If you’re a literal bookworm and don’t know the web3 space so well, no worries, we got ya! It‘s one of the first all-text NFT launchpads that empowers you to create and sell, all in one place.`}</Text>
-          <Text>{`And you’ll be among kindred spirits – we want to build a strong community since writing can be a very lonely business. So don’t be shy, visit our Telegram and Twitter Channel and get connected to other poets, literature lovers and collectors. `}</Text>
-          <Text>{`This is just the beginning of this community. In the future we want to find more innovative ways to connect writers, readers and blockchain technology. Stay tuned and please don't sleep on it!`}</Text>
+          <Text>{`There are different Web3 Publishing tools out there. Moonpage wants to focus on the writers and the craft and process of writing. We want to empower you to do more than just turning your text into one NFT and sell it. You know it best: writing is not just about three button clicks.`}</Text>
+          <Text>{`We want to empower you to find early supporters when you start writing already, monetize your creative process, to experiment and gather a community around you to engage with. This way, you don’t have to write your novel for two years without knowing whether anyone will ever read it, without any financial backing. Start selling your NFTs in editions and let the hype build up! 
+Become one of the first writers on the moon.`}</Text>
+          <Text>{`As a publishing house or agency, you don't need to risk so much with one big publication. Let your authors experiment, see the resonance. And furthermore find new talents! Don't sleep on this upcoming new wave. Be a pioneer and join us.`}</Text>
         </QAWrapper>
         <QAWrapper>
-          <SubHeader>Our Vision</SubHeader>
-          <Text>{`As much as we love traditional books, we believe there are many
-            forms in which literature can be explored. Publishing houses are
-            doing a great job finding and forming talent and maintaining a high
-            level of quality, but they can be gatekeepers.`}</Text>
-          <Text>{`A lot of
-            writers – especially young ones – struggle to find a platform for
-            their writing. „Gifted, bohemian, penniless writer“ might sound cool
-            in theory but in reality it’s a frustrating hassle. Trust us, we‘ve
-            been there ourselves!`}</Text>
-          <Text>
-            {`In web3 it’s easier for creative writers to
-            reach their readers directly and experiment with their art, besides
-            earning crypto currency for their text NFTs empowers them
-            financially. So why not infuse publishing with the possibilities and
-            the sheer fun and craziness of NFTs?`}
-          </Text>
+          <SubHeader>Why Text NFTs?</SubHeader>
+          {/* <Text>{`What if you, as a writer, could publish your writings, earn the lion share, receive royalties and create communities around your work – all of this settled in a smart contract, where the rules are coded in an immutable ledger?`}</Text> */}
+          <Text>{`The traditional publishing industry is a concentration of brilliant minds. They are doing a great job finding and forming talent and maintaining a high level of quality. But at the same time it is a system of strong gatekeepers. In avergage writers only get a 10% provision on the book they publish. Publishing houses are lacking liquidity and select only a handful of mostly already well known writers. Publishing a book is a big financial risk for both writers and publishing houses. It makes publishers scared to promote new faces and hard for young writers to ever reach their audience. A lot of writers – especially young ones – struggle to find a platform for their writing. „Gifted, bohemian, penniless writer“ might sound cool in theory but in reality it’s a frustrating hassle. Trust us, we‘ve been there ourselves!`}</Text>
+          <Text>{`Web2 Publishing has become an alternative for many. But Web3 lets us explore many more possibilities: it’s easy for creative writers to reach their readers and experiment with their art while being empowered financially, because they are earning crypto currency. So why not infuse writing and publishing with the possibilities and the sheer fun and craziness of NFTs?`}</Text>
+          <Text>{`Through NFTs literature collectibles become tradable and because they exist on a whole blockchain ecosystem and are not tied to a single application, they can become means of expression and attention with a much broader reach. This is what excites us! Sadly, less and less people are reading books and although we are consuming stories all the time through ads or streaming, we as a society seem to have forgotten to cherish the craft and the minds behind all of it. Web3 gives us the chance to infuse literature with the financial value and human attention that it really deserves.`}</Text>
+          <Text>{`And when it comes to collecting: You never know if there’s a hidden Stephen King or Rilke among these web3 writers … Browse projects, read brand new stuff, get your text NFTs of hidden future stars and see them moon!`}</Text>
         </QAWrapper>
         <QAWrapper>
           <SubHeader>Our History</SubHeader>
@@ -173,12 +156,12 @@ const About = () => {
             Creative Writing. Works of Jack Kerouac, Bret Easton Ellis, Lucia
             Berlin, Leo Tolstoi and many more make our hearts beat faster! A few
             years after graduation Olivia had become a published and awarded
-            writer and Hyun-Kyung had professionally immersed herself in web3
+            writer and Juli had professionally immersed herself in web3
             code.`}</Text>
           <Text>
             {`After exchanging experiences of struggling as a writer and discussing
             how web3 technology could open new spaces for literature, we knew
-            immediately, what we had to do: Moonpage.`}
+            immediately, what we had to do: Moonpage. This is our dream. We are building, what we would've loved to have ourselves a few year back.`}
           </Text>
         </QAWrapper>
         <CoFoundersWrapper>
