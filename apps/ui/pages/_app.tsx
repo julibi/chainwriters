@@ -141,7 +141,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
     <>
       <Head>
         <title>
-          Moonpage. The future of text. Create and collect text NFTs.
+          Moonpage. The Web3 Literature Lab. For the first writers on the moon.
         </title>
         <meta charSet="utf-8" />
         <meta property="og:locale" content="en_US" />
@@ -151,13 +151,13 @@ function CustomApp({ Component, pageProps }: AppProps) {
         />
         <meta
           name="description"
-          content="Enter the future of text. Create and collect text NFTs.  Moonpage is a launchpad where creators and writers can turn their projects into text NFTs."
+          content="Moonpage. The Web3 Literature Lab. For the first writers on the moon. Moonpage is a free and easy platform for turning your text into NFTs. A place for your craft and creative process of writing."
         ></meta>
         <meta property="og:site_name" content="Moonpage" />
         <meta property="og:title" content="Text NFTs" />
         <meta
           property="og:description"
-          content="Enter the future of text. Create and collect text NFTs. Moonpage is a launchpad where creators and writers can turn their projects into text NFTs."
+          content="Moonpage. The Web3 Literature Lab. For the first writers on the moon. Moonpage is a free and easy platform for turning your text into NFTs. A place for your craft and creative process of writing."
         />
         <meta
           property="og:image"
