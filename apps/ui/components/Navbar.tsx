@@ -133,6 +133,7 @@ const Navbar = () => {
     () => (isDarkMode ? '/logo/LogoLight.svg' : '/logo/LogoDark.svg'),
     [isDarkMode]
   );
+  console.log({ hasTried });
 
   // TODO WALLET CONNECTION ON MOBILE!
   return (

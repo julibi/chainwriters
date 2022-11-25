@@ -31,7 +31,6 @@ import {
   ThemeProvider,
 } from '../providers';
 import * as gtag from '../utils/ga';
-import { useEagerConnect } from '../hooks/useEagerConnect';
 
 const GlobalStyle = createGlobalStyle`
 html{
@@ -119,7 +118,6 @@ function getLibrary(
 }
 
 function CustomApp({ Component, pageProps }: AppProps) {
-  const hasTried = useEagerConnect();
   const router = useRouter();
 
   useEffect(() => {
