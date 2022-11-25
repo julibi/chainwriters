@@ -255,6 +255,7 @@ const Leaf = ({ attributes, children, leaf }) => {
 
 const BlockButton = ({ format, icon }) => {
   const editor = useSlate();
+  const theme = useTheme();
   return (
     <EditorToolButton
       active={isBlockActive(
@@ -266,6 +267,7 @@ const BlockButton = ({ format, icon }) => {
         event.preventDefault();
         toggleBlock(editor, format);
       }}
+      theme={theme}
     >
       <span className="material-icons">{icon}</span>
     </EditorToolButton>
@@ -274,6 +276,7 @@ const BlockButton = ({ format, icon }) => {
 
 const MarkButton = ({ format, icon }) => {
   const editor = useSlate();
+  const theme = useTheme();
   return (
     <EditorToolButton
       active={isMarkActive(editor, format)}
@@ -281,6 +284,7 @@ const MarkButton = ({ format, icon }) => {
         event.preventDefault();
         toggleMark(editor, format);
       }}
+      theme={theme}
     >
       <span className="material-icons">{icon}</span>
     </EditorToolButton>
