@@ -1,16 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import styled from 'styled-components';
-import {
-  BASE_BORDER_RADIUS,
-  BG_NORMAL,
-  INSET_BASE_BOX_SHADOW,
-  BaseButton,
-  BASE_BOX_SHADOW,
-  MAIN_TEXT_COLOR,
-  FONT_SERIF_BOLD,
-} from '../themes';
+import { BaseButton, FONT_SERIF_BOLD, ElementThemeProps } from '../themes';
 import { FlexContainer } from '../pages/create';
+import { useTheme } from '../hooks/theme';
 
 interface RootProps {
   width?: string | number;
@@ -34,14 +27,14 @@ const ImageWrapper = styled.div`
   margin-inline-end: 1rem;
 `;
 
-const Options = styled.div`
+const Options = styled.div<ElementThemeProps>`
   position: absolute;
   top: 70px;
   left: 0;
   z-index: 1;
-  background-color: ${BG_NORMAL};
-  border-radius: ${BASE_BORDER_RADIUS};
-  box-shadow: ${BASE_BOX_SHADOW};
+  background-color: ${({ theme }) => theme.BG_NORMAL};
+  border-radius: ${({ theme }) => theme.BASE_BORDER_RADIUS};
+  box-shadow: ${({ theme }) => theme.BASE_BOX_SHADOW};
   width: 100%;
   max-height: 200px;
   overflow-y: scroll;
@@ -52,22 +45,11 @@ const Options = styled.div`
 `;
 
 const Option = styled(BaseButton)`
-  color: ${MAIN_TEXT_COLOR};
   font-family: ${FONT_SERIF_BOLD};
   margin-block-end: 1rem;
   padding: 1rem;
 
   display: flex;
-
-  :hover {
-    cursor: pointer;
-    border-radius: ${BASE_BORDER_RADIUS};
-    box-shadow: ${INSET_BASE_BOX_SHADOW};
-  }
-
-  :active {
-    box-shadow: ${INSET_BASE_BOX_SHADOW};
-  }
 `;
 
 interface OptionType {
@@ -92,6 +74,7 @@ const Dropdown = ({
   placeholder,
   width,
 }: DropdownProps) => {
+  const theme = useTheme();
   const [showDropdown, setShowDropdown] = useState(false);
   const [selected, setSelected] = useState<OptionType | null>(
     preselected ?? null
@@ -149,9 +132,10 @@ const Dropdown = ({
         </ArrowDown>
       )}
       {showDropdown && (
-        <Options>
+        <Options theme={theme}>
           {options.map((opt) => (
             <Option
+              theme={theme}
               key={opt.id}
               onClick={() => {
                 opt.onSelect(opt.id);
