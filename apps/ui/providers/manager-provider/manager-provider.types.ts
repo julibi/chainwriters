@@ -28,8 +28,10 @@ export type ManagerApi = {
 };
 
 export type NewConfiguration = {
+  imgFile: any;
   imgHash: string;
   animationHash: string;
+  blurb: Node[] | undefined;
   blurbHash: string;
   genre: string;
   subtitle: string;

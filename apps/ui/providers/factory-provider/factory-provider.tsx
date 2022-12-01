@@ -26,6 +26,7 @@ export function FactoryProvider({ children }: FactoryProviderProps) {
   const createProject = useCallback(
     async ({
       title,
+      text,
       textIpfsHash,
       originalLanguage,
       initialMintPrice,
@@ -65,6 +66,25 @@ export function FactoryProvider({ children }: FactoryProviderProps) {
           // not sure tho
           const projectId = Number(CreationEvent.args.projectId).toString();
           const project = projectId || latestProjectId?.toString();
+
+          // upload metadata to BE
+          try {
+            const requestOptions = {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ title, mpId: project, text }),
+            };
+            // fire and forget
+            await fetch(
+              `https://moonpage-metadata-backend-dev.herokuapp.com/projects/${project}`,
+              requestOptions
+            );
+          } catch (e) {
+            // do nothing
+            console.log({ e });
+          }
+
+          // pin metadata with Pinata
           try {
             await pinToPinata(textIpfsHash, project, 'text', title);
           } catch (e) {

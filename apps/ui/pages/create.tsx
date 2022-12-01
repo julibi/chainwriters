@@ -180,7 +180,7 @@ const Create = () => {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(0);
   const [title, setTitle] = useState('');
-  const [text, setText] = useState<Node[] | string | undefined>();
+  const [text, setText] = useState<Node[] | undefined>();
   const [language, setLanguage] = useState<string>('');
   const [translation, setTranslation] = useState<Node[] | undefined>();
   // const [textIPFS, setTextIPFS] = useState<null | string>(null);
@@ -227,6 +227,7 @@ const Create = () => {
 
     await createProject({
       title,
+      text,
       textIpfsHash: hash,
       originalLanguage: language,
       initialMintPrice: parseEther(firstEdMintPrice),
@@ -267,8 +268,10 @@ const Create = () => {
     // TODO: add animationhash
     await configureProject({
       projectId,
+      imgFile,
       imgHash: coverImgIPFS,
       animationHash: '',
+      blurb,
       blurbHash: blurbIPFS,
       genre,
       subtitle,
@@ -277,11 +280,13 @@ const Create = () => {
       },
     });
   }, [
+    blurb,
     blurbIPFS,
     configureProject,
     coverImgIPFS,
     currentStep,
     genre,
+    imgFile,
     projectId,
     subtitle,
   ]);

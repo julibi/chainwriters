@@ -53,8 +53,10 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
   const configureProject = useCallback(
     async ({
       projectId,
+      imgFile,
       imgHash,
       animationHash,
+      blurb,
       blurbHash,
       genre,
       subtitle,
@@ -93,6 +95,44 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
           onSuccess?.();
         };
         mpManager.provider.once(hash, async (transaction) => {
+          if (blurb) {
+            // upload blurb metadata to BE
+            try {
+              const blurbRequestOptions = {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ blurb }),
+              };
+              // fire and forget
+              await fetch(
+                `https://moonpage-metadata-backend-dev.herokuapp.com/projects/blurb/${projectId}`,
+                blurbRequestOptions
+              );
+            } catch (e) {
+              // do nothing
+            }
+          }
+
+          if (imgFile) {
+            // upload cover image metadata to BE
+            try {
+              const formData = new FormData();
+              formData.append('file', imgFile);
+              const imgRequestOptions = {
+                method: 'POST',
+                body: formData,
+              };
+              // fire and forget
+              await fetch(
+                `https://moonpage-metadata-backend-dev.herokuapp.com/image-upload/${projectId}`,
+                imgRequestOptions
+              );
+            } catch (e) {
+              // do nothing
+            }
+          }
+
+          // pin metadata to IPFS
           try {
             await pinToPinata(imgHash, projectId, 'image');
             await pinToPinata(blurbHash, projectId, 'blurb');
