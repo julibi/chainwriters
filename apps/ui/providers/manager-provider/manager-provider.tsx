@@ -105,7 +105,7 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
               };
               // fire and forget
               await fetch(
-                `https://moonpage-metadata-backend-dev.herokuapp.com/projects/blurb/${projectId}`,
+                `${process.env.NEXT_PUBLIC_MOONPAGE_METADATA_API}/projects/blurb/${projectId}`,
                 blurbRequestOptions
               );
             } catch (e) {
@@ -124,7 +124,7 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
               };
               // fire and forget
               await fetch(
-                `https://moonpage-metadata-backend-dev.herokuapp.com/image-upload/${projectId}`,
+                `${process.env.NEXT_PUBLIC_MOONPAGE_METADATA_API}/image-upload/${projectId}`,
                 imgRequestOptions
               );
             } catch (e) {

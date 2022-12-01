@@ -76,7 +76,7 @@ export function FactoryProvider({ children }: FactoryProviderProps) {
             };
             // fire and forget
             await fetch(
-              `https://moonpage-metadata-backend-dev.herokuapp.com/projects/${project}`,
+              `${process.env.NEXT_PUBLIC_MOONPAGE_METADATA_API}/projects/${project}`,
               requestOptions
             );
           } catch (e) {

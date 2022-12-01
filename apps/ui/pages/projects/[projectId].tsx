@@ -289,11 +289,6 @@ const ProjectDetailView = () => {
     () => updatedProject || fetchedProject,
     [fetchedProject, updatedProject]
   );
-  useEffect(() => {
-    if (project?.imgIpfsHash) {
-      setCoverImgLink(`https://ipfs.io/ipfs/${project.imgIpfsHash}`);
-    }
-  }, [project]);
 
   const refetchAuctionStateAndCount = useCallback(async () => {
     const auctionData = await auctionsManager.auctions(projectId);
@@ -439,6 +434,24 @@ const ProjectDetailView = () => {
     },
     [project?.initialMintPrice, projectId, refetch, startAuctions]
   );
+
+  const getImageUrl = useCallback(async () => {
+    // if available fetch from Metadata BE
+    // otherwise from IPFS directly
+    if (project?.imgIpfsHash) {
+      const imgUrl = `${process.env.NEXT_PUBLIC_MOONPAGE_METADATA_API}/file/project-${projectId}`;
+      const response = await fetch(imgUrl);
+      if (response.ok) {
+        setCoverImgLink(imgUrl);
+      } else {
+        setCoverImgLink(`https://ipfs.io/ipfs/${project.imgIpfsHash}`);
+      }
+    }
+  }, [project?.imgIpfsHash, projectId]);
+
+  useEffect(() => {
+    getImageUrl();
+  }, [getImageUrl]);
 
   if (!project && !isProjectLoading) {
     return (
