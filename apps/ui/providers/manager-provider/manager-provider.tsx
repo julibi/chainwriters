@@ -250,6 +250,7 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
   const updateBlurb = useCallback(
     async ({
       projectId,
+      blurb,
       blurbIpfsHash,
       oldBlurbIpfsHash,
       onError,
@@ -276,6 +277,20 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
           onSuccess?.();
         };
         mpManager.provider.once(hash, async (transaction) => {
+          // save update in BE
+          try {
+            const blurbUpdateOptions = {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ blurb }),
+            };
+            const metadataUrl = `${process.env.NX_PUBLIC_MOONPAGE_METADATA_API}/projects/blurb/${projectId}`;
+            await fetch(metadataUrl, blurbUpdateOptions);
+          } catch (e) {
+            // do nothing
+          }
+
+          // then pin it with Pinata
           try {
             // TODO: find a way to only unpin the first all other than the last one.
             // Because we want to show the user the latest change made.
@@ -298,6 +313,7 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
   const updateText = useCallback(
     async ({
       projectId,
+      text,
       textIpfsHash,
       oldTextIpfsHash,
       onError,
@@ -322,6 +338,20 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
           onSuccess?.();
         };
         mpManager.provider.once(hash, async (transaction) => {
+          // save update in BE
+          try {
+            const textUpdateOptions = {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ text }),
+            };
+            const metadataUrl = `${process.env.NX_PUBLIC_MOONPAGE_METADATA_API}/projects/text/${projectId}`;
+            await fetch(metadataUrl, textUpdateOptions);
+          } catch (e) {
+            // do nothing
+          }
+
+          // then pin it with Pinata
           try {
             // TODO: find a way to only unpin the first all other than the last one.
             // Because we want to show the user the latest change made.

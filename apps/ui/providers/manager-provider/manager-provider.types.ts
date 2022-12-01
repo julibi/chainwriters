@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { Node } from 'slate';
 import { Contributor } from '../projects-provider/projects-provider.types';
 
 export interface ManagerProviderProps {
@@ -59,6 +60,7 @@ export interface UpdateTranslationHashArgs {
 
 export interface UpdateBlurbHashArgs {
   projectId: string;
+  blurb: Node[];
   oldBlurbIpfsHash: string;
   blurbIpfsHash: string;
   onSuccess?: () => void;
@@ -68,6 +70,7 @@ export interface UpdateBlurbHashArgs {
 export interface UpdateTextHashArgs {
   projectId: string;
   oldTextIpfsHash: string;
+  text: Node[];
   textIpfsHash: string;
   onSuccess?: () => void;
   onError?: (e: any) => void;

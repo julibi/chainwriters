@@ -50,23 +50,35 @@ const useShowText = (projectId: string) => {
     if (!project || !account || error) {
       return null;
     }
-
+    let fetchedText;
     try {
-      const response = await fetch(
-        `https://ipfs.io/ipfs/${project?.textIpfsHash}`
-      );
+      const metadataUrl = `${process.env.NX_PUBLIC_MOONPAGE_METADATA_API}/projects/${projectId}`;
+      const metadataResponse = await fetch(metadataUrl);
+      const metadata = await metadataResponse.json();
+      fetchedText = metadata.text;
+      setText(fetchedText);
+      setPending(false);
+    } catch (e) {
+      // do nothing
+    }
+    // if text cannot be fetched from BE, fetch from IPFS directly
+    if (!fetchedText) {
+      try {
+        const response = await fetch(
+          `https://ipfs.io/ipfs/${project?.textIpfsHash}`
+        );
 
-      if (response.ok) {
-        const fetchedText = await response.text();
-        const formatted = JSON.parse(fetchedText);
-        setText(formatted);
+        if (response.ok) {
+          const fetchedText = await response.text();
+          const formatted = JSON.parse(fetchedText);
+          setText(formatted);
+          setPending(false);
+        }
+      } catch (e: unknown) {
         setPending(false);
       }
-    } catch (e: unknown) {
-      console.log({ e });
-      setPending(false);
     }
-  }, [project, account, error]);
+  }, [project, account, error, projectId]);
 
   const fetchTranslation = useCallback(async () => {
     setPending(true);

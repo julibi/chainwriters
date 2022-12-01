@@ -78,6 +78,7 @@ const Blurb = ({ blurbIpfsHash, projectId, isAllowedToEdit }) => {
     if (blurbIpfsHash) {
       setIsBlurbFetching(true);
       // todo: cleanup, blurb will always be array of nodes in future
+      // try fetching from Metadata BE
       try {
         const metadataUrl = `${process.env.NEXT_PUBLIC_MOONPAGE_METADATA_API}/projects/${projectId}`;
         const metadataResponse = await fetch(metadataUrl);
@@ -96,6 +97,7 @@ const Blurb = ({ blurbIpfsHash, projectId, isAllowedToEdit }) => {
           setOriginalBlurb(fetchedBlurb);
           setIsBlurbFetching(false);
         }
+        // alternatively fetch directly from IPFS
       } catch (e) {
         const responseIpfs = await fetch(
           `https://ipfs.io/ipfs/${blurbIpfsHash}`
@@ -129,6 +131,7 @@ const Blurb = ({ blurbIpfsHash, projectId, isAllowedToEdit }) => {
     const hash = await uploadText(blurb);
     await updateBlurb({
       projectId,
+      blurb,
       blurbIpfsHash: hash,
       oldBlurbIpfsHash: blurbIpfsHash,
       onSuccess: () => {

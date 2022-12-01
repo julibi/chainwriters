@@ -194,6 +194,7 @@ const Read = () => {
     const hash = await uploadText(currentText);
     await updateText({
       projectId,
+      text: currentText,
       textIpfsHash: hash,
       oldTextIpfsHash: originalTextIpfsHash,
       onSuccess: () => {
