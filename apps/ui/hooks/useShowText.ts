@@ -86,21 +86,34 @@ const useShowText = (projectId: string) => {
       return null;
     }
 
+    let fetchedTranslation;
     try {
-      const response = await fetch(
-        `https://ipfs.io/ipfs/${project?.translationIpfsHash}`
-      );
-      if (response.ok) {
-        const fetchedTranslation = await response.text();
-        const formatted = JSON.parse(fetchedTranslation);
-        setTranslation(formatted);
+      const metadataUrl = `${process.env.NX_PUBLIC_MOONPAGE_METADATA_API}/projects/${projectId}`;
+      const metadataResponse = await fetch(metadataUrl);
+      const metadata = await metadataResponse.json();
+      fetchedTranslation = metadata.translation;
+      setTranslation(fetchedTranslation);
+      setPending(false);
+    } catch (e) {
+      // do nothing
+    }
+    if (!fetchedTranslation) {
+      try {
+        const response = await fetch(
+          `https://ipfs.io/ipfs/${project?.translationIpfsHash}`
+        );
+        if (response.ok) {
+          const fetchedTranslation = await response.text();
+          const formatted = JSON.parse(fetchedTranslation);
+          setTranslation(formatted);
+          setPending(false);
+        }
+      } catch (e: unknown) {
+        console.log({ e });
         setPending(false);
       }
-    } catch (e: unknown) {
-      console.log({ e });
-      setPending(false);
     }
-  }, [account, error, project]);
+  }, [account, error, project?.translationIpfsHash, projectId]);
 
   const hasTranslation = useMemo(() => {
     return project?.translationIpfsHash?.length > 0;

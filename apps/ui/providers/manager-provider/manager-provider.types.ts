@@ -53,6 +53,7 @@ export interface SetContributorsArgs {
 
 export interface UpdateTranslationHashArgs {
   projectId: string;
+  translation: Node[];
   translationIpfsHash: string;
   onSuccess?: () => void;
   onError?: (e: any) => void;

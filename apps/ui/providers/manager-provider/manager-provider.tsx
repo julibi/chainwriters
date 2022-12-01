@@ -205,6 +205,7 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
   const updateTranslation = useCallback(
     async ({
       projectId,
+      translation,
       translationIpfsHash,
       onError,
       onSuccess,
@@ -231,6 +232,20 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
           onSuccess?.();
         };
         mpManager.provider.once(hash, async (transaction) => {
+          // save update in BE
+          try {
+            const translationUpdateOptions = {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ translation }),
+            };
+            const metadataUrl = `${process.env.NX_PUBLIC_MOONPAGE_METADATA_API}/projects/translation/${projectId}`;
+            await fetch(metadataUrl, translationUpdateOptions);
+          } catch (e) {
+            // do nothing
+          }
+
+          // then pin it with Pinata
           try {
             await pinToPinata(translationIpfsHash, projectId, 'translation');
           } catch (e) {

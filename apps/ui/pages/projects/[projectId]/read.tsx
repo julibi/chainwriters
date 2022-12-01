@@ -241,6 +241,7 @@ const Read = () => {
       if (isAuthor && isEditing) {
         return <RichText text={translation} onKeyDown={() => {}} />;
       }
+      console.log('here???', { translation, translationOn });
       return <RichTextRead text={translation} />;
     }
   }, [

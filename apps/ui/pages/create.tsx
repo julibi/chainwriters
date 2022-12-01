@@ -256,6 +256,7 @@ const Create = () => {
 
     await updateTranslation({
       projectId,
+      translation,
       translationIpfsHash: hash,
       onSuccess: () => {
         setCurrentStep(currentStep + 1);
