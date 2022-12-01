@@ -236,14 +236,6 @@ const Read = () => {
         <RichTextRead text={shouldResetToOriginal ? text : textShownInEditor} />
       );
     }
-
-    if (translation && translationOn) {
-      if (isAuthor && isEditing) {
-        return <RichText text={translation} onKeyDown={() => {}} />;
-      }
-      console.log('here???', { translation, translationOn });
-      return <RichTextRead text={translation} />;
-    }
   }, [
     handleUpdateText,
     isAuthor,
@@ -251,10 +243,18 @@ const Read = () => {
     shouldResetToOriginal,
     text,
     textShownInEditor,
-    translation,
     translationOn,
     updateTextStatus,
   ]);
+
+  const correctTranslation = useCallback(() => {
+    if (translation && translationOn) {
+      if (isAuthor && isEditing) {
+        return <RichText text={translation} onKeyDown={() => {}} />;
+      }
+      return <RichTextRead text={translation} />;
+    }
+  }, [isAuthor, isEditing, translation, translationOn]);
 
   if (pending) {
     return (
@@ -324,6 +324,7 @@ const Read = () => {
           </EditButtonWrapper>
         )}
         {correctText()}
+        {correctTranslation()}
       </TextWrapper>
     </Root>
   );
