@@ -5,6 +5,8 @@ import { BigNumber } from 'ethers';
 import Image from 'next/image';
 import { toast } from 'react-toastify';
 import styled from 'styled-components';
+import LockOpenIcon from '@material-ui/icons/LockOpen';
+import LockIcon from '@material-ui/icons/Lock';
 import Blurb from './Blurb';
 import ActionButton from '../../components/ActionButton';
 import BaseModal from '../../components/BaseModal';
@@ -15,6 +17,7 @@ import Checkbox from '../../components/Checkbox';
 import Title from '../../components/Title';
 import Loading from '../../components/Loading';
 import MintSection from '../../components/ProjectDetails/MintSection';
+import TooltippedIndicator from '../../components/TooltippedIndicator';
 import { truncateAddress } from '../../components/WalletIndicator';
 import { useCollection } from '../../hooks/collection';
 import { useAuctions } from '../../hooks/auctions';
@@ -122,6 +125,14 @@ const ReadIndicator = styled(BaseButton)`
       opacity: 1;
     }
   }
+`;
+
+const Indicators = styled.div`
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  display: flex;
+  justify-content: space-between;
 `;
 
 const Author = styled.div`
@@ -478,6 +489,21 @@ const ProjectDetailView = () => {
                   quality={65}
                   layout="responsive"
                 />
+                <Indicators>
+                  {project?.isFrozen ? (
+                    <TooltippedIndicator
+                      tooltipContent="Project was locked by autor. Content won't change anymore."
+                      icon={<LockIcon htmlColor="#fff" fontSize="inherit" />}
+                    />
+                  ) : (
+                    <TooltippedIndicator
+                      tooltipContent="Author can still change the content."
+                      icon={
+                        <LockOpenIcon htmlColor="#fff" fontSize="inherit" />
+                      }
+                    />
+                  )}
+                </Indicators>
               </ImageWrapper>
               <Author>
                 <Title padding="0" size="xs" width="fit-content">

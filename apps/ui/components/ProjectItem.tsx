@@ -3,6 +3,8 @@ import Image from 'next/image';
 import styled from 'styled-components';
 import { useRouter } from 'next/router';
 import { BigNumber } from 'ethers';
+import LockOpenIcon from '@material-ui/icons/LockOpen';
+import LockIcon from '@material-ui/icons/Lock';
 import {
   BASE_BORDER_RADIUS,
   POP,
@@ -15,8 +17,6 @@ import { truncateAddress } from './WalletIndicator';
 import { getCoverImageUrl } from '../utils/getCoverImageUrl';
 import { Tooltip } from './Tooltip';
 import { formatEtherBigNumber } from '../utils/formatEtherBigNumber';
-import LockOpenIcon from '@material-ui/icons/LockOpen';
-import LockIcon from '@material-ui/icons/Lock';
 import TooltippedIndicator from './TooltippedIndicator';
 
 const Root = styled.div<ElementThemeProps>`
