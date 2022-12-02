@@ -51,7 +51,15 @@ const RichTextWrapper = styled.div`
 
 interface ConfigureModalProps {
   onClose: () => void;
-  onConfigure: ({ imgHash, animationHash, blurbHash, genre, subtitle }) => void;
+  onConfigure: ({
+    imgHash,
+    imgFile,
+    animationHash,
+    blurb,
+    blurbHash,
+    genre,
+    subtitle,
+  }) => void;
   pending: boolean;
 }
 
@@ -98,7 +106,9 @@ const ConfigureModal = ({
 
       onConfigure({
         imgHash: coverImgCID,
+        imgFile,
         animationHash: '',
+        blurb,
         blurbHash: blurbCID,
         genre,
         subtitle,
@@ -110,7 +120,7 @@ const ConfigureModal = ({
         'Something went wrong while trying to uplod your data to IPFS.'
       );
     }
-  }, [blurb, client, genre, imgBuffer, onConfigure, subtitle]);
+  }, [blurb, client, genre, imgBuffer, imgFile, onConfigure, subtitle]);
 
   return (
     <BaseModal onClose={onClose}>

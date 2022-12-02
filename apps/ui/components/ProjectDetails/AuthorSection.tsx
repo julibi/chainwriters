@@ -150,8 +150,10 @@ const AuthorSection = ({
     async (args) =>
       await configureProject({
         projectId,
+        imgFile: args.imgFile,
         imgHash: args.imgHash,
         animationHash: args.animationHash,
+        blurb: args.blurb,
         blurbHash: args.blurbHash,
         genre: args.genre,
         subtitle: args.subtitle,
@@ -161,7 +163,7 @@ const AuthorSection = ({
           refetch();
         },
       }),
-    [projectId, refetch, configureProject]
+    [configureProject, projectId, refetch]
   );
 
   const handleSetContributors = useCallback(
