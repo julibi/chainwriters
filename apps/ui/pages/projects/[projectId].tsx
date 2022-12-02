@@ -1,10 +1,14 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useWeb3React } from '@web3-react/core';
+import { BigNumber } from 'ethers';
 import Image from 'next/image';
+import { toast } from 'react-toastify';
 import styled from 'styled-components';
+import Blurb from './Blurb';
 import ActionButton from '../../components/ActionButton';
 import BaseModal from '../../components/BaseModal';
+import NextLink from '../../components/NextLink';
 import AuthorSection from '../../components/ProjectDetails/AuthorSection';
 import AuctionSection from '../../components/ProjectDetails/AuctionSection';
 import Checkbox from '../../components/Checkbox';
@@ -18,7 +22,10 @@ import { useAuctions } from '../../hooks/auctions';
 import { useGetProject } from '../../hooks/projects/useGetProject';
 import { useGetProjectId } from '../../hooks/projects/useGetProjectId';
 import useAuctionsManager from '../../hooks/useAuctionsManager';
+import { useTheme } from '../../hooks/theme';
+import useMoonpageManager from '../../hooks/useMoonpageManager';
 import { formatNumber } from '../../utils/formatNumber';
+import { getCoverImageUrl } from '../../utils/getCoverImageUrl';
 import {
   BASE_BORDER_RADIUS,
   DISABLED_WHITE,
@@ -30,17 +37,10 @@ import {
   ElementThemeProps,
 } from '../../themes';
 import { MOONPAGE_DEV_ADDRESS } from '../../../constants';
-import { toast } from 'react-toastify';
-import NextLink from '../../components/NextLink';
-import { useTheme } from '../../hooks/theme';
-
-import useMoonpageManager from '../../hooks/useMoonpageManager';
 import {
   Edition,
   Project,
 } from '../../providers/projects-provider/projects-provider.types';
-import { BigNumber } from 'ethers';
-import Blurb from './Blurb';
 
 const Root = styled.div`
   display: flex;
@@ -436,17 +436,8 @@ const ProjectDetailView = () => {
   );
 
   const getImageUrl = useCallback(async () => {
-    // if available fetch from Metadata BE
-    // otherwise from IPFS directly
-    if (project?.imgIpfsHash) {
-      const imgUrl = `${process.env.NEXT_PUBLIC_MOONPAGE_METADATA_API}/file/project-${projectId}`;
-      const response = await fetch(imgUrl);
-      if (response.ok) {
-        setCoverImgLink(imgUrl);
-      } else {
-        setCoverImgLink(`https://ipfs.io/ipfs/${project.imgIpfsHash}`);
-      }
-    }
+    const imgUrl = await getCoverImageUrl(projectId, project?.imgIpfsHash);
+    setCoverImgLink(imgUrl);
   }, [project?.imgIpfsHash, projectId]);
 
   useEffect(() => {

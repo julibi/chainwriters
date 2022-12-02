@@ -115,9 +115,10 @@ const useShowText = (projectId: string) => {
     }
   }, [account, error, project?.translationIpfsHash, projectId]);
 
-  const hasTranslation = useMemo(() => {
-    return project?.translationIpfsHash?.length > 0;
-  }, [project]);
+  const hasTranslation = useMemo(
+    () => project?.translationIpfsHash?.length > 0,
+    [project]
+  );
 
   useEffect(() => {
     if (account && allowedToRead) {

@@ -149,7 +149,6 @@ const Projects = () => {
     refetchAllProjects,
     areAllProjectsLoading,
   } = useProjects();
-
   // TODO: this is just local filtering - do it with graphql useQuery
   const search = useCallback(() => {
     const projectsArray = projects;

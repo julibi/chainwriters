@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Image from 'next/image';
 import styled from 'styled-components';
 import { useRouter } from 'next/router';
@@ -11,6 +11,7 @@ import {
 } from '../themes';
 import { useTheme } from '../hooks/theme';
 import { truncateAddress } from './WalletIndicator';
+import { getCoverImageUrl } from '../utils/getCoverImageUrl';
 
 const Root = styled.div<ElementThemeProps>`
   display: flex;
@@ -86,6 +87,8 @@ const ProjectItem = ({
 }: ProjectItemTypes) => {
   const router = useRouter();
   const theme = useTheme();
+  const [coverImgLink, setCoverImgLink] = useState<string>(null);
+
   const handleClick = (e) => {
     e.preventDefault();
     router.push(`projects/${id}`);
@@ -93,15 +96,23 @@ const ProjectItem = ({
   const created = new Date(Number(createdAt) * 1000).toLocaleDateString(
     'en-US'
   );
+
+  const getImageUrl = useCallback(async () => {
+    if (id && imgIpfsHash?.length) {
+      const imgUrl = await getCoverImageUrl(id, imgIpfsHash);
+      setCoverImgLink(imgUrl);
+    }
+  }, [id, imgIpfsHash]);
+
+  useEffect(() => {
+    getImageUrl();
+  }, [getImageUrl]);
+
   return (
     <Root onClick={handleClick} theme={theme}>
       <ImageWrapper>
         <Image
-          src={
-            imgIpfsHash
-              ? `https://ipfs.io/ipfs/${imgIpfsHash}`
-              : '/ImgPlaceholder.png'
-          }
+          src={coverImgLink ?? '/ImgPlaceholder.png'}
           height={'100%'}
           width={'100%'}
           alt={'Project Image'}
