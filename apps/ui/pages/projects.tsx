@@ -2,6 +2,7 @@ import React, {
   ChangeEvent,
   KeyboardEvent,
   useCallback,
+  useEffect,
   useState,
 } from 'react';
 import Image from 'next/image';
@@ -176,6 +177,10 @@ const Projects = () => {
     setSearchedProjects(null);
     setHasSearched(false);
   };
+
+  useEffect(() => {
+    refetchAllProjects();
+  }, []);
 
   return (
     <Root>
