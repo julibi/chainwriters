@@ -8,6 +8,7 @@ export const GET_TOP_PROJECTS = gql`
     projects(first: 3, orderBy: mintCount, orderDirection: desc) {
       auctionsEnded
       auctionsStarted
+      balance
       createdAt
       creator
       editions {
@@ -17,6 +18,7 @@ export const GET_TOP_PROJECTS = gql`
       id
       imgIpfsHash
       isCurated
+      isFrozen
       isPaused
       mintCount
       originalLanguage
@@ -41,6 +43,7 @@ export function useGetTopProjects() {
     const { projects } = data;
     const formatted = projects?.map((project) => ({
       ...project,
+      balance: BigNumber.from(project.balance),
       mintCount: BigNumber.from(project.mintCount),
       startId: BigNumber.from(project.startId),
       endId: BigNumber.from(project.currentId),

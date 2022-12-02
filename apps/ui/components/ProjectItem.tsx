@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import Image from 'next/image';
 import styled from 'styled-components';
 import { useRouter } from 'next/router';
+import { BigNumber } from 'ethers';
 import {
   BASE_BORDER_RADIUS,
   POP,
@@ -12,6 +13,11 @@ import {
 import { useTheme } from '../hooks/theme';
 import { truncateAddress } from './WalletIndicator';
 import { getCoverImageUrl } from '../utils/getCoverImageUrl';
+import { Tooltip } from './Tooltip';
+import { formatEtherBigNumber } from '../utils/formatEtherBigNumber';
+import LockOpenIcon from '@material-ui/icons/LockOpen';
+import LockIcon from '@material-ui/icons/Lock';
+import TooltippedIndicator from './TooltippedIndicator';
 
 const Root = styled.div<ElementThemeProps>`
   display: flex;
@@ -31,6 +37,7 @@ const Root = styled.div<ElementThemeProps>`
 `;
 
 const ImageWrapper = styled.div`
+  position: relative;
   flex: 1;
 
   span {
@@ -41,6 +48,15 @@ const ImageWrapper = styled.div`
       object-fit: contain !important;
     }
   }
+`;
+
+const Indicators = styled.div`
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+
+  display: flex;
+  justify-content: space-between;
 `;
 
 const InfoWrapper = styled.div`
@@ -68,10 +84,13 @@ const Label = styled.span<ElementThemeProps>`
 
 interface ProjectItemTypes {
   id: string;
+  tvl: BigNumber;
   createdAt: string;
   creator: string;
   title: string;
   imgIpfsHash: string;
+  isFrozen: boolean;
+  isPaused: boolean;
   subtitle: string;
   genre: string;
 }
@@ -80,10 +99,13 @@ const ProjectItem = ({
   id,
   createdAt,
   creator,
+  isFrozen,
+  isPaused,
   title,
   imgIpfsHash,
   subtitle,
   genre,
+  tvl,
 }: ProjectItemTypes) => {
   const router = useRouter();
   const theme = useTheme();
@@ -118,6 +140,19 @@ const ProjectItem = ({
           alt={'Project Image'}
           priority
         />
+        <Indicators>
+          {isFrozen ? (
+            <TooltippedIndicator
+              tooltipContent="Project was locked by autor. Content won't change anymore."
+              icon={<LockIcon htmlColor="#fff" fontSize="inherit" />}
+            />
+          ) : (
+            <TooltippedIndicator
+              tooltipContent="Author can still change the content."
+              icon={<LockOpenIcon htmlColor="#fff" fontSize="inherit" />}
+            />
+          )}
+        </Indicators>
       </ImageWrapper>
       <InfoWrapper>
         <Title>{title}</Title>
@@ -135,6 +170,15 @@ const ProjectItem = ({
         <Flex>
           <Label theme={theme}>Author</Label>
           <div>{truncateAddress(creator)}</div>
+        </Flex>
+        <Flex>
+          <Tooltip
+            content="Total Value Locked. Matic collected in this edition."
+            theme={theme}
+          >
+            <Label theme={theme}>TVL</Label>
+          </Tooltip>
+          <div>{`${tvl ? formatEtherBigNumber(tvl) : 0} Matic`}</div>
         </Flex>
       </InfoWrapper>
     </Root>

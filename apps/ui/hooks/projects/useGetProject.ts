@@ -11,6 +11,7 @@ export const GET_ONE_PROJECT = gql`
     project(id: $id) {
       auctionsEnded
       auctionsStarted
+      balance
       blurbIpfsHash
       contributors {
         id
@@ -34,6 +35,8 @@ export const GET_ONE_PROJECT = gql`
       id
       imgIpfsHash
       initialMintPrice
+      isFrozen
+      isPaused
       mintCount
       originalLanguage
       premintedByAuthor
@@ -72,6 +75,7 @@ export function useGetProject(projectId: string) {
     }));
     return {
       ...data.project,
+      balance: BigNumber.from(project.balance),
       mintCount: BigNumber.from(project.mintCount),
       startId: BigNumber.from(project.startId),
       endId: BigNumber.from(project.endId),

@@ -16,6 +16,7 @@ import { useProjects } from '../hooks/projects';
 // import Dropdown from '../components/Dropdown';
 import { BaseButton, BaseInput, Cross, FONT_SERIF_BOLD } from '../themes';
 import Loading from '../components/Loading';
+import { BigNumber } from '@ethersproject/bignumber';
 
 const Root = styled.div`
   display: flex;
@@ -127,10 +128,13 @@ const ProjectItems = styled.div`
 
 interface Project {
   id: string;
+  balance: BigNumber;
   creator: string;
   createdAt?: string;
   title: string;
   imgIpfsHash?: string;
+  isFrozen: boolean;
+  isPaused: boolean;
   subtitle?: string;
   genre?: string;
   auctionsStarted: boolean;
@@ -286,7 +290,18 @@ const Projects = () => {
             searchedProjects &&
             searchedProjects.map(
               (
-                { title, createdAt, creator, genre, subtitle, imgIpfsHash, id },
+                {
+                  title,
+                  balance,
+                  createdAt,
+                  creator,
+                  genre,
+                  subtitle,
+                  imgIpfsHash,
+                  isFrozen,
+                  isPaused,
+                  id,
+                },
                 idx
               ) => (
                 <ProjectItem
@@ -298,6 +313,9 @@ const Projects = () => {
                   imgIpfsHash={imgIpfsHash}
                   subtitle={subtitle}
                   genre={genre}
+                  tvl={balance}
+                  isFrozen={isFrozen}
+                  isPaused={isPaused}
                 />
               )
             )}
@@ -306,7 +324,18 @@ const Projects = () => {
             projects &&
             projects.map(
               (
-                { title, createdAt, creator, genre, subtitle, imgIpfsHash, id },
+                {
+                  title,
+                  balance,
+                  createdAt,
+                  creator,
+                  genre,
+                  subtitle,
+                  imgIpfsHash,
+                  isFrozen,
+                  isPaused,
+                  id,
+                },
                 idx
               ) => (
                 <ProjectItem
@@ -318,6 +347,9 @@ const Projects = () => {
                   imgIpfsHash={imgIpfsHash}
                   subtitle={subtitle}
                   genre={genre}
+                  tvl={balance}
+                  isFrozen={isFrozen}
+                  isPaused={isPaused}
                 />
               )
             )}

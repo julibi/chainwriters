@@ -12,6 +12,8 @@ import StartAuctionsModal from './StartAuctionsModal';
 import { useCollection } from '../../hooks/collection';
 import { useAuctions } from '../../hooks/auctions';
 import { useTheme } from '../../hooks/theme';
+import { formatEtherBigNumber } from '../../utils/formatEtherBigNumber';
+import { Tooltip } from '../Tooltip';
 
 const InfoBlock = styled.div<ElementThemeProps>`
   width: 40%;
@@ -139,7 +141,7 @@ const AuctionSection = ({
         <Title size="xs">{'Auction Has Not Started Yet'}</Title>
       </InfoBlock>
     );
-  }, [isAuthor, startAuctionsPending, project]);
+  }, [project, isAuthor, startAuctionsPending, theme]);
 
   useEffect(() => {
     if (startAuctionsStatus === 'success') {
@@ -164,6 +166,14 @@ const AuctionSection = ({
       <FlexWrapper style={{ marginBlockEnd: '0' }}>
         <InfoBlock theme={theme}>
           <Title size="xs">{`Minted: ${Number(totalSupply)}`}</Title>
+          <Title size="xs">
+            <Tooltip
+              content="Total Value Locked. Matic collected in this edition."
+              theme={theme}
+            >
+              <span>{`TVL: ${formatEtherBigNumber(project.balance)}`}</span>
+            </Tooltip>
+          </Title>
         </InfoBlock>
         {project.auctionsStarted && !project.auctionsEnded && (
           <>

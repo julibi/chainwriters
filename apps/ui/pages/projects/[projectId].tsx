@@ -16,7 +16,6 @@ import Title from '../../components/Title';
 import Loading from '../../components/Loading';
 import MintSection from '../../components/ProjectDetails/MintSection';
 import { truncateAddress } from '../../components/WalletIndicator';
-import useShowText from '../../hooks/useShowText';
 import { useCollection } from '../../hooks/collection';
 import { useAuctions } from '../../hooks/auctions';
 import { useGetProject } from '../../hooks/projects/useGetProject';
@@ -111,6 +110,7 @@ const ReadIndicator = styled(BaseButton)`
   left: 1rem;
   font-family: ${FONT_SERIF_BOLD};
   background-color: ${POP};
+  box-shadow: none;
 
   animation: fadein 2s;
 
@@ -277,7 +277,6 @@ const ProjectDetailView = () => {
   const auctionsManager = useAuctionsManager();
   const mpManager = useMoonpageManager();
   const { retriggerAuction } = useAuctions();
-  const { allowedToRead } = useShowText(projectId);
   const [coverImgLink, setCoverImgLink] = useState<string>(null);
   const [isGettingCurrentPrice, setIsGettingCurentPrice] =
     useState<boolean>(false);
@@ -469,9 +468,7 @@ const ProjectDetailView = () => {
                 </Title>
               )}
               <ImageWrapper>
-                {allowedToRead && (
-                  <ReadIndicator onClick={handleClickRead}>READ</ReadIndicator>
-                )}
+                <ReadIndicator onClick={handleClickRead}>READ</ReadIndicator>
                 <Image
                   priority
                   src={coverImgLink ?? '/ImgPlaceholder.png'}

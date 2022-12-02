@@ -12,6 +12,9 @@ import {
 import { useCollection } from '../../hooks/collection';
 import ActionButton from '../ActionButton';
 import MintLegalModal from './MintLegalModal';
+import { useTheme } from '../../hooks/theme/useTheme';
+import { formatEtherBigNumber } from '../../utils/formatEtherBigNumber';
+import { Tooltip } from '../Tooltip';
 
 const Root = styled.div`
   flex: 1;
@@ -19,6 +22,10 @@ const Root = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
+`;
+
+const TVL = styled.h3`
+  text-transform: uppercase;
 `;
 
 const Price = styled.h3`
@@ -58,6 +65,7 @@ const MintSection = ({
   const [showLegalModal, setShowLegalModal] = useState<boolean>(false);
   const [amount, setAmount] = useState<number>(1);
   const { mint, mintStatus } = useCollection();
+  const theme = useTheme();
   const totalSupply = useMemo(() => {
     return project.currentId.sub(currentEdition?.startId);
   }, [project, currentEdition]);
@@ -115,7 +123,20 @@ const MintSection = ({
   return (
     <Root>
       <Title>{`MINT - EDITION ${edition}`}</Title>
-      <Price>{`Price ${price ? formatEther(price) : 0} MATIC`}</Price>
+      <div>
+        <Tooltip
+          content="Total Value Locked. Matic collected in this edition."
+          placement="top"
+          theme={theme}
+        >
+          <TVL>
+            {`TVL: ${
+              project.balance ? formatEtherBigNumber(project.balance) : 0
+            } Matic`}
+          </TVL>
+        </Tooltip>
+        <Price>{`Price: ${price ? formatEther(price) : 0} MATIC`}</Price>
+      </div>
       <PieChart part={Number(totalSupply) ?? 0} whole={Number(maxSupply)} />
       <ControlWrapper>
         <StyledControl
