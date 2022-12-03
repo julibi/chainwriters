@@ -135,7 +135,6 @@ const useGetAllNftsOfAccount = () => {
       setIsLoading(false);
     } catch (e: unknown) {
       setIsLoading(false);
-      console.log({ e });
     }
   }, [account, allProjects, chainId, collection, getEditionAndIdOfToken]);
 

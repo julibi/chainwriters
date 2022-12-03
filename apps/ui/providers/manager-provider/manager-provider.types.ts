@@ -61,7 +61,7 @@ export interface UpdateTranslationHashArgs {
 
 export interface UpdateBlurbHashArgs {
   projectId: string;
-  blurb: Node[];
+  blurb: Node[] | string;
   oldBlurbIpfsHash: string;
   blurbIpfsHash: string;
   onSuccess?: () => void;
