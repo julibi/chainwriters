@@ -3,7 +3,6 @@ import Image from 'next/image';
 import styled from 'styled-components';
 import { ButtonsWrapper, FadeIn, Wrapper } from '../../pages/create';
 import { BASE_BORDER_RADIUS, ElementThemeProps } from '../../themes';
-import { useTheme } from '../../hooks/theme';
 import ActionButton from '../ActionButton';
 import Title from '../Title';
 
@@ -17,7 +16,7 @@ export const DragNDrop = styled.div<ElementThemeProps>`
   height: 300px;
   align-items: center;
   border-radius: ${BASE_BORDER_RADIUS};
-  box-shadow: ${({ theme }) => theme.INSET_BASE_BOX_SHADOW};
+  box-shadow: ${({ theme }) => theme.INSET_BASE_BOX_SHADOW} !important;
   margin: 0 0 2rem 0;
 
   > span {
@@ -93,8 +92,6 @@ const CoverImageForm = ({
   pending,
   reset,
 }: CoverImageFormProps) => {
-  const theme = useTheme();
-
   return (
     <FadeIn>
       <Wrapper>
@@ -110,7 +107,6 @@ const CoverImageForm = ({
               const file = e.dataTransfer.files[0];
               captureFile(file);
             }}
-            theme={theme}
           >
             <Image
               src={
@@ -134,7 +130,6 @@ const CoverImageForm = ({
                 const file = e.target.files[0];
                 captureFile(file);
               }}
-              theme={theme}
             />
             <ButtonsWrapper>
               <ActionButton

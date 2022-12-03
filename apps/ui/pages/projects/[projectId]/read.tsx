@@ -15,7 +15,6 @@ import {
 import Toggle from '../../../components/Toggle';
 import RichTextRead from '../../../components/RichTextRead';
 import Title from '../../../components/Title';
-import { useWeb3React } from '@web3-react/core';
 import RichText from '../../../components/Create/RichText';
 import EditButton from '../../../components/EditButton';
 import { useManager } from '../../../hooks/manager';
@@ -136,13 +135,13 @@ const RichTextWrapper = styled.div`
 
 const Read = () => {
   const router = useRouter();
-  const { account } = useWeb3React();
   const theme = useTheme();
   const projectId = useGetProjectId();
   const { uploadText } = useUploadTextToIpfs();
   const { updateText, updateTextStatus } = useManager();
   const {
     allowedToRead,
+    isAuthor,
     project,
     text,
     textIpfsHash: originalTextIpfsHash,
@@ -159,16 +158,6 @@ const Read = () => {
     () => currentText ?? text,
     [text, currentText]
   );
-
-  const isAuthor = useMemo(() => {
-    if (
-      allowedToRead &&
-      account?.toLowerCase() === project?.creator?.toLowerCase()
-    ) {
-      return true;
-    }
-    return false;
-  }, [allowedToRead, account, project?.creator]);
 
   const handleClickGoBack = useCallback(
     (e) => {

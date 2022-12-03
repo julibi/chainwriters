@@ -96,26 +96,28 @@ const Blurb = ({ blurbIpfsHash, projectId, isAllowedToEdit }) => {
           setBlurb(fetchedBlurb);
           setOriginalBlurb(fetchedBlurb);
           setIsBlurbFetching(false);
-        }
-        // alternatively fetch directly from IPFS
-      } catch (e) {
-        const responseIpfs = await fetch(
-          `https://ipfs.io/ipfs/${blurbIpfsHash}`
-        );
-        if (responseIpfs.ok) {
-          let fetchedBlurb = await responseIpfs.text();
-          fetchedBlurb = isJson(fetchedBlurb)
-            ? JSON.parse(fetchedBlurb)
-            : fetchedBlurb;
-
-          setBlurb(fetchedBlurb);
-          setOriginalBlurb(fetchedBlurb);
-          setIsBlurbFetching(false);
         } else {
-          setBlurb(BLURB_FETCH_ERROR);
-          setOriginalBlurb(BLURB_FETCH_ERROR);
-          setIsBlurbFetching(false);
+          // alternatively fetch directly from IPFS
+          const responseIpfs = await fetch(
+            `https://ipfs.io/ipfs/${blurbIpfsHash}`
+          );
+          if (responseIpfs.ok) {
+            let fetchedBlurb = await responseIpfs.text();
+            fetchedBlurb = isJson(fetchedBlurb)
+              ? JSON.parse(fetchedBlurb)
+              : fetchedBlurb;
+
+            setBlurb(fetchedBlurb);
+            setOriginalBlurb(fetchedBlurb);
+            setIsBlurbFetching(false);
+          } else {
+            setBlurb(BLURB_FETCH_ERROR);
+            setOriginalBlurb(BLURB_FETCH_ERROR);
+            setIsBlurbFetching(false);
+          }
         }
+      } catch (e) {
+        // do nothing
       }
     }
   }, [blurbIpfsHash, projectId]);

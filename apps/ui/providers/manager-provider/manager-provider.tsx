@@ -17,7 +17,7 @@ import { Contributor } from '../projects-provider/projects-provider.types';
 import { BigNumber } from 'ethers';
 import { DEFAULT_COVER_IMAGE_IPFS_HASH } from '../../constants';
 import pinToPinata from '../../utils/pinToPinata';
-import { getGasMargin } from '../../utils/getGasMargin';
+import { fixedGasMargin, getGasMargin } from '../../utils/getGasMargin';
 import unpinFromPinata from '../../utils/unpinFromPinata';
 
 const defaultContext: ManagerApi = {
@@ -67,16 +67,17 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
         setConfigureStatus('confirming');
 
         imgHash = imgHash.length ? imgHash : DEFAULT_COVER_IMAGE_IPFS_HASH;
-        const estimatedGas =
-          await mpManager.estimateGas.configureProjectDetails(
-            projectId,
-            imgHash,
-            animationHash,
-            blurbHash,
-            genre,
-            subtitle
-          );
-        const gasLimit = getGasMargin(estimatedGas);
+        // const estimatedGas =
+        //   await mpManager.estimateGas.configureProjectDetails(
+        //     projectId,
+        //     imgHash,
+        //     animationHash,
+        //     blurbHash,
+        //     genre,
+        //     subtitle
+        //   );
+        // const gasLimit = getGasMargin(estimatedGas);
+        const { maxFeePerGas, maxPriorityFeePerGas } = await fixedGasMargin();
         const Tx = await mpManager.configureProjectDetails(
           projectId,
           imgHash,
@@ -84,7 +85,7 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
           blurbHash,
           genre,
           subtitle,
-          { gasLimit }
+          { maxFeePerGas, maxPriorityFeePerGas }
         );
         const { hash } = Tx;
         setConfigureStatus('waiting');
@@ -168,19 +169,20 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
       });
       try {
         setSetContributorsStatus('confirming');
-        const estimatedGas = await mpManager.estimateGas.addContributors(
-          projectId,
-          addressesArray,
-          sharesArray,
-          rolesArray
-        );
-        const gasLimit = getGasMargin(estimatedGas);
+        // const estimatedGas = await mpManager.estimateGas.addContributors(
+        //   projectId,
+        //   addressesArray,
+        //   sharesArray,
+        //   rolesArray
+        // );
+        // const gasLimit = getGasMargin(estimatedGas);
+        const { maxFeePerGas, maxPriorityFeePerGas } = await fixedGasMargin();
         const Tx = await mpManager.addContributors(
           projectId,
           addressesArray,
           sharesArray,
           rolesArray,
-          { gasLimit }
+          { maxFeePerGas, maxPriorityFeePerGas }
         );
         const { hash } = Tx;
         setSetContributorsStatus('waiting');
@@ -212,16 +214,17 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
     }: UpdateTranslationHashArgs) => {
       try {
         setUpdateTranslationStatus('confirming');
-        const estimatedGas =
-          await mpManager.estimateGas.updateTranslationIpfsHash(
-            projectId,
-            translationIpfsHash
-          );
-        const gasLimit = getGasMargin(estimatedGas);
+        // const estimatedGas =
+        //   await mpManager.estimateGas.updateTranslationIpfsHash(
+        //     projectId,
+        //     translationIpfsHash
+        //   );
+        // const gasLimit = getGasMargin(estimatedGas);
+        const { maxFeePerGas, maxPriorityFeePerGas } = await fixedGasMargin();
         const Tx = await mpManager.updateTranslationIpfsHash(
           projectId,
           translationIpfsHash,
-          { gasLimit }
+          { maxFeePerGas, maxPriorityFeePerGas }
         );
         const { hash } = Tx;
         setUpdateTranslationStatus('waiting');
@@ -273,15 +276,16 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
     }: UpdateBlurbHashArgs) => {
       try {
         setUpdateBlurbStatus('confirming');
-        const estimatedGas = await mpManager.estimateGas.updateBlurbIpfsHash(
-          projectId,
-          blurbIpfsHash
-        );
-        const gasLimit = getGasMargin(estimatedGas);
+        // const estimatedGas = await mpManager.estimateGas.updateBlurbIpfsHash(
+        //   projectId,
+        //   blurbIpfsHash
+        // );
+        // const gasLimit = getGasMargin(estimatedGas);
+        const { maxFeePerGas, maxPriorityFeePerGas } = await fixedGasMargin();
         const Tx = await mpManager.updateBlurbIpfsHash(
           projectId,
           blurbIpfsHash,
-          { gasLimit }
+          { maxFeePerGas, maxPriorityFeePerGas }
         );
         const { hash } = Tx;
         setUpdateBlurbStatus('waiting');
@@ -336,13 +340,15 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
     }: UpdateTextHashArgs) => {
       try {
         setUpdateTextStatus('confirming');
-        const estimatedGas = await mpManager.estimateGas.updateTextIpfsHash(
-          projectId,
-          textIpfsHash
-        );
-        const gasLimit = getGasMargin(estimatedGas);
+        // const estimatedGas = await mpManager.estimateGas.updateTextIpfsHash(
+        //   projectId,
+        //   textIpfsHash
+        // );
+        // const gasLimit = getGasMargin(estimatedGas);
+        const { maxFeePerGas, maxPriorityFeePerGas } = await fixedGasMargin();
         const Tx = await mpManager.updateTextIpfsHash(projectId, textIpfsHash, {
-          gasLimit,
+          maxFeePerGas,
+          maxPriorityFeePerGas,
         });
         const { hash } = Tx;
         setUpdateTextStatus('waiting');
@@ -399,17 +405,18 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
         const formattedPrice = BigNumber.from(
           (Number(price) * 1e18).toString()
         );
-        const estimatedGas = await mpManager.estimateGas.enableNextEdition(
-          projectId,
-          amount,
-          formattedPrice
-        );
-        const gasLimit = getGasMargin(estimatedGas);
+        // const estimatedGas = await mpManager.estimateGas.enableNextEdition(
+        //   projectId,
+        //   amount,
+        //   formattedPrice
+        // );
+        // const gasLimit = getGasMargin(estimatedGas);
+        const { maxFeePerGas, maxPriorityFeePerGas } = await fixedGasMargin();
         const Tx = await mpManager.enableNextEdition(
           projectId,
           amount,
           formattedPrice,
-          { gasLimit }
+          { maxFeePerGas, maxPriorityFeePerGas }
         );
         const { hash } = Tx;
         setEnableNextEditionStatus('waiting');

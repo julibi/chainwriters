@@ -33,6 +33,7 @@ const LIST_TYPES = ['numbered-list', 'bulleted-list'];
 const TEXT_ALIGN_TYPES = ['left', 'center', 'right', 'justify'];
 const Toolbar = styled.div`
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
 
   @media (max-width: 900px) {

@@ -19,21 +19,18 @@ import Dropdown from '../Dropdown';
 import { GENRES } from '../../constants';
 import Title from '../Title';
 import RichText from '../Create/RichText';
+import { useTheme } from '../../hooks/theme';
 
 const ContentWrapper = styled.div`
-  margin: 2rem;
-  padding: 0.75rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  overflow: scroll;
+  padding: 2rem;
+  width: 100%;
   height: 600px;
+  overflow: scroll;
 `;
 
 const FlexColumn = styled.div`
   display: flex;
   flex-direction: column;
-  width: 100%;
 `;
 
 const Label = styled.label`
@@ -68,6 +65,7 @@ const ConfigureModal = ({
   onClose,
   pending,
 }: ConfigureModalProps) => {
+  const theme = useTheme();
   const client = useIpfsClient();
   const [imgBuffer, setImgBuffer] = useState<null | Buffer>(null);
   const [imgFile, setImgFile] = useState(null);
@@ -125,70 +123,79 @@ const ConfigureModal = ({
   return (
     <BaseModal onClose={onClose}>
       <ContentWrapper>
-        <Title size="m" margin="0 0 2rem 0">
-          Configure Your Project
-        </Title>
-        <FlexColumn>
-          <InputField
-            label={'Subtitle: '}
-            value={subtitle}
-            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-              setSubtitle(e.target.value);
-            }}
-          />
-          <DropdownWrapper>
-            <Dropdown options={genreOptions} placeholder="Genre" width="100%" />
-          </DropdownWrapper>
-          <Label>{'Blurb:'}</Label>
-          <RichTextWrapper>
-            <RichText onKeyDown={(val: Node[]) => setBlurb(val)} />
-          </RichTextWrapper>
-          <StyledImageForm>
-            <DragNDrop
-              onDragOver={(e: any) => {
-                e.preventDefault();
+        <div>
+          <Title size="m" margin="0 0 2rem 0">
+            Configure Your Project
+          </Title>
+          <FlexColumn>
+            <InputField
+              label={'Subtitle: '}
+              value={subtitle}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                setSubtitle(e.target.value);
               }}
-              onDrop={(e: any) => {
-                e.preventDefault();
-                const file = e.dataTransfer.files[0];
-                captureFile(file);
-              }}
-            >
-              <Image
-                src={
-                  imgFile ? URL.createObjectURL(imgFile) : '/ImgPlaceholder.png'
-                }
-                height={'100%'}
-                width={'100%'}
-                alt={'Cover'}
-                quality={65}
-                layout="responsive"
+            />
+            <DropdownWrapper>
+              <Dropdown
+                options={genreOptions}
+                placeholder="Genre"
+                width="100%"
               />
-            </DragNDrop>
-            <FlexColumn>
-              <FileName>
-                {imgFile ? shortenImageName(imgFile.name) : ''}
-              </FileName>
-              <StyledFileInput
-                disabled={pending}
-                type="file"
-                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+            </DropdownWrapper>
+            <Label>{'Blurb:'}</Label>
+            <RichTextWrapper>
+              <RichText onKeyDown={(val: Node[]) => setBlurb(val)} />
+            </RichTextWrapper>
+            <StyledImageForm>
+              <DragNDrop
+                onDragOver={(e: any) => {
                   e.preventDefault();
-                  const file = e.target.files[0];
+                }}
+                onDrop={(e: any) => {
+                  e.preventDefault();
+                  const file = e.dataTransfer.files[0];
                   captureFile(file);
                 }}
-              />
-            </FlexColumn>
-          </StyledImageForm>
-          <ActionButton
-            disabled={pending}
-            onClick={handleClick}
-            loading={uploadPending || pending}
-            width="100%"
-            text="Configure"
-            web3Connectable
-          />
-        </FlexColumn>
+                theme={theme}
+              >
+                <Image
+                  src={
+                    imgFile
+                      ? URL.createObjectURL(imgFile)
+                      : '/ImgPlaceholder.png'
+                  }
+                  height={'100%'}
+                  width={'100%'}
+                  alt={'Cover'}
+                  quality={65}
+                  layout="responsive"
+                />
+              </DragNDrop>
+              <FlexColumn>
+                <FileName>
+                  {imgFile ? shortenImageName(imgFile.name) : ''}
+                </FileName>
+                <StyledFileInput
+                  disabled={pending}
+                  type="file"
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                    e.preventDefault();
+                    const file = e.target.files[0];
+                    captureFile(file);
+                  }}
+                />
+              </FlexColumn>
+            </StyledImageForm>
+            <ActionButton
+              disabled={pending}
+              onClick={handleClick}
+              loading={uploadPending || pending}
+              width="100%"
+              text="Configure"
+              web3Connectable
+            />
+          </FlexColumn>
+        </div>
       </ContentWrapper>
     </BaseModal>
   );

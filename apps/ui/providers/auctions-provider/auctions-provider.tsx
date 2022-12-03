@@ -9,7 +9,7 @@ import {
   RetriggerAuctionArgs,
 } from './auctions-provider.types';
 import { BigNumber } from 'ethers';
-import { getGasMargin } from '../../utils/getGasMargin';
+import { fixedGasMargin } from '../../utils/getGasMargin';
 
 const defaultContext: AuctionsApi = {
   retriggerAuction: async () => undefined,
@@ -27,19 +27,22 @@ export function AuctionsProvider({ children }: AuctionsProviderProps) {
     async ({ projectId, onSuccess, onError }: RetriggerAuctionArgs) => {
       try {
         setRetriggerAuctionStatus('confirming');
-        const estimatedGas = await auctionsManager.estimateGas.retriggerAuction(
-          BigNumber.from(projectId)
-        );
-        const gasLimit = getGasMargin(estimatedGas);
+        // this estimation is not working anymore 3.Dec 2022
+        // const estimatedGas = await auctionsManager.estimateGas.retriggerAuction(
+        //   BigNumber.from(projectId)
+        // );
+        // const gasLimit = getGasMargin(estimatedGas);
+        const { maxFeePerGas, maxPriorityFeePerGas } = await fixedGasMargin();
+
         const Tx = await auctionsManager.retriggerAuction(
           BigNumber.from(projectId),
-          { gasLimit }
+          { maxFeePerGas, maxPriorityFeePerGas }
         );
         const { hash } = Tx;
         setRetriggerAuctionStatus('waiting');
         toast.info(<ToastLink message={'Retriggering...'} />);
         auctionsManager.provider.once(hash, (transaction) => {
-          // we need a time, because the graph needs some time
+          // we need time, because the graph needs a while
           setTimeout(() => {
             setRetriggerAuctionStatus('success');
             toast.info(<ToastLink message={'Success!'} />);

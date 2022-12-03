@@ -11,6 +11,9 @@ import { useUser } from './user/useUser';
 export const GET_PROJECT = gql`
   query oneProjectQuery($id: String!) {
     project(id: $id) {
+      contributors {
+        address
+      }
       createdAt
       creator
       genre
@@ -27,10 +30,7 @@ export const GET_PROJECT = gql`
 const useShowText = (projectId: string) => {
   const { account } = useWeb3React();
   const { detailedNfts } = useUser();
-  const allowedToRead = useMemo(
-    () => !!detailedNfts?.find((nft) => nft.projectId === Number(projectId)),
-    [detailedNfts, projectId]
-  );
+
   const [text, setText] = useState<Node[]>();
   const [translation, setTranslation] = useState<Node[]>();
   const [pending, setPending] = useState<boolean>(true);
@@ -44,6 +44,29 @@ const useShowText = (projectId: string) => {
   const project = useMemo(() => {
     return data?.project;
   }, [data]);
+
+  const isContributor = useMemo(() => {
+    const contributors =
+      data?.project?.contributors?.map((ctrib) =>
+        ctrib.address.toLowerCase()
+      ) || [];
+    return contributors.includes(account?.toLowerCase());
+  }, [account, data]);
+
+  const isAuthor = useMemo(() => {
+    if (account?.toLowerCase() === project?.creator?.toLowerCase()) {
+      return true;
+    }
+    return false;
+  }, [account, project?.creator]);
+
+  const allowedToRead = useMemo(
+    () =>
+      isAuthor ||
+      isContributor ||
+      !!detailedNfts?.find((nft) => nft.projectId === Number(projectId)),
+    [detailedNfts, isAuthor, isContributor, projectId]
+  );
 
   const fetchTextData = useCallback(async () => {
     setPending(true);
@@ -135,6 +158,8 @@ const useShowText = (projectId: string) => {
   return useMemo(
     () => ({
       allowedToRead,
+      isAuthor,
+      isContributor,
       pending: pending || isLoading,
       project,
       text,
@@ -145,6 +170,8 @@ const useShowText = (projectId: string) => {
     }),
     [
       allowedToRead,
+      isAuthor,
+      isContributor,
       fetchTranslation,
       hasTranslation,
       isLoading,
