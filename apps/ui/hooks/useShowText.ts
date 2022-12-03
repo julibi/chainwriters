@@ -30,10 +30,9 @@ export const GET_PROJECT = gql`
 const useShowText = (projectId: string) => {
   const { account } = useWeb3React();
   const { detailedNfts } = useUser();
-
   const [text, setText] = useState<Node[]>();
   const [translation, setTranslation] = useState<Node[]>();
-  const [pending, setPending] = useState<boolean>(true);
+  const [pending, setPending] = useState<boolean>(false);
   const {
     loading: isLoading,
     error,
@@ -82,8 +81,10 @@ const useShowText = (projectId: string) => {
       setText(fetchedText);
       setPending(false);
     } catch (e) {
+      setPending(false);
       // do nothing
     }
+
     // if text cannot be fetched from BE, fetch from IPFS directly
     if (!fetchedText) {
       try {
@@ -118,6 +119,7 @@ const useShowText = (projectId: string) => {
       setTranslation(fetchedTranslation);
       setPending(false);
     } catch (e) {
+      setPending(false);
       // do nothing
     }
     if (!fetchedTranslation) {
@@ -132,7 +134,6 @@ const useShowText = (projectId: string) => {
           setPending(false);
         }
       } catch (e: unknown) {
-        console.log({ e });
         setPending(false);
       }
     }

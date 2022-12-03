@@ -1,13 +1,23 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useWeb3React } from '@web3-react/core';
+import { Multicall } from 'ethereum-multicall';
+import { JsonRpcProvider } from '@ethersproject/providers';
 import useMoonpageCollection from '../../hooks/useMoonpageCollection';
 import { useProjects } from '../../hooks/projects';
 import { Project } from '../projects-provider/projects-provider.types';
 import { OwnedUserNft } from './user-provider.types';
+import { RPC_URLS } from '../../connectors';
+import { loop } from '../../utils/loop';
+import {
+  MOONPAGE_COLLECTION_ADDRESS,
+  MOONPAGE_COLLECTION_ADDRESS_DEV,
+} from '../../../constants';
+import ABI from '../../abis/MoonpageCollection.json';
+import { BigNumber } from '@ethersproject/bignumber';
 
 // make this hook accept address parameter ?-> could be used in the future for "profile page"
 const useGetAllNftsOfAccount = () => {
-  const { account } = useWeb3React();
+  const { account, chainId } = useWeb3React();
   const collection = useMoonpageCollection();
   const { allProjects, areAllProjectsLoading, allProjectsFetchError } =
     useProjects();
@@ -60,18 +70,47 @@ const useGetAllNftsOfAccount = () => {
   );
 
   const fetchBalance = useCallback(async () => {
+    const provider = new JsonRpcProvider(RPC_URLS[chainId], chainId);
+    const multicall = new Multicall({
+      ethersProvider: provider,
+      tryAggregate: false,
+    });
+
     try {
       setIsLoading(true);
+      // fetch the balance
       const fetchedBalanceBig = await collection.balanceOf(account);
       const fetchedBalance = Number(fetchedBalanceBig);
-      const tokens = [];
+      const callsForMulticalls = [];
+      let tokens = [];
+      // prepare multicall
+      loop(fetchedBalance, (i: number) => {
+        callsForMulticalls.push({
+          reference: 'tokenOfOwnerByIndex',
+          methodName: 'tokenOfOwnerByIndex',
+          methodParameters: [account, i],
+        });
+      });
 
-      // todo: make a multicall instead
-      for (let i = 0; i < fetchedBalance; i++) {
-        const nftIdBig = await collection.tokenOfOwnerByIndex(account, i);
-        const nftId = Number(nftIdBig);
-        tokens.push(nftId);
-      }
+      const multicallContext = {
+        reference: 'NFTS_OF_USER',
+        contractAddress:
+          process.env.NX_PUBLIC_ENVIRONMENT === 'PROD'
+            ? MOONPAGE_COLLECTION_ADDRESS
+            : MOONPAGE_COLLECTION_ADDRESS_DEV,
+        abi: ABI,
+        calls: callsForMulticalls,
+      };
+
+      const result = (
+        await multicall.call(multicallContext)
+      ).results.NFTS_OF_USER.callsReturnContext.filter(
+        (returnElement) => returnElement.success
+      );
+      // get all token Ids of user
+      tokens = result.map((el) =>
+        Number(BigNumber.from(el.returnValues[0].hex))
+      );
 
       setBalance(fetchedBalance);
       setNfts(tokens);
@@ -79,6 +118,7 @@ const useGetAllNftsOfAccount = () => {
       const nftsWithIdAndEdition = tokens.map((token) =>
         getEditionAndIdOfToken(token, allProjects)
       );
+
       const groupByProjectId = nftsWithIdAndEdition.reduce((group, product) => {
         const { projectId } = product;
         group[projectId] = group[projectId] ?? [];
@@ -89,6 +129,7 @@ const useGetAllNftsOfAccount = () => {
       for (const [key, value] of Object.entries(groupByProjectId)) {
         groupedInArray.push(value);
       }
+
       setDetailedNfts(nftsWithIdAndEdition);
       setGroupedNfts(groupedInArray);
       setIsLoading(false);
@@ -96,7 +137,7 @@ const useGetAllNftsOfAccount = () => {
       setIsLoading(false);
       console.log({ e });
     }
-  }, [account, allProjects, collection, getEditionAndIdOfToken]);
+  }, [account, allProjects, chainId, collection, getEditionAndIdOfToken]);
 
   useEffect(() => {
     if (account && !areAllProjectsLoading && !allProjectsFetchError) {
@@ -117,75 +158,3 @@ const useGetAllNftsOfAccount = () => {
 };
 
 export default useGetAllNftsOfAccount;
-
-// const provider = new JsonRpcProvider(RPC_URLS[80001], 80001);
-// const multicall = new Multicall({
-//   ethersProvider: provider,
-//   tryAggregate: false,
-// });
-
-//   // multicall
-//   const addressLow = address.toLowerCase();
-//   const multicallContext = {
-//     reference: 'PROJECT_DETAILS',
-//     contractAddress: addressLow,
-//     abi: PROJECT_ABI,
-//     calls: [
-//       {
-//         reference: 'project',
-//         methodName: 'project',
-//         methodParameters: [],
-//       },
-//       {
-//         reference: 'currentEdition',
-//         methodName: 'currentEdition',
-//         methodParameters: [],
-//       },
-//       {
-//         reference: 'expiresAt',
-//         methodName: 'expiresAt',
-//         methodParameters: [],
-//       },
-//       {
-//         reference: 'totalSupplyGenEd',
-//         methodName: 'totalSupply',
-//         methodParameters: [1],
-//       },
-//       {
-//         reference: 'mintPrice',
-//         // it should be getPrice
-//         methodName: 'INITIAL_MINT_PRICE',
-//         methodParameters: [],
-//       },
-//       {
-//         reference: 'currentEditionMintPrice',
-//         methodName: 'currentEditionMintPrice',
-//         methodParameters: [],
-//       },
-//       {
-//         reference: 'currentEditionMax',
-//         methodName: 'currentEditionMax',
-//         methodParameters: [],
-//       },
-//       {
-//         reference: 'auctionsStarted',
-//         methodName: 'auctionStarted',
-//         methodParameters: [],
-//       },
-//       {
-//         reference: 'auctionsEnded',
-//         methodName: 'auctionPhaseFinished',
-//         methodParameters: [],
-//       },
-//       {
-//         reference: 'paused',
-//         methodName: 'paused',
-//         methodParameters: [],
-//       },
-//       {
-//         reference: 'factory',
-//         methodName: 'factory',
-//         methodParameters: [],
-//       },
-//     ],
-//   };
