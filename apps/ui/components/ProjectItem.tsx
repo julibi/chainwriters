@@ -120,8 +120,10 @@ const ProjectItem = ({
   );
 
   const getImageUrl = useCallback(async () => {
+    console.log({ id, imgIpfsHash, title });
     if (id && imgIpfsHash?.length) {
       const imgUrl = await getCoverImageUrl(id, imgIpfsHash);
+      console.log({ imgUrl });
       setCoverImgLink(imgUrl);
     }
   }, [id, imgIpfsHash]);
