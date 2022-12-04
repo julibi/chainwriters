@@ -45,6 +45,7 @@ const ProjectList = styled.section`
 
 const ProjectSection = () => {
   const { topProjects: data, areTopProjectsLoading: loading } = useProjects();
+
   return (
     <Root>
       <Title color={POP}>Top Projects</Title>
@@ -52,7 +53,18 @@ const ProjectSection = () => {
       <ProjectList>
         {data?.map(
           (
-            { id, title, createdAt, creator, imgIpfsHash, subtitle, genre },
+            {
+              id,
+              title,
+              balance,
+              createdAt,
+              creator,
+              imgIpfsHash,
+              isFrozen,
+              isPaused,
+              subtitle,
+              genre,
+            },
             idx
           ) => (
             <ProjectItem
@@ -64,6 +76,9 @@ const ProjectSection = () => {
               imgIpfsHash={imgIpfsHash}
               subtitle={subtitle}
               genre={genre}
+              tvl={balance}
+              isFrozen={isFrozen}
+              isPaused={isPaused}
             />
           )
         )}

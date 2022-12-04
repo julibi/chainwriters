@@ -1,24 +1,33 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useWeb3React } from '@web3-react/core';
+import { BigNumber } from 'ethers';
 import Image from 'next/image';
+import { toast } from 'react-toastify';
 import styled from 'styled-components';
+import LockOpenIcon from '@material-ui/icons/LockOpen';
+import LockIcon from '@material-ui/icons/Lock';
+import Blurb from './Blurb';
 import ActionButton from '../../components/ActionButton';
 import BaseModal from '../../components/BaseModal';
+import NextLink from '../../components/NextLink';
 import AuthorSection from '../../components/ProjectDetails/AuthorSection';
 import AuctionSection from '../../components/ProjectDetails/AuctionSection';
 import Checkbox from '../../components/Checkbox';
 import Title from '../../components/Title';
 import Loading from '../../components/Loading';
 import MintSection from '../../components/ProjectDetails/MintSection';
+import TooltippedIndicator from '../../components/TooltippedIndicator';
 import { truncateAddress } from '../../components/WalletIndicator';
-import useShowText from '../../hooks/useShowText';
 import { useCollection } from '../../hooks/collection';
 import { useAuctions } from '../../hooks/auctions';
 import { useGetProject } from '../../hooks/projects/useGetProject';
 import { useGetProjectId } from '../../hooks/projects/useGetProjectId';
 import useAuctionsManager from '../../hooks/useAuctionsManager';
+import { useTheme } from '../../hooks/theme';
+import useMoonpageManager from '../../hooks/useMoonpageManager';
 import { formatNumber } from '../../utils/formatNumber';
+import { getCoverImageUrl } from '../../utils/getCoverImageUrl';
 import {
   BASE_BORDER_RADIUS,
   DISABLED_WHITE,
@@ -30,17 +39,10 @@ import {
   ElementThemeProps,
 } from '../../themes';
 import { MOONPAGE_DEV_ADDRESS } from '../../../constants';
-import { toast } from 'react-toastify';
-import NextLink from '../../components/NextLink';
-import { useTheme } from '../../hooks/theme';
-
-import useMoonpageManager from '../../hooks/useMoonpageManager';
 import {
   Edition,
   Project,
 } from '../../providers/projects-provider/projects-provider.types';
-import { BigNumber } from 'ethers';
-import Blurb from './Blurb';
 
 const Root = styled.div`
   display: flex;
@@ -111,6 +113,7 @@ const ReadIndicator = styled(BaseButton)`
   left: 1rem;
   font-family: ${FONT_SERIF_BOLD};
   background-color: ${POP};
+  box-shadow: none;
 
   animation: fadein 2s;
 
@@ -122,6 +125,14 @@ const ReadIndicator = styled(BaseButton)`
       opacity: 1;
     }
   }
+`;
+
+const Indicators = styled.div`
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  display: flex;
+  justify-content: space-between;
 `;
 
 const Author = styled.div`
@@ -277,7 +288,6 @@ const ProjectDetailView = () => {
   const auctionsManager = useAuctionsManager();
   const mpManager = useMoonpageManager();
   const { retriggerAuction } = useAuctions();
-  const { allowedToRead } = useShowText(projectId);
   const [coverImgLink, setCoverImgLink] = useState<string>(null);
   const [isGettingCurrentPrice, setIsGettingCurentPrice] =
     useState<boolean>(false);
@@ -289,11 +299,6 @@ const ProjectDetailView = () => {
     () => updatedProject || fetchedProject,
     [fetchedProject, updatedProject]
   );
-  useEffect(() => {
-    if (project?.imgIpfsHash) {
-      setCoverImgLink(`https://ipfs.io/ipfs/${project.imgIpfsHash}`);
-    }
-  }, [project]);
 
   const refetchAuctionStateAndCount = useCallback(async () => {
     const auctionData = await auctionsManager.auctions(projectId);
@@ -440,6 +445,15 @@ const ProjectDetailView = () => {
     [project?.initialMintPrice, projectId, refetch, startAuctions]
   );
 
+  const getImageUrl = useCallback(async () => {
+    const imgUrl = await getCoverImageUrl(projectId, project?.imgIpfsHash);
+    setCoverImgLink(imgUrl);
+  }, [project?.imgIpfsHash, projectId]);
+
+  useEffect(() => {
+    getImageUrl();
+  }, [getImageUrl]);
+
   if (!project && !isProjectLoading) {
     return (
       <Root>
@@ -465,9 +479,7 @@ const ProjectDetailView = () => {
                 </Title>
               )}
               <ImageWrapper>
-                {allowedToRead && (
-                  <ReadIndicator onClick={handleClickRead}>READ</ReadIndicator>
-                )}
+                <ReadIndicator onClick={handleClickRead}>READ</ReadIndicator>
                 <Image
                   priority
                   src={coverImgLink ?? '/ImgPlaceholder.png'}
@@ -477,6 +489,21 @@ const ProjectDetailView = () => {
                   quality={65}
                   layout="responsive"
                 />
+                <Indicators>
+                  {project?.isFrozen ? (
+                    <TooltippedIndicator
+                      tooltipContent="Project was locked by autor. Content won't change anymore."
+                      icon={<LockIcon htmlColor="#fff" fontSize="inherit" />}
+                    />
+                  ) : (
+                    <TooltippedIndicator
+                      tooltipContent="Author can still change the content."
+                      icon={
+                        <LockOpenIcon htmlColor="#fff" fontSize="inherit" />
+                      }
+                    />
+                  )}
+                </Indicators>
               </ImageWrapper>
               <Author>
                 <Title padding="0" size="xs" width="fit-content">

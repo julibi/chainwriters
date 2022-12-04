@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { Node } from 'slate';
 import { Contributor } from '../projects-provider/projects-provider.types';
 
 export interface ManagerProviderProps {
@@ -28,8 +29,10 @@ export type ManagerApi = {
 };
 
 export type NewConfiguration = {
+  imgFile: any;
   imgHash: string;
   animationHash: string;
+  blurb: Node[] | undefined;
   blurbHash: string;
   genre: string;
   subtitle: string;
@@ -50,6 +53,7 @@ export interface SetContributorsArgs {
 
 export interface UpdateTranslationHashArgs {
   projectId: string;
+  translation: Node[];
   translationIpfsHash: string;
   onSuccess?: () => void;
   onError?: (e: any) => void;
@@ -57,6 +61,7 @@ export interface UpdateTranslationHashArgs {
 
 export interface UpdateBlurbHashArgs {
   projectId: string;
+  blurb: Node[] | string;
   oldBlurbIpfsHash: string;
   blurbIpfsHash: string;
   onSuccess?: () => void;
@@ -66,6 +71,7 @@ export interface UpdateBlurbHashArgs {
 export interface UpdateTextHashArgs {
   projectId: string;
   oldTextIpfsHash: string;
+  text: Node[];
   textIpfsHash: string;
   onSuccess?: () => void;
   onError?: (e: any) => void;

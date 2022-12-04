@@ -11,7 +11,11 @@ const nextConfig = {
     svgr: false,
   },
   images: {
-    domains: ['ipfs.io'],
+    domains: [
+      'ipfs.io',
+      'moonpage-metadata-backend-dev.herokuapp.com',
+      'moonpage-metadata-backend-prod.herokuapp.com',
+    ],
   },
   env: {
     NEXT_PUBLIC_RPC_URL_POLYGON_MAINNET_INFURA:
@@ -35,6 +39,8 @@ const nextConfig = {
     NEXT_PUBLIC_HOTJAR_ID: process.env.NX_PUBLIC_HOTJAR_ID,
     NEXT_PUBLIC_HOTJAR_SV: process.env.NX_PUBLIC_HOTJAR_SV,
     NEXT_SITE_URL: process.env.NX_PUBLIC_SITE_URL,
+    NEXT_PUBLIC_MOONPAGE_METADATA_API:
+      process.env.NX_PUBLIC_MOONPAGE_METADATA_API,
   },
 };
 

@@ -11,7 +11,7 @@ import { toast } from 'react-toastify';
 import ToastLink from '../../components/ToastLink';
 import { WriteActionStatus } from '../manager-provider/manager-provider.types';
 import useAuctionsManager from '../../hooks/useAuctionsManager';
-import { getGasMargin } from '../../utils/getGasMargin';
+import { fixedGasMargin } from '../../utils/getGasMargin';
 
 const defaultContext: CollectionApi = {
   startAuctions: async () => undefined,
@@ -44,17 +44,18 @@ export function CollectionProvider({ children }: CollectionProviderProps) {
         setStartAuctionsStatus('confirming');
 
         const discountRate = Number(initialMintPrice.div(60 * 60 * 24));
-        const estimatedGas = await collection.estimateGas.startAuctions(
-          projectId,
-          amountForCreator,
-          discountRate
-        );
-        const gasLimit = getGasMargin(estimatedGas);
+        // const estimatedGas = await collection.estimateGas.startAuctions(
+        //   projectId,
+        //   amountForCreator,
+        //   discountRate
+        // );
+        // const gasLimit = getGasMargin(estimatedGas);
+        const { maxFeePerGas, maxPriorityFeePerGas } = await fixedGasMargin();
         const Tx = await collection.startAuctions(
           projectId,
           amountForCreator,
           discountRate,
-          { gasLimit }
+          { maxFeePerGas, maxPriorityFeePerGas }
         );
         const { hash } = Tx;
         setStartAuctionsStatus('waiting');
@@ -73,6 +74,7 @@ export function CollectionProvider({ children }: CollectionProviderProps) {
           }, 10000);
         });
       } catch (e) {
+        console.log({ e });
         setStartAuctionsStatus('error');
         toast.error(<ToastLink message={'Something went wrong!'} />);
         onError?.(e);
@@ -89,13 +91,16 @@ export function CollectionProvider({ children }: CollectionProviderProps) {
           projectId,
           initialMintPrice
         );
-        const estimatedGas = await collection.estimateGas.buy(projectId, {
-          value: currentPrice,
-        });
-        const gasLimit = getGasMargin(estimatedGas);
+        // const estimatedGas = await collection.estimateGas.buy(projectId, {
+        //   value: currentPrice,
+        // });
+        // const gasLimit = getGasMargin(estimatedGas);
+        const { maxFeePerGas, maxPriorityFeePerGas } = await fixedGasMargin();
+
         const Tx = await collection.buy(projectId, {
           value: currentPrice,
-          gasLimit,
+          maxFeePerGas,
+          maxPriorityFeePerGas,
         });
         const { hash } = Tx;
         setBuyStatus('waiting');
@@ -119,17 +124,19 @@ export function CollectionProvider({ children }: CollectionProviderProps) {
     async ({ projectId, amount, price, onSuccess, onError }: MintArgs) => {
       try {
         setMintStatus('confirming');
-        const estimatedGas = await collection.estimateGas.publicMint(
-          projectId,
-          amount,
-          {
-            value: price,
-          }
-        );
-        const gasLimit = getGasMargin(estimatedGas);
+        // const estimatedGas = await collection.estimateGas.publicMint(
+        //   projectId,
+        //   amount,
+        //   {
+        //     value: price,
+        //   }
+        // );
+        // const gasLimit = getGasMargin(estimatedGas);
+        const { maxFeePerGas, maxPriorityFeePerGas } = await fixedGasMargin();
         const tx = await collection.publicMint(projectId, amount, {
           value: price,
-          gasLimit,
+          maxFeePerGas,
+          maxPriorityFeePerGas,
         });
         const { hash } = tx;
         toast.info(<ToastLink message={'Minting...'} />);

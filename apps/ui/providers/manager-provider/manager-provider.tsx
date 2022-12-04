@@ -17,7 +17,7 @@ import { Contributor } from '../projects-provider/projects-provider.types';
 import { BigNumber } from 'ethers';
 import { DEFAULT_COVER_IMAGE_IPFS_HASH } from '../../constants';
 import pinToPinata from '../../utils/pinToPinata';
-import { getGasMargin } from '../../utils/getGasMargin';
+import { fixedGasMargin, getGasMargin } from '../../utils/getGasMargin';
 import unpinFromPinata from '../../utils/unpinFromPinata';
 
 const defaultContext: ManagerApi = {
@@ -53,8 +53,10 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
   const configureProject = useCallback(
     async ({
       projectId,
+      imgFile,
       imgHash,
       animationHash,
+      blurb,
       blurbHash,
       genre,
       subtitle,
@@ -65,16 +67,17 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
         setConfigureStatus('confirming');
 
         imgHash = imgHash.length ? imgHash : DEFAULT_COVER_IMAGE_IPFS_HASH;
-        const estimatedGas =
-          await mpManager.estimateGas.configureProjectDetails(
-            projectId,
-            imgHash,
-            animationHash,
-            blurbHash,
-            genre,
-            subtitle
-          );
-        const gasLimit = getGasMargin(estimatedGas);
+        // const estimatedGas =
+        //   await mpManager.estimateGas.configureProjectDetails(
+        //     projectId,
+        //     imgHash,
+        //     animationHash,
+        //     blurbHash,
+        //     genre,
+        //     subtitle
+        //   );
+        // const gasLimit = getGasMargin(estimatedGas);
+        const { maxFeePerGas, maxPriorityFeePerGas } = await fixedGasMargin();
         const Tx = await mpManager.configureProjectDetails(
           projectId,
           imgHash,
@@ -82,7 +85,7 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
           blurbHash,
           genre,
           subtitle,
-          { gasLimit }
+          { maxFeePerGas, maxPriorityFeePerGas }
         );
         const { hash } = Tx;
         setConfigureStatus('waiting');
@@ -93,6 +96,44 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
           onSuccess?.();
         };
         mpManager.provider.once(hash, async (transaction) => {
+          if (blurb) {
+            // upload blurb metadata to BE
+            try {
+              const blurbRequestOptions = {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ blurb }),
+              };
+              // fire and forget
+              await fetch(
+                `${process.env.NEXT_PUBLIC_MOONPAGE_METADATA_API}/projects/blurb/${projectId}`,
+                blurbRequestOptions
+              );
+            } catch (e) {
+              // do nothing
+            }
+          }
+
+          if (imgFile) {
+            // upload cover image metadata to BE
+            try {
+              const formData = new FormData();
+              formData.append('file', imgFile);
+              const imgRequestOptions = {
+                method: 'POST',
+                body: formData,
+              };
+              // fire and forget
+              await fetch(
+                `${process.env.NEXT_PUBLIC_MOONPAGE_METADATA_API}/image-upload/${projectId}`,
+                imgRequestOptions
+              );
+            } catch (e) {
+              // do nothing
+            }
+          }
+
+          // pin metadata to IPFS
           try {
             await pinToPinata(imgHash, projectId, 'image');
             await pinToPinata(blurbHash, projectId, 'blurb');
@@ -128,19 +169,20 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
       });
       try {
         setSetContributorsStatus('confirming');
-        const estimatedGas = await mpManager.estimateGas.addContributors(
-          projectId,
-          addressesArray,
-          sharesArray,
-          rolesArray
-        );
-        const gasLimit = getGasMargin(estimatedGas);
+        // const estimatedGas = await mpManager.estimateGas.addContributors(
+        //   projectId,
+        //   addressesArray,
+        //   sharesArray,
+        //   rolesArray
+        // );
+        // const gasLimit = getGasMargin(estimatedGas);
+        const { maxFeePerGas, maxPriorityFeePerGas } = await fixedGasMargin();
         const Tx = await mpManager.addContributors(
           projectId,
           addressesArray,
           sharesArray,
           rolesArray,
-          { gasLimit }
+          { maxFeePerGas, maxPriorityFeePerGas }
         );
         const { hash } = Tx;
         setSetContributorsStatus('waiting');
@@ -165,22 +207,24 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
   const updateTranslation = useCallback(
     async ({
       projectId,
+      translation,
       translationIpfsHash,
       onError,
       onSuccess,
     }: UpdateTranslationHashArgs) => {
       try {
         setUpdateTranslationStatus('confirming');
-        const estimatedGas =
-          await mpManager.estimateGas.updateTranslationIpfsHash(
-            projectId,
-            translationIpfsHash
-          );
-        const gasLimit = getGasMargin(estimatedGas);
+        // const estimatedGas =
+        //   await mpManager.estimateGas.updateTranslationIpfsHash(
+        //     projectId,
+        //     translationIpfsHash
+        //   );
+        // const gasLimit = getGasMargin(estimatedGas);
+        const { maxFeePerGas, maxPriorityFeePerGas } = await fixedGasMargin();
         const Tx = await mpManager.updateTranslationIpfsHash(
           projectId,
           translationIpfsHash,
-          { gasLimit }
+          { maxFeePerGas, maxPriorityFeePerGas }
         );
         const { hash } = Tx;
         setUpdateTranslationStatus('waiting');
@@ -191,6 +235,20 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
           onSuccess?.();
         };
         mpManager.provider.once(hash, async (transaction) => {
+          // save update in BE
+          try {
+            const translationUpdateOptions = {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ translation }),
+            };
+            const metadataUrl = `${process.env.NX_PUBLIC_MOONPAGE_METADATA_API}/projects/translation/${projectId}`;
+            await fetch(metadataUrl, translationUpdateOptions);
+          } catch (e) {
+            // do nothing
+          }
+
+          // then pin it with Pinata
           try {
             await pinToPinata(translationIpfsHash, projectId, 'translation');
           } catch (e) {
@@ -210,6 +268,7 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
   const updateBlurb = useCallback(
     async ({
       projectId,
+      blurb,
       blurbIpfsHash,
       oldBlurbIpfsHash,
       onError,
@@ -217,15 +276,16 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
     }: UpdateBlurbHashArgs) => {
       try {
         setUpdateBlurbStatus('confirming');
-        const estimatedGas = await mpManager.estimateGas.updateBlurbIpfsHash(
-          projectId,
-          blurbIpfsHash
-        );
-        const gasLimit = getGasMargin(estimatedGas);
+        // const estimatedGas = await mpManager.estimateGas.updateBlurbIpfsHash(
+        //   projectId,
+        //   blurbIpfsHash
+        // );
+        // const gasLimit = getGasMargin(estimatedGas);
+        const { maxFeePerGas, maxPriorityFeePerGas } = await fixedGasMargin();
         const Tx = await mpManager.updateBlurbIpfsHash(
           projectId,
           blurbIpfsHash,
-          { gasLimit }
+          { maxFeePerGas, maxPriorityFeePerGas }
         );
         const { hash } = Tx;
         setUpdateBlurbStatus('waiting');
@@ -236,6 +296,20 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
           onSuccess?.();
         };
         mpManager.provider.once(hash, async (transaction) => {
+          // save update in BE
+          try {
+            const blurbUpdateOptions = {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ blurb }),
+            };
+            const metadataUrl = `${process.env.NX_PUBLIC_MOONPAGE_METADATA_API}/projects/blurb/${projectId}`;
+            await fetch(metadataUrl, blurbUpdateOptions);
+          } catch (e) {
+            // do nothing
+          }
+
+          // then pin it with Pinata
           try {
             // TODO: find a way to only unpin the first all other than the last one.
             // Because we want to show the user the latest change made.
@@ -258,6 +332,7 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
   const updateText = useCallback(
     async ({
       projectId,
+      text,
       textIpfsHash,
       oldTextIpfsHash,
       onError,
@@ -265,13 +340,15 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
     }: UpdateTextHashArgs) => {
       try {
         setUpdateTextStatus('confirming');
-        const estimatedGas = await mpManager.estimateGas.updateTextIpfsHash(
-          projectId,
-          textIpfsHash
-        );
-        const gasLimit = getGasMargin(estimatedGas);
+        // const estimatedGas = await mpManager.estimateGas.updateTextIpfsHash(
+        //   projectId,
+        //   textIpfsHash
+        // );
+        // const gasLimit = getGasMargin(estimatedGas);
+        const { maxFeePerGas, maxPriorityFeePerGas } = await fixedGasMargin();
         const Tx = await mpManager.updateTextIpfsHash(projectId, textIpfsHash, {
-          gasLimit,
+          maxFeePerGas,
+          maxPriorityFeePerGas,
         });
         const { hash } = Tx;
         setUpdateTextStatus('waiting');
@@ -282,6 +359,20 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
           onSuccess?.();
         };
         mpManager.provider.once(hash, async (transaction) => {
+          // save update in BE
+          try {
+            const textUpdateOptions = {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ text }),
+            };
+            const metadataUrl = `${process.env.NX_PUBLIC_MOONPAGE_METADATA_API}/projects/text/${projectId}`;
+            await fetch(metadataUrl, textUpdateOptions);
+          } catch (e) {
+            // do nothing
+          }
+
+          // then pin it with Pinata
           try {
             // TODO: find a way to only unpin the first all other than the last one.
             // Because we want to show the user the latest change made.
@@ -314,17 +405,18 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
         const formattedPrice = BigNumber.from(
           (Number(price) * 1e18).toString()
         );
-        const estimatedGas = await mpManager.estimateGas.enableNextEdition(
-          projectId,
-          amount,
-          formattedPrice
-        );
-        const gasLimit = getGasMargin(estimatedGas);
+        // const estimatedGas = await mpManager.estimateGas.enableNextEdition(
+        //   projectId,
+        //   amount,
+        //   formattedPrice
+        // );
+        // const gasLimit = getGasMargin(estimatedGas);
+        const { maxFeePerGas, maxPriorityFeePerGas } = await fixedGasMargin();
         const Tx = await mpManager.enableNextEdition(
           projectId,
           amount,
           formattedPrice,
-          { gasLimit }
+          { maxFeePerGas, maxPriorityFeePerGas }
         );
         const { hash } = Tx;
         setEnableNextEditionStatus('waiting');

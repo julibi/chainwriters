@@ -11,6 +11,9 @@ import { useUser } from './user/useUser';
 export const GET_PROJECT = gql`
   query oneProjectQuery($id: String!) {
     project(id: $id) {
+      contributors {
+        address
+      }
       createdAt
       creator
       genre
@@ -27,13 +30,9 @@ export const GET_PROJECT = gql`
 const useShowText = (projectId: string) => {
   const { account } = useWeb3React();
   const { detailedNfts } = useUser();
-  const allowedToRead = useMemo(
-    () => !!detailedNfts?.find((nft) => nft.projectId === Number(projectId)),
-    [detailedNfts, projectId]
-  );
   const [text, setText] = useState<Node[]>();
   const [translation, setTranslation] = useState<Node[]>();
-  const [pending, setPending] = useState<boolean>(true);
+  const [pending, setPending] = useState<boolean>(false);
   const {
     loading: isLoading,
     error,
@@ -45,28 +44,65 @@ const useShowText = (projectId: string) => {
     return data?.project;
   }, [data]);
 
+  const isContributor = useMemo(() => {
+    const contributors =
+      data?.project?.contributors?.map((ctrib) =>
+        ctrib.address.toLowerCase()
+      ) || [];
+    return contributors.includes(account?.toLowerCase());
+  }, [account, data]);
+
+  const isAuthor = useMemo(() => {
+    if (account?.toLowerCase() === project?.creator?.toLowerCase()) {
+      return true;
+    }
+    return false;
+  }, [account, project?.creator]);
+
+  const allowedToRead = useMemo(
+    () =>
+      isAuthor ||
+      isContributor ||
+      !!detailedNfts?.find((nft) => nft.projectId === Number(projectId)),
+    [detailedNfts, isAuthor, isContributor, projectId]
+  );
+
   const fetchTextData = useCallback(async () => {
     setPending(true);
     if (!project || !account || error) {
       return null;
     }
-
+    let fetchedText;
     try {
-      const response = await fetch(
-        `https://ipfs.io/ipfs/${project?.textIpfsHash}`
-      );
+      const metadataUrl = `${process.env.NX_PUBLIC_MOONPAGE_METADATA_API}/projects/${projectId}`;
+      const metadataResponse = await fetch(metadataUrl);
+      const metadata = await metadataResponse.json();
+      fetchedText = metadata.text;
+      setText(fetchedText);
+      setPending(false);
+    } catch (e) {
+      setPending(false);
+      // do nothing
+    }
 
-      if (response.ok) {
-        const fetchedText = await response.text();
-        const formatted = JSON.parse(fetchedText);
-        setText(formatted);
+    // if text cannot be fetched from BE, fetch from IPFS directly
+    if (!fetchedText) {
+      try {
+        const response = await fetch(
+          `https://ipfs.io/ipfs/${project?.textIpfsHash}`
+        );
+
+        if (response.ok) {
+          const fetchedText = await response.text();
+          const formatted = JSON.parse(fetchedText);
+          setText(formatted);
+          setPending(false);
+        }
+      } catch (e: unknown) {
         setPending(false);
       }
-    } catch (e: unknown) {
-      console.log({ e });
-      setPending(false);
     }
-  }, [project, account, error]);
+  }, [project, account, error, projectId]);
 
   const fetchTranslation = useCallback(async () => {
     setPending(true);
@@ -74,25 +110,39 @@ const useShowText = (projectId: string) => {
       return null;
     }
 
+    let fetchedTranslation;
     try {
-      const response = await fetch(
-        `https://ipfs.io/ipfs/${project?.translationIpfsHash}`
-      );
-      if (response.ok) {
-        const fetchedTranslation = await response.text();
-        const formatted = JSON.parse(fetchedTranslation);
-        setTranslation(formatted);
+      const metadataUrl = `${process.env.NX_PUBLIC_MOONPAGE_METADATA_API}/projects/${projectId}`;
+      const metadataResponse = await fetch(metadataUrl);
+      const metadata = await metadataResponse.json();
+      fetchedTranslation = metadata.translation;
+      setTranslation(fetchedTranslation);
+      setPending(false);
+    } catch (e) {
+      setPending(false);
+      // do nothing
+    }
+    if (!fetchedTranslation) {
+      try {
+        const response = await fetch(
+          `https://ipfs.io/ipfs/${project?.translationIpfsHash}`
+        );
+        if (response.ok) {
+          const fetchedTranslation = await response.text();
+          const formatted = JSON.parse(fetchedTranslation);
+          setTranslation(formatted);
+          setPending(false);
+        }
+      } catch (e: unknown) {
         setPending(false);
       }
-    } catch (e: unknown) {
-      console.log({ e });
-      setPending(false);
     }
-  }, [account, error, project]);
+  }, [account, error, project?.translationIpfsHash, projectId]);
 
-  const hasTranslation = useMemo(() => {
-    return project?.translationIpfsHash?.length > 0;
-  }, [project]);
+  const hasTranslation = useMemo(
+    () => project?.translationIpfsHash?.length > 0,
+    [project]
+  );
 
   useEffect(() => {
     if (account && allowedToRead) {
@@ -109,6 +159,8 @@ const useShowText = (projectId: string) => {
   return useMemo(
     () => ({
       allowedToRead,
+      isAuthor,
+      isContributor,
       pending: pending || isLoading,
       project,
       text,
@@ -119,6 +171,8 @@ const useShowText = (projectId: string) => {
     }),
     [
       allowedToRead,
+      isAuthor,
+      isContributor,
       fetchTranslation,
       hasTranslation,
       isLoading,

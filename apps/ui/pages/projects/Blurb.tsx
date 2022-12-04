@@ -78,29 +78,49 @@ const Blurb = ({ blurbIpfsHash, projectId, isAllowedToEdit }) => {
     if (blurbIpfsHash) {
       setIsBlurbFetching(true);
       // todo: cleanup, blurb will always be array of nodes in future
+      // try fetching from Metadata BE
       try {
-        const response = await fetch(`https://ipfs.io/ipfs/${blurbIpfsHash}`);
-        if (response.ok) {
-          let fetchedBlurb = await response.text();
-          fetchedBlurb = isJson(fetchedBlurb)
-            ? JSON.parse(fetchedBlurb)
-            : fetchedBlurb;
+        const metadataUrl = `${process.env.NEXT_PUBLIC_MOONPAGE_METADATA_API}/projects/${projectId}`;
+        const metadataResponse = await fetch(metadataUrl);
+        if (metadataResponse.ok) {
+          const fetchedMetadata = await metadataResponse.json();
+          const fetchedBlurb = fetchedMetadata.blurb.length
+            ? fetchedMetadata.blurb
+            : [
+                {
+                  type: 'paragraph',
+                  children: [{ text: 'No blurb specified.' }],
+                },
+              ];
 
           setBlurb(fetchedBlurb);
           setOriginalBlurb(fetchedBlurb);
           setIsBlurbFetching(false);
         } else {
-          setBlurb(BLURB_FETCH_ERROR);
-          setOriginalBlurb(BLURB_FETCH_ERROR);
-          setIsBlurbFetching(false);
+          // alternatively fetch directly from IPFS
+          const responseIpfs = await fetch(
+            `https://ipfs.io/ipfs/${blurbIpfsHash}`
+          );
+          if (responseIpfs.ok) {
+            let fetchedBlurb = await responseIpfs.text();
+            fetchedBlurb = isJson(fetchedBlurb)
+              ? JSON.parse(fetchedBlurb)
+              : fetchedBlurb;
+
+            setBlurb(fetchedBlurb);
+            setOriginalBlurb(fetchedBlurb);
+            setIsBlurbFetching(false);
+          } else {
+            setBlurb(BLURB_FETCH_ERROR);
+            setOriginalBlurb(BLURB_FETCH_ERROR);
+            setIsBlurbFetching(false);
+          }
         }
       } catch (e) {
-        setBlurb(BLURB_FETCH_ERROR);
-        setOriginalBlurb(BLURB_FETCH_ERROR);
-        setIsBlurbFetching(false);
+        // do nothing
       }
     }
-  }, [blurbIpfsHash]);
+  }, [blurbIpfsHash, projectId]);
 
   useEffect(() => {
     if (blurbIpfsHash) {
@@ -113,6 +133,7 @@ const Blurb = ({ blurbIpfsHash, projectId, isAllowedToEdit }) => {
     const hash = await uploadText(blurb);
     await updateBlurb({
       projectId,
+      blurb,
       blurbIpfsHash: hash,
       oldBlurbIpfsHash: blurbIpfsHash,
       onSuccess: () => {

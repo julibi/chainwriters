@@ -9,7 +9,7 @@ import ToastLink from '../../components/ToastLink';
 import { WriteActionStatus } from '../manager-provider/manager-provider.types';
 import useMoonpageFactoryContract from '../../hooks/useMoonpageFactoryContract';
 import pinToPinata from '../../utils/pinToPinata';
-import { getGasMargin } from '../../utils/getGasMargin';
+import { fixedGasMargin, getGasMargin } from '../../utils/getGasMargin';
 
 const defaultContext: FactoryApi = {
   createProject: async () => undefined,
@@ -26,6 +26,7 @@ export function FactoryProvider({ children }: FactoryProviderProps) {
   const createProject = useCallback(
     async ({
       title,
+      text,
       textIpfsHash,
       originalLanguage,
       initialMintPrice,
@@ -35,21 +36,22 @@ export function FactoryProvider({ children }: FactoryProviderProps) {
     }: CreateArgs) => {
       try {
         setCreateProjectStatus('confirming');
-        const estimatedGas = await factory.estimateGas.createProject(
-          title,
-          textIpfsHash,
-          originalLanguage,
-          initialMintPrice,
-          firstEditionAmount
-        );
-        const gasLimit = getGasMargin(estimatedGas);
+        // const estimatedGas = await factory.estimateGas.createProject(
+        //   title,
+        //   textIpfsHash,
+        //   originalLanguage,
+        //   initialMintPrice,
+        //   firstEditionAmount
+        // );
+        // const gasLimit = getGasMargin(estimatedGas);
+        const { maxFeePerGas, maxPriorityFeePerGas } = await fixedGasMargin();
         const Tx = await factory.createProject(
           title,
           textIpfsHash,
           originalLanguage,
           initialMintPrice,
           firstEditionAmount,
-          { gasLimit }
+          { maxFeePerGas, maxPriorityFeePerGas }
         );
         const { hash } = Tx;
         setCreateProjectStatus('waiting');
@@ -65,6 +67,25 @@ export function FactoryProvider({ children }: FactoryProviderProps) {
           // not sure tho
           const projectId = Number(CreationEvent.args.projectId).toString();
           const project = projectId || latestProjectId?.toString();
+
+          // upload metadata to BE
+          try {
+            const requestOptions = {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ title, mpId: project, text }),
+            };
+            // fire and forget
+            await fetch(
+              `${process.env.NEXT_PUBLIC_MOONPAGE_METADATA_API}/projects/${project}`,
+              requestOptions
+            );
+          } catch (e) {
+            // do nothing
+            console.log({ e });
+          }
+
+          // pin metadata with Pinata
           try {
             await pinToPinata(textIpfsHash, project, 'text', title);
           } catch (e) {

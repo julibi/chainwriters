@@ -41,6 +41,7 @@ export interface Edition {
 export interface Project {
   auctionsEnded: boolean;
   auctionsStarted: boolean;
+  balance: BigNumber;
   blurbIpfsHash: string | null;
   contributors: Contributor[] | null;
   createdAt: string;
@@ -53,6 +54,8 @@ export interface Project {
   id: string;
   imgIpfsHash: string | null;
   initialMintPrice: BigNumber;
+  isFrozen: boolean;
+  isPaused: boolean;
   mintCount: BigNumber;
   originalLanguage: string;
   paused: boolean;
