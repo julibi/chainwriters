@@ -4,6 +4,7 @@ import { useWeb3React } from '@web3-react/core';
 import Image from 'next/image';
 import styled from 'styled-components';
 import {
+  coinbaseWallet,
   injected,
   supportedChainIds,
   supportedChainMapping,
@@ -114,6 +115,15 @@ const WalletConnectionModal = ({ onClose }: WalletConnectionModalProps) => {
     }
   };
 
+  const handleCoinbaseConnectClick = async () => {
+    try {
+      await activate(coinbaseWallet, undefined, true);
+      onClose();
+    } catch (e) {
+      toast.error(e.message);
+    }
+  };
+
   useEffect(() => {
     if (chainId) {
       const isSupported = supportedChainIds.includes(chainId);
@@ -193,6 +203,21 @@ const WalletConnectionModal = ({ onClose }: WalletConnectionModalProps) => {
               width={40}
               height={25}
               alt="Walletconnect icon"
+              priority
+            />
+          </div>
+        </ConnectionButton>
+        <ConnectionButton
+          disabled={!isTermsAccepted}
+          onClick={handleCoinbaseConnectClick}
+        >
+          <ConnectorName>COINBASE WALLET</ConnectorName>
+          <div>
+            <Image
+              src={'/Coinbase.svg'}
+              width={40}
+              height={40}
+              alt="Coinbase icon"
               priority
             />
           </div>
