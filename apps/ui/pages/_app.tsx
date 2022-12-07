@@ -2,6 +2,7 @@ import { AppProps } from 'next/app';
 import Head from 'next/head';
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
+import Script from 'next/script';
 import { ApolloProvider } from '@apollo/client';
 import { Web3ReactProvider } from '@web3-react/core';
 import {
@@ -169,6 +170,20 @@ function CustomApp({ Component, pageProps }: AppProps) {
         <meta property="og:locale" content="en_US" />
       </Head>
       <GlobalStyle />
+      <Script
+        async
+        src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`}
+      />
+      <Script
+        id="GoogleAnalyticsID"
+        dangerouslySetInnerHTML={{
+          __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', ${process.env.NEXT_PUBLIC_GA_ID});`,
+        }}
+      />
       <Web3ReactProvider getLibrary={getLibrary}>
         <ApolloProvider client={client}>
           <ToastContainer />
