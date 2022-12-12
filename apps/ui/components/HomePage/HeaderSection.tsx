@@ -123,14 +123,19 @@ const HeaderSection = () => {
             text="Create"
             margin="2rem 2rem 2rem 0"
           />
-          <ActionButton
-            onClick={() => {}}
-            loading={false}
-            disabled
-            text="Watch Demo"
-            margin="0"
-            color={theme.MAIN_TEXT_COLOR}
-          />
+          <a
+            target="_blank"
+            href="https://www.youtube.com/watch?v=mwo9N8t4G7s"
+            rel="noopener noreferrer"
+          >
+            <ActionButton
+              onClick={() => ({})}
+              loading={false}
+              text="Watch Demo"
+              margin="0"
+              color={theme.MAIN_TEXT_COLOR}
+            />
+          </a>
         </Buttons>
       </LandingHeader>
       <LandingAnimationWrapper>
