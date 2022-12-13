@@ -5,7 +5,6 @@ import FAQSection from '../components/HomePage/FAQSection';
 import HowItWorksSection from '../components/HomePage/HowItWorksSection';
 import HeaderSection from '../components/HomePage/HeaderSection';
 import Roadmap from '../components/HomePage/Roadmap';
-import DatalistDropdown from '../components/DatalistDropdown';
 
 const Root = styled.section``;
 
@@ -26,13 +25,6 @@ export function Index() {
       <ProjectSection />
       <HowItWorksSection />
       <Roadmap />
-      <DatalistDropdown
-        listName="text"
-        options={['Korea', 'Germany', 'New Zealand']}
-        onSelect={(evt) =>
-          console.log((evt.target as HTMLTextAreaElement).value)
-        }
-      />
       {/* top auctions */}
       <FAQSection />
     </Root>

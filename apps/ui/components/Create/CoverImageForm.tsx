@@ -5,6 +5,7 @@ import { ButtonsWrapper, FadeIn, Wrapper } from '../../pages/create';
 import { BASE_BORDER_RADIUS, ElementThemeProps } from '../../themes';
 import ActionButton from '../ActionButton';
 import Title from '../Title';
+import { useTheme } from '../../hooks/theme/useTheme';
 
 export const StyledImageForm = styled.form`
   display: flex;
@@ -92,6 +93,7 @@ const CoverImageForm = ({
   pending,
   reset,
 }: CoverImageFormProps) => {
+  const theme = useTheme();
   return (
     <FadeIn>
       <Wrapper>
@@ -107,6 +109,7 @@ const CoverImageForm = ({
               const file = e.dataTransfer.files[0];
               captureFile(file);
             }}
+            theme={theme}
           >
             <Image
               src={

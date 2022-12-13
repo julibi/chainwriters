@@ -122,6 +122,7 @@ const routes = [
   { name: 'Create', path: '/create' },
   { name: 'Bookshelf', path: '/mybookshelf' },
   { name: 'About', path: '/about' },
+  { name: 'Experimental', path: '/experimental' },
 ];
 
 const Navbar = () => {
