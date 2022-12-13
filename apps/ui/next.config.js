@@ -41,6 +41,7 @@ const nextConfig = {
     NEXT_SITE_URL: process.env.NX_PUBLIC_SITE_URL,
     NEXT_PUBLIC_MOONPAGE_METADATA_API:
       process.env.NX_PUBLIC_MOONPAGE_METADATA_API,
+    NEXT_PUBLIC_OPENAI_API_KEY: process.env.NX_PUBLIC_OPENAI_API_KEY,
   },
 };
 

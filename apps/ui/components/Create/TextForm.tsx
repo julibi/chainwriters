@@ -29,7 +29,7 @@ const TextForm = ({ onSubmit, onKeyDown, text }: TextFormProps) => {
       <Wrapper>
         <Title size="m">Text</Title>
         <RichTextWrapper>
-          <RichText onKeyDown={onKeyDown} />
+          <RichText onKeyDown={onKeyDown} text={text} />
         </RichTextWrapper>
         <StyledInputError>
           {text && serialize(text).trim().length < 1

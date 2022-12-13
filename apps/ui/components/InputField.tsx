@@ -1,6 +1,6 @@
 import React, { FormEvent } from 'react';
 import styled from 'styled-components';
-import { BaseInput, POP } from '../themes';
+import { BaseInput, FONT_SERIF_REGULAR, POP } from '../themes';
 
 const Root = styled.div`
   display: flex;
@@ -10,6 +10,7 @@ const Root = styled.div`
 const StyledLabel = styled.label`
   display: inline-block;
   margin-block-end: 0.5rem;
+  font-family: ${FONT_SERIF_REGULAR};
 `;
 
 export const StyledInput = styled(BaseInput)`
