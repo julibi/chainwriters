@@ -42,20 +42,6 @@ import { BigNumber } from 'ethers';
 // --> should be 900.000 tokens - each call is maxed at 200
 // --> after 4.500 calls we gotta pay!
 
-// Creating with Open AI
-// Form
-// what would you like to create ? - type
-// about what topic ? - topic
-// what should the mood of it be? - mood
-// --> creates text,
-// --> title
-// genesis edition amount
-// genesis edition price
-// --> create
-// the rest is the same as normal create just without
-// - translation
-// - original language (always English)
-
 const Root = styled.div`
   display: flex;
   flex-direction: column;
