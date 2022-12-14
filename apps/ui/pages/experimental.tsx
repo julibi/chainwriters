@@ -4,6 +4,7 @@ import {
   BASE_BORDER_RADIUS,
   ElementThemeProps,
   FONT_SERIF_BOLD,
+  FONT_SERIF_REGULAR,
   POP,
 } from '../themes';
 import { useCollection } from '../hooks/collection';
@@ -117,7 +118,13 @@ const PromptResults = styled.div`
 
 const DropdownWrapper = styled.div`
   width: 100%;
-  margin-block-end: 3rem;
+  margin-block-end: 1rem;
+`;
+
+const Label = styled.label`
+  font-family: ${FONT_SERIF_REGULAR};
+  display: inline-block;
+  margin-block-end: 0.5rem;
 `;
 
 const LoadingWrapper = styled.div`
@@ -154,6 +161,7 @@ type OpenAIInput = {
   type: string;
   mood: string;
   topic: string;
+  words: string;
 };
 
 const Experimental = () => {
@@ -208,6 +216,7 @@ const Experimental = () => {
           topic: openAIInput.topic,
           mood: openAIInput.mood,
           type: openAIInput.type,
+          words: openAIInput.words,
         }),
       });
       const data = await response.json();
@@ -382,6 +391,18 @@ const Experimental = () => {
     },
   }));
 
+  const wordsUsed = useMemo(() => {
+    if (openAIInput?.words) {
+      const listOfwords = openAIInput.words.split(',');
+      const listOfwordsFormatted = listOfwords
+        .join(', ')
+        .replace(/, ([^,]*)$/, ' and $1');
+      const wordsContained =
+        listOfwords.length >= 1 ? listOfwordsFormatted : '';
+      return wordsContained;
+    }
+  }, [openAIInput?.words]);
+
   return (
     <Root>
       <Title color={POP} margin="0 0 4rem 0">
@@ -400,10 +421,21 @@ const Experimental = () => {
               <br />
               <Container>
                 <PromptInputs>
+                  <Label>Format</Label>
+                  <DropdownWrapper>
+                    <Dropdown
+                      options={promptTextTypesOptions}
+                      placeholder="Select Text Type"
+                      isDisabled={isLoadingAIResponse}
+                      isRequiredField
+                      width="100%"
+                    />
+                  </DropdownWrapper>
                   <InputField
                     disabled={isLoadingAIResponse}
                     label="Topic"
                     type="text"
+                    isErrorPossible={false}
                     placeholder="Christmas"
                     value={openAIInput?.topic}
                     onChange={(e) =>
@@ -417,6 +449,7 @@ const Experimental = () => {
                   <InputField
                     disabled={isLoadingAIResponse}
                     label="Mood"
+                    isErrorPossible={false}
                     type="text"
                     placeholder="Scary"
                     value={openAIInput?.mood}
@@ -427,28 +460,35 @@ const Experimental = () => {
                       })
                     }
                   />
-                  <DropdownWrapper>
-                    <Dropdown
-                      options={promptTextTypesOptions}
-                      placeholder="Format"
-                      isDisabled={isLoadingAIResponse}
-                      width="100%"
-                    />
-                  </DropdownWrapper>
+                  <InputField
+                    disabled={isLoadingAIResponse}
+                    label="Words"
+                    isErrorPossible={false}
+                    tooltipText="Comma-seperated list of words that should be used by AI"
+                    type="text"
+                    placeholder="heart, apple"
+                    value={openAIInput?.words}
+                    onChange={(e) =>
+                      setOpenAIInput({
+                        ...openAIInput,
+                        words: (e.target as HTMLTextAreaElement).value,
+                      })
+                    }
+                  />
                   <PromptButtonsWrapper>
                     <ActionButton
                       onClick={onSubmit}
                       disabled={!isValidPromptInput || isLoadingAIResponse}
                       loading={isLoadingAIResponse}
                       text="Generate Text"
-                      margin="0 0 3rem 0"
+                      margin="1rem 0 1rem 0"
                     />
                     <ActionButton
                       onClick={onContinueWithAIResult}
                       disabled={!isValidPromptInput || isLoadingAIResponse}
                       loading={isLoadingAIResponse}
                       text="Continue with Draft"
-                      margin="1rem 0 0 0"
+                      margin="1rem 0 1rem 0"
                     />
                   </PromptButtonsWrapper>
                 </PromptInputs>
@@ -467,7 +507,7 @@ const Experimental = () => {
                         : 'a'
                     } ${openAIInput?.mood ?? ''} ${openAIInput?.type}${
                       openAIInput?.topic ? ' about ' + openAIInput.topic : ''
-                    }.`}</Title>
+                    }.${wordsUsed ? ` Words used: ${wordsUsed}.` : ''}`}</Title>
                   )}
                   <Result>{result}</Result>
                   {isLoadingAIResponse && (

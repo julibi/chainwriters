@@ -8,7 +8,12 @@ const openai = new OpenAIApi(configuration);
 export default async function (req, res) {
   const completion = await openai.createCompletion({
     model: 'text-davinci-002',
-    prompt: generatePrompt(req.body.topic, req.body.mood, req.body.type),
+    prompt: generatePrompt(
+      req.body.topic,
+      req.body.mood,
+      req.body.type,
+      req.body.words
+    ),
     max_tokens: 200,
     temperature: 0.6,
   });
@@ -16,8 +21,7 @@ export default async function (req, res) {
   res.status(200).json({ result: completion.data.choices[0].text });
 }
 
-function generatePrompt(topic, mood, type) {
-  console.log({ topic, mood, type });
+function generatePrompt(topic, mood, type, words) {
   const capitalizedTopic = topic?.length
     ? topic[0].toUpperCase() + topic.slice(1).toLowerCase()
     : '';
@@ -25,5 +29,10 @@ function generatePrompt(topic, mood, type) {
     ? mood[0].toUpperCase() + mood.slice(1).toLowerCase()
     : '';
   const capitalizedType = type[0].toUpperCase() + type.slice(1).toLowerCase();
-  return `Write a ${capitalizedMood} ${capitalizedType} about ${capitalizedTopic}.`;
+  const listOfwords = words.split(',');
+  const listOfwordsFormatted = listOfwords
+    .join(', ')
+    .replace(/, ([^,]*)$/, ' and $1');
+  const wordsContained = listOfwords.length >= 1 ? listOfwordsFormatted : '';
+  return `Write a ${capitalizedMood} ${capitalizedType} about ${capitalizedTopic}${wordsContained}.`;
 }
