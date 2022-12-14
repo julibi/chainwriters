@@ -1,7 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import styled from 'styled-components';
-import { BaseButton, FONT_SERIF_BOLD, ElementThemeProps } from '../themes';
+import {
+  BaseButton,
+  FONT_SERIF_BOLD,
+  ElementThemeProps,
+  BASE_BORDER_RADIUS,
+} from '../themes';
 import { FlexContainer } from '../pages/create';
 import { useTheme } from '../hooks/theme';
 
@@ -33,7 +38,7 @@ const Options = styled.div<ElementThemeProps>`
   left: 0;
   z-index: 1;
   background-color: ${({ theme }) => theme.BG_NORMAL};
-  border-radius: ${({ theme }) => theme.BASE_BORDER_RADIUS};
+  border-radius: ${BASE_BORDER_RADIUS};
   box-shadow: ${({ theme }) => theme.BASE_BOX_SHADOW};
   width: 100%;
   max-height: 200px;
@@ -52,6 +57,12 @@ const Option = styled(BaseButton)`
   display: flex;
 `;
 
+const FieldComment = styled.span`
+  height: 12px;
+  font-size: 12px;
+  margin-inline-start: 0.5rem;
+`;
+
 interface OptionType {
   id: number | string;
   img?: string;
@@ -65,10 +76,12 @@ interface DropdownProps {
   width?: string | number;
   placeholder?: string;
   isDisabled?: boolean;
+  isRequiredField?: boolean;
 }
 
 const Dropdown = ({
   isDisabled,
+  isRequiredField = false,
   options,
   preselected,
   placeholder,
@@ -98,66 +111,69 @@ const Dropdown = ({
   }, []);
 
   return (
-    <Root
-      disabled={isDisabled}
-      onClick={toggleDropdown}
-      ref={ref}
-      width={width}
-    >
-      {selected ? (
-        <FlexContainer>
-          {selected.img && (
-            <ImageWrapper>
-              <Image
-                height={'16px'}
-                width={'20px'}
-                src={`/${selected.img}`}
-                alt={selected.value}
-              />
-            </ImageWrapper>
-          )}
-          {selected.value}
-        </FlexContainer>
-      ) : (
-        placeholder ?? 'Filter'
-      )}
-      {!isDisabled && (
-        <ArrowDown>
-          <Image
-            height={'12px'}
-            width={'16px'}
-            src={'/ArrowDown.svg'}
-            alt={'ArrowDown'}
-          />
-        </ArrowDown>
-      )}
-      {showDropdown && (
-        <Options theme={theme}>
-          {options.map((opt) => (
-            <Option
-              theme={theme}
-              key={opt.id}
-              onClick={() => {
-                opt.onSelect(opt.id);
-                setSelected(opt);
-              }}
-            >
-              {opt.img && (
-                <ImageWrapper>
-                  <Image
-                    height={'16px'}
-                    width={'20px'}
-                    src={`/${opt.img}`}
-                    alt={opt.value}
-                  />
-                </ImageWrapper>
-              )}
-              {opt.value}
-            </Option>
-          ))}
-        </Options>
-      )}
-    </Root>
+    <>
+      <Root
+        disabled={isDisabled}
+        onClick={toggleDropdown}
+        ref={ref}
+        width={width}
+      >
+        {selected ? (
+          <FlexContainer>
+            {selected.img && (
+              <ImageWrapper>
+                <Image
+                  height={'16px'}
+                  width={'20px'}
+                  src={`/${selected.img}`}
+                  alt={selected.value}
+                />
+              </ImageWrapper>
+            )}
+            {selected.value}
+          </FlexContainer>
+        ) : (
+          placeholder ?? 'Filter'
+        )}
+        {!isDisabled && (
+          <ArrowDown>
+            <Image
+              height={'12px'}
+              width={'16px'}
+              src={'/ArrowDown.svg'}
+              alt={'ArrowDown'}
+            />
+          </ArrowDown>
+        )}
+        {showDropdown && (
+          <Options theme={theme}>
+            {options.map((opt) => (
+              <Option
+                theme={theme}
+                key={opt.id}
+                onClick={() => {
+                  opt.onSelect(opt.id);
+                  setSelected(opt);
+                }}
+              >
+                {opt.img && (
+                  <ImageWrapper>
+                    <Image
+                      height={'16px'}
+                      width={'20px'}
+                      src={`/${opt.img}`}
+                      alt={opt.value}
+                    />
+                  </ImageWrapper>
+                )}
+                {opt.value}
+              </Option>
+            ))}
+          </Options>
+        )}
+      </Root>
+      {isRequiredField && <FieldComment>*Required field</FieldComment>}
+    </>
   );
 };
 

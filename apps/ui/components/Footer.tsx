@@ -30,6 +30,7 @@ const SocialMediaLinkWrapper = styled.a<ElementThemeProps>`
   flex-direction: column;
   text-decoration: none;
   color: ${({ theme }) => theme.MAIN_TEXT_COLOR};
+  flex-wrap: wrap;
 `;
 
 const SocialMediaName = styled.span<ElementThemeProps>`
