@@ -211,7 +211,7 @@ const Navbar = () => {
               alt="moonpage"
               priority
             />
-            <LogoText>moonpage</LogoText>
+            <LogoText>Moonpage</LogoText>
           </LogoWrapper>
         </LinkWrapper>
         <NavList>
