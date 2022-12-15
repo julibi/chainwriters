@@ -198,11 +198,13 @@ const Experimental = () => {
   const [openAIInput, setOpenAIInput] = useState<OpenAIInput | null>(null);
   const [result, setResult] = useState();
   const [isLoadingAIResponse, setIsLoadingAIResponse] = useState(false);
+  const [AIError, setAIError] = useState(null);
+
   const isValidPromptInput = useMemo(() => {
     return !!openAIInput?.type;
   }, [openAIInput]);
 
-  const onSubmit = async (event) => {
+  const onSubmitAIPrompt = async (event) => {
     event.preventDefault();
     setResult(null);
     setIsLoadingAIResponse(true);
@@ -220,9 +222,13 @@ const Experimental = () => {
         }),
       });
       const data = await response.json();
+      setAIError(null);
       setResult(data.result);
     } catch (e) {
       console.log({ e });
+      setAIError(
+        'Sorry, something went wrong while trying to talk to the AI. Refresh and try again. (2)'
+      );
     }
     setIsLoadingAIResponse(false);
   };
@@ -477,7 +483,7 @@ const Experimental = () => {
                   />
                   <PromptButtonsWrapper>
                     <ActionButton
-                      onClick={onSubmit}
+                      onClick={onSubmitAIPrompt}
                       disabled={!isValidPromptInput || isLoadingAIResponse}
                       loading={isLoadingAIResponse}
                       text="Generate Text"
@@ -509,7 +515,8 @@ const Experimental = () => {
                       openAIInput?.topic ? ' about ' + openAIInput.topic : ''
                     }.${wordsUsed ? ` Words used: ${wordsUsed}.` : ''}`}</Title>
                   )}
-                  <Result>{result}</Result>
+                  {result && !AIError && <Result>{result}</Result>}
+                  {!result && AIError && <Result>{AIError}</Result>}
                   {isLoadingAIResponse && (
                     <LoadingWrapper>
                       <Loading height={30} dotHeight={30} />
