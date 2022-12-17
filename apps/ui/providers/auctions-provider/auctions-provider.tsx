@@ -9,7 +9,7 @@ import {
   RetriggerAuctionArgs,
 } from './auctions-provider.types';
 import { BigNumber } from 'ethers';
-import { fixedGasMargin } from '../../utils/getGasMargin';
+import { getGasMargin } from '../../utils/getGasMargin';
 
 const defaultContext: AuctionsApi = {
   retriggerAuction: async () => undefined,
@@ -32,7 +32,7 @@ export function AuctionsProvider({ children }: AuctionsProviderProps) {
         //   BigNumber.from(projectId)
         // );
         // const gasLimit = getGasMargin(estimatedGas);
-        const { maxFeePerGas, maxPriorityFeePerGas } = await fixedGasMargin();
+        const { maxFeePerGas, maxPriorityFeePerGas } = await getGasMargin();
 
         const Tx = await auctionsManager.retriggerAuction(
           BigNumber.from(projectId),

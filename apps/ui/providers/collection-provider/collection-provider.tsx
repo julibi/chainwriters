@@ -11,7 +11,7 @@ import { toast } from 'react-toastify';
 import ToastLink from '../../components/ToastLink';
 import { WriteActionStatus } from '../manager-provider/manager-provider.types';
 import useAuctionsManager from '../../hooks/useAuctionsManager';
-import { fixedGasMargin } from '../../utils/getGasMargin';
+import { getGasMargin } from '../../utils/getGasMargin';
 
 const defaultContext: CollectionApi = {
   startAuctions: async () => undefined,
@@ -50,7 +50,7 @@ export function CollectionProvider({ children }: CollectionProviderProps) {
         //   discountRate
         // );
         // const gasLimit = getGasMargin(estimatedGas);
-        const { maxFeePerGas, maxPriorityFeePerGas } = await fixedGasMargin();
+        const { maxFeePerGas, maxPriorityFeePerGas } = await getGasMargin();
         const Tx = await collection.startAuctions(
           projectId,
           amountForCreator,
@@ -95,7 +95,7 @@ export function CollectionProvider({ children }: CollectionProviderProps) {
         //   value: currentPrice,
         // });
         // const gasLimit = getGasMargin(estimatedGas);
-        const { maxFeePerGas, maxPriorityFeePerGas } = await fixedGasMargin();
+        const { maxFeePerGas, maxPriorityFeePerGas } = await getGasMargin();
 
         const Tx = await collection.buy(projectId, {
           value: currentPrice,
@@ -132,7 +132,7 @@ export function CollectionProvider({ children }: CollectionProviderProps) {
         //   }
         // );
         // const gasLimit = getGasMargin(estimatedGas);
-        const { maxFeePerGas, maxPriorityFeePerGas } = await fixedGasMargin();
+        const { maxFeePerGas, maxPriorityFeePerGas } = await getGasMargin();
         const tx = await collection.publicMint(projectId, amount, {
           value: price,
           maxFeePerGas,
