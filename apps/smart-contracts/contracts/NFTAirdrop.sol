@@ -35,7 +35,7 @@ contract NFTAirdrop is Pausable {
         recipients[msg.sender] = false;
         AirdropItem storage airdrop = airdrops[nextAirdropId];
 
-        IERC721(airdrop.nft).safeTransferFrom(
+        IERC721(airdrop.nft).transferFrom(
             address(this),
             msg.sender,
             airdrop.id
@@ -58,7 +58,7 @@ contract NFTAirdrop is Pausable {
         for (uint256 i = 0; i < _airdropItems.length; i++) {
             airdrops[_nextAirdropId] = _airdropItems[i];
 
-            IERC721(_airdropItems[i].nft).safeTransferFrom(
+            IERC721(_airdropItems[i].nft).transferFrom(
                 msg.sender,
                 address(this),
                 _airdropItems[i].id
