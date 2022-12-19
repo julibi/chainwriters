@@ -10,6 +10,7 @@ contract NFTAirdrop is Pausable {
         uint256 id;
     }
     address public admin;
+    address public dropperAddress;
     uint256 public nextAirdropId = 0;
     uint256 public airdropItemsIndex = 0;
     uint256 public recipientsIndex = 0;
@@ -19,6 +20,7 @@ contract NFTAirdrop is Pausable {
 
     constructor() {
         admin = msg.sender;
+        dropperAddress = msg.sender;
     }
 
     modifier onlyAdmin() {
@@ -49,10 +51,12 @@ contract NFTAirdrop is Pausable {
     // Admin functions
     // -----------------
 
-    function addAirdropItems(AirdropItem[] memory _airdropItems)
-        external
-        onlyAdmin
-    {
+    function setDropperAddress(address _newDropper) external onlyAdmin {
+        dropperAddress = _newDropper;
+    }
+
+    function addAirdropItems(AirdropItem[] memory _airdropItems) external {
+        require(msg.sender == dropperAddress, "not authorized");
         uint256 _nextAirdropId = nextAirdropId;
 
         for (uint256 i = 0; i < _airdropItems.length; i++) {
