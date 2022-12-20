@@ -183,12 +183,11 @@ Become one of the first writers on the moon.`}</Text>
               </CoFounderImgWrapper>
               <FounderDescription>
                 <Name>Juli</Name>
-                <Field>Software Engineer</Field>
-                <Field>Founder</Field>
+                <Field>Co-Founder</Field>
                 <Introduction>
-                  Experienced developer specialising in Web3. As a software
-                  engineer she has contributed to multiple well-known NFT
-                  projects such as{' '}
+                  Experienced software engineer specialising in Web3. As a
+                  software engineer she has contributed to multiple well-known
+                  NFT projects such as{' '}
                   <LinkWrapper url="https://www.polychainmonsters.com">
                     Polychain Monsters
                   </LinkWrapper>
@@ -204,6 +203,53 @@ Become one of the first writers on the moon.`}</Text>
             <CoFounder>
               <CoFounderImgWrapper>
                 <Image
+                  src="/Roxana.png"
+                  quality={65}
+                  layout="responsive"
+                  height={'100%'}
+                  width={'100%'}
+                  alt={'Roxana'}
+                  priority
+                />
+              </CoFounderImgWrapper>
+              <FounderDescription>
+                <Name>Roxana</Name>
+                <Field>Co-Founder</Field>
+                <Introduction>
+                  Entrepreneur with background in behavioural science, deeply
+                  motivated by purpose driven projects. Roxana entered web3 for
+                  the art and technology, and stayed for the community. She's
+                  active in the ReFi space, Digital Identity, Growth and Loyalty
+                  through NFTs.
+                </Introduction>
+              </FounderDescription>
+            </CoFounder>
+            <CoFounder>
+              <CoFounderImgWrapper>
+                <Image
+                  src="/Luki.png"
+                  quality={65}
+                  layout="responsive"
+                  height={'100%'}
+                  width={'100%'}
+                  alt={'Luki'}
+                  priority
+                />
+              </CoFounderImgWrapper>
+              <FounderDescription>
+                <Name>Luki</Name>
+                <Field>Co-Founder</Field>
+                <Introduction>
+                  Worked in finance for nine years, and developed a passion
+                  about Web3 in 2021. Luki went through DLT Talent Programs and
+                  DeFi Talents Programs. She has been an advocate in the Web3
+                  space.
+                </Introduction>
+              </FounderDescription>
+            </CoFounder>
+            <CoFounder>
+              <CoFounderImgWrapper>
+                <Image
                   src="/Livitest.png"
                   quality={65}
                   layout="responsive"
@@ -215,7 +261,7 @@ Become one of the first writers on the moon.`}</Text>
               </CoFounderImgWrapper>
               <FounderDescription>
                 <Name>Olivia</Name>
-                <Field>Marketing</Field>
+                <Field>Advisor</Field>
                 <Introduction>
                   Novelist and editor. Her novel{' '}
                   <LinkWrapper url="https://www.amazon.com/-/de/dp/B08S1SKVTB/ref=sr_1_1?__mk_de_DE=%C3%85M%C3%85%C5%BD%C3%95%C3%91&crid=DYX2ZZ93KK68&keywords=lux+olivia+kuderewski&qid=1658173221&sprefix=lux+olivia+kuderewski%2Caps%2C140&sr=8-1">
