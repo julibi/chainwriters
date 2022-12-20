@@ -13,6 +13,7 @@ import ActionButton from '../../components/ActionButton';
 import { useManager } from '../../hooks/manager';
 import useUploadTextToIpfs from '../../hooks/useUploadTextToIpfs';
 import { useTheme } from '../../hooks/theme';
+import { serializeToMarkdown } from '../../utils/serializeMarkdown';
 
 const DescriptionSection = styled.section<ElementThemeProps>`
   position: relative;
@@ -119,17 +120,20 @@ const Blurb = ({ blurbIpfsHash, projectId, isAllowedToEdit }) => {
       } catch (e) {
         // do nothing
       }
+    } else {
+      const placeholder = serializeToMarkdown('No Blurb was specified.');
+      setBlurb(placeholder);
+      setOriginalBlurb(placeholder);
+      setIsBlurbFetching(false);
     }
   }, [blurbIpfsHash, projectId]);
 
   useEffect(() => {
-    if (blurbIpfsHash) {
-      fetchBlurb();
-    }
-  }, [blurbIpfsHash, fetchBlurb]);
+    fetchBlurb();
+  }, [fetchBlurb]);
 
   const handleUpdateBlurb = useCallback(async () => {
-    if (!blurb || !blurbIpfsHash || !projectId) return null;
+    if (!blurb || !projectId) return null;
     const hash = await uploadText(blurb);
     await updateBlurb({
       projectId,
@@ -173,8 +177,6 @@ const Blurb = ({ blurbIpfsHash, projectId, isAllowedToEdit }) => {
       }
     }
   }, [blurb, handleUpdateBlurb, isAllowedToEdit, isEditing, updateBlurbStatus]);
-
-  if (!blurbIpfsHash) return null;
 
   return (
     <DescriptionSection theme={theme}>
