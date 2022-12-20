@@ -241,10 +241,10 @@ Become one of the first writers on the moon.`}</Text>
                 <Name>Luki</Name>
                 <Field>Co-Founder</Field>
                 <Introduction>
-                  Worked in finance for nine years, and developed a passion
-                  about Web3 in 2021. Luki went through DLT Talent Programs and
-                  DeFi Talents Programs. She has been an advocate in the Web3
-                  space.
+                  Worked in finance for nine years, and developed a passion for
+                  Web3 in 2021. She went through DLT Talents Program and DeFi
+                  Talents Program through Frankfurt School of Finance and
+                  Management. She has been an advocate in the Web3 space.
                 </Introduction>
               </FounderDescription>
             </CoFounder>
