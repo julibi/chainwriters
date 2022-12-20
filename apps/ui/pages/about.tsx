@@ -62,6 +62,7 @@ const CoFounders = styled.div`
 const CoFounder = styled.div`
   display: flex;
   flex-direction: column;
+  margin: 1rem;
 `;
 
 const CoFounderWithMarginBottom = styled(CoFounder)`
