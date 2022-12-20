@@ -115,7 +115,11 @@ contract NFTAirdrop is Pausable {
         address _from,
         address[] calldata _to,
         uint256[] calldata _id
-    ) external onlyAdmin whenNotPaused {
+    ) external whenNotPaused {
+        require(
+            msg.sender == admin || msg.sender == dropperAddress,
+            "not authorized"
+        );
         require(
             _to.length == _id.length,
             "receivers and IDs are different length"

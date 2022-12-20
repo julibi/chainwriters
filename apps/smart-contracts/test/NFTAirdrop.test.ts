@@ -300,7 +300,7 @@ describe("NFTAirdrop", async () => {
       true
     );
 
-    // only admin can bulkTransfer
+    // random address cannot bulkTransfer
     await expect(
       AirdropContract.connect(userA).bulkTransfer(
         RandomNFTContract.address,
@@ -319,11 +319,61 @@ describe("NFTAirdrop", async () => {
       )
     ).to.revertedWith("receivers and IDs are different length");
 
+    // admin can bulkTransfer
     await AirdropContract.connect(deployer).bulkTransfer(
       RandomNFTContract.address,
       deployer.address,
       [userA.address, userB.address, userC.address],
       [0, 1, 2]
     );
+
+    // adming can select nur dropper address and this address can then bulkTransfer as well
+    // dropper address can also bulkTransfer
+
+    // set new dropper
+    await AirdropContract.connect(deployer).setDropperAddress(userI.address);
+    const newDropper = await AirdropContract.dropperAddress();
+    expect(newDropper).to.equal(userI.address);
+
+    // sent nfts to the new dropper
+    await AirdropContract.connect(deployer).bulkTransfer(
+      RandomNFTContract.address,
+      deployer.address,
+      [newDropper, newDropper],
+      [3, 4]
+    );
+    expect(await RandomNFTContract.ownerOf(3)).to.equal(newDropper);
+    expect(await RandomNFTContract.ownerOf(4)).to.equal(newDropper);
+
+    // dropper approvesAll for Airdropt Contract
+    await RandomNFTContract.connect(userI).setApprovalForAll(
+      AirdropContract.address,
+      true
+    );
+
+    // and uses bulktransfer to just transfer one
+    await AirdropContract.connect(userI).bulkTransfer(
+      RandomNFTContract.address,
+      newDropper,
+      [userA.address],
+      [3]
+    );
+    expect(await RandomNFTContract.ownerOf(3)).to.equal(userA.address);
+
+    // then dropper revokes approvesAll for Airdropt Contract
+    await RandomNFTContract.connect(userI).setApprovalForAll(
+      AirdropContract.address,
+      false
+    );
+
+    // now the dropper cannot use bulktransfer anymore
+    await expect(
+      AirdropContract.connect(userI).bulkTransfer(
+        RandomNFTContract.address,
+        newDropper,
+        [userA.address],
+        [4]
+      )
+    ).to.revertedWith("ERC721: transfer caller is not owner nor approved");
   });
 });
