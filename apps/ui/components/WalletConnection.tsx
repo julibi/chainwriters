@@ -4,13 +4,14 @@ import WalletIndicator from './WalletIndicator';
 import WalletConnectionModal from './WalletConnectionModal';
 
 const WalletConnection = () => {
-  const { account, chainId } = useWeb3React();
+  const { account, chainId, deactivate } = useWeb3React();
   const [showConnectModal, setShowConnectModal] = useState(false);
 
   return (
     <div>
       <WalletIndicator
         address={account}
+        deactivate={deactivate}
         chain={chainId}
         handleClick={() => setShowConnectModal(true)}
         showLoading={false}
