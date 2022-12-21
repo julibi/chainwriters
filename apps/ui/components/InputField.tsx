@@ -67,7 +67,6 @@ const InputField = ({
           </Tooltip>
         )}
       </LabelWrapper>
-
       <StyledInput
         type={type}
         disabled={disabled}

@@ -13,7 +13,6 @@ import LinkWrapper from '../components/LinkWrapper';
 import { useTheme } from '../hooks/theme';
 import { useDarkMode } from '../hooks/useDarkMode';
 import { useEagerConnect } from '../hooks/useEagerConnect';
-import { useWeb3React } from '@web3-react/core';
 
 const Root = styled.div`
   display: block;

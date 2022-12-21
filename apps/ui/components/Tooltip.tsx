@@ -29,7 +29,7 @@ export const TooltipPlacementTypes = TOOLTIPPLACEMENTTYPES;
 export type TooltipPlacementType = typeof TOOLTIPPLACEMENTTYPES[number];
 
 export interface TooltipProps {
-  children?: ReactElement<string>;
+  children?: ReactElement;
   content?: ReactNode;
   className?: string;
   forwardedRef?: Ref<HTMLButtonElement>;
