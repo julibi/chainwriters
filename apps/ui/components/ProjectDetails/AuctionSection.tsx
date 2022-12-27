@@ -77,6 +77,7 @@ const AuctionSection = ({
       return BigNumber.from('0');
     }
   }, [project]);
+  console.log(Number(totalSupply));
   const startAuctionsPending = useMemo(
     () =>
       startAuctionsStatus === 'confirming' || startAuctionsStatus === 'waiting',

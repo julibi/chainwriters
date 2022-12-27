@@ -473,6 +473,23 @@ export class Project extends Entity {
     }
   }
 
+  get songLink(): string | null {
+    let value = this.get("songLink");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set songLink(value: string | null) {
+    if (!value) {
+      this.unset("songLink");
+    } else {
+      this.set("songLink", Value.fromString(<string>value));
+    }
+  }
+
   get auctionsStarted(): boolean {
     let value = this.get("auctionsStarted");
     return value!.toBoolean();
@@ -568,6 +585,15 @@ export class Project extends Entity {
 
   set isPaused(value: boolean) {
     this.set("isPaused", Value.fromBoolean(value));
+  }
+
+  get isDeleted(): boolean {
+    let value = this.get("isDeleted");
+    return value!.toBoolean();
+  }
+
+  set isDeleted(value: boolean) {
+    this.set("isDeleted", Value.fromBoolean(value));
   }
 
   get premintedByAuthor(): BigInt | null {

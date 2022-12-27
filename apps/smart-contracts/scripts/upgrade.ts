@@ -6,18 +6,18 @@ export const wait = (seconds: number) =>
 
 async function upgrade() {
   await hre.run("compile");
-  let proxyAddress = "0x2a1Ab7b335CC94B5ddf99576b775999C68C6A7D7";
+  let proxyAddress = "0x0ffab0dE416A0ED309dF1E492a9D6aF8EDE2b9cD";
   const [deployer] = await hre.ethers.getSigners();
   console.log("Deploying contracts with the account:", deployer.address);
   console.log("Account balance:", (await deployer.getBalance()).toString());
   console.log(`Network: ${hre.ethers.network}`);
 
-  const MoonpageFactoryV2 = await hre.ethers.getContractFactory(
-    "MoonpageFactoryV2"
+  const MoonpageManagerV2 = await hre.ethers.getContractFactory(
+    "MoonpageManagerV2"
   );
   const upgraded = await hre.upgrades.upgradeProxy(
     proxyAddress,
-    MoonpageFactoryV2
+    MoonpageManagerV2
   );
   console.log(`Upgraded to: ${upgraded.address}`);
 }

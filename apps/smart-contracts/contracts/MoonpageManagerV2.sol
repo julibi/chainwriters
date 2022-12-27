@@ -8,7 +8,7 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "../interfaces/IMoonpageCollection.sol";
 
-contract MoonpageManagerTestingV2 is
+contract MoonpageManagerV2 is
     Initializable,
     PausableUpgradeable,
     AccessControlUpgradeable,
@@ -71,8 +71,8 @@ contract MoonpageManagerTestingV2 is
     mapping(uint256 => mapping(uint256 => uint256)) public editionRanges;
     mapping(uint256 => string) public translationIpfsHashes;
 
-    // what gets added in this upgrade
-    mapping(uint256 => string) public testStringToBeSavedPerProject;
+    //added with V2
+    mapping(uint256 => string) public songLinks;
 
     event ProjectCreated(
         address creator,
@@ -87,6 +87,7 @@ contract MoonpageManagerTestingV2 is
         uint256 endId,
         uint256 currentEdLastId
     );
+    event ProjectDeleted(uint256 projectId);
     event Configured(
         uint256 projectId,
         string imgHash,
@@ -100,6 +101,9 @@ contract MoonpageManagerTestingV2 is
     event BlurbUpdated(uint256 projectId, string newIpfsHash);
     event ImageUpdated(uint256 projectId, string newIpfsHash);
     event AnimationUpdated(uint256 projectId, string newIpfsHash);
+    event GenreUpdated(uint256 projectId, string newGenre);
+    event SubtitleUpdated(uint256 projectId, string newSubtitle);
+    event LanguageUpdated(uint256 projectId, string newLanguage);
     event ContributorAdded(
         uint256 projectId,
         address contributor,
@@ -121,6 +125,7 @@ contract MoonpageManagerTestingV2 is
     event BaseDataFrozen(uint256 projectId, bool frozen);
     event PremintedByAuthor(uint256 projectId, uint256 amount);
     event BalanceDecreased(uint256 projectId, uint256 amount);
+    event SongLinkSet(uint256 projectId, string songLink);
 
     modifier onlyCreator(uint256 _projectId) {
         require(
@@ -137,6 +142,11 @@ contract MoonpageManagerTestingV2 is
 
     modifier onlyCollection() {
         require(msg.sender == address(collection), "Not authorized");
+        _;
+    }
+
+    modifier whenProjectNotFrozen(uint256 _projectId) {
+        require(!frozenProjectIds[_projectId], "Base data frozen");
         _;
     }
 
@@ -163,7 +173,7 @@ contract MoonpageManagerTestingV2 is
     // Write functions for creators
     // ------------------
 
-    function setupDao(
+    function setupProject(
         address _caller,
         address _royaltiesSplitter,
         uint256 _projectId,
@@ -249,9 +259,9 @@ contract MoonpageManagerTestingV2 is
     function updateTextIpfsHash(uint256 _projectId, string calldata _ipfsHash)
         external
         onlyCreator(_projectId)
+        whenProjectNotFrozen(_projectId)
         whenNotPaused
     {
-        require(!pausedProjectIds[_projectId], "Project is paused");
         baseDatas[_projectId].textIpfsHash = _ipfsHash;
 
         emit TextUpdated(_projectId, _ipfsHash);
@@ -260,8 +270,12 @@ contract MoonpageManagerTestingV2 is
     function updateTranslationIpfsHash(
         uint256 _projectId,
         string calldata _ipfsHash
-    ) external onlyCreator(_projectId) whenNotPaused {
-        require(!pausedProjectIds[_projectId], "Project is paused");
+    )
+        external
+        onlyCreator(_projectId)
+        whenProjectNotFrozen(_projectId)
+        whenNotPaused
+    {
         translationIpfsHashes[_projectId] = _ipfsHash;
 
         emit TranslationUpdated(_projectId, _ipfsHash);
@@ -270,9 +284,9 @@ contract MoonpageManagerTestingV2 is
     function updateImgIpfsHash(uint256 _projectId, string calldata _ipfsHash)
         external
         onlyCreator(_projectId)
+        whenProjectNotFrozen(_projectId)
         whenNotPaused
     {
-        require(!pausedProjectIds[_projectId], "Project is paused");
         baseDatas[_projectId].imgIpfsHash = _ipfsHash;
 
         emit ImageUpdated(_projectId, _ipfsHash);
@@ -281,8 +295,12 @@ contract MoonpageManagerTestingV2 is
     function updateAnimationIpfsHash(
         uint256 _projectId,
         string calldata _ipfsHash
-    ) external onlyCreator(_projectId) whenNotPaused {
-        require(!pausedProjectIds[_projectId], "Project is paused");
+    )
+        external
+        onlyCreator(_projectId)
+        whenProjectNotFrozen(_projectId)
+        whenNotPaused
+    {
         baseDatas[_projectId].animationIpfsHash = _ipfsHash;
         emit AnimationUpdated(_projectId, _ipfsHash);
     }
@@ -290,20 +308,44 @@ contract MoonpageManagerTestingV2 is
     function updateBlurbIpfsHash(uint256 _projectId, string calldata _ipfsHash)
         external
         onlyCreator(_projectId)
+        whenProjectNotFrozen(_projectId)
         whenNotPaused
     {
-        require(!pausedProjectIds[_projectId], "Project is paused");
         baseDatas[_projectId].blurbIpfsHash = _ipfsHash;
         emit BlurbUpdated(_projectId, _ipfsHash);
     }
 
-    // what gets added in this upgrade
-    function updateTestString(
-        uint256 _projectId,
-        string calldata _exampledString
-    ) external onlyCreator(_projectId) whenNotPaused {
-        require(!pausedProjectIds[_projectId], "Project is paused");
-        testStringToBeSavedPerProject[_projectId] = _exampledString;
+    // added with V2
+    function updateGenre(uint256 _projectId, string calldata _genre)
+        external
+        onlyCreator(_projectId)
+        whenProjectNotFrozen(_projectId)
+        whenNotPaused
+    {
+        baseDatas[_projectId].genre = _genre;
+        emit GenreUpdated(_projectId, _genre);
+    }
+
+    // added with V2
+    function updateSubtitle(uint256 _projectId, string calldata _subtitle)
+        external
+        onlyCreator(_projectId)
+        whenProjectNotFrozen(_projectId)
+        whenNotPaused
+    {
+        baseDatas[_projectId].subtitle = _subtitle;
+        emit SubtitleUpdated(_projectId, _subtitle);
+    }
+
+    // added with V2
+    function updateLanguage(uint256 _projectId, string calldata _language)
+        external
+        onlyCreator(_projectId)
+        whenProjectNotFrozen(_projectId)
+        whenNotPaused
+    {
+        baseDatas[_projectId].originalLanguage = _language;
+        emit LanguageUpdated(_projectId, _language);
     }
 
     function addContributors(
@@ -311,10 +353,15 @@ contract MoonpageManagerTestingV2 is
         address[] calldata _contributors,
         uint256[] calldata _shares,
         string[] calldata _roles
-    ) external onlyCreator(_projectId) whenNotPaused {
+    )
+        external
+        onlyCreator(_projectId)
+        whenProjectNotFrozen(_projectId)
+        whenNotPaused
+    {
+        require(!pausedProjectIds[_projectId], "Project paused");
         // in theory user can put the same contributor 3 times - we don't care
         AuthorShare storage share = authorShares[_projectId];
-        require(!frozenProjectIds[_projectId], "Base data frozen");
         require(
             contributionsIndeces[_projectId] == 0,
             "Contributors set already"
@@ -329,7 +376,10 @@ contract MoonpageManagerTestingV2 is
         for (uint8 i = 0; i < _contributors.length; i++) {
             contribTotalShares += _shares[i];
         }
-        require(contribTotalShares <= 85, "Contributor shares too high");
+        require(
+            contribTotalShares <= (100 - fee),
+            "Contributor shares too high"
+        );
 
         for (uint8 i = 0; i < _contributors.length; i++) {
             require(
@@ -355,7 +405,7 @@ contract MoonpageManagerTestingV2 is
         uint256 _newEdAmount,
         uint256 _newEdMintPrice
     ) external onlyCreator(_projectId) whenNotPaused {
-        require(!pausedProjectIds[_projectId], "Project is paused");
+        require(!pausedProjectIds[_projectId], "Project paused");
         require(
             editions[_projectId].currentTokenId ==
                 editions[_projectId].currentEdLastTokenId + 1,
@@ -388,13 +438,31 @@ contract MoonpageManagerTestingV2 is
         );
     }
 
+    function setIsBaseDataFrozen(uint256 _projectId)
+        external
+        whenNotPaused
+        onlyCreator(_projectId)
+    {
+        frozenProjectIds[_projectId] = true;
+        emit BaseDataFrozen(_projectId, true);
+    }
+
+    // added with V2
+    function setSongLink(uint256 _projectId, string calldata _songLink)
+        external
+        whenNotPaused
+        onlyCreator(_projectId)
+    {
+        songLinks[_projectId] = _songLink;
+        emit SongLinkSet(_projectId, _songLink);
+    }
+
     // ------------------
     // Can only be called by a Collection
     // ------------------
 
     function increaseBalance(uint256 _projectId, uint256 _amount)
         external
-        whenNotPaused
         onlyCollection
     {
         projectBalances[_projectId] = projectBalances[_projectId].add(_amount);
@@ -403,7 +471,6 @@ contract MoonpageManagerTestingV2 is
 
     function increaseCurrentTokenId(uint256 _projectId)
         external
-        whenNotPaused
         onlyCollection
     {
         editions[_projectId].currentTokenId = editions[_projectId]
@@ -412,19 +479,10 @@ contract MoonpageManagerTestingV2 is
         emit TokenIdIncreased(_projectId, 1);
     }
 
-    function setIsBaseDataFrozen(uint256 _projectId, bool _shouldBeFrozen)
-        external
-        whenNotPaused
-        onlyCollection
-    {
-        frozenProjectIds[_projectId] = _shouldBeFrozen;
-        emit BaseDataFrozen(_projectId, true);
-    }
-
     function setPremintedByCreator(
         uint256 _projectId,
         uint256 _premintedByCreator
-    ) external whenNotPaused onlyCollection {
+    ) external onlyCollection {
         baseDatas[_projectId].premintedByCreator = _premintedByCreator;
         emit PremintedByAuthor(_projectId, _premintedByCreator);
     }
@@ -469,6 +527,17 @@ contract MoonpageManagerTestingV2 is
         emit BalanceDecreased(_projectId, moonpageDevShareInMatic);
     }
 
+    // added with V2
+    function deleteProject(uint256 _projectId) external {
+        bool isAdmin = hasRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        bool isCreatorBeforeAuction = (msg.sender ==
+            baseDatas[_projectId].creatorAddress) &&
+            (baseDatas[_projectId].premintedByCreator == 0);
+        require(isAdmin || isCreatorBeforeAuction, "Cannot delete project");
+        existingProjectIds[_projectId] = false;
+        resetBaseData(_projectId);
+    }
+
     // ------------------
     // Admin Functions
     // ------------------
@@ -494,11 +563,11 @@ contract MoonpageManagerTestingV2 is
     function setAddresses(
         address _collection,
         address _factory,
-        address _deployer
+        address _mpDev
     ) external onlyRole(DEFAULT_ADMIN_ROLE) {
         collection = IMoonpageCollection(_collection);
         factory = address(_factory);
-        moonpageDev = address(_deployer);
+        moonpageDev = address(_mpDev);
     }
 
     function setMinPrice(uint256 _minPrice)
@@ -506,6 +575,10 @@ contract MoonpageManagerTestingV2 is
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
         minPrice = _minPrice;
+    }
+
+    function setFee(uint256 _fee) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        fee = _fee;
     }
 
     function pause() external onlyRole(PAUSER_ROLE) {
@@ -526,6 +599,20 @@ contract MoonpageManagerTestingV2 is
     }
 
     receive() external payable {}
+
+    // ------------------
+    // Internal Functions
+    // ------------------
+
+    // added with V2
+    function resetBaseData(uint256 _projectId) internal {
+        baseDatas[_projectId].textIpfsHash = "";
+        baseDatas[_projectId].imgIpfsHash = "";
+        baseDatas[_projectId].animationIpfsHash = "";
+        baseDatas[_projectId].blurbIpfsHash = "";
+        translationIpfsHashes[_projectId] = "";
+        emit ProjectDeleted(_projectId);
+    }
 
     // ------------------
     // Read functions
@@ -552,8 +639,8 @@ contract MoonpageManagerTestingV2 is
         view
         returns (uint256)
     {
-        uint256 maxTokenId = _projectId * 1000;
-        uint256 minTokenId = maxTokenId - 1000 + 1;
+        uint256 maxTokenId = _projectId.mul(maxAmountEdition);
+        uint256 minTokenId = maxTokenId - maxAmountEdition + 1;
         if (_tokenId >= minTokenId && _tokenId <= maxTokenId) {
             uint256 maxEditions = editions[_projectId].current;
             for (uint256 i = 1; i <= maxEditions; i++) {
@@ -568,10 +655,6 @@ contract MoonpageManagerTestingV2 is
 
     function isPaused(uint256 _projectId) external view returns (bool) {
         return pausedProjectIds[_projectId];
-    }
-
-    function isFrozen(uint256 _projectId) external view returns (bool) {
-        return frozenProjectIds[_projectId];
     }
 
     function exists(uint256 _projectId) external view returns (bool) {

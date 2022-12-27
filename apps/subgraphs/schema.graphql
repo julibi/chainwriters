@@ -39,6 +39,7 @@ type Project @entity {
   originalLanguage: String
   subtitle: String
   genre: String
+  songLink: String
   auctionsStarted: Boolean!
   auctionsEnded: Boolean!
   startId: BigInt
@@ -48,6 +49,7 @@ type Project @entity {
   isCurated: Boolean
   isFrozen: Boolean
   isPaused: Boolean
+  isDeleted: Boolean
   premintedByAuthor: BigInt
   mintCount: BigInt!
   currentAuctionExpiresAt: BigInt

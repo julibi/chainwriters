@@ -10,12 +10,17 @@ import {
   NextEditionEnabled,
   PremintedByAuthor,
   ProjectCreated,
+  ProjectDeleted,
   ProjectPaused,
   TextUpdated,
   TranslationUpdated,
   BlurbUpdated,
+  GenreUpdated,
+  SubtitleUpdated,
+  LanguageUpdated,
   ImageUpdated,
   AnimationUpdated,
+  SongLinkSet,
   TokenIdIncreased,
 } from '../generated/MoonpageManager/MoonpageManager';
 import { Minted } from '../generated/MoonpageCollection/MoonpageCollection';
@@ -56,6 +61,21 @@ export function handleProjectCreated(event: ProjectCreated): void {
   edition.endId = event.params.currentEdLastId;
   edition.mintPrice = event.params.initialMintPrice;
   edition.save();
+}
+
+export function handleDeleted(event: ProjectDeleted): void {
+  let projectId = event.params.projectId.toString();
+  let project = Project.load(projectId);
+  if (!project) {
+    throw new Error(`Could not find project with ID`);
+  }
+  project.textIpfsHash = '';
+  project.imgIpfsHash = '';
+  project.animationIpfsHash = '';
+  project.blurbIpfsHash = '';
+  project.translationIpfsHash = '';
+  project.isDeleted = true;
+  project.save();
 }
 
 export function handleNextEditionEnabled(event: NextEditionEnabled): void {
@@ -157,6 +177,39 @@ export function handleBlurbUpdated(event: BlurbUpdated): void {
   project.save();
 }
 
+export function handleGenreUpdated(event: GenreUpdated): void {
+  let projectId = event.params.projectId.toString();
+  let project = Project.load(projectId);
+  if (!project) {
+    throw new Error(`Could not find project with ID`);
+  }
+
+  project.genre = event.params.newGenre;
+  project.save();
+}
+
+export function handleSubtitleUpdated(event: SubtitleUpdated): void {
+  let projectId = event.params.projectId.toString();
+  let project = Project.load(projectId);
+  if (!project) {
+    throw new Error(`Could not find project with ID`);
+  }
+
+  project.subtitle = event.params.newSubtitle;
+  project.save();
+}
+
+export function handleLanguageUpdated(event: LanguageUpdated): void {
+  let projectId = event.params.projectId.toString();
+  let project = Project.load(projectId);
+  if (!project) {
+    throw new Error(`Could not find project with ID`);
+  }
+
+  project.originalLanguage = event.params.newLanguage;
+  project.save();
+}
+
 export function handleImageUpdated(event: ImageUpdated): void {
   let projectId = event.params.projectId.toString();
   let project = Project.load(projectId);
@@ -176,6 +229,16 @@ export function handleAnimationUpdated(event: AnimationUpdated): void {
   }
 
   project.animationIpfsHash = event.params.newIpfsHash;
+  project.save();
+}
+
+export function handleSongLinkSet(event: SongLinkSet): void {
+  let projectId = event.params.projectId.toString();
+  let project = Project.load(projectId);
+  if (!project) {
+    throw new Error(`Could not find project with ID`);
+  }
+  project.songLink = event.params.songLink;
   project.save();
 }
 
