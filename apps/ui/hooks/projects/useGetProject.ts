@@ -35,6 +35,7 @@ export const GET_ONE_PROJECT = gql`
       id
       imgIpfsHash
       initialMintPrice
+      isDeleted
       isFrozen
       isPaused
       mintCount

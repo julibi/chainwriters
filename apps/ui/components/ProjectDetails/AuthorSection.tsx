@@ -1,4 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
+import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import Emoji from '../Emojis';
 import { BASE_BORDER_RADIUS, ElementThemeProps } from '../../themes';
@@ -18,6 +19,9 @@ import StartAuctionsModal from './StartAuctionsModal';
 import { useCollection } from '../../hooks/collection';
 import EnableNextEditionModal from './EnableNextEditionModal';
 import Title from '../Title';
+import TooltippedIndicator from '../TooltippedIndicator';
+import { PriorityHigh } from '@material-ui/icons';
+import { useGetProjectIpfsHashes } from '../../hooks/projects/useGetProjectIpfsHashes';
 
 const Root = styled.section<ElementThemeProps>`
   display: flex;
@@ -48,6 +52,13 @@ const ProgressBarIndicator = styled.span`
   margin-block-start: 0.5rem;
 `;
 
+const DeleteWrapper = styled.div`
+  margin-block-start: 1rem;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+`;
+
 const ActionItems = styled.div`
   display: flex;
   justify-content: center;
@@ -74,16 +85,20 @@ const AuthorSection = ({
   projectId,
   refetch,
 }: AuthorSectionProps) => {
+  const router = useRouter();
   const theme = useTheme();
   const {
     configureProject,
     configureStatus,
+    deleteProject,
+    deleteProjectStatus,
     setContributors,
     setContributorsStatus,
     enableNextEdition,
     enableNextEditionStatus,
   } = useManager();
   const { startAuctions, startAuctionsStatus } = useCollection();
+  const { project: hashes } = useGetProjectIpfsHashes(projectId);
   const [showConfigureModal, setShowConfigureModal] = useState<boolean>(false);
   const [showContributorsModal, setShowContributorsModal] =
     useState<boolean>(false);
@@ -110,6 +125,16 @@ const AuthorSection = ({
   const currentEndId = useMemo(
     () => (currentEdition ? Number(currentEdition.endId) : 0),
     [currentEdition]
+  );
+
+  const canDeleteProject = useMemo(
+    () => !project?.auctionsStarted,
+    [project?.auctionsStarted]
+  );
+
+  const isDeleting = useMemo(
+    () => ['confirming', 'waiting'].includes(deleteProjectStatus),
+    [deleteProjectStatus]
   );
 
   const canTriggerNextEdition = useMemo(
@@ -206,6 +231,22 @@ const AuthorSection = ({
         },
       }),
     [enableNextEdition, projectId, refetch]
+  );
+
+  const handleDelete = useCallback(
+    async () =>
+      await deleteProject({
+        projectId,
+        textHash: hashes.textIpfsHash,
+        blurbHash: hashes.blurbIpfsHash,
+        imgHash: hashes.imgIpfsHash,
+        translationHash: hashes.translationIpfsHash,
+        onError: undefined,
+        onSuccess: () => {
+          router.push(`/projects`);
+        },
+      }),
+    [deleteProject, hashes, projectId, router]
   );
 
   const beforeAuction = () => {
@@ -308,6 +349,7 @@ const AuthorSection = ({
               </p>
               <ActionButton
                 disabled={
+                  isDeleting ||
                   startAuctionsStatus === 'confirming' ||
                   startAuctionsStatus === 'waiting' ||
                   project.auctionsStarted ||
@@ -331,10 +373,11 @@ const AuthorSection = ({
     <Root theme={theme}>
       <Title size="l">Project Settings</Title>
       {!project.auctionsStarted && beforeAuction()}
-      <Title size="m" margin="3rem 0 3rem 0">
-        Editions
-      </Title>
+
       <ActionItems>
+        <Title size="m" margin="1rem 0 1rem 0">
+          Editions
+        </Title>
         <MoreDetails
           open={canTriggerNextEdition}
           title={'Unlock Next Edition'}
@@ -360,6 +403,35 @@ const AuthorSection = ({
             />
           </>
         </MoreDetails>
+        <Title size="m" margin="1rem 0 1rem 0">
+          Danger Zone
+        </Title>
+        <MoreDetails
+          open={canDeleteProject}
+          title={'Delete Project'}
+          styles={{ marginBlockEnd: '1rem' }}
+        >
+          <>
+            <p>
+              You can only delete a project when auctions have not started. Once
+              NFTs have been minted (by you or collectors) deleting becomes
+              impossible. Deleting cannot be undone!
+            </p>
+            <DeleteWrapper>
+              <ActionButton
+                margin="0 1rem 0 0"
+                disabled={!canDeleteProject || isDeleting}
+                text="Delete Project"
+                loading={isDeleting}
+                onClick={handleDelete}
+              />
+              <TooltippedIndicator
+                tooltipContent="Are you sure? This cannot be undone."
+                icon={<PriorityHigh htmlColor="#fff" fontSize="inherit" />}
+              />
+            </DeleteWrapper>
+          </>
+        </MoreDetails>
       </ActionItems>
       {showConfigureModal && (
         <ConfigureModal
@@ -380,7 +452,6 @@ const AuthorSection = ({
           }
         />
       )}
-
       {showAuthorMintModal && (
         <StartAuctionsModal
           onClose={() => setShowAuthorMintModal(false)}

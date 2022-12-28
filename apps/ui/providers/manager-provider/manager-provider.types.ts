@@ -16,6 +16,8 @@ export type WriteActionStatus =
 export type ManagerApi = {
   configureStatus: WriteActionStatus;
   configureProject: (x: ConfigureProjectArgs) => Promise<void>;
+  deleteProject: (x: DeleteProjectArgs) => Promise<void>;
+  deleteProjectStatus: WriteActionStatus;
   setContributors: (x: SetContributorsArgs) => Promise<void>;
   setContributorsStatus: WriteActionStatus;
   enableNextEdition: (x: EnableNextEditionArgs) => Promise<void>;
@@ -81,6 +83,16 @@ export interface EnableNextEditionArgs {
   projectId: string;
   amount: number;
   price: string;
+  onSuccess?: () => void;
+  onError?: (e: any) => void;
+}
+
+export interface DeleteProjectArgs {
+  projectId: string;
+  textHash: null | string;
+  blurbHash: null | string;
+  imgHash: null | string;
+  translationHash: null | string;
   onSuccess?: () => void;
   onError?: (e: any) => void;
 }

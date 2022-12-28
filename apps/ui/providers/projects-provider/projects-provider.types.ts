@@ -54,12 +54,14 @@ export interface Project {
   id: string;
   imgIpfsHash: string | null;
   initialMintPrice: BigNumber;
+  isDeleted?: boolean | null;
   isFrozen: boolean;
   isPaused: boolean;
   mintCount: BigNumber;
   originalLanguage: string;
   paused: boolean;
   premintedByAuthor: BigNumber;
+  songLink?: string;
   startId: BigNumber;
   subtitle: string | null;
   textIpfsHash: string | null;

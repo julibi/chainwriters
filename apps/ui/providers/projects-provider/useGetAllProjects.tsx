@@ -5,7 +5,11 @@ import { ProjectsResult } from '../../providers/projects-provider/projects-provi
 
 export const GET_ALL_PROJECTS = gql`
   query allProjects {
-    projects(orderBy: createdAt, orderDirection: desc) {
+    projects(
+      orderBy: createdAt
+      orderDirection: desc
+      where: { isDeleted: null }
+    ) {
       auctionsEnded
       auctionsStarted
       balance
@@ -21,6 +25,7 @@ export const GET_ALL_PROJECTS = gql`
       id
       imgIpfsHash
       isCurated
+      isDeleted
       isFrozen
       isPaused
       mintCount
@@ -33,6 +38,7 @@ export const GET_ALL_PROJECTS = gql`
       currentId
       initialMintPrice
       premintedByAuthor
+      songLink
     }
   }
 `;

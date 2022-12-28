@@ -14,6 +14,7 @@ import { useAuctions } from '../../hooks/auctions';
 import { useTheme } from '../../hooks/theme';
 import { formatEtherBigNumber } from '../../utils/formatEtherBigNumber';
 import { Tooltip } from '../Tooltip';
+import { useManager } from '../../hooks/manager';
 
 const InfoBlock = styled.div<ElementThemeProps>`
   width: 40%;
@@ -69,6 +70,7 @@ const AuctionSection = ({
   const theme = useTheme();
   const { startAuctionsStatus } = useCollection();
   const { retriggerAuctionStatus } = useAuctions();
+  const { deleteProjectStatus } = useManager();
   const [showStartAuctionsModal, setShowStartAuctionsModal] = useState(false);
   const totalSupply = useMemo(() => {
     if (project) {
@@ -77,13 +79,19 @@ const AuctionSection = ({
       return BigNumber.from('0');
     }
   }, [project]);
-  console.log(Number(totalSupply));
+
   const startAuctionsPending = useMemo(
     () =>
       startAuctionsStatus === 'confirming' || startAuctionsStatus === 'waiting',
 
     [startAuctionsStatus]
   );
+
+  const deletePending = useMemo(
+    () => ['confirming', 'waiting'].includes(deleteProjectStatus),
+    [deleteProjectStatus]
+  );
+
   const retriggerPending = useMemo(
     () =>
       isGettingCurrentPrice ||
@@ -131,7 +139,7 @@ const AuctionSection = ({
     }
     return isAuthor ? (
       <ActionButton
-        disabled={startAuctionsPending}
+        disabled={startAuctionsPending || deletePending}
         loading={startAuctionsPending}
         margin="0"
         onClick={() => setShowStartAuctionsModal(true)}
@@ -142,7 +150,7 @@ const AuctionSection = ({
         <Title size="xs">{'Auction Has Not Started Yet'}</Title>
       </InfoBlock>
     );
-  }, [project, isAuthor, startAuctionsPending, theme]);
+  }, [project, isAuthor, startAuctionsPending, deletePending, theme]);
 
   useEffect(() => {
     if (startAuctionsStatus === 'success') {

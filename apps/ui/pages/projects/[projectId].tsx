@@ -454,7 +454,8 @@ const ProjectDetailView = () => {
     getImageUrl();
   }, [getImageUrl]);
 
-  if (!project && !isProjectLoading) {
+  console.log({ project });
+  if ((!project || project.isDeleted) && !isProjectLoading) {
     return (
       <Root>
         <Title size="xl">{`The project you are looking for does not exist :(`}</Title>

@@ -18,6 +18,7 @@ export const GET_PROJECT = gql`
       creator
       genre
       id
+      isDeleted
       originalLanguage
       subtitle
       textIpfsHash

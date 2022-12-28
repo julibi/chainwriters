@@ -6,7 +6,7 @@ import { AccountQueryVar } from '../../providers/user-provider/user-provider.typ
 
 export const GET_PROJECTS_OF_ACCOUNT = gql`
   query oneProjectQuery($account: String!) {
-    projects(where: { creator: $account }) {
+    projects(where: { creator: $account, isDeleted: null }) {
       auctionsEnded
       auctionsStarted
       blurbIpfsHash

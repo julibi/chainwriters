@@ -142,6 +142,7 @@ const Read = () => {
   const {
     allowedToRead,
     isAuthor,
+    isDeleted,
     project,
     text,
     textIpfsHash: originalTextIpfsHash,
@@ -244,6 +245,14 @@ const Read = () => {
       return <RichTextRead text={translation} />;
     }
   }, [isAuthor, isEditing, translation, translationOn]);
+
+  if (!project || project?.isDeleted) {
+    return (
+      <Root>
+        <Title size="xl">{`The project you are looking for does not exist :(`}</Title>
+      </Root>
+    );
+  }
 
   if (pending) {
     return (
