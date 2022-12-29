@@ -454,7 +454,6 @@ const ProjectDetailView = () => {
     getImageUrl();
   }, [getImageUrl]);
 
-  console.log({ project });
   if ((!project || project.isDeleted) && !isProjectLoading) {
     return (
       <Root>

@@ -461,17 +461,32 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
         const { hash } = Tx;
         setDeleteProjectStatus('waiting');
         toast.info(<ToastLink message={'Deleting project...'} />);
-        mpManager.provider.once(hash, (transaction) => {
+        mpManager.provider.once(hash, async (transaction) => {
           // unpin hashes
           textHash && unpinFromPinata(textHash);
           imgHash && unpinFromPinata(imgHash);
           blurbHash && unpinFromPinata(blurbHash);
           translationHash && unpinFromPinata(translationHash);
 
-          // TODO
-          //remove data from BE
-          // -delete project projects/1
-          // -delete image
+          // delete metadata in BE
+          try {
+            const deleteProjectRequestOptions = {
+              method: 'DELETE',
+              headers: { 'Content-Type': 'application/json' },
+            };
+            // fire and forget
+            await fetch(
+              `${process.env.NEXT_PUBLIC_MOONPAGE_METADATA_API}/projects/${projectId}`,
+              deleteProjectRequestOptions
+            );
+            await fetch(
+              `${process.env.NEXT_PUBLIC_MOONPAGE_METADATA_API}/file/project-${projectId}`,
+              deleteProjectRequestOptions
+            );
+          } catch (e) {
+            console.log('something went wrong while deleting BE stuff', { e });
+            // do nothing
+          }
 
           setDeleteProjectStatus('success');
           toast.success(<ToastLink message={'Success!'} />);
