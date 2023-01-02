@@ -23,8 +23,26 @@ type Mint @entity {
   tokenId: BigInt!
 }
 
+type Vote @entity {
+  id: ID!
+  project: Project!
+  ballot: Bytes!
+  creator: Bytes!
+  proposal: String!
+  option1: String!
+  option2: String!
+  option3: String!
+  option1Count: BigInt!
+  option2Count: BigInt!
+  option3Count: BigInt!
+  totalCount: BigInt!
+  voteStarted: BigInt!
+  voteEnding: BigInt!
+}
+
 type Project @entity {
   id: ID!
+  ballot: Bytes!
   creator: Bytes!
   royaltiesSplitter: Bytes!
   createdAt: BigInt!

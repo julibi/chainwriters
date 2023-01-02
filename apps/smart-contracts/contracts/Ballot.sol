@@ -10,6 +10,7 @@ contract Ballot is AccessControlEnumerable {
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
     IMoonpageCollection public moonpageCollection;
     IMoonpageManager public moonpageManager;
+    uint256 public projectId;
     uint256 public startId;
     uint256 public endId;
     uint256 public maxVotes;
@@ -41,19 +42,30 @@ contract Ballot is AccessControlEnumerable {
     mapping(uint256 => mapping(uint256 => SingleVote)) public votings;
     mapping(uint256 => Setting) public voteSettings;
     event VoteStarted(
+        uint256 projectId,
         uint256 votingId,
         uint256 maxVotes,
         uint256 time,
-        string proposal
+        string proposal,
+        string option1,
+        string option2,
+        string option3
     );
     event VoteEnded(
+        uint256 projectId,
         uint256 votingId,
         uint256 time,
         uint256 option1Votes,
         uint256 option2Votes,
         uint256 option3Votes
     );
-    event Voted(uint256 votingId, uint256 time);
+    event Voted(
+        uint256 projectId,
+        uint256 votingId,
+        uint256 time,
+        uint256 option,
+        uint256 counts
+    );
 
     constructor(
         address _collection,
@@ -70,6 +82,7 @@ contract Ballot is AccessControlEnumerable {
         endId = endTokenId;
         maxVotes = endTokenId - startTokenId + 1;
         state = State.NotVoting;
+        projectId = _projectId;
     }
 
     modifier authorized(uint256[] calldata _tokenIds) {
@@ -121,7 +134,16 @@ contract Ballot is AccessControlEnumerable {
         }
 
         state = State.Voting;
-        emit VoteStarted(votingsIndex, maxVotes, block.timestamp, _proposal);
+        emit VoteStarted(
+            projectId,
+            votingsIndex,
+            maxVotes,
+            block.timestamp,
+            _proposal,
+            _optionValues[0],
+            _optionValues[1],
+            _optionValues[2]
+        );
     }
 
     function endVote() external onlyRole(CREATOR_ROLE) inState(State.Voting) {
@@ -131,6 +153,7 @@ contract Ballot is AccessControlEnumerable {
         state = State.NotVoting;
         votingsIndex++;
         emit VoteEnded(
+            projectId,
             votingsIndex,
             block.timestamp,
             voteSettings[votingsIndex].option1Votes,
@@ -174,6 +197,12 @@ contract Ballot is AccessControlEnumerable {
             voteSettings[votingsIndex].votesCount++;
         }
 
-        emit Voted(votingsIndex, block.timestamp);
+        emit Voted(
+            projectId,
+            votingsIndex,
+            block.timestamp,
+            _option,
+            _tokenIds.length
+        );
     }
 }
