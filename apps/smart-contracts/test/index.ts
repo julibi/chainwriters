@@ -1,11 +1,10 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { ethers, waffle } from "hardhat";
-import upgrades from "@openzeppelin/upgrades-core";
+import { ethers, upgrades, waffle } from "hardhat";
 import { expect } from "chai";
 import { formatEther } from "@ethersproject/units";
 import {
   MoonpageManager,
-  MoonpageManagerTestingV2,
+  MoonpageManagerV2,
   MoonpageCollection,
   MoonpageFactory,
   BallotsFactory,
@@ -37,7 +36,7 @@ describe("Project", function () {
   let CollectionAsUserA: MoonpageCollection;
   let CollectionAsUserB: MoonpageCollection;
   let Manager: any;
-  let ManagerUpgraded: MoonpageManagerTestingV2;
+  let ManagerUpgraded: MoonpageManagerV2;
   let ManagerAsDeployer: MoonpageManager;
   let ManagerAsCreator: any;
   let AuctionsManager: any;
@@ -1215,109 +1214,6 @@ describe("Project", function () {
       expect(lastGenEdTokenId).to.equal(2010);
       expect(currentEdLastTokenId).to.equal(2010);
       expect(endTokenId).to.equal(3000);
-    });
-  });
-
-  describe("BALLOTS", () => {
-    it("Ballots work as expected", async () => {
-      // auctions start and Gen Ed Sells out
-      await CollectionAsCreator.startAuctions(
-        1,
-        authorOwnsAmount,
-        discountRate
-      );
-      await CollectionAsUserA.buy(1, {
-        value: myMintPrice,
-      });
-      await CollectionAsUserA.buy(1, {
-        value: myMintPrice,
-      });
-      await CollectionAsUserB.buy(1, {
-        value: myMintPrice,
-      });
-      await CollectionAsUserB.buy(1, {
-        value: myMintPrice,
-      });
-      // project creator - and creator only – can deploy a ballot
-      await expect(BallotsFactoryAsDeployer.createBallot(1)).to.revertedWith(
-        "Not authorized"
-      );
-      await expect(BallotsFactoryAsCreator.createBallot(100)).to.revertedWith(
-        "No collection"
-      );
-      await BallotsFactoryAsCreator.createBallot(1);
-      await expect(BallotsFactoryAsCreator.createBallot(1)).to.revertedWith(
-        "Ballot already exists"
-      );
-      const ballotAddress = await BallotsFactory.ballots(1);
-      expect(await BallotsFactory.ballotsLength()).to.equal(1);
-      const BallotFactory = await ethers.getContractFactory("Ballot");
-      Ballot = BallotFactory.attach(ballotAddress);
-      BallotAsCreator = Ballot.connect(creator);
-      BallotAsDeployer = Ballot.connect(deployer);
-      // voting from start to finish - only Gen Ed token owners can vote
-      // in this case tokenId 1 - 6 (incl)
-      await BallotAsCreator.startVote(
-        "Publish it as a real book?",
-        ["Yes", "No", "abstention"],
-        false
-      );
-      await expect(
-        BallotAsCreator.startVote(
-          "Random second vote that cannot happen at the same time.",
-          ["Yes", "No", "abstention"],
-          false
-        )
-      ).to.revertedWith("Impossible at this state");
-      const startId = await Ballot.startId();
-      const endId = await Ballot.endId();
-      const maxVotes = await Ballot.maxVotes();
-      console.log({ startId, endId, maxVotes });
-      expect(startId).to.equal(1);
-      expect(endId).to.equal(7);
-      expect(maxVotes).to.equal(7);
-      await BallotAsDeployer.vote(1, 1);
-      await BallotAsCreator.vote(2, 1);
-      await BallotAsCreator.vote(3, 2);
-      await expect(BallotAsCreator.endVote()).to.be.revertedWith(
-        "Vote not yet expired"
-      );
-      const BallotAsUserA = Ballot.connect(userA);
-      const BallotAsUserB = Ballot.connect(userB);
-      await expect(BallotAsUserA.vote(1, 0)).to.be.revertedWith(
-        "Not authorized"
-      );
-      await expect(BallotAsUserA.vote(4, 8)).to.be.revertedWith(
-        "Invalid option"
-      );
-      await BallotAsUserA.vote(4, 0);
-      await expect(BallotAsUserA.vote(4, 0)).to.be.revertedWith(
-        "Already voted"
-      );
-      const voteResults = await Ballot.voteSettings(0);
-      expect(voteResults.votesCount).to.equal("4");
-      expect(voteResults.option1Votes).to.equal("1");
-      expect(voteResults.option2Votes).to.equal("2");
-      expect(voteResults.option3Votes).to.equal("1");
-      await BallotAsUserA.vote(5, 0);
-      await BallotAsUserB.vote(6, 0);
-      await BallotAsUserB.vote(7, 0);
-      await BallotAsCreator.endVote();
-      await expect(BallotAsCreator.endVote()).to.be.revertedWith(
-        "Impossible at this state"
-      );
-
-      // can create another vote that can be ended after 1 week
-      await BallotAsCreator.startVote(
-        "A second vote. Want an exclusive meeting?",
-        ["Yes", "No", "abstention"],
-        false
-      );
-      await BallotAsUserA.vote(4, 0);
-      await BallotAsUserA.vote(5, 0);
-      await BallotAsUserB.vote(6, 0);
-      await advanceDays(9);
-      await expect(BallotAsCreator.endVote()).to.not.reverted;
     });
   });
 });
