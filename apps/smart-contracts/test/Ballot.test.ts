@@ -10,9 +10,15 @@ import {
   Ballot,
   AuctionsManager,
 } from "../typechain";
+import { config } from "dotenv";
 
 const advanceDays = async (days: any) => {
   await ethers.provider.send("evm_increaseTime", [60 * 60 * 24 * days]);
+  await ethers.provider.send("evm_mine", []);
+};
+
+const advanceMinutes = async (minutes: any) => {
+  await ethers.provider.send("evm_increaseTime", [minutes * 60]);
   await ethers.provider.send("evm_mine", []);
 };
 
@@ -233,16 +239,17 @@ describe("Voting", function () {
       BallotAsDeployer = Ballot.connect(deployer);
       // voting from start to finish - only Gen Ed token owners can vote
       // in this case tokenId 1 - 6 (incl)
+      const inTwelveMinutes = Math.floor(Date.now() / 1000) + 12 * 60;
       await BallotAsCreator.startVote(
         "Publish it as a real book?",
         ["Yes", "No", "abstention"],
-        1
+        inTwelveMinutes
       );
       await expect(
         BallotAsCreator.startVote(
           "Random second vote that cannot happen at the same time.",
           ["Yes", "No", "abstention"],
-          1
+          inTwelveMinutes
         )
       ).to.revertedWith("Impossible at this state");
       const startId = await Ballot.startId();
@@ -281,7 +288,7 @@ describe("Voting", function () {
       await expect(BallotAsUserB.vote([6, 7], 0)).to.be.revertedWith(
         "Already voted"
       );
-      await advanceDays(1);
+      await advanceMinutes(12);
       await BallotAsCreator.endVote();
       await expect(BallotAsCreator.endVote()).to.be.revertedWith(
         "Impossible at this state"
@@ -292,16 +299,18 @@ describe("Voting", function () {
       expect(voteResults.option2Votes).to.equal("5");
       expect(voteResults.option3Votes).to.equal("1");
 
-      // can create another vote that can be ended after 1 week
+      // can create another vote
+      // caution Date.now() refers to the time after having advanced 12 minutes already before
+      const inThirtyMinutes = Math.floor(Date.now() / 1000) + 30 * 60;
       await BallotAsCreator.startVote(
         "A second vote. Want an exclusive meeting?",
         ["Yes", "No", "abstention"],
-        1
+        inThirtyMinutes
       );
       await BallotAsUserA.vote([4], 0);
       await BallotAsUserA.vote([5], 0);
       await BallotAsUserB.vote([6], 0);
-      await advanceDays(9);
+      await advanceMinutes(30);
       await expect(BallotAsCreator.endVote()).to.not.reverted;
 
       const nextVoteResults = await Ballot.voteSettings(1);

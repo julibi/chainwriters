@@ -109,8 +109,12 @@ contract Ballot is AccessControlEnumerable {
     function startVote(
         string memory _proposal,
         string[] memory _optionValues,
-        uint256 _duration
+        uint256 _end
     ) external onlyRole(CREATOR_ROLE) inState(State.NotVoting) {
+        require(
+            _end >= (block.timestamp + 10 minutes),
+            "Not enough time to vote"
+        );
         require(_optionValues.length == 3, "Must be three options");
 
         voteSettings[votingsIndex].proposal = _proposal;
@@ -123,15 +127,7 @@ contract Ballot is AccessControlEnumerable {
         voteSettings[votingsIndex].option1Votes = 0;
         voteSettings[votingsIndex].option2Votes = 0;
         voteSettings[votingsIndex].option3Votes = 0;
-        if (_duration == 1) {
-            voteSettings[votingsIndex].endTime = block.timestamp + 1 days;
-        } else if (_duration == 5) {
-            voteSettings[votingsIndex].endTime = block.timestamp + 5 days;
-        } else if (_duration == 10) {
-            voteSettings[votingsIndex].endTime = block.timestamp + 10 days;
-        } else {
-            voteSettings[votingsIndex].endTime = block.timestamp + 30 days;
-        }
+        voteSettings[votingsIndex].endTime = _end;
 
         state = State.Voting;
         emit VoteStarted(

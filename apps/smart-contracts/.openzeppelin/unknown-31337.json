@@ -638,7 +638,7 @@
     },
     {
       "address": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
-      "txHash": "0x56b7654b5adce69571853752393938d94bf5cf861d2d3cde39fe149aec6679eb",
+      "txHash": "0x2910949cbdc66044ff8bae3580ba496dcf3e0e36b8098b48bbf6ebff2a3e4eca",
       "kind": "uups"
     }
   ],
@@ -781,7 +781,7 @@
             "label": "collection",
             "offset": 0,
             "slot": "307",
-            "type": "t_contract(IMoonpageCollection)14198",
+            "type": "t_contract(IMoonpageCollection)14160",
             "contract": "MoonpageManager",
             "src": "contracts/MoonpageManager.sol:26"
           },
@@ -789,7 +789,7 @@
             "label": "baseDatas",
             "offset": 0,
             "slot": "308",
-            "type": "t_mapping(t_uint256,t_struct(BaseData)9538_storage)",
+            "type": "t_mapping(t_uint256,t_struct(BaseData)9500_storage)",
             "contract": "MoonpageManager",
             "src": "contracts/MoonpageManager.sol:61"
           },
@@ -797,7 +797,7 @@
             "label": "authorShares",
             "offset": 0,
             "slot": "309",
-            "type": "t_mapping(t_uint256,t_struct(AuthorShare)9543_storage)",
+            "type": "t_mapping(t_uint256,t_struct(AuthorShare)9505_storage)",
             "contract": "MoonpageManager",
             "src": "contracts/MoonpageManager.sol:62"
           },
@@ -805,7 +805,7 @@
             "label": "editions",
             "offset": 0,
             "slot": "310",
-            "type": "t_mapping(t_uint256,t_struct(Edition)9567_storage)",
+            "type": "t_mapping(t_uint256,t_struct(Edition)9529_storage)",
             "contract": "MoonpageManager",
             "src": "contracts/MoonpageManager.sol:63"
           },
@@ -813,7 +813,7 @@
             "label": "contributions",
             "offset": 0,
             "slot": "311",
-            "type": "t_mapping(t_uint256,t_mapping(t_uint256,t_struct(Contribution)9552_storage))",
+            "type": "t_mapping(t_uint256,t_mapping(t_uint256,t_struct(Contribution)9514_storage))",
             "contract": "MoonpageManager",
             "src": "contracts/MoonpageManager.sol:64"
           },
@@ -903,7 +903,7 @@
             "label": "bytes32",
             "numberOfBytes": "32"
           },
-          "t_contract(IMoonpageCollection)14198": {
+          "t_contract(IMoonpageCollection)14160": {
             "label": "contract IMoonpageCollection",
             "numberOfBytes": "20"
           },
@@ -919,7 +919,7 @@
             "label": "mapping(uint256 => bool)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_uint256,t_mapping(t_uint256,t_struct(Contribution)9552_storage))": {
+          "t_mapping(t_uint256,t_mapping(t_uint256,t_struct(Contribution)9514_storage))": {
             "label": "mapping(uint256 => mapping(uint256 => struct MoonpageManager.Contribution))",
             "numberOfBytes": "32"
           },
@@ -931,19 +931,19 @@
             "label": "mapping(uint256 => string)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_uint256,t_struct(AuthorShare)9543_storage)": {
+          "t_mapping(t_uint256,t_struct(AuthorShare)9505_storage)": {
             "label": "mapping(uint256 => struct MoonpageManager.AuthorShare)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_uint256,t_struct(BaseData)9538_storage)": {
+          "t_mapping(t_uint256,t_struct(BaseData)9500_storage)": {
             "label": "mapping(uint256 => struct MoonpageManager.BaseData)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_uint256,t_struct(Contribution)9552_storage)": {
+          "t_mapping(t_uint256,t_struct(Contribution)9514_storage)": {
             "label": "mapping(uint256 => struct MoonpageManager.Contribution)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_uint256,t_struct(Edition)9567_storage)": {
+          "t_mapping(t_uint256,t_struct(Edition)9529_storage)": {
             "label": "mapping(uint256 => struct MoonpageManager.Edition)",
             "numberOfBytes": "32"
           },
@@ -959,7 +959,7 @@
             "label": "string",
             "numberOfBytes": "32"
           },
-          "t_struct(AuthorShare)9543_storage": {
+          "t_struct(AuthorShare)9505_storage": {
             "label": "struct MoonpageManager.AuthorShare",
             "members": [
               {
@@ -977,7 +977,7 @@
             ],
             "numberOfBytes": "64"
           },
-          "t_struct(BaseData)9538_storage": {
+          "t_struct(BaseData)9500_storage": {
             "label": "struct MoonpageManager.BaseData",
             "members": [
               {
@@ -1049,7 +1049,7 @@
             ],
             "numberOfBytes": "352"
           },
-          "t_struct(Contribution)9552_storage": {
+          "t_struct(Contribution)9514_storage": {
             "label": "struct MoonpageManager.Contribution",
             "members": [
               {
@@ -1079,7 +1079,7 @@
             ],
             "numberOfBytes": "128"
           },
-          "t_struct(Edition)9567_storage": {
+          "t_struct(Edition)9529_storage": {
             "label": "struct MoonpageManager.Edition",
             "members": [
               {
@@ -1246,7 +1246,7 @@
             "label": "moonpageManager",
             "offset": 0,
             "slot": "301",
-            "type": "t_contract(IMoonpageManager)14424",
+            "type": "t_contract(IMoonpageManager)14386",
             "contract": "AuctionsManager",
             "src": "contracts/AuctionsManager.sol:21"
           },
@@ -1254,7 +1254,7 @@
             "label": "moonpageFactory",
             "offset": 0,
             "slot": "302",
-            "type": "t_contract(IMoonpageFactory)14257",
+            "type": "t_contract(IMoonpageFactory)14219",
             "contract": "AuctionsManager",
             "src": "contracts/AuctionsManager.sol:22"
           },
@@ -1262,7 +1262,7 @@
             "label": "moonpageCollection",
             "offset": 0,
             "slot": "303",
-            "type": "t_contract(IMoonpageCollection)14198",
+            "type": "t_contract(IMoonpageCollection)14160",
             "contract": "AuctionsManager",
             "src": "contracts/AuctionsManager.sol:23"
           },
@@ -1296,15 +1296,15 @@
             "label": "bytes32",
             "numberOfBytes": "32"
           },
-          "t_contract(IMoonpageCollection)14198": {
+          "t_contract(IMoonpageCollection)14160": {
             "label": "contract IMoonpageCollection",
             "numberOfBytes": "20"
           },
-          "t_contract(IMoonpageFactory)14257": {
+          "t_contract(IMoonpageFactory)14219": {
             "label": "contract IMoonpageFactory",
             "numberOfBytes": "20"
           },
-          "t_contract(IMoonpageManager)14424": {
+          "t_contract(IMoonpageManager)14386": {
             "label": "contract IMoonpageManager",
             "numberOfBytes": "20"
           },
@@ -1519,7 +1519,7 @@
             "label": "moonpageManager",
             "offset": 0,
             "slot": "305",
-            "type": "t_contract(IMoonpageManager)14424",
+            "type": "t_contract(IMoonpageManager)14386",
             "contract": "MoonpageFactory",
             "src": "contracts/MoonpageFactory.sol:24"
           },
@@ -1527,7 +1527,7 @@
             "label": "auctionsManager",
             "offset": 0,
             "slot": "306",
-            "type": "t_contract(IAuctionsManager)14145",
+            "type": "t_contract(IAuctionsManager)14107",
             "contract": "MoonpageFactory",
             "src": "contracts/MoonpageFactory.sol:25"
           },
@@ -1577,11 +1577,11 @@
             "label": "bytes32",
             "numberOfBytes": "32"
           },
-          "t_contract(IAuctionsManager)14145": {
+          "t_contract(IAuctionsManager)14107": {
             "label": "contract IAuctionsManager",
             "numberOfBytes": "20"
           },
-          "t_contract(IMoonpageManager)14424": {
+          "t_contract(IMoonpageManager)14386": {
             "label": "contract IMoonpageManager",
             "numberOfBytes": "20"
           },
@@ -1622,9 +1622,9 @@
         }
       }
     },
-    "984e7713ef007b1a73c1178d262e9c28d902ef8a0b4e06893e1383cf1468c1b4": {
+    "0405afb2138ce4832d2c710904c4255f62a42aa2fab07540a6a4dbf9dffe5a18": {
       "address": "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
-      "txHash": "0x8ee9f25491a24db6f99705b7e4e85a8ef3c69ba845f0fdd13badeaa3f8b307e8",
+      "txHash": "0x9c92b2664f4c3a7175fbb4deaddfdc03365eac9a692a0f0691e8ca8bc1513ab3",
       "layout": {
         "storage": [
           {
@@ -1720,7 +1720,7 @@
             "label": "moonpageManager",
             "offset": 0,
             "slot": "302",
-            "type": "t_contract(IMoonpageManager)14424",
+            "type": "t_contract(IMoonpageManager)14386",
             "contract": "BallotsFactory",
             "src": "contracts/BallotsFactory.sol:21"
           },
@@ -1728,7 +1728,7 @@
             "label": "moonpageCollection",
             "offset": 0,
             "slot": "303",
-            "type": "t_contract(IMoonpageCollection)14198",
+            "type": "t_contract(IMoonpageCollection)14160",
             "contract": "BallotsFactory",
             "src": "contracts/BallotsFactory.sol:22"
           },
@@ -1762,11 +1762,11 @@
             "label": "bytes32",
             "numberOfBytes": "32"
           },
-          "t_contract(IMoonpageCollection)14198": {
+          "t_contract(IMoonpageCollection)14160": {
             "label": "contract IMoonpageCollection",
             "numberOfBytes": "20"
           },
-          "t_contract(IMoonpageManager)14424": {
+          "t_contract(IMoonpageManager)14386": {
             "label": "contract IMoonpageManager",
             "numberOfBytes": "20"
           },
