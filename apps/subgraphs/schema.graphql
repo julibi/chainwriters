@@ -23,11 +23,9 @@ type Mint @entity {
   tokenId: BigInt!
 }
 
-type Vote @entity {
+type Voting @entity {
   id: ID!
-  project: Project!
-  ballot: Bytes!
-  creator: Bytes!
+  ballot: Ballot!
   proposal: String!
   option1: String!
   option2: String!
@@ -38,11 +36,21 @@ type Vote @entity {
   totalCount: BigInt!
   voteStarted: BigInt!
   voteEnding: BigInt!
+  isVoting: Boolean!
+}
+
+type Ballot @entity {
+  id: ID!
+  project: Project!
+  created: BigInt
+  ballotAddress: Bytes!
+  creator: Bytes!
+  votings: [Voting!] @derivedFrom(field: "ballot")
 }
 
 type Project @entity {
   id: ID!
-  ballot: Bytes!
+  ballot: Ballot @derivedFrom(field: "project")
   creator: Bytes!
   royaltiesSplitter: Bytes!
   createdAt: BigInt!

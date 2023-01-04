@@ -109,3 +109,48 @@ dataSources:
         - event: ExpirationSet(uint256,uint256)
           handler: handleExpirationSet
       file: ./src/mapping.ts
+  - kind: ethereum
+    name: BallotsFactory
+    network: mumbai
+    source:
+      address: '0x02a87518eE562E13a8abc60f4e29Ec40767F1Bf8'
+      abi: BallotsFactory
+      startBlock: 30471490
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Ballot
+        - Project
+      abis:
+        - name: BallotsFactory
+          file: ./abis/BallotsFactory.json
+      eventHandlers:
+        - event: BallotCreated(uint256,address)
+          handler: handleBallotCreated
+
+      file: ./src/mapping.ts
+templates:
+  - name: Ballot
+    kind: ethereum/contract
+    network: mumbai
+    source:
+      abi: Ballot
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      file: ./src/mapping.ts
+      entities:
+        - Voting
+        - Ballot
+        - Project
+      abis:
+        - name: Ballot
+          file: ./abis/Ballot.json
+      eventHandlers:
+        - event: VoteStarted(uint256,uint256,uint256,uint256,string,string,string,string)
+          handler: handleVoteStarted
+        - event: Voted(uint256,uint256,uint256,uint256)
+          handler: handleVoted

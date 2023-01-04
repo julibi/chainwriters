@@ -21,11 +21,7 @@ contract BallotsFactory is
     IMoonpageManager public moonpageManager;
     IMoonpageCollection public moonpageCollection;
     mapping(uint256 => address) public ballots;
-    event BallotCreated(
-        uint256 _projectId,
-        uint256 _timeCreated,
-        address _ballotAddress
-    );
+    event BallotCreated(uint256 projectId, address ballotAddress);
 
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
@@ -69,7 +65,7 @@ contract BallotsFactory is
         );
         ballots[_projectId] = address(ballot);
         ballotsLength++;
-        emit BallotCreated(_projectId, block.timestamp, address(ballot));
+        emit BallotCreated(_projectId, address(ballot));
         return address(ballot);
     }
 

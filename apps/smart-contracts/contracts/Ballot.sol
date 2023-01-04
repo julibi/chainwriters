@@ -45,7 +45,7 @@ contract Ballot is AccessControlEnumerable {
         uint256 projectId,
         uint256 votingId,
         uint256 maxVotes,
-        uint256 time,
+        uint256 endTime,
         string proposal,
         string option1,
         string option2,
@@ -54,7 +54,6 @@ contract Ballot is AccessControlEnumerable {
     event VoteEnded(
         uint256 projectId,
         uint256 votingId,
-        uint256 time,
         uint256 option1Votes,
         uint256 option2Votes,
         uint256 option3Votes
@@ -62,7 +61,6 @@ contract Ballot is AccessControlEnumerable {
     event Voted(
         uint256 projectId,
         uint256 votingId,
-        uint256 time,
         uint256 option,
         uint256 counts
     );
@@ -134,7 +132,7 @@ contract Ballot is AccessControlEnumerable {
             projectId,
             votingsIndex,
             maxVotes,
-            block.timestamp,
+            _end,
             _proposal,
             _optionValues[0],
             _optionValues[1],
@@ -151,7 +149,6 @@ contract Ballot is AccessControlEnumerable {
         emit VoteEnded(
             projectId,
             votingsIndex,
-            block.timestamp,
             voteSettings[votingsIndex].option1Votes,
             voteSettings[votingsIndex].option2Votes,
             voteSettings[votingsIndex].option3Votes
@@ -193,12 +190,6 @@ contract Ballot is AccessControlEnumerable {
             voteSettings[votingsIndex].votesCount++;
         }
 
-        emit Voted(
-            projectId,
-            votingsIndex,
-            block.timestamp,
-            _option,
-            _tokenIds.length
-        );
+        emit Voted(projectId, votingsIndex, _option, _tokenIds.length);
     }
 }
