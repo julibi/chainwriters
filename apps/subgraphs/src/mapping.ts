@@ -395,13 +395,13 @@ export function handleVoted(event: Voted): void {
   let upvotedCount = event.params.counts;
   let upvotedOption = event.params.option;
 
-  if (upvotedOption == BigInt.fromString('1')) {
+  if (upvotedOption == BigInt.fromString('0')) {
     voting.option1Count = voting.option1Count.plus(upvotedCount);
   }
-  if (upvotedOption == BigInt.fromString('2')) {
+  if (upvotedOption == BigInt.fromString('1')) {
     voting.option2Count = voting.option2Count.plus(upvotedCount);
   }
-  if (upvotedOption == BigInt.fromString('3')) {
+  if (upvotedOption == BigInt.fromString('2')) {
     voting.option3Count = voting.option3Count.plus(upvotedCount);
   }
   voting.totalCount = voting.totalCount.plus(upvotedCount);
