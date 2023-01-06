@@ -22,6 +22,7 @@ import Title from '../Title';
 import TooltippedIndicator from '../TooltippedIndicator';
 import { PriorityHigh } from '@material-ui/icons';
 import { useGetProjectIpfsHashes } from '../../hooks/projects/useGetProjectIpfsHashes';
+import { useBallotsFactory } from '../../hooks/ballotFactory/useBallotsFactory';
 
 const Root = styled.section<ElementThemeProps>`
   display: flex;
@@ -98,6 +99,7 @@ const AuthorSection = ({
     enableNextEditionStatus,
   } = useManager();
   const { startAuctions, startAuctionsStatus } = useCollection();
+  const { createBallot, createBallotStatus } = useBallotsFactory();
   const { project: hashes } = useGetProjectIpfsHashes(projectId);
   const [showConfigureModal, setShowConfigureModal] = useState<boolean>(false);
   const [showContributorsModal, setShowContributorsModal] =
@@ -106,6 +108,7 @@ const AuthorSection = ({
     useState<boolean>(false);
   const [showEnableNextEditionModal, setShowEnableNextEditionModal] =
     useState(false);
+  const [showVotingModal, setShowVotingModal] = useState(false);
 
   const configured = useMemo(() => {
     let hasConfigured = false;
@@ -249,6 +252,18 @@ const AuthorSection = ({
     [deleteProject, hashes, projectId, router]
   );
 
+  const handleCreateBallot = useCallback(
+    async () =>
+      await createBallot({
+        projectId,
+        onError: undefined,
+        onSuccess: () => {
+          refetch();
+        },
+      }),
+    [createBallot, projectId, refetch]
+  );
+
   const beforeAuction = () => {
     return (
       <>
@@ -369,12 +384,41 @@ const AuthorSection = ({
     );
   };
 
+  console.log({ project });
   return (
     <Root theme={theme}>
       <Title size="l">Project Settings</Title>
       {!project.auctionsStarted && beforeAuction()}
 
       <ActionItems>
+        <Title size="m" margin="1rem 0 1rem 0">
+          Voting
+        </Title>
+        <MoreDetails
+          open={canTriggerNextEdition}
+          title={'Let NFT holders of your project vote'}
+          styles={{ marginBlockEnd: '1rem' }}
+        >
+          <>
+            <p>
+              You can setup a voting ballot. Once you have created one, you can
+              let people vote. Only one vote can happen after another.
+            </p>
+            <ActionButton
+              disabled={
+                !!project?.ballotAddress ||
+                createBallotStatus === 'confirming' ||
+                createBallotStatus === 'waiting'
+              }
+              text="Set up voting ballot"
+              loading={
+                createBallotStatus === 'confirming' ||
+                createBallotStatus === 'waiting'
+              }
+              onClick={handleCreateBallot}
+            />
+          </>
+        </MoreDetails>
         <Title size="m" margin="1rem 0 1rem 0">
           Editions
         </Title>

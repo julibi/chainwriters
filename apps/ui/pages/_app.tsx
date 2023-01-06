@@ -30,6 +30,7 @@ import {
   ProjectsProvider,
   UserProvider,
   ThemeProvider,
+  BallotsFactoryProvider,
 } from '../providers';
 import * as gtag from '../utils/ga';
 
@@ -194,11 +195,13 @@ function CustomApp({ Component, pageProps }: AppProps) {
                   <CollectionProvider>
                     <FactoryProvider>
                       <ThemeProvider>
-                        <main className="app">
-                          <Layout>
-                            <Component {...pageProps} />
-                          </Layout>
-                        </main>
+                        <BallotsFactoryProvider>
+                          <main className="app">
+                            <Layout>
+                              <Component {...pageProps} />
+                            </Layout>
+                          </main>
+                        </BallotsFactoryProvider>
                       </ThemeProvider>
                     </FactoryProvider>
                   </CollectionProvider>

@@ -38,10 +38,27 @@ export interface Edition {
   mintPrice: BigNumber;
 }
 
+export interface Voting {
+  id: string;
+  proposal: string;
+  option1: string;
+  option2: string;
+  option3: string;
+  option1Count: BigNumber;
+  option2Count: BigNumber;
+  option3Count: BigNumber;
+  totalCount: BigNumber;
+  voteStarted: BigNumber;
+  voteEnding: BigNumber;
+}
+
 export interface Project {
   auctionsEnded: boolean;
   auctionsStarted: boolean;
   balance: BigNumber;
+  ballotAddress?: string;
+  ballotCreated?: BigNumber;
+  votings?: Voting[];
   blurbIpfsHash: string | null;
   contributors: Contributor[] | null;
   createdAt: string;

@@ -12,6 +12,21 @@ export const GET_ONE_PROJECT = gql`
       auctionsEnded
       auctionsStarted
       balance
+      ballotAddress
+      ballotCreated
+      votings {
+        id
+        proposal
+        option1
+        option2
+        option3
+        option1Count
+        option2Count
+        option3Count
+        totalCount
+        voteStarted
+        voteEnding
+      }
       blurbIpfsHash
       contributors {
         id
