@@ -25,7 +25,7 @@ type Mint @entity {
 
 type Voting @entity {
   id: ID!
-  ballot: Ballot!
+  project: Project!
   proposal: String!
   option1: String!
   option2: String!
@@ -39,18 +39,8 @@ type Voting @entity {
   isVoting: Boolean!
 }
 
-type Ballot @entity {
-  id: ID!
-  project: Project!
-  created: BigInt
-  ballotAddress: Bytes!
-  creator: Bytes!
-  votings: [Voting!] @derivedFrom(field: "ballot")
-}
-
 type Project @entity {
   id: ID!
-  ballot: Ballot @derivedFrom(field: "project")
   creator: Bytes!
   royaltiesSplitter: Bytes!
   createdAt: BigInt!
@@ -65,7 +55,6 @@ type Project @entity {
   originalLanguage: String
   subtitle: String
   genre: String
-  songLink: String
   auctionsStarted: Boolean!
   auctionsEnded: Boolean!
   startId: BigInt
@@ -82,4 +71,7 @@ type Project @entity {
   minted: [Mint!] @derivedFrom(field: "project")
   contributors: [Contributor!] @derivedFrom(field: "project")
   editions: [Edition!] @derivedFrom(field: "project")
+  ballotAddress: Bytes
+  ballotCreated: BigInt
+  votings: [Voting!] @derivedFrom(field: "project")
 }

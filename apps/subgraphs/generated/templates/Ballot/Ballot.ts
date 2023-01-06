@@ -109,20 +109,16 @@ export class VoteEnded__Params {
     return this._event.parameters[1].value.toBigInt();
   }
 
-  get time(): BigInt {
+  get option1Votes(): BigInt {
     return this._event.parameters[2].value.toBigInt();
   }
 
-  get option1Votes(): BigInt {
+  get option2Votes(): BigInt {
     return this._event.parameters[3].value.toBigInt();
   }
 
-  get option2Votes(): BigInt {
-    return this._event.parameters[4].value.toBigInt();
-  }
-
   get option3Votes(): BigInt {
-    return this._event.parameters[5].value.toBigInt();
+    return this._event.parameters[4].value.toBigInt();
   }
 }
 
@@ -151,7 +147,7 @@ export class VoteStarted__Params {
     return this._event.parameters[2].value.toBigInt();
   }
 
-  get time(): BigInt {
+  get endTime(): BigInt {
     return this._event.parameters[3].value.toBigInt();
   }
 
@@ -193,16 +189,12 @@ export class Voted__Params {
     return this._event.parameters[1].value.toBigInt();
   }
 
-  get time(): BigInt {
+  get option(): BigInt {
     return this._event.parameters[2].value.toBigInt();
   }
 
-  get option(): BigInt {
-    return this._event.parameters[3].value.toBigInt();
-  }
-
   get counts(): BigInt {
-    return this._event.parameters[4].value.toBigInt();
+    return this._event.parameters[3].value.toBigInt();
   }
 }
 

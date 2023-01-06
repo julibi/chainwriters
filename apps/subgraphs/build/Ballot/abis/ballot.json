@@ -118,12 +118,6 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "time",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
         "name": "option1Votes",
         "type": "uint256"
       },
@@ -167,7 +161,7 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "time",
+        "name": "endTime",
         "type": "uint256"
       },
       {
@@ -211,12 +205,6 @@
         "indexed": false,
         "internalType": "uint256",
         "name": "votingId",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "time",
         "type": "uint256"
       },
       {

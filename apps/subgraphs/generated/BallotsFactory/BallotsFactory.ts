@@ -45,16 +45,12 @@ export class BallotCreated__Params {
     this._event = event;
   }
 
-  get _projectId(): BigInt {
+  get projectId(): BigInt {
     return this._event.parameters[0].value.toBigInt();
   }
 
-  get _timeCreated(): BigInt {
-    return this._event.parameters[1].value.toBigInt();
-  }
-
-  get _ballotAddress(): Address {
-    return this._event.parameters[2].value.toAddress();
+  get ballotAddress(): Address {
+    return this._event.parameters[1].value.toAddress();
   }
 }
 

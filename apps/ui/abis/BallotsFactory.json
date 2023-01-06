@@ -29,19 +29,13 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "_projectId",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "_timeCreated",
+        "name": "projectId",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "address",
-        "name": "_ballotAddress",
+        "name": "ballotAddress",
         "type": "address"
       }
     ],

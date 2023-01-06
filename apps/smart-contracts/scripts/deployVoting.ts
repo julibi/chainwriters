@@ -12,9 +12,9 @@ async function deployAll() {
   const [deployer] = await hre.ethers.getSigners();
   const provider = await hre.ethers.provider;
   const MOONPAGE_MANAGER_ADDRESS_DEV =
-    "0x0ffab0dE416A0ED309dF1E492a9D6aF8EDE2b9cD";
+    "0xb43D745d330372cF8973294712736003296ea75a";
   const MOONPAGE_COLLECTION_ADDRESS_DEV =
-    "0xc0702467e7f4160AD747cA59E80DFC9FedA87D1b";
+    "0xB82d3442DAdc51399A438a3a394734AA52401C99";
   console.log("Deployer account:", deployer.address);
 
   console.log("Account balance:", (await deployer.getBalance()).toString());
@@ -79,6 +79,24 @@ async function deployAll() {
       constructorArguments: [],
     }),
   ]);
+
+  // create a ballot
+  // const BallotsFactoryProxy = BallotsFactoryFactory.attach(
+  //   "0x525A98329d67F042f76A44d4D91C5Eb4B9ebFcf4"
+  // );
+  // await BallotsFactoryProxy.createBallot(115);
+  // const ballot115Address = await BallotsFactoryProxy.ballots(115);
+  // const BallotFactory = await hre.ethers.getContractFactory("Ballot");
+  // const Ballot115 = BallotFactory.attach(
+  //   "0x2a917D9bB78eC8be577977D3783B7AA15B52F960"
+  // );
+  // const Ballot115AsCreator = Ballot115.connect(deployer);
+  // const inTwelveMinutes = Math.floor(Date.now() / 1000) + 12 * 60;
+  // await Ballot115AsCreator.startVote(
+  //   "Publish it as a real book?",
+  //   ["Yes", "No", "abstention"],
+  //   inTwelveMinutes
+  // );
 }
 
 deployAll().catch((error) => {

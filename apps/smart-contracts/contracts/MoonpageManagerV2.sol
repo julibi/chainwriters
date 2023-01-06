@@ -71,9 +71,6 @@ contract MoonpageManagerV2 is
     mapping(uint256 => mapping(uint256 => uint256)) public editionRanges;
     mapping(uint256 => string) public translationIpfsHashes;
 
-    //added with V2
-    mapping(uint256 => string) public songLinks;
-
     event ProjectCreated(
         address creator,
         address royaltiesSplitter,
@@ -125,7 +122,6 @@ contract MoonpageManagerV2 is
     event BaseDataFrozen(uint256 projectId, bool frozen);
     event PremintedByAuthor(uint256 projectId, uint256 amount);
     event BalanceDecreased(uint256 projectId, uint256 amount);
-    event SongLinkSet(uint256 projectId, string songLink);
 
     modifier onlyCreator(uint256 _projectId) {
         require(
@@ -445,16 +441,6 @@ contract MoonpageManagerV2 is
     {
         frozenProjectIds[_projectId] = true;
         emit BaseDataFrozen(_projectId, true);
-    }
-
-    // added with V2
-    function setSongLink(uint256 _projectId, string calldata _songLink)
-        external
-        whenNotPaused
-        onlyCreator(_projectId)
-    {
-        songLinks[_projectId] = _songLink;
-        emit SongLinkSet(_projectId, _songLink);
     }
 
     // ------------------

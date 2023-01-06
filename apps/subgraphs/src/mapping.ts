@@ -20,7 +20,6 @@ import {
   LanguageUpdated,
   ImageUpdated,
   AnimationUpdated,
-  SongLinkSet,
   TokenIdIncreased,
 } from '../generated/MoonpageManager/MoonpageManager';
 import { Minted } from '../generated/MoonpageCollection/MoonpageCollection';
@@ -30,9 +29,13 @@ import {
   ExpirationSet,
 } from '../generated/AuctionsManager/AuctionsManager';
 import { BallotCreated } from '../generated/BallotsFactory/BallotsFactory';
-import { VoteStarted } from '../generated/templates/Ballot/Ballot';
 import {
-  Ballot,
+  VoteStarted,
+  Voted,
+  VoteEnded,
+} from '../generated/templates/Ballot/Ballot';
+import { Ballot } from '../generated/templates';
+import {
   Contributor,
   Edition,
   Mint,
@@ -241,16 +244,6 @@ export function handleAnimationUpdated(event: AnimationUpdated): void {
   project.save();
 }
 
-export function handleSongLinkSet(event: SongLinkSet): void {
-  let projectId = event.params.projectId.toString();
-  let project = Project.load(projectId);
-  if (!project) {
-    throw new Error(`Could not find project with ID`);
-  }
-  project.songLink = event.params.songLink;
-  project.save();
-}
-
 export function handleMint(event: Minted): void {
   let projectId = event.params.projectId.toString();
   let project = Project.load(projectId);
@@ -361,24 +354,22 @@ export function handleBallotCreated(event: BallotCreated): void {
   if (!project) {
     throw new Error(`Could not find project with ID`);
   }
-  let ballot = new Ballot(projectId);
-  ballot.project = project.id;
-  ballot.created = event.block.timestamp;
-  ballot.ballotAddress = event.params.ballotAddress;
-  ballot.creator = project.creator;
-  ballot.save();
 
+  project.ballotCreated = event.block.timestamp;
+  project.ballotAddress = event.params.ballotAddress;
   project.save();
+
+  Ballot.create(event.params.ballotAddress);
 }
 
 export function handleVoteStarted(event: VoteStarted): void {
   let projectId = event.params.projectId.toString();
-  let ballot = Ballot.load(projectId);
-  let voting = new Voting(ballot + event.params.votingId.toString());
-  if (!ballot) {
-    throw new Error(`Could not find ballot with ID`);
+
+  let voting = new Voting(projectId + '-' + event.params.votingId.toString());
+  if (!voting) {
+    throw new Error('Could not create voting for project');
   }
-  voting.ballot = ballot.id;
+  voting.project = projectId;
   voting.proposal = event.params.proposal;
   voting.option1 = event.params.option1;
   voting.option2 = event.params.option2;
@@ -388,34 +379,44 @@ export function handleVoteStarted(event: VoteStarted): void {
   voting.option3Count = BigInt.fromString('0');
   voting.totalCount = BigInt.fromString('0');
   voting.voteStarted = event.block.timestamp;
-  voting.voteEnding = event.params.time;
+  voting.voteEnding = event.params.endTime;
   voting.isVoting = true;
-
   voting.save();
 }
 
 export function handleVoted(event: Voted): void {
-  let ballot = Ballot.load(event.params.projectId.toString());
-  let voting = Voting.load(ballot + event.params.votingId.toString());
+  let projectId = event.params.projectId.toString();
+  let voting = Voting.load(projectId + '-' + event.params.votingId.toString());
 
-  if (!ballot) {
-    throw new Error(`Could not find ballot with ID`);
-  }
   if (!voting) {
     throw new Error(`Could not find voting with ID`);
   }
 
-  let upvotedCount = event.params.counts.toString();
+  let upvotedCount = event.params.counts;
   let upvotedOption = event.params.option;
 
-  if (upvotedOption == '1') {
+  if (upvotedOption == BigInt.fromString('1')) {
     voting.option1Count = voting.option1Count.plus(upvotedCount);
   }
-  if (upvotedOption == '2') {
+  if (upvotedOption == BigInt.fromString('2')) {
     voting.option2Count = voting.option2Count.plus(upvotedCount);
   }
-  if (upvotedOption == '3') {
+  if (upvotedOption == BigInt.fromString('3')) {
     voting.option3Count = voting.option3Count.plus(upvotedCount);
   }
+  voting.totalCount = voting.totalCount.plus(upvotedCount);
+  voting.save();
+}
+
+export function handleVoteEnded(event: VoteEnded): void {
+  let projectId = event.params.projectId.toString();
+  let voting = Voting.load(projectId + '-' + event.params.votingId.toString());
+
+  if (!voting) {
+    throw new Error(`Could not find voting with ID`);
+  }
+
+  voting.voteEnding = event.block.timestamp;
+  voting.isVoting = false;
   voting.save();
 }

@@ -15,9 +15,15 @@ async function upgrade() {
   const MoonpageManagerV2 = await hre.ethers.getContractFactory(
     "MoonpageManagerV2"
   );
+  const options = {
+    unsafeAllowRenames: false,
+    unsafeSkipStorageCheck: false,
+    kind: "uups",
+  };
   const upgraded = await hre.upgrades.upgradeProxy(
     proxyAddress,
-    MoonpageManagerV2
+    MoonpageManagerV2,
+    options
   );
   console.log(`Upgraded to: ${upgraded.address}`);
 }
