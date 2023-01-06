@@ -39,12 +39,12 @@ dataSources:
           handler: handleTranslationUpdated
         - event: BlurbUpdated(uint256,string)
           handler: handleBlurbUpdated
-        - event: GenreUpdated(uint256,string)
-          handler: handleGenreUpdated
-        - event: SubtitleUpdated(uint256,string)
-          handler: handleSubtitleUpdated
-        - event: LanguageUpdated(uint256,string)
-          handler: handleLanguageUpdated
+        # - event: GenreUpdated(uint256,string)
+        #   handler: handleGenreUpdated
+        # - event: SubtitleUpdated(uint256,string)
+        #   handler: handleSubtitleUpdated
+        # - event: LanguageUpdated(uint256,string)
+        #   handler: handleLanguageUpdated
         - event: ImageUpdated(uint256,string)
           handler: handleImageUpdated
         - event: AnimationUpdated(uint256,string)
@@ -57,8 +57,8 @@ dataSources:
           handler: handleBalanceDecreased
         - event: ProjectPaused(uint256,bool)
           handler: handlePaused
-        - event: ProjectDeleted(uint256)
-          handler: handleDeleted
+        # - event: ProjectDeleted(uint256)
+        #   handler: handleDeleted
         - event: Curated(uint256,bool)
           handler: handleCurated
       file: ./src/mapping.ts

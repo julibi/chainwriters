@@ -6,9 +6,9 @@ dataSources:
     name: MoonpageManager
     network: mumbai
     source:
-      address: "0x0ffab0dE416A0ED309dF1E492a9D6aF8EDE2b9cD"
+      address: "0xb43D745d330372cF8973294712736003296ea75a"
       abi: MoonpageManager
-      startBlock: 28481920
+      startBlock: 30618080
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -39,12 +39,6 @@ dataSources:
           handler: handleTranslationUpdated
         - event: BlurbUpdated(uint256,string)
           handler: handleBlurbUpdated
-        - event: GenreUpdated(uint256,string)
-          handler: handleGenreUpdated
-        - event: SubtitleUpdated(uint256,string)
-          handler: handleSubtitleUpdated
-        - event: LanguageUpdated(uint256,string)
-          handler: handleLanguageUpdated
         - event: ImageUpdated(uint256,string)
           handler: handleImageUpdated
         - event: AnimationUpdated(uint256,string)
@@ -57,8 +51,6 @@ dataSources:
           handler: handleBalanceDecreased
         - event: ProjectPaused(uint256,bool)
           handler: handlePaused
-        - event: ProjectDeleted(uint256)
-          handler: handleDeleted
         - event: Curated(uint256,bool)
           handler: handleCurated
       file: MoonpageManager/MoonpageManager.wasm
@@ -66,9 +58,9 @@ dataSources:
     name: MoonpageCollection
     network: mumbai
     source:
-      address: "0xc0702467e7f4160AD747cA59E80DFC9FedA87D1b"
+      address: "0xB82d3442DAdc51399A438a3a394734AA52401C99"
       abi: MoonpageCollection
-      startBlock: 28481928
+      startBlock: 30618080
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -87,9 +79,9 @@ dataSources:
     name: AuctionsManager
     network: mumbai
     source:
-      address: "0x40b971d1F63831777FB6850D6802931446DcCf8a"
+      address: "0x8B65a704BF5a5d62b26D01C890b9883b3f905C56"
       abi: AuctionsManager
-      startBlock: 28481928
+      startBlock: 30618080
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -111,9 +103,9 @@ dataSources:
     name: BallotsFactory
     network: mumbai
     source:
-      address: "0x587c19308AE73ad5c52b8cd787bc34F953564d77"
+      address: "0x98CF8766C92B4fdde2B05fa61F26892f4ac05b11"
       abi: BallotsFactory
-      startBlock: 30471490
+      startBlock: 30618080
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5

@@ -61,7 +61,6 @@ export interface Project {
   originalLanguage: string;
   paused: boolean;
   premintedByAuthor: BigNumber;
-  songLink?: string;
   startId: BigNumber;
   subtitle: string | null;
   textIpfsHash: string | null;

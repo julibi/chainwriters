@@ -38,7 +38,6 @@ export const GET_ALL_PROJECTS = gql`
       currentId
       initialMintPrice
       premintedByAuthor
-      songLink
     }
   }
 `;

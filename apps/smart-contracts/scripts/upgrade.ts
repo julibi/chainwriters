@@ -6,7 +6,7 @@ export const wait = (seconds: number) =>
 
 async function upgrade() {
   await hre.run("compile");
-  let proxyAddress = "0x0ffab0dE416A0ED309dF1E492a9D6aF8EDE2b9cD";
+  let proxyAddress = "0xb43D745d330372cF8973294712736003296ea75a";
   const [deployer] = await hre.ethers.getSigners();
   console.log("Deploying contracts with the account:", deployer.address);
   console.log("Account balance:", (await deployer.getBalance()).toString());
