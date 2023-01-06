@@ -250,6 +250,28 @@ export class Curated__Params {
   }
 }
 
+export class GenreUpdated extends ethereum.Event {
+  get params(): GenreUpdated__Params {
+    return new GenreUpdated__Params(this);
+  }
+}
+
+export class GenreUpdated__Params {
+  _event: GenreUpdated;
+
+  constructor(event: GenreUpdated) {
+    this._event = event;
+  }
+
+  get projectId(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+
+  get newGenre(): string {
+    return this._event.parameters[1].value.toString();
+  }
+}
+
 export class ImageUpdated extends ethereum.Event {
   get params(): ImageUpdated__Params {
     return new ImageUpdated__Params(this);
@@ -287,6 +309,28 @@ export class Initialized__Params {
 
   get version(): i32 {
     return this._event.parameters[0].value.toI32();
+  }
+}
+
+export class LanguageUpdated extends ethereum.Event {
+  get params(): LanguageUpdated__Params {
+    return new LanguageUpdated__Params(this);
+  }
+}
+
+export class LanguageUpdated__Params {
+  _event: LanguageUpdated;
+
+  constructor(event: LanguageUpdated) {
+    this._event = event;
+  }
+
+  get projectId(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+
+  get newLanguage(): string {
+    return this._event.parameters[1].value.toString();
   }
 }
 
@@ -426,6 +470,24 @@ export class ProjectCreated__Params {
   }
 }
 
+export class ProjectDeleted extends ethereum.Event {
+  get params(): ProjectDeleted__Params {
+    return new ProjectDeleted__Params(this);
+  }
+}
+
+export class ProjectDeleted__Params {
+  _event: ProjectDeleted;
+
+  constructor(event: ProjectDeleted) {
+    this._event = event;
+  }
+
+  get projectId(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+}
+
 export class ProjectPaused extends ethereum.Event {
   get params(): ProjectPaused__Params {
     return new ProjectPaused__Params(this);
@@ -523,6 +585,28 @@ export class RoleRevoked__Params {
 
   get sender(): Address {
     return this._event.parameters[2].value.toAddress();
+  }
+}
+
+export class SubtitleUpdated extends ethereum.Event {
+  get params(): SubtitleUpdated__Params {
+    return new SubtitleUpdated__Params(this);
+  }
+}
+
+export class SubtitleUpdated__Params {
+  _event: SubtitleUpdated;
+
+  constructor(event: SubtitleUpdated) {
+    this._event = event;
+  }
+
+  get projectId(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+
+  get newSubtitle(): string {
+    return this._event.parameters[1].value.toString();
   }
 }
 
@@ -1954,6 +2038,36 @@ export class ConfigureProjectDetailsCall__Outputs {
   }
 }
 
+export class DeleteProjectCall extends ethereum.Call {
+  get inputs(): DeleteProjectCall__Inputs {
+    return new DeleteProjectCall__Inputs(this);
+  }
+
+  get outputs(): DeleteProjectCall__Outputs {
+    return new DeleteProjectCall__Outputs(this);
+  }
+}
+
+export class DeleteProjectCall__Inputs {
+  _call: DeleteProjectCall;
+
+  constructor(call: DeleteProjectCall) {
+    this._call = call;
+  }
+
+  get _projectId(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+}
+
+export class DeleteProjectCall__Outputs {
+  _call: DeleteProjectCall;
+
+  constructor(call: DeleteProjectCall) {
+    this._call = call;
+  }
+}
+
 export class DistributeSharesCall extends ethereum.Call {
   get inputs(): DistributeSharesCall__Inputs {
     return new DistributeSharesCall__Inputs(this);
@@ -2652,6 +2766,40 @@ export class UpdateBlurbIpfsHashCall__Outputs {
   }
 }
 
+export class UpdateGenreCall extends ethereum.Call {
+  get inputs(): UpdateGenreCall__Inputs {
+    return new UpdateGenreCall__Inputs(this);
+  }
+
+  get outputs(): UpdateGenreCall__Outputs {
+    return new UpdateGenreCall__Outputs(this);
+  }
+}
+
+export class UpdateGenreCall__Inputs {
+  _call: UpdateGenreCall;
+
+  constructor(call: UpdateGenreCall) {
+    this._call = call;
+  }
+
+  get _projectId(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+
+  get _genre(): string {
+    return this._call.inputValues[1].value.toString();
+  }
+}
+
+export class UpdateGenreCall__Outputs {
+  _call: UpdateGenreCall;
+
+  constructor(call: UpdateGenreCall) {
+    this._call = call;
+  }
+}
+
 export class UpdateImgIpfsHashCall extends ethereum.Call {
   get inputs(): UpdateImgIpfsHashCall__Inputs {
     return new UpdateImgIpfsHashCall__Inputs(this);
@@ -2682,6 +2830,74 @@ export class UpdateImgIpfsHashCall__Outputs {
   _call: UpdateImgIpfsHashCall;
 
   constructor(call: UpdateImgIpfsHashCall) {
+    this._call = call;
+  }
+}
+
+export class UpdateLanguageCall extends ethereum.Call {
+  get inputs(): UpdateLanguageCall__Inputs {
+    return new UpdateLanguageCall__Inputs(this);
+  }
+
+  get outputs(): UpdateLanguageCall__Outputs {
+    return new UpdateLanguageCall__Outputs(this);
+  }
+}
+
+export class UpdateLanguageCall__Inputs {
+  _call: UpdateLanguageCall;
+
+  constructor(call: UpdateLanguageCall) {
+    this._call = call;
+  }
+
+  get _projectId(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+
+  get _language(): string {
+    return this._call.inputValues[1].value.toString();
+  }
+}
+
+export class UpdateLanguageCall__Outputs {
+  _call: UpdateLanguageCall;
+
+  constructor(call: UpdateLanguageCall) {
+    this._call = call;
+  }
+}
+
+export class UpdateSubtitleCall extends ethereum.Call {
+  get inputs(): UpdateSubtitleCall__Inputs {
+    return new UpdateSubtitleCall__Inputs(this);
+  }
+
+  get outputs(): UpdateSubtitleCall__Outputs {
+    return new UpdateSubtitleCall__Outputs(this);
+  }
+}
+
+export class UpdateSubtitleCall__Inputs {
+  _call: UpdateSubtitleCall;
+
+  constructor(call: UpdateSubtitleCall) {
+    this._call = call;
+  }
+
+  get _projectId(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+
+  get _subtitle(): string {
+    return this._call.inputValues[1].value.toString();
+  }
+}
+
+export class UpdateSubtitleCall__Outputs {
+  _call: UpdateSubtitleCall;
+
+  constructor(call: UpdateSubtitleCall) {
     this._call = call;
   }
 }
