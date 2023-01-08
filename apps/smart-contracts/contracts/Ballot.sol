@@ -145,7 +145,7 @@ contract Ballot is AccessControlEnumerable {
         bool voteExpired = block.timestamp > voteSettings[votingsIndex].endTime;
         require(allVoted || voteExpired, "Vote not yet expired");
         state = State.NotVoting;
-        votingsIndex++;
+
         emit VoteEnded(
             projectId,
             votingsIndex,
@@ -153,6 +153,7 @@ contract Ballot is AccessControlEnumerable {
             voteSettings[votingsIndex].option2Votes,
             voteSettings[votingsIndex].option3Votes
         );
+        votingsIndex++;
     }
 
     function vote(uint256[] calldata _tokenIds, uint256 _option)

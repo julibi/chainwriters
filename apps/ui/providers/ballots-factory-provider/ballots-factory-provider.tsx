@@ -1,4 +1,4 @@
-import useBallotsFactory from '../../hooks/useBallotsFactory';
+import useBallotsFactoryContract from '../../hooks/useBallotsFactoryContract';
 import { createContext, useCallback, useMemo, useState } from 'react';
 import {
   BallotsFactoryApi,
@@ -20,7 +20,7 @@ export const BallotsFactoryContext = createContext(defaultContext);
 export function BallotsFactoryProvider({
   children,
 }: BallotsFactoryProviderProps) {
-  const ballotsFactory = useBallotsFactory();
+  const ballotsFactory = useBallotsFactoryContract();
   const [createBallotStatus, setCreateBallotStatus] =
     useState<WriteActionStatus>();
 

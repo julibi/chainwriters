@@ -23,6 +23,7 @@ import TooltippedIndicator from '../TooltippedIndicator';
 import { PriorityHigh } from '@material-ui/icons';
 import { useGetProjectIpfsHashes } from '../../hooks/projects/useGetProjectIpfsHashes';
 import { useBallotsFactory } from '../../hooks/ballotFactory/useBallotsFactory';
+import useBallot from '../../hooks/useBallot';
 
 const Root = styled.section<ElementThemeProps>`
   display: flex;
@@ -101,6 +102,7 @@ const AuthorSection = ({
   const { startAuctions, startAuctionsStatus } = useCollection();
   const { createBallot, createBallotStatus } = useBallotsFactory();
   const { project: hashes } = useGetProjectIpfsHashes(projectId);
+  const { Ballot, startVote, endVote } = useBallot(project?.ballotAddress);
   const [showConfigureModal, setShowConfigureModal] = useState<boolean>(false);
   const [showContributorsModal, setShowContributorsModal] =
     useState<boolean>(false);
@@ -264,6 +266,18 @@ const AuthorSection = ({
     [createBallot, projectId, refetch]
   );
 
+  const handleStartVote = useCallback(
+    async () =>
+      await createBallot({
+        projectId,
+        onError: undefined,
+        onSuccess: () => {
+          refetch();
+        },
+      }),
+    [createBallot, projectId, refetch]
+  );
+
   const beforeAuction = () => {
     return (
       <>
@@ -384,7 +398,6 @@ const AuthorSection = ({
     );
   };
 
-  console.log({ project });
   return (
     <Root theme={theme}>
       <Title size="l">Project Settings</Title>
@@ -411,6 +424,19 @@ const AuthorSection = ({
                 createBallotStatus === 'waiting'
               }
               text="Set up voting ballot"
+              loading={
+                createBallotStatus === 'confirming' ||
+                createBallotStatus === 'waiting'
+              }
+              onClick={handleCreateBallot}
+            />
+            <ActionButton
+              disabled={
+                !!project?.ballotAddress ||
+                createBallotStatus === 'confirming' ||
+                createBallotStatus === 'waiting'
+              }
+              text="Start a vote"
               loading={
                 createBallotStatus === 'confirming' ||
                 createBallotStatus === 'waiting'

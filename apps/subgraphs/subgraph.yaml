@@ -111,7 +111,7 @@ dataSources:
     name: BallotsFactory
     network: mumbai
     source:
-      address: '0x98CF8766C92B4fdde2B05fa61F26892f4ac05b11'
+      address: '0x637F9D64a7836D4a2714AC271AFF3687434744bB'
       abi: BallotsFactory
       startBlock: 30618080
     mapping:

@@ -43,6 +43,7 @@ import {
   Edition,
   Project,
 } from '../../providers/projects-provider/projects-provider.types';
+import Votings from './Votings';
 
 const Root = styled.div`
   display: flex;
@@ -556,6 +557,10 @@ const ProjectDetailView = () => {
             isAllowedToEdit={
               project?.creator.toLowerCase() === account?.toLowerCase()
             }
+          />
+          <Votings
+            projectId={projectId}
+            ballotAddress={project?.ballotAddress}
           />
           <ShareSection theme={theme}>
             <Title>Contributors</Title>

@@ -6,7 +6,7 @@ import {
 } from '../../constants';
 import useContract from './useContract';
 
-const useBallotsFactory = () => {
+const useBallotsFactoryContract = () => {
   const address =
     process.env.NX_PUBLIC_ENVIRONMENT === 'PROD'
       ? MOONPAGE_BALLOTS_FACTORY_ADDRESS
@@ -24,4 +24,4 @@ const useBallotsFactory = () => {
   return BallotsFactoryContract;
 };
 
-export default useBallotsFactory;
+export default useBallotsFactoryContract;

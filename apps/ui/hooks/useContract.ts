@@ -5,8 +5,8 @@ import { RPC_URLS } from '../connectors';
 
 const RPC_URL =
   process.env.NEXT_PUBLIC_ENVIRONMENT === 'DEV'
-    ? RPC_URLS[137]
-    : RPC_URLS[80001];
+    ? RPC_URLS[80001]
+    : RPC_URLS[137];
 
 interface UseContractProps {
   address: string;
