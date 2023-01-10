@@ -102,7 +102,10 @@ const AuthorSection = ({
   const { startAuctions, startAuctionsStatus } = useCollection();
   const { createBallot, createBallotStatus } = useBallotsFactory();
   const { project: hashes } = useGetProjectIpfsHashes(projectId);
-  const { Ballot, startVote, endVote } = useBallot(project?.ballotAddress);
+  const { Ballot, startVote, endVote } = useBallot(
+    project?.ballotAddress,
+    projectId
+  );
   const [showConfigureModal, setShowConfigureModal] = useState<boolean>(false);
   const [showContributorsModal, setShowContributorsModal] =
     useState<boolean>(false);
