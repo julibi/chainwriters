@@ -41,7 +41,7 @@ export function BallotsFactoryProvider({
         });
         const { hash } = Tx;
         setCreateBallotStatus('waiting');
-        toast.info(<ToastLink message={'Starting Auctions...'} />);
+        toast.info(<ToastLink message={'Create Voting Station...'} />);
         ballotsFactory.provider.once(hash, async (transaction) => {
           // we need a time, because the graph needs some time
           setTimeout(() => {
@@ -49,7 +49,7 @@ export function BallotsFactoryProvider({
             toast.info(
               <ToastLink
                 message={'Success!'}
-                linkText="Ballot for Votings was created!"
+                linkText="Voting Station was created!"
               />
             );
             onSuccess?.();

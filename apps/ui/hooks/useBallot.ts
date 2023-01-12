@@ -214,6 +214,7 @@ const useBallot = (ballotAddress: string, projectId: string) => {
 
   return useMemo(
     () => ({
+      isBallotExisting: !!Ballot,
       Ballot,
       startVote,
       endVote,

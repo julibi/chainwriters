@@ -76,7 +76,7 @@ const Voting = ({
       totalCount == 1000,
     [totalCount, isVoting, voteEnding]
   );
-  console.log({ isVoting, totalCount, maxNFTCount, hasEnded });
+
   return (
     <Root theme={theme}>
       <Title color={POP} padding="0" margin="1rem" size="xs">

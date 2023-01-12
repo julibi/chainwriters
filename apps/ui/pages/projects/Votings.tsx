@@ -5,6 +5,7 @@ import Voting from '../../components/Voting';
 import { BASE_BORDER_RADIUS } from '../../themes';
 import { useTheme } from '../../hooks/theme/useTheme';
 import Title from '../../components/Title';
+import VotingsCreator from './VotingsCreator';
 
 const Root = styled.div`
   width: 90%;
@@ -39,10 +40,8 @@ const VotingsWrapper = styled.div`
 
 const Votings = ({ ballotAddress, projectId }) => {
   const theme = useTheme();
-  const { voteSettings, vote, votings, maxNFTCount } = useBallot(
-    ballotAddress,
-    projectId
-  );
+  const { isBallotExisting, voteSettings, vote, votings, maxNFTCount } =
+    useBallot(ballotAddress, projectId);
 
   // TODO: show a ballot creator, if NFTs have been minted and there is no voting running
 
@@ -78,6 +77,7 @@ const Votings = ({ ballotAddress, projectId }) => {
             );
           }
         )}
+        <VotingsCreator ballotAddress={ballotAddress} projectId={projectId} />
       </VotingsWrapper>
     </Root>
   );

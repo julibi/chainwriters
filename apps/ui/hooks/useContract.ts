@@ -9,13 +9,14 @@ const RPC_URL =
     : RPC_URLS[137];
 
 interface UseContractProps {
-  address: string;
+  address: string | undefined;
   abi: ContractInterface;
 }
 const useContract = ({ address, abi }: UseContractProps) => {
   const { account, library } = useWeb3React();
 
   return useMemo(() => {
+    if (!address) return null;
     return library && account
       ? new Contract(address, abi, library?.getSigner(account))
       : new Contract(address, abi, getDefaultProvider(RPC_URL));

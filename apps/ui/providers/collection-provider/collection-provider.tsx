@@ -32,6 +32,8 @@ export function CollectionProvider({ children }: CollectionProviderProps) {
   const [buyStatus, setBuyStatus] = useState<WriteActionStatus>();
   const [mintStatus, setMintStatus] = useState<WriteActionStatus>();
 
+  console.log({ collection, auctionsManager });
+
   const startAuctions = useCallback(
     async ({
       projectId,

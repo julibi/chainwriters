@@ -220,6 +220,8 @@ const Shares = styled.div`
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
+  font-size: 14px;
+  font-family: ${FONT_SERIF_REGULAR};
 `;
 
 const Share = styled.div`
@@ -229,7 +231,7 @@ const Share = styled.div`
   align-items: center;
 `;
 
-const ShareTitle = styled.h5`
+const ShareTitle = styled.span`
   margin-block-end: 1rem;
   text-transform: capitalize;
 `;
@@ -285,6 +287,7 @@ const ProjectDetailView = () => {
     refetch,
     isLoading: isProjectLoading,
   } = useGetProject(projectId);
+
   const { buy, buyStatus, startAuctions } = useCollection();
   const auctionsManager = useAuctionsManager();
   const mpManager = useMoonpageManager();
@@ -300,7 +303,6 @@ const ProjectDetailView = () => {
     () => updatedProject || fetchedProject,
     [fetchedProject, updatedProject]
   );
-  console.log({ project });
   const refetchAuctionStateAndCount = useCallback(async () => {
     const auctionData = await auctionsManager.auctions(projectId);
     const editionData = await mpManager.editions(projectId);
