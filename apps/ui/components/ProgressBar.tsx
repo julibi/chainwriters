@@ -5,10 +5,15 @@ import { useTheme } from '../hooks/theme';
 
 interface ProgressBarProps {
   completed: number;
+  height?: string;
 }
+type RootProps = {
+  theme: ElementThemeProps;
+  height: number;
+};
 
-const Root = styled.div<ElementThemeProps>`
-  height: 40px;
+const Root = styled.div<RootProps>`
+  height: ${({ height }) => height ?? '40px'};
   width: 100%;
   background-color: ${({ theme }) => theme.BG_NORMAL};
   box-shadow: ${({ theme }) => theme.INSET_BASE_BOX_SHADOW};
@@ -19,7 +24,7 @@ const Root = styled.div<ElementThemeProps>`
   position: relative;
 `;
 
-const Progress = styled.div<ProgressBarProps>`
+const Progress = styled.div<{ completed: number }>`
   height: 75%;
   width: ${({ completed }) => completed}%;
   background-color: ${POP};
@@ -45,10 +50,10 @@ const ProgressTopLayer = styled.div`
     4px 2px 8px 0px rgb(0 0 0 / 30%);
 `;
 
-const ProgressBar = ({ completed }: ProgressBarProps) => {
+const ProgressBar = ({ completed, height }: ProgressBarProps) => {
   const theme = useTheme();
   return (
-    <Root theme={theme}>
+    <Root height={height} theme={theme}>
       <Progress completed={completed}>
         <ProgressTopLayer />
       </Progress>

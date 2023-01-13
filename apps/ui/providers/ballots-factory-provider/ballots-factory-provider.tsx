@@ -13,6 +13,7 @@ import { WriteActionStatus } from '../manager-provider/manager-provider.types';
 const defaultContext: BallotsFactoryApi = {
   createBallot: async () => undefined,
   createBallotStatus: 'idle',
+  fetchBallotAddress: async () => undefined,
 };
 
 export const BallotsFactoryContext = createContext(defaultContext);
@@ -25,12 +26,7 @@ export function BallotsFactoryProvider({
     useState<WriteActionStatus>();
 
   const createBallot = useCallback(
-    async ({
-      projectId,
-
-      onSuccess,
-      onError,
-    }: CreateBallotArgs) => {
+    async ({ projectId, onSuccess, onError }: CreateBallotArgs) => {
       try {
         setCreateBallotStatus('confirming');
 
@@ -65,12 +61,25 @@ export function BallotsFactoryProvider({
     [ballotsFactory]
   );
 
+  const fetchBallotAddress = useCallback(
+    async (projectId: string) => {
+      try {
+        const address = await ballotsFactory.ballots(projectId);
+        return address;
+      } catch (e) {
+        return null;
+      }
+    },
+    [ballotsFactory]
+  );
+
   const api = useMemo(
     () => ({
       createBallot,
       createBallotStatus,
+      fetchBallotAddress,
     }),
-    [createBallot, createBallotStatus]
+    [createBallot, createBallotStatus, fetchBallotAddress]
   );
 
   return (

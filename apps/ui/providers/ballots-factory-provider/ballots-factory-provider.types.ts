@@ -4,6 +4,7 @@ import { WriteActionStatus } from '../manager-provider/manager-provider.types';
 export type BallotsFactoryApi = {
   createBallot: (x: CreateBallotArgs) => Promise<void>;
   createBallotStatus: WriteActionStatus;
+  fetchBallotAddress: (x: string) => string | null;
 };
 
 export type CreateBallotArgs = {

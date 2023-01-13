@@ -39,14 +39,23 @@ const VotingsWrapper = styled.div`
   }
 `;
 
-const Votings = ({ ballotAddress, creator, projectId }) => {
+const Votings = ({
+  ballotAddress,
+  creator,
+  projectId,
+  onFinishSettingUpBallot,
+}) => {
   const { account } = useWeb3React();
   const theme = useTheme();
-  const { isBallotExisting, voteSettings, vote, votings, maxNFTCount } =
-    useBallot(ballotAddress, projectId);
+  const { votings, maxNFTCount } = useBallot(ballotAddress, projectId);
   const isCreator = useMemo(
     () => account?.toLowerCase() === creator?.toLowerCase(),
     [account, creator]
+  );
+
+  const sortedVotes = useMemo(
+    () => (votings ? [...votings].reverse() : null),
+    [votings]
   );
 
   // TODO: show a ballot creator, if NFTs have been minted and there is no voting running
@@ -56,7 +65,13 @@ const Votings = ({ ballotAddress, creator, projectId }) => {
     <Root theme={theme}>
       <Title>Voting</Title>
       <VotingsWrapper>
-        {votings?.map(
+        <VotingsCreator
+          ballotAddress={ballotAddress}
+          projectId={projectId}
+          votings={votings}
+          onFinishSettingUpBallot={onFinishSettingUpBallot}
+        />
+        {sortedVotes?.map(
           ({
             id,
             proposal,
@@ -84,11 +99,6 @@ const Votings = ({ ballotAddress, creator, projectId }) => {
             );
           }
         )}
-        <VotingsCreator
-          ballotAddress={ballotAddress}
-          projectId={projectId}
-          votings={votings}
-        />
       </VotingsWrapper>
     </Root>
   );

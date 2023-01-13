@@ -12,6 +12,7 @@ import { useBallotsFactory } from '../../hooks/ballotFactory';
 import useBallot from '../../hooks/useBallot';
 import StartVotingModal from '../../components/ProjectDetails/StartVotingModal';
 import { VOTE_ENDING_TIMES } from '../../constants';
+import { Voting } from '../../providers/projects-provider/projects-provider.types';
 
 const Root = styled.div`
   width: 400px;
@@ -49,12 +50,15 @@ const Text = styled.span`
 type VotingsCreatorProps = {
   ballotAddress: string;
   projectId: string;
+  onFinishSettingUpBallot: () => void;
+  votings: Voting[];
 };
 
 const VotingsCreator = ({
   ballotAddress,
   projectId,
   votings,
+  onFinishSettingUpBallot,
 }: VotingsCreatorProps) => {
   const theme = useTheme();
   const { createBallot, createBallotStatus } = useBallotsFactory();
@@ -70,10 +74,11 @@ const VotingsCreator = ({
       await createBallot({
         projectId,
         onSuccess: () => {
+          onFinishSettingUpBallot();
           setHasCreatedBallot(true);
         },
       }),
-    [projectId, createBallot]
+    [createBallot, projectId, onFinishSettingUpBallot]
   );
 
   const getTimestampOfVoteEnding = (ending: string) => {
@@ -130,15 +135,13 @@ const VotingsCreator = ({
     [startVoteStatus]
   );
 
+  const isVoteOver = (voteEnding, isVoting) =>
+    Number(voteEnding) > Math.floor(Date.now() / 1000) || !isVoting;
+
   const isPossibleToStartVote = useMemo(() => {
     if (!votings?.length) return true;
-    console.log(votings);
     const { isVoting, voteEnding, totalCount } = votings[votings.length - 1];
-    if (
-      isVoting ||
-      voteEnding > Math.floor(Date.now() / 1000) ||
-      totalCount === 1000
-    ) {
+    if (isVoteOver(voteEnding, isVoting) || Number(totalCount) === 1000) {
       return false;
     } else {
       return true;
@@ -146,6 +149,7 @@ const VotingsCreator = ({
   }, [votings]);
 
   if (!isPossibleToStartVote) return null;
+
   return (
     <Root theme={theme}>
       {isBallotExisting || hasCreatedBallot ? (

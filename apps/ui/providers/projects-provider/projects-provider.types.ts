@@ -47,6 +47,7 @@ export interface Voting {
   option1Count: BigNumber;
   option2Count: BigNumber;
   option3Count: BigNumber;
+  isVoting: boolean;
   totalCount: BigNumber;
   voteStarted: BigNumber;
   voteEnding: BigNumber;

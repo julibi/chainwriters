@@ -203,6 +203,7 @@ const useBallot = (ballotAddress: string, projectId: string) => {
   }, [Ballot, votingsIndex]);
 
   const votings = useMemo(() => votingData?.project?.votings, [votingData]);
+
   const maxNFTCount = useMemo(
     () => mintCountData?.project?.mintCount,
     [mintCountData]
@@ -237,10 +238,10 @@ const useBallot = (ballotAddress: string, projectId: string) => {
       vote,
       maxNFTCount,
       votings,
-      votingsIndex,
       startVoteStatus,
       voteStatus,
       endVoteStatus,
+      votingsIndex,
       voteSettings,
     ]
   );

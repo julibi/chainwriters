@@ -44,6 +44,7 @@ import {
   Project,
 } from '../../providers/projects-provider/projects-provider.types';
 import Votings from './Votings';
+import { useBallotsFactory } from '../../hooks/ballotFactory';
 
 const Root = styled.div`
   display: flex;
@@ -282,6 +283,7 @@ const ProjectDetailView = () => {
   const { account } = useWeb3React();
   const theme = useTheme();
   const projectId = useGetProjectId();
+  const { fetchBallotAddress } = useBallotsFactory();
   const {
     project: fetchedProject,
     refetch,
@@ -348,6 +350,11 @@ const ProjectDetailView = () => {
       ],
     });
   }, [mpManager, project, projectId]);
+
+  const updateBallotAddress = useCallback(() => {
+    const ballotAddress = fetchBallotAddress(projectId);
+    setUpdatedProject({ ...project, ballotAddress });
+  }, [fetchBallotAddress, project, projectId]);
 
   const isAuthor = useMemo(() => {
     if (
@@ -564,6 +571,7 @@ const ProjectDetailView = () => {
             creator={project?.creator}
             projectId={projectId}
             ballotAddress={project?.ballotAddress}
+            onFinishSettingUpBallot={updateBallotAddress}
           />
           <ShareSection theme={theme}>
             <Title>Contributors</Title>

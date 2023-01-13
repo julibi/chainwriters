@@ -1,3 +1,4 @@
+import { BigNumber } from '@ethersproject/bignumber';
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import { useTheme } from '../hooks/theme';
@@ -12,11 +13,11 @@ type VotingProps = {
   option1: string;
   option2: string;
   option3: string;
-  voteStarted: string;
-  voteEnding: string;
+  voteStarted: BigNumber;
+  voteEnding: BigNumber;
   isVoting: boolean;
-  totalCount: number;
-  maxNFTCount: number;
+  totalCount: BigNumber;
+  maxNFTCount: BigNumber;
 };
 
 const Root = styled.div`
@@ -26,6 +27,7 @@ const Root = styled.div`
   display: flex;
   flex-direction: column;
   align-items: right;
+  justify-content: space-between;
   box-shadow: ${({ theme }) => theme.INSET_BASE_BOX_SHADOW};
   border-radius: ${BASE_BORDER_RADIUS};
   font-family: ${FONT_SERIF_BOLD};
@@ -38,7 +40,7 @@ const Root = styled.div`
 const StatusWrapper = styled.div`
   width: 100%;
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-start;
 `;
 
 const Status = styled.div`
@@ -47,6 +49,13 @@ const Status = styled.div`
   margin: 1rem 0;
   padding: 0.2rem 0.5rem;
   width: fit-content;
+  font-size: 10px;
+`;
+
+const Choices = styled.div`
+  margin-block-start: 1rem;
+  display: flex;
+  flex-direction: column;
 `;
 
 const Choice = styled.span`
@@ -74,13 +83,13 @@ const Voting = ({
     () =>
       !isVoting ||
       Number(new Date()) / 1000 > Number(voteEnding) ||
-      totalCount == 1000,
+      Number(totalCount) == 1000,
     [totalCount, isVoting, voteEnding]
   );
 
   return (
     <Root theme={theme}>
-      <Title color={POP} padding="0" margin="1rem 1rem 0 1rem" size="xs">
+      <Title color={POP} padding="0" margin="0 1rem" size="s">
         {proposal}
       </Title>
       <StatusWrapper>
@@ -93,10 +102,12 @@ const Voting = ({
           </Status>
         )}
       </StatusWrapper>
-      <ProgressBar completed={34} />
-      <Choice>{'a) ' + option1}</Choice>
-      <Choice>{'b) ' + option2}</Choice>
-      <Choice>{'c) ' + option3}</Choice>
+      <ProgressBar completed={34} height="24px" />
+      <Choices>
+        <Choice>{'a) ' + option1}</Choice>
+        <Choice>{'b) ' + option2}</Choice>
+        <Choice>{'c) ' + option3}</Choice>
+      </Choices>
       <VoteButtonWrapper>
         <ActionButton
           onClick={() => {
