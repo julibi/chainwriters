@@ -54,7 +54,7 @@ const Votings = ({
   );
 
   const sortedVotes = useMemo(
-    () => (votings ? [...votings].reverse() : null),
+    () => (votings ? [...votings].reverse().slice(0, 2) : null),
     [votings]
   );
 

@@ -86,6 +86,10 @@ const Voting = ({
       Number(totalCount) == 1000,
     [totalCount, isVoting, voteEnding]
   );
+  const percentageVoted = useMemo(
+    () => Math.round((Number(totalCount) / Number(maxNFTCount)) * 100),
+    [maxNFTCount, totalCount]
+  );
 
   return (
     <Root theme={theme}>
@@ -102,7 +106,7 @@ const Voting = ({
           </Status>
         )}
       </StatusWrapper>
-      <ProgressBar completed={34} height="24px" />
+      <ProgressBar completed={percentageVoted} height="24px" />
       <Choices>
         <Choice>{'a) ' + option1}</Choice>
         <Choice>{'b) ' + option2}</Choice>
