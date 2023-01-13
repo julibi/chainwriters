@@ -1,11 +1,13 @@
 import { BigNumber } from '@ethersproject/bignumber';
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { useTheme } from '../hooks/theme';
 import { BASE_BORDER_RADIUS, FONT_SERIF_BOLD, POP } from '../themes';
 import ActionButton from './ActionButton';
+import Checkbox from './Checkbox';
 import Countdown from './Countdown';
 import ProgressBar from './ProgressBar';
+import RadioButton from './RadioButton';
 import Title from './Title';
 
 type VotingProps = {
@@ -52,14 +54,20 @@ const Status = styled.div`
   font-size: 10px;
 `;
 
+const VotingNumbers = styled.span`
+  font-size: 10px;
+  margin-block-start: 0.1rem;
+  color: ${POP};
+`;
+
 const Choices = styled.div`
   margin-block-start: 1rem;
   display: flex;
   flex-direction: column;
 `;
 
-const Choice = styled.span`
-  margin: 0.5rem 0;
+const RadioInputWrapper = styled.div`
+  margin-block-end: 1rem;
 `;
 
 const VoteButtonWrapper = styled.div`
@@ -90,7 +98,12 @@ const Voting = ({
     () => Math.round((Number(totalCount) / Number(maxNFTCount)) * 100),
     [maxNFTCount, totalCount]
   );
+  const [selectedOption, setSelectedOption] = useState<null | number>(null);
+  const onValueChange = useCallback((event) => {
+    setSelectedOption(Number(event.target.value));
+  }, []);
 
+  const formSubmit = useCallback(() => {}, []);
   return (
     <Root theme={theme}>
       <Title color={POP} padding="0" margin="0 1rem" size="s">
@@ -107,22 +120,55 @@ const Voting = ({
         )}
       </StatusWrapper>
       <ProgressBar completed={percentageVoted} height="24px" />
+      <VotingNumbers>{`${Number(totalCount)} / ${Number(
+        maxNFTCount
+      )} Voted`}</VotingNumbers>
       <Choices>
-        <Choice>{'a) ' + option1}</Choice>
-        <Choice>{'b) ' + option2}</Choice>
-        <Choice>{'c) ' + option3}</Choice>
+        <RadioInputWrapper>
+          <label>
+            <input
+              type="radio"
+              value={0}
+              checked={selectedOption === 0}
+              onChange={onValueChange}
+            />
+            {`a) ${option1}`}
+          </label>
+        </RadioInputWrapper>
+        <RadioInputWrapper>
+          <label>
+            <input
+              type="radio"
+              value={1}
+              checked={selectedOption === 1}
+              onChange={onValueChange}
+            />
+            {`b) ${option2}`}
+          </label>
+        </RadioInputWrapper>
+        <RadioInputWrapper>
+          <label>
+            <input
+              type="radio"
+              value={2}
+              checked={selectedOption === 2}
+              onChange={onValueChange}
+            />
+            {`3) ${option3}`}
+          </label>
+        </RadioInputWrapper>
+        <VoteButtonWrapper>
+          <ActionButton
+            onClick={() => {
+              console.log('first');
+            }}
+            text="Vote"
+            disabled={hasEnded}
+            loading={false}
+            margin="2rem 0 0 0"
+          />
+        </VoteButtonWrapper>
       </Choices>
-      <VoteButtonWrapper>
-        <ActionButton
-          onClick={() => {
-            console.log('first');
-          }}
-          text="Vote"
-          disabled={hasEnded}
-          loading={false}
-          margin="2rem 0 0 0"
-        />
-      </VoteButtonWrapper>
     </Root>
   );
 };

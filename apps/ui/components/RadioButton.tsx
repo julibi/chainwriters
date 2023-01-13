@@ -9,7 +9,7 @@ const Wrapper = styled.div`
   margin: 1rem;
 `;
 
-const RadioInput = styled.input.attrs({ type: 'checkbox' })`
+const RadioInput = styled.input.attrs({ type: 'radio' })`
   display: inline-block;
   /* Double-sized Checkboxes */
   -ms-transform: scale(1.2); /* IE */
@@ -34,19 +34,21 @@ const BlockSpan = styled.span`
   }
 `;
 
-interface CheckboxProps {
+interface RadioButtonProps {
+  id: any;
   readonly?: boolean;
   check: boolean;
   children?: React.ReactChild;
   onChange?: () => void;
 }
 
-const Checkbox = ({
+const RadioButton = ({
+  id,
   readonly = false,
   check,
   children,
   onChange,
-}: CheckboxProps) => {
+}: RadioButtonProps) => {
   const theme = useTheme();
   const [checked, setChecked] = useState<boolean>(check);
   const toggleChecked = () => {
@@ -55,8 +57,9 @@ const Checkbox = ({
   return (
     <Wrapper>
       <RadioInput
+        id={id}
         disabled={readonly}
-        type="checkbox"
+        type="radio"
         onChange={() => {
           !readonly && toggleChecked();
           onChange();
@@ -68,4 +71,4 @@ const Checkbox = ({
   );
 };
 
-export default Checkbox;
+export default RadioButton;
