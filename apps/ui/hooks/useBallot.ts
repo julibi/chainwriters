@@ -5,6 +5,10 @@ import useContract from './useContract';
 import ABI from '../abis/Ballot.json';
 import { WriteActionStatus } from '../providers/manager-provider/manager-provider.types';
 import { getGasMargin } from '../utils/getGasMargin';
+import {
+  Project,
+  ProjectVars,
+} from '../providers/projects-provider/projects-provider.types';
 
 export const GET_ALL_BALLOTS_OF_PROJECT = gql`
   query allBallotsOfProjectQuery($id: String!) {
@@ -67,7 +71,7 @@ const useBallot = (ballotAddress: string, projectId: string) => {
     error: votingDataError,
     data: votingData,
     refetch: refetchData,
-  } = useQuery(GET_ALL_BALLOTS_OF_PROJECT, {
+  } = useQuery<{ project: Project }, ProjectVars>(GET_ALL_BALLOTS_OF_PROJECT, {
     variables: { id: projectId },
   });
   const {
@@ -97,13 +101,13 @@ const useBallot = (ballotAddress: string, projectId: string) => {
         setStartVoteStatus('confirming');
 
         const { maxFeePerGas, maxPriorityFeePerGas } = await getGasMargin();
-        const Tx = await Ballot.createVote(proposal, optionValues, end, {
+        const Tx = await Ballot.startVote(proposal, optionValues, end, {
           maxFeePerGas,
           maxPriorityFeePerGas,
         });
         const { hash } = Tx;
         setStartVoteStatus('waiting');
-        toast.info('Starting Voting...');
+        toast.info('Starting Vote...');
         Ballot.provider.once(hash, async (transaction) => {
           // we need a time, because the graph needs some time
           setTimeout(() => {
@@ -114,7 +118,6 @@ const useBallot = (ballotAddress: string, projectId: string) => {
           }, 10000);
         });
       } catch (e) {
-        console.log({ e });
         setStartVoteStatus('error');
         toast.error('Something went wrong!');
         onError?.(e);

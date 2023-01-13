@@ -1,16 +1,22 @@
-import React, { ChangeEvent, useCallback, useMemo, useState } from 'react';
+import { POP } from '../../themes';
+import React, { ChangeEvent, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import ActionButton from '../ActionButton';
 import BaseModal from '../BaseModal';
 import Dropdown from '../Dropdown';
 import InputField from '../InputField';
 import Title from '../Title';
+import { VOTE_ENDING_TIMES } from '../../constants';
 
 const ContentWrapper = styled.div`
   padding: 2rem;
-  width: 100%;
+  width: 450px;
   height: 600px;
   overflow: scroll;
+
+  @media (max-width: 900px) {
+    width: 100%;
+  }
 `;
 
 const FlexColumn = styled.div`
@@ -19,7 +25,13 @@ const FlexColumn = styled.div`
 `;
 
 const DropdownWrapper = styled.div`
-  margin-block-end: 2rem;
+  margin-block-end: 1rem;
+`;
+
+const EndingTimeError = styled.span`
+  color: ${POP};
+  text-align: center;
+  margin-block-end: 1rem;
 `;
 
 type VoteSetting = {
@@ -30,7 +42,17 @@ type VoteSetting = {
   endingTime: string | null;
 };
 
-const StartVotingModal = ({ onClose }) => {
+type StartVotingModalProps = {
+  onClose: () => void;
+  onStartVote: (x: VoteSetting) => void;
+  isStartingVote: boolean;
+};
+
+const StartVotingModal = ({
+  onClose,
+  onStartVote,
+  isStartingVote,
+}: StartVotingModalProps) => {
   const [voteSetting, setVoteSetting] = useState<VoteSetting>({
     proposal: null,
     option1: null,
@@ -64,19 +86,17 @@ const StartVotingModal = ({ onClose }) => {
 
   // when submitting, get the ending time
 
-  const endingTimeOptions = ['1 hour', '1 day', '1 week', '1 month']?.map(
-    (item) => ({
-      id: item,
-      value: item,
-      onSelect: () => setVoteSetting({ ...voteSetting, endingTime: item }),
-    })
-  );
+  const endingTimeOptions = VOTE_ENDING_TIMES.map((item) => ({
+    id: item,
+    value: item,
+    onSelect: () => setVoteSetting({ ...voteSetting, endingTime: item }),
+  }));
 
   return (
     <BaseModal onClose={onClose}>
       <ContentWrapper>
         <div>
-          <Title size="m" margin="0 0 2rem 0">
+          <Title size="m" textAlign="center" margin="0 0 2rem 0">
             Start a Vote
           </Title>
           <FlexColumn>
@@ -87,6 +107,9 @@ const StartVotingModal = ({ onClose }) => {
                 width="100%"
               />
             </DropdownWrapper>
+            <EndingTimeError>
+              {!voteSetting?.endingTime ? 'Please set a time' : ''}
+            </EndingTimeError>
             <InputField
               error={
                 !isProposalValid(voteSetting.proposal) &&
@@ -105,7 +128,7 @@ const StartVotingModal = ({ onClose }) => {
               label={'Option 1: '}
               value={voteSetting.option1}
               onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                setVoteSetting({ ...voteSetting, option2: e.target.value });
+                setVoteSetting({ ...voteSetting, option1: e.target.value });
               }}
             />
             <InputField
@@ -128,9 +151,9 @@ const StartVotingModal = ({ onClose }) => {
             />
           </FlexColumn>
           <ActionButton
-            disabled={!isFormSubmittable}
-            onClick={() => {}}
-            loading={false}
+            disabled={!isFormSubmittable || isStartingVote}
+            onClick={() => onStartVote(voteSetting)}
+            loading={isStartingVote}
             width="100%"
             text="Configure"
             web3Connectable

@@ -1,11 +1,12 @@
 import styled from 'styled-components';
 import useBallot from '../../hooks/useBallot';
-import React from 'react';
+import React, { useMemo } from 'react';
 import Voting from '../../components/Voting';
 import { BASE_BORDER_RADIUS } from '../../themes';
 import { useTheme } from '../../hooks/theme/useTheme';
 import Title from '../../components/Title';
 import VotingsCreator from './VotingsCreator';
+import { useWeb3React } from '@web3-react/core';
 
 const Root = styled.div`
   width: 90%;
@@ -38,12 +39,18 @@ const VotingsWrapper = styled.div`
   }
 `;
 
-const Votings = ({ ballotAddress, projectId }) => {
+const Votings = ({ ballotAddress, creator, projectId }) => {
+  const { account } = useWeb3React();
   const theme = useTheme();
   const { isBallotExisting, voteSettings, vote, votings, maxNFTCount } =
     useBallot(ballotAddress, projectId);
+  const isCreator = useMemo(
+    () => account?.toLowerCase() === creator?.toLowerCase(),
+    [account, creator]
+  );
 
   // TODO: show a ballot creator, if NFTs have been minted and there is no voting running
+  if (votings?.length == 0 && !isCreator) return null;
 
   return (
     <Root theme={theme}>
@@ -77,7 +84,11 @@ const Votings = ({ ballotAddress, projectId }) => {
             );
           }
         )}
-        <VotingsCreator ballotAddress={ballotAddress} projectId={projectId} />
+        <VotingsCreator
+          ballotAddress={ballotAddress}
+          projectId={projectId}
+          votings={votings}
+        />
       </VotingsWrapper>
     </Root>
   );

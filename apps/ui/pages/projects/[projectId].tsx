@@ -561,6 +561,7 @@ const ProjectDetailView = () => {
             }
           />
           <Votings
+            creator={project?.creator}
             projectId={projectId}
             ballotAddress={project?.ballotAddress}
           />

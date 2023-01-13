@@ -139,7 +139,6 @@ const WalletConnectionModal = ({ onClose }: WalletConnectionModalProps) => {
         value: chain.name,
         img: chain.icon,
         onSelect: (network: number) => {
-          console.log({ network });
           setSelectedNetwork(network);
         },
       };

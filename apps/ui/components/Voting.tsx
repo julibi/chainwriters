@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { useTheme } from '../hooks/theme';
 import { BASE_BORDER_RADIUS, FONT_SERIF_BOLD, POP } from '../themes';
 import ActionButton from './ActionButton';
+import Countdown from './Countdown';
 import ProgressBar from './ProgressBar';
 import Title from './Title';
 
@@ -79,11 +80,18 @@ const Voting = ({
 
   return (
     <Root theme={theme}>
-      <Title color={POP} padding="0" margin="1rem" size="xs">
+      <Title color={POP} padding="0" margin="1rem 1rem 0 1rem" size="xs">
         {proposal}
       </Title>
       <StatusWrapper>
-        <Status theme={theme}>{hasEnded ? 'Ended' : 'Still Running'}</Status>
+        {hasEnded ? (
+          <Status theme={theme}>{'Ended'}</Status>
+        ) : (
+          <Status theme={theme}>
+            <span>{'Time left:'}</span>
+            <Countdown end={Number(voteEnding)} />
+          </Status>
+        )}
       </StatusWrapper>
       <ProgressBar completed={34} />
       <Choice>{'a) ' + option1}</Choice>
