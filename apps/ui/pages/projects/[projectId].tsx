@@ -355,6 +355,7 @@ const ProjectDetailView = () => {
 
   const updateBallotAddress = useCallback(() => {
     const ballotAddress = fetchBallotAddress(projectId);
+    // @ts-ignore
     setUpdatedProject({ ...project, ballotAddress });
   }, [fetchBallotAddress, project, projectId]);
 
