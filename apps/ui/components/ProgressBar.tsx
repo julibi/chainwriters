@@ -5,11 +5,11 @@ import { useTheme } from '../hooks/theme';
 
 interface ProgressBarProps {
   completed: number;
-  height?: number;
+  height?: string;
 }
 type RootProps = {
   theme: ElementThemeProps;
-  height: number;
+  height: string;
 };
 
 const Root = styled.div<RootProps>`
