@@ -246,7 +246,7 @@ const Read = () => {
     }
   }, [isAuthor, isEditing, translation, translationOn]);
 
-  if (!project || project?.isDeleted) {
+  if (!project || isDeleted) {
     return (
       <Root>
         <Title size="xl">{`The project you are looking for does not exist :(`}</Title>

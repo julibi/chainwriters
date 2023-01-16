@@ -162,6 +162,7 @@ const useShowText = (projectId: string) => {
       allowedToRead,
       isAuthor,
       isContributor,
+      isDeleted: project?.isDeleted,
       pending: pending || isLoading,
       project,
       text,
