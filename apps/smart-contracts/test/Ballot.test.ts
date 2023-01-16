@@ -251,7 +251,7 @@ describe("Voting", function () {
           ["Yes", "No", "abstention"],
           inTwelveMinutes
         )
-      ).to.revertedWith("Impossible at this state");
+      ).to.revertedWith("Vote not yet expired");
       const startId = await Ballot.startId();
       const endId = await Ballot.endId();
       const maxVotes = await Ballot.maxVotes();
@@ -262,9 +262,7 @@ describe("Voting", function () {
       await BallotAsDeployer.vote([1], 1);
       await BallotAsCreator.vote([2], 1);
       await BallotAsCreator.vote([3], 2);
-      await expect(BallotAsCreator.endVote()).to.be.revertedWith(
-        "Vote not yet expired"
-      );
+
       const BallotAsUserA = Ballot.connect(userA);
       const BallotAsUserB = Ballot.connect(userB);
       await expect(BallotAsUserA.vote([1], 0)).to.be.revertedWith(
@@ -289,10 +287,7 @@ describe("Voting", function () {
         "Already voted"
       );
       await advanceMinutes(12);
-      await BallotAsCreator.endVote();
-      await expect(BallotAsCreator.endVote()).to.be.revertedWith(
-        "Impossible at this state"
-      );
+
       const voteResults = await Ballot.voteSettings(0);
       expect(voteResults.votesCount).to.equal("9");
       expect(voteResults.option1Votes).to.equal("3");
@@ -307,11 +302,11 @@ describe("Voting", function () {
         ["Yes", "No", "abstention"],
         inThirtyMinutes
       );
+
       await BallotAsUserA.vote([4], 0);
       await BallotAsUserA.vote([5], 0);
       await BallotAsUserB.vote([6], 0);
       await advanceMinutes(30);
-      await expect(BallotAsCreator.endVote()).to.not.reverted;
 
       const nextVoteResults = await Ballot.voteSettings(1);
       expect(nextVoteResults.votesCount).to.equal("3");

@@ -26,8 +26,8 @@ async function deployAll() {
   const MoonpageCollection = MoonpageCollectionFactory.attach(
     MOONPAGE_COLLECTION_ADDRESS_DEV
   );
-
   console.log(`MoonpageCollection address: ${MoonpageCollection.address}`);
+
   // deploy MoonpageManager
   const MoonpageManagerFactory = await hre.ethers.getContractFactory(
     "MoonpageManager"
@@ -35,12 +35,7 @@ async function deployAll() {
   const MoonpageManager = await MoonpageManagerFactory.attach(
     MOONPAGE_MANAGER_ADDRESS_DEV
   );
-
   console.log(`MoonpageManager address: ${MoonpageManager.address}`);
-  // deploy AuctionsManager
-  const AuctionsManagerFactory = await hre.ethers.getContractFactory(
-    "AuctionsManager"
-  );
 
   // deploy BallotFactory
   const BallotsFactoryFactory = await hre.ethers.getContractFactory(

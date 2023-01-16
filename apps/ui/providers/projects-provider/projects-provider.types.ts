@@ -51,6 +51,7 @@ export interface Voting {
   totalCount: BigNumber;
   voteStarted: BigNumber;
   voteEnding: BigNumber;
+  project?: { ballotCreated: BigNumber; title: string };
 }
 
 export interface Project {
@@ -92,4 +93,8 @@ export type ProjectResult = {
 
 export type ProjectsResult = {
   projects: Project[];
+};
+
+export type VotingsResult = {
+  votings: Voting[];
 };

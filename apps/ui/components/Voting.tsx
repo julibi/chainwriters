@@ -141,8 +141,8 @@ const Voting = ({
         Number(option2Count),
         Number(option3Count),
       ])?.[0];
-    return !isDraw && highestCount;
-  }, [option1Count, option2Count, option3Count]);
+    return hasEnded && !isDraw && highestCount;
+  }, [hasEnded, option1Count, option2Count, option3Count]);
   const isVotingStatus = useMemo(
     () => ['confirming', 'waiting'].includes(voteStatus),
     [voteStatus]
@@ -222,7 +222,7 @@ const Voting = ({
       )} Voted`}</VotingNumbers>
       <Choices>
         <RadioInputWrapper>
-          <StyledRadioLabel isWinner={winningCount === Number(option2Count)}>
+          <StyledRadioLabel isWinner={winningCount === Number(option1Count)}>
             <input
               disabled={hasEnded}
               type="radio"

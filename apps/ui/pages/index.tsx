@@ -5,6 +5,7 @@ import FAQSection from '../components/HomePage/FAQSection';
 import HowItWorksSection from '../components/HomePage/HowItWorksSection';
 import HeaderSection from '../components/HomePage/HeaderSection';
 import Roadmap from '../components/HomePage/Roadmap';
+import VotingsSection from '../components/HomePage/VotingsSection';
 
 const Root = styled.section``;
 
@@ -23,6 +24,7 @@ export function Index() {
       <HeaderSection />
       <MainSellingPointsSection />
       <ProjectSection />
+      <VotingsSection />
       <HowItWorksSection />
       <Roadmap />
       {/* top auctions */}

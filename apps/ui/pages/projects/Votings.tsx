@@ -52,15 +52,13 @@ const Votings = ({
     () => account?.toLowerCase() === creator?.toLowerCase(),
     [account, creator]
   );
-
   const sortedVotes = useMemo(
     () => (votings ? [...votings].reverse().slice(0, 2) : null),
     [votings]
   );
 
-  // TODO: show a ballot creator, if NFTs have been minted and there is no voting running
   if (votings?.length == 0 && !isCreator) return null;
-  // console.log({ votings });
+
   return (
     <Root theme={theme}>
       <Title>Voting</Title>
@@ -94,8 +92,8 @@ const Votings = ({
                 option2={option2}
                 option3={option3}
                 option1Count={option1Count}
-                option2Count={option1Count}
-                option3Count={option1Count}
+                option2Count={option2Count}
+                option3Count={option3Count}
                 voteStarted={voteStarted}
                 voteEnding={voteEnding}
                 isVoting={isVoting}

@@ -1,5 +1,6 @@
 import useBallotsFactoryContract from '../../hooks/useBallotsFactoryContract';
 import { createContext, useCallback, useMemo, useState } from 'react';
+import { gql, useQuery } from '@apollo/client';
 import {
   BallotsFactoryApi,
   CreateBallotArgs,
@@ -9,11 +10,41 @@ import { toast } from 'react-toastify';
 import ToastLink from '../../components/ToastLink';
 import { getGasMargin } from '../../utils/getGasMargin';
 import { WriteActionStatus } from '../manager-provider/manager-provider.types';
+import {
+  Voting,
+  VotingsResult,
+} from '../../providers/projects-provider/projects-provider.types';
+
+export const GET_RECENT_VOTINGS = gql`
+  query recentVotes {
+    votings(orderBy: voteStarted, orderDirection: desc, first: 3) {
+      id
+      proposal
+      option1
+      option2
+      option3
+      option1Count
+      option2Count
+      option3Count
+      isVoting
+      totalCount
+      voteStarted
+      voteEnding
+      project {
+        ballotAddress
+        title
+      }
+    }
+  }
+`;
 
 const defaultContext: BallotsFactoryApi = {
   createBallot: async () => undefined,
   createBallotStatus: 'idle',
-  fetchBallotAddress: async () => undefined,
+  fetchBallotAddress: async () => null,
+  votingsData: null,
+  votingsLoading: 'idle',
+  refetchVotingsData: () => null,
 };
 
 export const BallotsFactoryContext = createContext(defaultContext);
@@ -24,6 +55,11 @@ export function BallotsFactoryProvider({
   const ballotsFactory = useBallotsFactoryContract();
   const [createBallotStatus, setCreateBallotStatus] =
     useState<WriteActionStatus>();
+  const {
+    loading: votingsLoading,
+    data: votingsData,
+    refetch: refetchVotingsData,
+  } = useQuery<VotingsResult>(GET_RECENT_VOTINGS);
 
   const createBallot = useCallback(
     async ({ projectId, onSuccess, onError }: CreateBallotArgs) => {
@@ -78,8 +114,18 @@ export function BallotsFactoryProvider({
       createBallot,
       createBallotStatus,
       fetchBallotAddress,
+      votingsLoading,
+      votingsData: votingsData?.votings,
+      refetchVotingsData,
     }),
-    [createBallot, createBallotStatus, fetchBallotAddress]
+    [
+      createBallot,
+      createBallotStatus,
+      fetchBallotAddress,
+      refetchVotingsData,
+      votingsData,
+      votingsLoading,
+    ]
   );
 
   return (

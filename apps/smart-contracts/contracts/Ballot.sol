@@ -15,11 +15,8 @@ contract Ballot is AccessControlEnumerable {
     uint256 public endId;
     uint256 public maxVotes;
     uint256 public votingsIndex = 0;
-    enum State {
-        Voting,
-        NotVoting
-    }
-    State public state;
+    bool public isFirstVote = true;
+
     struct SingleVote {
         bool voted;
         uint256 vote;
@@ -79,7 +76,6 @@ contract Ballot is AccessControlEnumerable {
         startId = startTokenId;
         endId = endTokenId;
         maxVotes = endTokenId - startTokenId + 1;
-        state = State.NotVoting;
         projectId = _projectId;
     }
 
@@ -99,16 +95,17 @@ contract Ballot is AccessControlEnumerable {
         _;
     }
 
-    modifier inState(State _state) {
-        require(state == _state, "Impossible at this state");
-        _;
-    }
-
     function startVote(
         string memory _proposal,
         string[] memory _optionValues,
         uint256 _end
-    ) external onlyRole(CREATOR_ROLE) inState(State.NotVoting) {
+    ) external onlyRole(CREATOR_ROLE) {
+        if (isFirstVote) {
+            isFirstVote = false;
+        } else {
+            endPreviousVote();
+        }
+
         require(
             _end >= (block.timestamp + 10 minutes),
             "Not enough time to vote"
@@ -127,7 +124,6 @@ contract Ballot is AccessControlEnumerable {
         voteSettings[votingsIndex].option3Votes = 0;
         voteSettings[votingsIndex].endTime = _end;
 
-        state = State.Voting;
         emit VoteStarted(
             projectId,
             votingsIndex,
@@ -140,11 +136,10 @@ contract Ballot is AccessControlEnumerable {
         );
     }
 
-    function endVote() external onlyRole(CREATOR_ROLE) inState(State.Voting) {
+    function endPreviousVote() internal {
         bool allVoted = voteSettings[votingsIndex].votesCount == maxVotes;
         bool voteExpired = block.timestamp > voteSettings[votingsIndex].endTime;
         require(allVoted || voteExpired, "Vote not yet expired");
-        state = State.NotVoting;
 
         emit VoteEnded(
             projectId,
@@ -159,7 +154,6 @@ contract Ballot is AccessControlEnumerable {
     function vote(uint256[] calldata _tokenIds, uint256 _option)
         external
         authorized(_tokenIds)
-        inState(State.Voting)
     {
         require(_option == 0 || _option == 1 || _option == 2, "Invalid option");
         require(
