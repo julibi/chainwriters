@@ -3,11 +3,10 @@ import React, { useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { useTheme } from '../hooks/theme';
 import { BASE_BORDER_RADIUS, FONT_SERIF_BOLD, POP } from '../themes';
+import { findDuplicates } from '../utils/findDuplicates';
 import ActionButton from './ActionButton';
-import Checkbox from './Checkbox';
 import Countdown from './Countdown';
 import ProgressBar from './ProgressBar';
-import RadioButton from './RadioButton';
 import Title from './Title';
 
 type VotingProps = {
@@ -15,6 +14,9 @@ type VotingProps = {
   option1: string;
   option2: string;
   option3: string;
+  option1Count: BigNumber;
+  option2Count: BigNumber;
+  option3Count: BigNumber;
   voteStarted: BigNumber;
   voteEnding: BigNumber;
   isVoting: boolean;
@@ -75,12 +77,21 @@ const VoteButtonWrapper = styled.div`
   display: flex;
   justify-content: center;
 `;
+type RadioLabelProps = {
+  isWinner: boolean;
+};
+const StyledRadioLabel = styled.label<RadioLabelProps>`
+  color: ${({ isWinner }) => (isWinner ? POP : 'inherit')};
+`;
 
 const Voting = ({
   proposal,
   option1,
   option2,
   option3,
+  option1Count,
+  option2Count,
+  option3Count,
   voteEnding,
   totalCount,
   isVoting,
@@ -103,7 +114,23 @@ const Voting = ({
     setSelectedOption(Number(event.target.value));
   }, []);
 
+  const winningCount = useMemo(() => {
+    const highestCount = Math.max(
+      Number(option1Count),
+      Number(option2Count),
+      Number(option3Count)
+    );
+    const isDraw =
+      highestCount ==
+      findDuplicates([
+        Number(option1Count),
+        Number(option2Count),
+        Number(option3Count),
+      ])?.[0];
+    return !isDraw && highestCount;
+  }, [option1Count, option2Count, option3Count]);
   const formSubmit = useCallback(() => {}, []);
+
   return (
     <Root theme={theme}>
       <Title color={POP} padding="0" margin="0 1rem" size="s">
@@ -125,37 +152,43 @@ const Voting = ({
       )} Voted`}</VotingNumbers>
       <Choices>
         <RadioInputWrapper>
-          <label>
+          <StyledRadioLabel isWinner={winningCount === Number(option2Count)}>
             <input
+              disabled={hasEnded}
               type="radio"
               value={0}
               checked={selectedOption === 0}
               onChange={onValueChange}
             />
             {`a) ${option1}`}
-          </label>
+            {hasEnded && ` (${option1Count} Votes)`}
+          </StyledRadioLabel>
         </RadioInputWrapper>
         <RadioInputWrapper>
-          <label>
+          <StyledRadioLabel isWinner={winningCount === Number(option2Count)}>
             <input
+              disabled={hasEnded}
               type="radio"
               value={1}
               checked={selectedOption === 1}
               onChange={onValueChange}
             />
             {`b) ${option2}`}
-          </label>
+            {hasEnded && ` (${option2Count} Votes)`}
+          </StyledRadioLabel>
         </RadioInputWrapper>
         <RadioInputWrapper>
-          <label>
+          <StyledRadioLabel isWinner={winningCount === Number(option3Count)}>
             <input
+              disabled={hasEnded}
               type="radio"
               value={2}
               checked={selectedOption === 2}
               onChange={onValueChange}
             />
-            {`3) ${option3}`}
-          </label>
+            {`c) ${option3}`}
+            {hasEnded && ` (${option3Count} Votes)`}
+          </StyledRadioLabel>
         </RadioInputWrapper>
         <VoteButtonWrapper>
           <ActionButton

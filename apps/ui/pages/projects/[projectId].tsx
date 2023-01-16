@@ -305,6 +305,8 @@ const ProjectDetailView = () => {
     () => updatedProject || fetchedProject,
     [fetchedProject, updatedProject]
   );
+
+  // console.log(project?.ballotAddress);
   const refetchAuctionStateAndCount = useCallback(async () => {
     const auctionData = await auctionsManager.auctions(projectId);
     const editionData = await mpManager.editions(projectId);

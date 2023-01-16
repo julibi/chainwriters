@@ -60,7 +60,7 @@ const Votings = ({
 
   // TODO: show a ballot creator, if NFTs have been minted and there is no voting running
   if (votings?.length == 0 && !isCreator) return null;
-
+  // console.log({ votings });
   return (
     <Root theme={theme}>
       <Title>Voting</Title>
@@ -78,6 +78,9 @@ const Votings = ({
             option1,
             option2,
             option3,
+            option1Count,
+            option2Count,
+            option3Count,
             voteStarted,
             voteEnding,
             isVoting,
@@ -90,6 +93,9 @@ const Votings = ({
                 option1={option1}
                 option2={option2}
                 option3={option3}
+                option1Count={option1Count}
+                option2Count={option1Count}
+                option3Count={option1Count}
                 voteStarted={voteStarted}
                 voteEnding={voteEnding}
                 isVoting={isVoting}
