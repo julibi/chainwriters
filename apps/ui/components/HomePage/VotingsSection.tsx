@@ -71,7 +71,7 @@ const VotingsSection = () => {
             },
             idx
           ) => (
-            <div>
+            <div key={idx}>
               <h3>{project?.title}</h3>
               <h3>{proposal}</h3>
             </div>

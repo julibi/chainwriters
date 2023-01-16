@@ -5,7 +5,7 @@ import { useTheme } from '../hooks/theme';
 
 interface ProgressBarProps {
   completed: number;
-  height?: string;
+  height?: number;
 }
 type RootProps = {
   theme: ElementThemeProps;
