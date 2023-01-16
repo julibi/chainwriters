@@ -14,7 +14,7 @@ const defaultContext: UserApi = {
 export const UserContext = createContext(defaultContext);
 
 export const UserProvider = ({ children }: UserProviderProps) => {
-  const { account, chainId } = useWeb3React();
+  const { account } = useWeb3React();
   const { balance, nfts, isLoading, detailedNfts, groupedNfts } =
     useGetAllNftsOfAccount(account);
 

@@ -1,5 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { toast } from 'react-toastify';
 import styled from 'styled-components';
 import { useTheme } from '../hooks/theme';
 import useBallot from '../hooks/useBallot';
@@ -104,9 +105,22 @@ const Voting = ({
   projectId,
 }: VotingProps) => {
   const theme = useTheme();
-  const { nfts, groupedNfts } = useUser();
-  console.log({ nfts, groupedNfts });
-  const { vote, voteStatus } = useBallot(ballotAddress, projectId);
+  const { groupedNfts } = useUser();
+  const { Ballot, vote, voteStatus, votingsIndex } = useBallot(
+    ballotAddress,
+    projectId
+  );
+  const [selectedOption, setSelectedOption] = useState<number>(0);
+  const [votableNFTs, setVotableNFTs] = useState<string[] | null>(null);
+  const percentageVoted = useMemo(
+    () => Math.round((Number(totalCount) / Number(maxNFTCount)) * 100),
+    [maxNFTCount, totalCount]
+  );
+  const userNFTsOfProject = useMemo(
+    () =>
+      groupedNfts?.find((group) => group[0].projectId === Number(projectId)),
+    [groupedNfts, projectId]
+  );
   const hasEnded = useMemo(
     () =>
       !isVoting ||
@@ -114,15 +128,6 @@ const Voting = ({
       Number(totalCount) == 1000,
     [totalCount, isVoting, voteEnding]
   );
-  const percentageVoted = useMemo(
-    () => Math.round((Number(totalCount) / Number(maxNFTCount)) * 100),
-    [maxNFTCount, totalCount]
-  );
-  const [selectedOption, setSelectedOption] = useState<number>(0);
-  const onValueChange = useCallback((event) => {
-    setSelectedOption(Number(event.target.value));
-  }, []);
-
   const winningCount = useMemo(() => {
     const highestCount = Math.max(
       Number(option1Count),
@@ -138,10 +143,63 @@ const Voting = ({
       ])?.[0];
     return !isDraw && highestCount;
   }, [option1Count, option2Count, option3Count]);
+  const isVotingStatus = useMemo(
+    () => ['confirming', 'waiting'].includes(voteStatus),
+    [voteStatus]
+  );
+  const hasVoted = useMemo(() => {
+    if (userNFTsOfProject?.length) {
+      if (!votableNFTs?.length) {
+        return true;
+      }
+    }
+    return false;
+  }, [userNFTsOfProject, votableNFTs]);
 
-  const handleVote = useCallback(() => {
-    // get all NFTs of that address
+  const onValueChange = useCallback((event) => {
+    setSelectedOption(Number(event.target.value));
   }, []);
+
+  const fetchVotableNFTs = useCallback(async () => {
+    if (!userNFTsOfProject) return;
+    const result = [];
+    try {
+      for (let i = 0; i < userNFTsOfProject.length; i++) {
+        const test = await Ballot.votings(
+          votingsIndex,
+          userNFTsOfProject[i].tokenId
+        );
+        if (!test.voted) {
+          result.push(userNFTsOfProject[i].tokenId);
+        }
+      }
+      return result;
+    } catch (e) {
+      return null;
+    }
+  }, [Ballot, userNFTsOfProject, votingsIndex]);
+
+  const handleVote = useCallback(async () => {
+    if (!votableNFTs?.length) {
+      return toast.error('No NFTs of this project or already voted.');
+    }
+
+    await vote({
+      tokenIds: votableNFTs,
+      option: selectedOption,
+      onSuccess: undefined,
+      onError: undefined,
+    });
+  }, [selectedOption, votableNFTs, vote]);
+
+  const votableNFTsWrapperCall = useCallback(async () => {
+    const nfts = await fetchVotableNFTs();
+    setVotableNFTs(nfts);
+  }, [fetchVotableNFTs]);
+
+  useEffect(() => {
+    votableNFTsWrapperCall();
+  }, [Ballot, votableNFTsWrapperCall, userNFTsOfProject]);
 
   return (
     <Root theme={theme}>
@@ -205,9 +263,9 @@ const Voting = ({
         <VoteButtonWrapper>
           <ActionButton
             onClick={handleVote}
-            text="Vote"
-            disabled={hasEnded}
-            loading={false}
+            text={hasVoted ? 'Voted' : 'Vote'}
+            disabled={hasEnded || isVotingStatus || hasVoted}
+            loading={isVotingStatus}
             margin="2rem 0 0 0"
           />
         </VoteButtonWrapper>

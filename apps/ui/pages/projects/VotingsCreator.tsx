@@ -85,8 +85,10 @@ const VotingsCreator = ({
     const now = new Date();
     let endingTime: number;
     if (ending === VOTE_ENDING_TIMES[0]) {
-      endingTime = now.setDate(now.getDate() + 1) / 1000;
+      endingTime = now.setHours(now.getHours() + 1) / 1000;
     } else if (ending === VOTE_ENDING_TIMES[1]) {
+      endingTime = now.setDate(now.getDate() + 1) / 1000;
+    } else if (ending === VOTE_ENDING_TIMES[2]) {
       endingTime = now.setDate(now.getDate() + 7) / 1000;
     } else {
       endingTime = now.setDate(now.getDate() + 30) / 1000;

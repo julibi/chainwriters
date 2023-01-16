@@ -144,14 +144,13 @@ const useBallot = (ballotAddress: string, projectId: string) => {
           setTimeout(() => {
             setVoteStatus('success');
             toast.info('Vote was cast successfully.');
-            onSuccess?.();
             refetchData();
+            onSuccess?.();
           }, 10000);
         });
       } catch (e) {
-        console.log({ e });
         setVoteStatus('error');
-        toast.error('Something went wrong!');
+        toast.error('Something went wrong while voting!');
         onError?.(e);
       }
     },
