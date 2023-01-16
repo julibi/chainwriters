@@ -101,6 +101,8 @@ const Votings = ({
                 isVoting={isVoting}
                 totalCount={totalCount}
                 maxNFTCount={maxNFTCount}
+                ballotAddress={ballotAddress}
+                projectId={projectId}
               />
             );
           }

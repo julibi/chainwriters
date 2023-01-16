@@ -2,6 +2,8 @@ import { BigNumber } from '@ethersproject/bignumber';
 import React, { useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { useTheme } from '../hooks/theme';
+import useBallot from '../hooks/useBallot';
+import { useUser } from '../hooks/user/useUser';
 import { BASE_BORDER_RADIUS, FONT_SERIF_BOLD, POP } from '../themes';
 import { findDuplicates } from '../utils/findDuplicates';
 import ActionButton from './ActionButton';
@@ -22,6 +24,8 @@ type VotingProps = {
   isVoting: boolean;
   totalCount: BigNumber;
   maxNFTCount: BigNumber;
+  ballotAddress: string;
+  projectId: string;
 };
 
 const Root = styled.div`
@@ -96,8 +100,13 @@ const Voting = ({
   totalCount,
   isVoting,
   maxNFTCount,
+  ballotAddress,
+  projectId,
 }: VotingProps) => {
   const theme = useTheme();
+  const { nfts, groupedNfts } = useUser();
+  console.log({ nfts, groupedNfts });
+  const { vote, voteStatus } = useBallot(ballotAddress, projectId);
   const hasEnded = useMemo(
     () =>
       !isVoting ||
@@ -109,7 +118,7 @@ const Voting = ({
     () => Math.round((Number(totalCount) / Number(maxNFTCount)) * 100),
     [maxNFTCount, totalCount]
   );
-  const [selectedOption, setSelectedOption] = useState<null | number>(null);
+  const [selectedOption, setSelectedOption] = useState<number>(0);
   const onValueChange = useCallback((event) => {
     setSelectedOption(Number(event.target.value));
   }, []);
@@ -129,7 +138,10 @@ const Voting = ({
       ])?.[0];
     return !isDraw && highestCount;
   }, [option1Count, option2Count, option3Count]);
-  const formSubmit = useCallback(() => {}, []);
+
+  const handleVote = useCallback(() => {
+    // get all NFTs of that address
+  }, []);
 
   return (
     <Root theme={theme}>
@@ -141,7 +153,7 @@ const Voting = ({
           <Status theme={theme}>{'Ended'}</Status>
         ) : (
           <Status theme={theme}>
-            <span>{'Time left:'}</span>
+            <span>{'Time left: '}</span>
             <Countdown end={Number(voteEnding)} />
           </Status>
         )}
@@ -192,9 +204,7 @@ const Voting = ({
         </RadioInputWrapper>
         <VoteButtonWrapper>
           <ActionButton
-            onClick={() => {
-              console.log('first');
-            }}
+            onClick={handleVote}
             text="Vote"
             disabled={hasEnded}
             loading={false}

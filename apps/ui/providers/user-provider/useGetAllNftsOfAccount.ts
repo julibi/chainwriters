@@ -15,9 +15,8 @@ import {
 import ABI from '../../abis/MoonpageCollection.json';
 import { BigNumber } from '@ethersproject/bignumber';
 
-// make this hook accept address parameter ?-> could be used in the future for "profile page"
-const useGetAllNftsOfAccount = () => {
-  const { account, chainId } = useWeb3React();
+const useGetAllNftsOfAccount = (account: string) => {
+  const { chainId } = useWeb3React();
   const collection = useMoonpageCollection();
   const { allProjects, areAllProjectsLoading, allProjectsFetchError } =
     useProjects();

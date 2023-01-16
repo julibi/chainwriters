@@ -1,6 +1,7 @@
 import useGetAllNftsOfAccount from './useGetAllNftsOfAccount';
 import { createContext, useMemo } from 'react';
 import { UserProviderProps, UserApi } from './user-provider.types';
+import { useWeb3React } from '@web3-react/core';
 
 const defaultContext: UserApi = {
   balance: 0,
@@ -13,8 +14,9 @@ const defaultContext: UserApi = {
 export const UserContext = createContext(defaultContext);
 
 export const UserProvider = ({ children }: UserProviderProps) => {
+  const { account, chainId } = useWeb3React();
   const { balance, nfts, isLoading, detailedNfts, groupedNfts } =
-    useGetAllNftsOfAccount();
+    useGetAllNftsOfAccount(account);
 
   const api = useMemo(
     () => ({
