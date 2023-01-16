@@ -5,7 +5,7 @@ import { Voting } from '../projects-provider/projects-provider.types';
 export type BallotsFactoryApi = {
   createBallot: (x: CreateBallotArgs) => Promise<void>;
   createBallotStatus: WriteActionStatus;
-  fetchBallotAddress: (x: string) => string | null;
+  fetchBallotAddress: (x: string) => Promise<void>;
   votingsData: Voting[];
   votingsLoading: WriteActionStatus;
   refetchVotingsData: () => null;

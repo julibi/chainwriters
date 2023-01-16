@@ -41,7 +41,7 @@ export const GET_RECENT_VOTINGS = gql`
 const defaultContext: BallotsFactoryApi = {
   createBallot: async () => undefined,
   createBallotStatus: 'idle',
-  fetchBallotAddress: async () => null,
+  fetchBallotAddress: async (x) => null,
   votingsData: null,
   votingsLoading: 'idle',
   refetchVotingsData: () => null,
