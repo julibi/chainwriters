@@ -49,7 +49,7 @@ const VotingsSection = () => {
 
   return (
     <Root>
-      <Title color={POP}>Top Projects</Title>
+      <Title color={POP}>Recent Votings</Title>
       {votingsLoading && !votingsData && <Loading height={530} />}
       <Votings>
         {votingsData?.map(
