@@ -10,10 +10,7 @@ import { toast } from 'react-toastify';
 import ToastLink from '../../components/ToastLink';
 import { getGasMargin } from '../../utils/getGasMargin';
 import { WriteActionStatus } from '../manager-provider/manager-provider.types';
-import {
-  Voting,
-  VotingsResult,
-} from '../../providers/projects-provider/projects-provider.types';
+import { VotingsResult } from '../../providers/projects-provider/projects-provider.types';
 
 export const GET_RECENT_VOTINGS = gql`
   query recentVotes {
@@ -43,8 +40,8 @@ const defaultContext: BallotsFactoryApi = {
   createBallotStatus: 'idle',
   fetchBallotAddress: async () => null,
   votingsData: null,
-  votingsLoading: 'idle',
-  refetchVotingsData: () => null,
+  votingsLoading: false,
+  refetchVotingsData: async () => null,
 };
 
 export const BallotsFactoryContext = createContext(defaultContext);
@@ -129,6 +126,7 @@ export function BallotsFactoryProvider({
   );
 
   return (
+    // @ts-ignore
     <BallotsFactoryContext.Provider value={api}>
       {children}
     </BallotsFactoryContext.Provider>

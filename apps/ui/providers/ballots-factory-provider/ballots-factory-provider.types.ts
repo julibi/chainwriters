@@ -7,8 +7,8 @@ export type BallotsFactoryApi = {
   createBallotStatus: WriteActionStatus;
   fetchBallotAddress: (x: string) => Promise<string | null>;
   votingsData: Voting[];
-  votingsLoading: WriteActionStatus;
-  refetchVotingsData: () => null;
+  votingsLoading: boolean;
+  refetchVotingsData: () => Promise<null>;
 };
 
 export type CreateBallotArgs = {
