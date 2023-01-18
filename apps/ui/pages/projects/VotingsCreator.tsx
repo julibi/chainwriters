@@ -174,6 +174,7 @@ const VotingsCreator = ({
               disabled={isStartingVote}
               loading={isStartingVote}
               margin="2rem 0 0 0 "
+              web3Connectable
             />
           </ButtonWrapper>
         </StartVoteWrapper>
@@ -194,6 +195,7 @@ const VotingsCreator = ({
               disabled={isCreatingBallot}
               loading={isCreatingBallot}
               margin="2rem 0"
+              web3Connectable
             />
           </ButtonWrapper>
         </>

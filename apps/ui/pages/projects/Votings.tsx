@@ -63,12 +63,14 @@ const Votings = ({
     <Root theme={theme}>
       <Title>Voting</Title>
       <VotingsWrapper>
-        <VotingsCreator
-          ballotAddress={ballotAddress}
-          projectId={projectId}
-          votings={votings}
-          onFinishSettingUpBallot={onFinishSettingUpBallot}
-        />
+        {isCreator && (
+          <VotingsCreator
+            ballotAddress={ballotAddress}
+            projectId={projectId}
+            votings={votings}
+            onFinishSettingUpBallot={onFinishSettingUpBallot}
+          />
+        )}
         {sortedVotes?.map(
           ({
             id,

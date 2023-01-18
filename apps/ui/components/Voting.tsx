@@ -267,6 +267,7 @@ const Voting = ({
             disabled={hasEnded || isVotingStatus || hasVoted}
             loading={isVotingStatus}
             margin="2rem 0 0 0"
+            web3Connectable
           />
         </VoteButtonWrapper>
       </Choices>
