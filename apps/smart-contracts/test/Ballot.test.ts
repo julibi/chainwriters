@@ -220,17 +220,31 @@ describe("Voting", function () {
       await CollectionAsUserB.buy(1, {
         value: myMintPrice,
       });
+      const firstVoteData = ["What should we do?", "yes", "no", "abstention"];
+      const inFifteenMinutes = Math.floor(Date.now() / 1000) + 15 * 60;
       // project creator - and creator only – can deploy a ballot
-      await expect(BallotsFactoryAsDeployer.createBallot(1)).to.revertedWith(
-        "Not authorized"
+      await expect(
+        BallotsFactoryAsDeployer.createBallot(
+          1,
+          firstVoteData,
+          inFifteenMinutes
+        )
+      ).to.revertedWith("Not authorized");
+      await expect(
+        BallotsFactoryAsCreator.createBallot(
+          100,
+          firstVoteData,
+          inFifteenMinutes
+        )
+      ).to.revertedWith("No collection");
+      await BallotsFactoryAsCreator.createBallot(
+        1,
+        firstVoteData,
+        inFifteenMinutes
       );
-      await expect(BallotsFactoryAsCreator.createBallot(100)).to.revertedWith(
-        "No collection"
-      );
-      await BallotsFactoryAsCreator.createBallot(1);
-      await expect(BallotsFactoryAsCreator.createBallot(1)).to.revertedWith(
-        "Ballot already exists"
-      );
+      await expect(
+        BallotsFactoryAsCreator.createBallot(1, firstVoteData, inFifteenMinutes)
+      ).to.revertedWith("Ballot already exists");
       const ballotAddress = await BallotsFactory.ballots(1);
       expect(await BallotsFactory.ballotsLength()).to.equal(1);
       const BallotFactory = await ethers.getContractFactory("Ballot");
@@ -239,17 +253,12 @@ describe("Voting", function () {
       BallotAsDeployer = Ballot.connect(deployer);
       // voting from start to finish - only Gen Ed token owners can vote
       // in this case tokenId 1 - 6 (incl)
-      const inTwelveMinutes = Math.floor(Date.now() / 1000) + 12 * 60;
-      await BallotAsCreator.startVote(
-        "Publish it as a real book?",
-        ["Yes", "No", "abstention"],
-        inTwelveMinutes
-      );
+
       await expect(
         BallotAsCreator.startVote(
           "Random second vote that cannot happen at the same time.",
           ["Yes", "No", "abstention"],
-          inTwelveMinutes
+          inFifteenMinutes
         )
       ).to.revertedWith("Vote not yet expired");
       const startId = await Ballot.startId();
@@ -286,7 +295,7 @@ describe("Voting", function () {
       await expect(BallotAsUserB.vote([6, 7], 0)).to.be.revertedWith(
         "Already voted"
       );
-      await advanceMinutes(12);
+      await advanceMinutes(15);
 
       const voteResults = await Ballot.voteSettings(0);
       expect(voteResults.votesCount).to.equal("9");

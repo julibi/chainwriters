@@ -45,11 +45,11 @@ contract BallotsFactory is
         ballotsLength = 0;
     }
 
-    function createBallot(uint256 _projectId)
-        external
-        whenNotPaused
-        returns (address)
-    {
+    function createBallot(
+        uint256 _projectId,
+        string[] memory _firstVoteParams,
+        uint256 _firstVoteEnd
+    ) external whenNotPaused returns (address) {
         bool projectExists = moonpageManager.exists(_projectId);
         require(projectExists, "No collection");
         (, , , address creatorAddress, , , , , , , ) = moonpageManager
@@ -61,7 +61,9 @@ contract BallotsFactory is
             address(moonpageCollection),
             address(moonpageManager),
             _projectId,
-            msg.sender
+            msg.sender,
+            _firstVoteParams,
+            _firstVoteEnd
         );
         ballots[_projectId] = address(ballot);
         ballotsLength++;

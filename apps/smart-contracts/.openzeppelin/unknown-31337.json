@@ -662,6 +662,11 @@
       "kind": "uups"
     },
     {
+      "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+      "txHash": "0xe78d93d831666732a3ea902ca14b147d30a324417a5fced23369d1c0d6321f75",
+      "kind": "uups"
+    },
+    {
       "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
       "txHash": "0xb0ccfede0baa0c22da7ca69ec0fb17bfba2661bd9827fe9dcf273c42b53f933c",
       "kind": "uups"
@@ -678,12 +683,7 @@
     },
     {
       "address": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
-      "txHash": "0xa6a96c3e9037f1aac415fcb2a9cce5120e89ee8d473c917bb06a092577ba7ca6",
-      "kind": "uups"
-    },
-    {
-      "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
-      "txHash": "0xe78d93d831666732a3ea902ca14b147d30a324417a5fced23369d1c0d6321f75",
+      "txHash": "0x31b85dcd3a0e3b9b8a78329b42f06f538535ad93ca0954a556569b8179dfe22c",
       "kind": "uups"
     }
   ],
@@ -826,7 +826,7 @@
             "label": "collection",
             "offset": 0,
             "slot": "307",
-            "type": "t_contract(IMoonpageCollection)14077",
+            "type": "t_contract(IMoonpageCollection)14155",
             "contract": "MoonpageManager",
             "src": "contracts/MoonpageManager.sol:26"
           },
@@ -834,7 +834,7 @@
             "label": "baseDatas",
             "offset": 0,
             "slot": "308",
-            "type": "t_mapping(t_uint256,t_struct(BaseData)9451_storage)",
+            "type": "t_mapping(t_uint256,t_struct(BaseData)9529_storage)",
             "contract": "MoonpageManager",
             "src": "contracts/MoonpageManager.sol:61"
           },
@@ -842,7 +842,7 @@
             "label": "authorShares",
             "offset": 0,
             "slot": "309",
-            "type": "t_mapping(t_uint256,t_struct(AuthorShare)9456_storage)",
+            "type": "t_mapping(t_uint256,t_struct(AuthorShare)9534_storage)",
             "contract": "MoonpageManager",
             "src": "contracts/MoonpageManager.sol:62"
           },
@@ -850,7 +850,7 @@
             "label": "editions",
             "offset": 0,
             "slot": "310",
-            "type": "t_mapping(t_uint256,t_struct(Edition)9480_storage)",
+            "type": "t_mapping(t_uint256,t_struct(Edition)9558_storage)",
             "contract": "MoonpageManager",
             "src": "contracts/MoonpageManager.sol:63"
           },
@@ -858,7 +858,7 @@
             "label": "contributions",
             "offset": 0,
             "slot": "311",
-            "type": "t_mapping(t_uint256,t_mapping(t_uint256,t_struct(Contribution)9465_storage))",
+            "type": "t_mapping(t_uint256,t_mapping(t_uint256,t_struct(Contribution)9543_storage))",
             "contract": "MoonpageManager",
             "src": "contracts/MoonpageManager.sol:64"
           },
@@ -948,7 +948,7 @@
             "label": "bytes32",
             "numberOfBytes": "32"
           },
-          "t_contract(IMoonpageCollection)14077": {
+          "t_contract(IMoonpageCollection)14155": {
             "label": "contract IMoonpageCollection",
             "numberOfBytes": "20"
           },
@@ -964,7 +964,7 @@
             "label": "mapping(uint256 => bool)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_uint256,t_mapping(t_uint256,t_struct(Contribution)9465_storage))": {
+          "t_mapping(t_uint256,t_mapping(t_uint256,t_struct(Contribution)9543_storage))": {
             "label": "mapping(uint256 => mapping(uint256 => struct MoonpageManager.Contribution))",
             "numberOfBytes": "32"
           },
@@ -976,19 +976,19 @@
             "label": "mapping(uint256 => string)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_uint256,t_struct(AuthorShare)9456_storage)": {
+          "t_mapping(t_uint256,t_struct(AuthorShare)9534_storage)": {
             "label": "mapping(uint256 => struct MoonpageManager.AuthorShare)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_uint256,t_struct(BaseData)9451_storage)": {
+          "t_mapping(t_uint256,t_struct(BaseData)9529_storage)": {
             "label": "mapping(uint256 => struct MoonpageManager.BaseData)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_uint256,t_struct(Contribution)9465_storage)": {
+          "t_mapping(t_uint256,t_struct(Contribution)9543_storage)": {
             "label": "mapping(uint256 => struct MoonpageManager.Contribution)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_uint256,t_struct(Edition)9480_storage)": {
+          "t_mapping(t_uint256,t_struct(Edition)9558_storage)": {
             "label": "mapping(uint256 => struct MoonpageManager.Edition)",
             "numberOfBytes": "32"
           },
@@ -1004,7 +1004,7 @@
             "label": "string",
             "numberOfBytes": "32"
           },
-          "t_struct(AuthorShare)9456_storage": {
+          "t_struct(AuthorShare)9534_storage": {
             "label": "struct MoonpageManager.AuthorShare",
             "members": [
               {
@@ -1022,7 +1022,7 @@
             ],
             "numberOfBytes": "64"
           },
-          "t_struct(BaseData)9451_storage": {
+          "t_struct(BaseData)9529_storage": {
             "label": "struct MoonpageManager.BaseData",
             "members": [
               {
@@ -1094,7 +1094,7 @@
             ],
             "numberOfBytes": "352"
           },
-          "t_struct(Contribution)9465_storage": {
+          "t_struct(Contribution)9543_storage": {
             "label": "struct MoonpageManager.Contribution",
             "members": [
               {
@@ -1124,7 +1124,7 @@
             ],
             "numberOfBytes": "128"
           },
-          "t_struct(Edition)9480_storage": {
+          "t_struct(Edition)9558_storage": {
             "label": "struct MoonpageManager.Edition",
             "members": [
               {
@@ -1291,7 +1291,7 @@
             "label": "moonpageManager",
             "offset": 0,
             "slot": "301",
-            "type": "t_contract(IMoonpageManager)14303",
+            "type": "t_contract(IMoonpageManager)14381",
             "contract": "AuctionsManager",
             "src": "contracts/AuctionsManager.sol:21"
           },
@@ -1299,7 +1299,7 @@
             "label": "moonpageFactory",
             "offset": 0,
             "slot": "302",
-            "type": "t_contract(IMoonpageFactory)14136",
+            "type": "t_contract(IMoonpageFactory)14214",
             "contract": "AuctionsManager",
             "src": "contracts/AuctionsManager.sol:22"
           },
@@ -1307,7 +1307,7 @@
             "label": "moonpageCollection",
             "offset": 0,
             "slot": "303",
-            "type": "t_contract(IMoonpageCollection)14077",
+            "type": "t_contract(IMoonpageCollection)14155",
             "contract": "AuctionsManager",
             "src": "contracts/AuctionsManager.sol:23"
           },
@@ -1341,15 +1341,15 @@
             "label": "bytes32",
             "numberOfBytes": "32"
           },
-          "t_contract(IMoonpageCollection)14077": {
+          "t_contract(IMoonpageCollection)14155": {
             "label": "contract IMoonpageCollection",
             "numberOfBytes": "20"
           },
-          "t_contract(IMoonpageFactory)14136": {
+          "t_contract(IMoonpageFactory)14214": {
             "label": "contract IMoonpageFactory",
             "numberOfBytes": "20"
           },
-          "t_contract(IMoonpageManager)14303": {
+          "t_contract(IMoonpageManager)14381": {
             "label": "contract IMoonpageManager",
             "numberOfBytes": "20"
           },
@@ -1564,7 +1564,7 @@
             "label": "moonpageManager",
             "offset": 0,
             "slot": "305",
-            "type": "t_contract(IMoonpageManager)14303",
+            "type": "t_contract(IMoonpageManager)14381",
             "contract": "MoonpageFactory",
             "src": "contracts/MoonpageFactory.sol:24"
           },
@@ -1572,7 +1572,7 @@
             "label": "auctionsManager",
             "offset": 0,
             "slot": "306",
-            "type": "t_contract(IAuctionsManager)14024",
+            "type": "t_contract(IAuctionsManager)14102",
             "contract": "MoonpageFactory",
             "src": "contracts/MoonpageFactory.sol:25"
           },
@@ -1622,11 +1622,11 @@
             "label": "bytes32",
             "numberOfBytes": "32"
           },
-          "t_contract(IAuctionsManager)14024": {
+          "t_contract(IAuctionsManager)14102": {
             "label": "contract IAuctionsManager",
             "numberOfBytes": "20"
           },
-          "t_contract(IMoonpageManager)14303": {
+          "t_contract(IMoonpageManager)14381": {
             "label": "contract IMoonpageManager",
             "numberOfBytes": "20"
           },
@@ -1812,6 +1812,195 @@
             "numberOfBytes": "20"
           },
           "t_contract(IMoonpageManager)14303": {
+            "label": "contract IMoonpageManager",
+            "numberOfBytes": "20"
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_bytes32,t_struct(RoleData)34_storage)": {
+            "label": "mapping(bytes32 => struct AccessControlUpgradeable.RoleData)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_address)": {
+            "label": "mapping(uint256 => address)",
+            "numberOfBytes": "32"
+          },
+          "t_struct(RoleData)34_storage": {
+            "label": "struct AccessControlUpgradeable.RoleData",
+            "members": [
+              {
+                "label": "members",
+                "type": "t_mapping(t_address,t_bool)",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "adminRole",
+                "type": "t_bytes32",
+                "offset": 0,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "093d06e16e41755a6ff732d6f13751b70f52dca4660549d1d4160f7ac0d8e32a": {
+      "address": "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
+      "txHash": "0x2f6828157d1ce1f29adceeddde83ae9e0ade32e793e10fffd9cab0883f1f8e49",
+      "layout": {
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_paused",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_bool",
+            "contract": "PausableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol:29"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "PausableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol:116"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ERC165Upgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeable.sol:41"
+          },
+          {
+            "label": "_roles",
+            "offset": 0,
+            "slot": "151",
+            "type": "t_mapping(t_bytes32,t_struct(RoleData)34_storage)",
+            "contract": "AccessControlUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol:61"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "152",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "AccessControlUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol:259"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "201",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ERC1967UpgradeUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/ERC1967/ERC1967UpgradeUpgradeable.sol:211"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "251",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "UUPSUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol:107"
+          },
+          {
+            "label": "ballotsLength",
+            "offset": 0,
+            "slot": "301",
+            "type": "t_uint256",
+            "contract": "BallotsFactory",
+            "src": "contracts/BallotsFactory.sol:20"
+          },
+          {
+            "label": "moonpageManager",
+            "offset": 0,
+            "slot": "302",
+            "type": "t_contract(IMoonpageManager)14381",
+            "contract": "BallotsFactory",
+            "src": "contracts/BallotsFactory.sol:21"
+          },
+          {
+            "label": "moonpageCollection",
+            "offset": 0,
+            "slot": "303",
+            "type": "t_contract(IMoonpageCollection)14155",
+            "contract": "BallotsFactory",
+            "src": "contracts/BallotsFactory.sol:22"
+          },
+          {
+            "label": "ballots",
+            "offset": 0,
+            "slot": "304",
+            "type": "t_mapping(t_uint256,t_address)",
+            "contract": "BallotsFactory",
+            "src": "contracts/BallotsFactory.sol:23"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_bytes32": {
+            "label": "bytes32",
+            "numberOfBytes": "32"
+          },
+          "t_contract(IMoonpageCollection)14155": {
+            "label": "contract IMoonpageCollection",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IMoonpageManager)14381": {
             "label": "contract IMoonpageManager",
             "numberOfBytes": "20"
           },

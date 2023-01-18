@@ -15,7 +15,6 @@ contract Ballot is AccessControlEnumerable {
     uint256 public endId;
     uint256 public maxVotes;
     uint256 public votingsIndex = 0;
-    bool public isFirstVote = true;
 
     struct SingleVote {
         bool voted;
@@ -66,7 +65,9 @@ contract Ballot is AccessControlEnumerable {
         address _collection,
         address _mpManager,
         uint256 _projectId,
-        address _creator
+        address _creator,
+        string[] memory _firstVoteParams,
+        uint256 _firstVoteEnd
     ) {
         _setupRole(CREATOR_ROLE, _creator);
         moonpageCollection = IMoonpageCollection(_collection);
@@ -77,6 +78,13 @@ contract Ballot is AccessControlEnumerable {
         endId = endTokenId;
         maxVotes = endTokenId - startTokenId + 1;
         projectId = _projectId;
+
+        string[] memory firstVoteOptions = new string[](3);
+        firstVoteOptions[0] = _firstVoteParams[1];
+        firstVoteOptions[1] = _firstVoteParams[2];
+        firstVoteOptions[2] = _firstVoteParams[3];
+
+        _startFirstVote(_firstVoteParams[0], firstVoteOptions, _firstVoteEnd);
     }
 
     modifier authorized(uint256[] calldata _tokenIds) {
@@ -100,12 +108,24 @@ contract Ballot is AccessControlEnumerable {
         string[] memory _optionValues,
         uint256 _end
     ) external onlyRole(CREATOR_ROLE) {
-        if (isFirstVote) {
-            isFirstVote = false;
-        } else {
-            endPreviousVote();
-        }
+        endPreviousVote();
 
+        _startVote(_proposal, _optionValues, _end);
+    }
+
+    function _startFirstVote(
+        string memory _proposal,
+        string[] memory _optionValues,
+        uint256 _end
+    ) private {
+        _startVote(_proposal, _optionValues, _end);
+    }
+
+    function _startVote(
+        string memory _proposal,
+        string[] memory _optionValues,
+        uint256 _end
+    ) private {
         require(
             _end >= (block.timestamp + 10 minutes),
             "Not enough time to vote"
@@ -136,7 +156,7 @@ contract Ballot is AccessControlEnumerable {
         );
     }
 
-    function endPreviousVote() internal {
+    function endPreviousVote() private {
         bool allVoted = voteSettings[votingsIndex].votesCount == maxVotes;
         bool voteExpired = block.timestamp > voteSettings[votingsIndex].endTime;
         require(allVoted || voteExpired, "Vote not yet expired");
