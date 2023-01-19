@@ -96,7 +96,6 @@ const VotingsCreator = ({
             end: getTimestampOfVoteEnding(startVoteProps.endingTime),
             onSuccess: () => {
               setShowStartVotingModal(false);
-              // refetch the data...
             },
             onError: (e) => {
               console.log({ e });
@@ -113,7 +112,6 @@ const VotingsCreator = ({
             endTime: getTimestampOfVoteEnding(startVoteProps.endingTime),
             onSuccess: () => {
               setShowStartVotingModal(false);
-              // refetch the data...
             },
             onError: (e) => {
               console.log({ e });

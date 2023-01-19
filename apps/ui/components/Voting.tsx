@@ -1,4 +1,3 @@
-import { BigNumber } from '@ethersproject/bignumber';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
 import styled from 'styled-components';
@@ -17,14 +16,13 @@ type VotingProps = {
   option1: string;
   option2: string;
   option3: string;
-  option1Count: BigNumber;
-  option2Count: BigNumber;
-  option3Count: BigNumber;
-  voteStarted: BigNumber;
-  voteEnding: BigNumber;
+  option1Count: number;
+  option2Count: number;
+  option3Count: number;
+  voteEnding: number;
   isVoting: boolean;
-  totalCount: BigNumber;
-  maxNFTCount: BigNumber;
+  totalCount: number;
+  maxNFTCount: number;
   ballotAddress: string;
   projectId: string;
 };
@@ -106,10 +104,14 @@ const Voting = ({
 }: VotingProps) => {
   const theme = useTheme();
   const { groupedNfts } = useUser();
-  const { Ballot, vote, voteStatus, votingsIndex } = useBallot(
-    ballotAddress,
-    projectId
-  );
+  const {
+    Ballot,
+    vote,
+    voteStatus,
+    votingsIndex,
+    refetchMintCount,
+    refetchVotingData,
+  } = useBallot(ballotAddress, projectId);
   const [selectedOption, setSelectedOption] = useState<number>(0);
   const [votableNFTs, setVotableNFTs] = useState<string[] | null>(null);
   const percentageVoted = useMemo(
@@ -200,6 +202,17 @@ const Voting = ({
   useEffect(() => {
     votableNFTsWrapperCall();
   }, [Ballot, votableNFTsWrapperCall, userNFTsOfProject]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      refetchMintCount();
+      refetchVotingData();
+    }, 50000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [refetchMintCount, refetchVotingData]);
 
   return (
     <Root theme={theme}>

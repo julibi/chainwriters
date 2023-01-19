@@ -44,9 +44,9 @@ export interface Voting {
   option1: string;
   option2: string;
   option3: string;
-  option1Count: BigNumber;
-  option2Count: BigNumber;
-  option3Count: BigNumber;
+  option1Count: number;
+  option2Count: number;
+  option3Count: number;
   isVoting: boolean;
   totalCount: number;
   voteStarted: number;
@@ -54,7 +54,7 @@ export interface Voting {
   project?: {
     id?: string;
     ballotAddress?: string;
-    ballotCreated?: BigNumber;
+    ballotCreated?: number;
     title: string;
   };
 }

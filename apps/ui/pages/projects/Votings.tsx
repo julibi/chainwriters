@@ -83,7 +83,6 @@ const Votings = ({
                 option1Count={option1Count}
                 option2Count={option2Count}
                 option3Count={option3Count}
-                voteStarted={voteStarted}
                 voteEnding={voteEnding}
                 isVoting={isVoting}
                 totalCount={totalCount}

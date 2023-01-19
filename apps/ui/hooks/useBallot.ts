@@ -70,7 +70,7 @@ const useBallot = (ballotAddress: string, projectId: string) => {
     loading: votingDataLoading,
     error: votingDataError,
     data: votingData,
-    refetch: refetchData,
+    refetch: refetchVotingData,
   } = useQuery<{ project: Project }, ProjectVars>(GET_ALL_BALLOTS_OF_PROJECT, {
     variables: { id: projectId },
   });
@@ -114,7 +114,7 @@ const useBallot = (ballotAddress: string, projectId: string) => {
             setStartVoteStatus('success');
             toast.info('Success! Voting is open.');
             onSuccess?.();
-            refetchData();
+            refetchVotingData();
           }, 10000);
         });
       } catch (e) {
@@ -123,7 +123,7 @@ const useBallot = (ballotAddress: string, projectId: string) => {
         onError?.(e);
       }
     },
-    [Ballot, refetchData]
+    [Ballot, refetchVotingData]
   );
 
   const vote = useCallback(
@@ -144,7 +144,7 @@ const useBallot = (ballotAddress: string, projectId: string) => {
           setTimeout(() => {
             setVoteStatus('success');
             toast.info('Vote was cast successfully.');
-            refetchData();
+            refetchVotingData();
             onSuccess?.();
           }, 10000);
         });
@@ -154,7 +154,7 @@ const useBallot = (ballotAddress: string, projectId: string) => {
         onError?.(e);
       }
     },
-    [Ballot, refetchData]
+    [Ballot, refetchVotingData]
   );
 
   const endVote = useCallback(
@@ -172,12 +172,15 @@ const useBallot = (ballotAddress: string, projectId: string) => {
         toast.info('Ending vote...');
         Ballot.provider.once(hash, async (transaction) => {
           // we need a time, because the graph needs some time
-          setTimeout(() => {
+          const timeout = setTimeout(() => {
             setEndVoteStatus('success');
             toast.info('Vote was successfully closed.');
             onSuccess?.();
-            refetchData();
+            refetchVotingData();
           }, 10000);
+          return () => {
+            clearTimeout(timeout);
+          };
         });
       } catch (e) {
         console.log({ e });
@@ -186,7 +189,7 @@ const useBallot = (ballotAddress: string, projectId: string) => {
         onError?.(e);
       }
     },
-    [Ballot, refetchData]
+    [Ballot, refetchVotingData]
   );
 
   // fetch the current voting index from contract
@@ -229,6 +232,8 @@ const useBallot = (ballotAddress: string, projectId: string) => {
       endVoteStatus,
       votingsIndex,
       voteSettings,
+      refetchVotingData,
+      refetchMintCount,
     }),
     [
       Ballot,
@@ -242,6 +247,8 @@ const useBallot = (ballotAddress: string, projectId: string) => {
       endVoteStatus,
       votingsIndex,
       voteSettings,
+      refetchVotingData,
+      refetchMintCount,
     ]
   );
 };

@@ -43,11 +43,14 @@ export function AuctionsProvider({ children }: AuctionsProviderProps) {
         toast.info(<ToastLink message={'Retriggering...'} />);
         auctionsManager.provider.once(hash, (transaction) => {
           // we need time, because the graph needs a while
-          setTimeout(() => {
+          const timeout = setTimeout(() => {
             setRetriggerAuctionStatus('success');
             toast.info(<ToastLink message={'Success!'} />);
             onSuccess?.();
           }, 10000);
+          return () => {
+            clearTimeout(timeout);
+          };
         });
       } catch (e: unknown) {
         setRetriggerAuctionStatus('error');

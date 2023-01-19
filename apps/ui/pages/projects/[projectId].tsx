@@ -330,7 +330,13 @@ const ProjectDetailView = () => {
   );
 
   const scrollToVotings = useCallback(() => {
-    setTimeout(() => votingsRef?.current?.scrollIntoView(), 1300);
+    const timeout = setTimeout(
+      () => votingsRef?.current?.scrollIntoView(),
+      1300
+    );
+    return () => {
+      clearTimeout(timeout);
+    };
   }, [votingsRef]);
 
   const refetchAuctionStateAndCount = useCallback(async () => {
