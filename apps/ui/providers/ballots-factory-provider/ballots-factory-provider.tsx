@@ -59,15 +59,27 @@ export function BallotsFactoryProvider({
   } = useQuery<VotingsResult>(GET_RECENT_VOTINGS);
 
   const createBallot = useCallback(
-    async ({ projectId, onSuccess, onError }: CreateBallotArgs) => {
+    async ({
+      projectId,
+      proposal,
+      options,
+      endTime,
+      onSuccess,
+      onError,
+    }: CreateBallotArgs) => {
       try {
         setCreateBallotStatus('confirming');
 
         const { maxFeePerGas, maxPriorityFeePerGas } = await getGasMargin();
-        const Tx = await ballotsFactory.createBallot(projectId, {
-          maxFeePerGas,
-          maxPriorityFeePerGas,
-        });
+        const Tx = await ballotsFactory.createBallot(
+          projectId,
+          [proposal, ...options],
+          endTime,
+          {
+            maxFeePerGas,
+            maxPriorityFeePerGas,
+          }
+        );
         const { hash } = Tx;
         setCreateBallotStatus('waiting');
         toast.info(<ToastLink message={'Create Voting Station...'} />);
@@ -85,7 +97,6 @@ export function BallotsFactoryProvider({
           }, 10000);
         });
       } catch (e) {
-        console.log({ e });
         setCreateBallotStatus('error');
         toast.error(<ToastLink message={'Something went wrong!'} />);
         onError?.(e);

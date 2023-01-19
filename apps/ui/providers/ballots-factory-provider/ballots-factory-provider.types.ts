@@ -13,6 +13,9 @@ export type BallotsFactoryApi = {
 
 export type CreateBallotArgs = {
   projectId: string;
+  proposal: string;
+  options: string[];
+  endTime: string;
   onSuccess?: () => void;
   onError?: (e: any) => void;
 };

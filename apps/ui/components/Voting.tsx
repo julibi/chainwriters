@@ -224,7 +224,7 @@ const Voting = ({
         <RadioInputWrapper>
           <StyledRadioLabel isWinner={winningCount === Number(option1Count)}>
             <input
-              disabled={hasEnded}
+              disabled={hasEnded || hasVoted}
               type="radio"
               value={0}
               checked={selectedOption === 0}
@@ -237,7 +237,7 @@ const Voting = ({
         <RadioInputWrapper>
           <StyledRadioLabel isWinner={winningCount === Number(option2Count)}>
             <input
-              disabled={hasEnded}
+              disabled={hasEnded || hasVoted}
               type="radio"
               value={1}
               checked={selectedOption === 1}
@@ -250,7 +250,7 @@ const Voting = ({
         <RadioInputWrapper>
           <StyledRadioLabel isWinner={winningCount === Number(option3Count)}>
             <input
-              disabled={hasEnded}
+              disabled={hasEnded || hasVoted}
               type="radio"
               value={2}
               checked={selectedOption === 2}

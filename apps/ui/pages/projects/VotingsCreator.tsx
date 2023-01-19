@@ -66,20 +66,7 @@ const VotingsCreator = ({
     ballotAddress,
     projectId
   );
-  const [hasCreatedBallot, setHasCreatedBallot] = useState(false);
   const [showStartVotingModal, setShowStartVotingModal] = useState(false);
-
-  const handleCreateBallot = useCallback(
-    async () =>
-      await createBallot({
-        projectId,
-        onSuccess: () => {
-          onFinishSettingUpBallot();
-          setHasCreatedBallot(true);
-        },
-      }),
-    [createBallot, projectId, onFinishSettingUpBallot]
-  );
 
   const getTimestampOfVoteEnding = (ending: string) => {
     const now = new Date();
@@ -98,25 +85,42 @@ const VotingsCreator = ({
 
   const handleStartVote = useCallback(
     async (startVoteProps) => {
-      await startVote({
-        proposal: startVoteProps.proposal,
-        optionValues: [
-          startVoteProps.option1,
-          startVoteProps.option2,
-          startVoteProps.option3,
-        ],
-        end: getTimestampOfVoteEnding(startVoteProps.endingTime),
-        onSuccess: () => {
-          setShowStartVotingModal(false);
-          // refetch the data...
-        },
-        onError: (e) => {
-          console.log({ e });
-          console.log('failure');
-        },
-      });
+      isBallotExisting
+        ? await startVote({
+            proposal: startVoteProps.proposal,
+            optionValues: [
+              startVoteProps.option1,
+              startVoteProps.option2,
+              startVoteProps.option3,
+            ],
+            end: getTimestampOfVoteEnding(startVoteProps.endingTime),
+            onSuccess: () => {
+              setShowStartVotingModal(false);
+              // refetch the data...
+            },
+            onError: (e) => {
+              console.log({ e });
+            },
+          })
+        : await createBallot({
+            projectId,
+            proposal: startVoteProps.proposal,
+            options: [
+              startVoteProps.option1,
+              startVoteProps.option2,
+              startVoteProps.option3,
+            ],
+            endTime: getTimestampOfVoteEnding(startVoteProps.endingTime),
+            onSuccess: () => {
+              setShowStartVotingModal(false);
+              // refetch the data...
+            },
+            onError: (e) => {
+              console.log({ e });
+            },
+          });
     },
-    [startVote]
+    [createBallot, isBallotExisting, projectId, startVote]
   );
 
   const handleClose = () => {
@@ -154,57 +158,34 @@ const VotingsCreator = ({
 
   return (
     <Root theme={theme}>
-      {isBallotExisting || hasCreatedBallot ? (
-        <StartVoteWrapper>
-          <div>
-            <Title padding="0" margin="1rem" size="s">
-              Start a vote for NFT holders.
-            </Title>
-          </div>
-          <div>
-            <Text>
-              A project can have one voting at a time. Specify topic of the
-              vote, options and deadline.
-            </Text>
-          </div>
-          <ButtonWrapper>
-            <ActionButton
-              onClick={openStartVotingModal}
-              text="Start Vote"
-              disabled={isStartingVote}
-              loading={isStartingVote}
-              margin="2rem 0 0 0 "
-              web3Connectable
-            />
-          </ButtonWrapper>
-        </StartVoteWrapper>
-      ) : (
-        <>
+      <StartVoteWrapper>
+        <div>
           <Title padding="0" margin="1rem" size="s">
             Let NFT holders of your project vote
           </Title>
+        </div>
+        <div>
           <Text>
-            Create a voting station with one click. You only have to do it once,
-            because this voting station will be reused. Afterwards, you will be
-            able to start a vote right here.
+            A project can have one voting at a time. Specify topic of the vote,
+            options and deadline.
           </Text>
-          <ButtonWrapper>
-            <ActionButton
-              onClick={handleCreateBallot}
-              text="Create Voting Station"
-              disabled={isCreatingBallot}
-              loading={isCreatingBallot}
-              margin="2rem 0"
-              web3Connectable
-            />
-          </ButtonWrapper>
-        </>
-      )}
+        </div>
+        <ButtonWrapper>
+          <ActionButton
+            onClick={openStartVotingModal}
+            text="Start Vote"
+            disabled={isStartingVote || isCreatingBallot}
+            loading={isStartingVote || isCreatingBallot}
+            margin="2rem 0 0 0 "
+            web3Connectable
+          />
+        </ButtonWrapper>
+      </StartVoteWrapper>
       {showStartVotingModal && (
         <StartVotingModal
           onClose={handleClose}
           onStartVote={handleStartVote}
-          isStartingVote={isStartingVote}
+          isStartingVote={isStartingVote || isCreatingBallot}
         />
       )}
     </Root>
