@@ -8,7 +8,7 @@ export const GET_ALL_PROJECTS = gql`
     projects(
       orderBy: createdAt
       orderDirection: desc
-      where: { isDeleted: null }
+      where: { isDeleted: null, id_not: 13 }
     ) {
       auctionsEnded
       auctionsStarted
