@@ -12,9 +12,9 @@ async function deployAll() {
   const [deployer] = await hre.ethers.getSigners();
   const provider = await hre.ethers.provider;
   const MOONPAGE_MANAGER_ADDRESS_DEV =
-    "0xb43D745d330372cF8973294712736003296ea75a";
+    "0x5fce69239815e7a409615426e73FDD9909E8a931";
   const MOONPAGE_COLLECTION_ADDRESS_DEV =
-    "0xB82d3442DAdc51399A438a3a394734AA52401C99";
+    "0xa5A234AA62C9411A717D349D4229CaF577Fa7d19";
   console.log("Deployer account:", deployer.address);
 
   console.log("Account balance:", (await deployer.getBalance()).toString());

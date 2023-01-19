@@ -70,6 +70,7 @@ contract MoonpageManagerV2 is
     mapping(uint256 => bool) public pausedProjectIds;
     mapping(uint256 => mapping(uint256 => uint256)) public editionRanges;
     mapping(uint256 => string) public translationIpfsHashes;
+    mapping(uint256 => bool) public ungatedProjectIds;
 
     event ProjectCreated(
         address creator,
@@ -122,6 +123,7 @@ contract MoonpageManagerV2 is
     event BaseDataFrozen(uint256 projectId, bool frozen);
     event PremintedByAuthor(uint256 projectId, uint256 amount);
     event BalanceDecreased(uint256 projectId, uint256 amount);
+    event TokenGatingToggled(uint256 projectId, bool shouldTokenGate);
 
     modifier onlyCreator(uint256 _projectId) {
         require(
@@ -342,6 +344,16 @@ contract MoonpageManagerV2 is
     {
         baseDatas[_projectId].originalLanguage = _language;
         emit LanguageUpdated(_projectId, _language);
+    }
+
+    // added with V2
+    function toggleTokengating(uint256 _projectId, bool _shouldTokenGate)
+        external
+        onlyCreator(_projectId)
+        whenNotPaused
+    {
+        ungatedProjectIds[_projectId] = _shouldTokenGate;
+        emit TokenGatingToggled(_projectId, _shouldTokenGate);
     }
 
     function addContributors(

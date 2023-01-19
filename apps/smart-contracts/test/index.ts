@@ -919,22 +919,6 @@ describe("Project", function () {
         })
       ).to.revertedWith("Auctions ended");
     });
-    // how do I test this?
-    xit("contract can be upgraded", async () => {
-      const MoonpageManagerTestingV2Factory = await ethers.getContractFactory(
-        "MoonpageManagerTestingV2"
-      );
-
-      // ManagerUpgraded = await upgrades.upgradeProxy(
-      //   Manager.address,
-      //   MoonpageManagerTestingV2Factory
-      // );
-      // const ManagerUpgradedAsCreator = ManagerUpgraded.connect(creator);
-      // const baseData = ManagerUpgraded.baseDatas(1);
-      // console.log({ baseData });
-      // await expect(ManagerUpgradedAsCreator.updateTestString(1, "blablabla"))
-      //   .not.to.reverted;
-    });
   });
 
   describe("MANAGER", () => {
@@ -1009,6 +993,68 @@ describe("Project", function () {
           value: myMintPrice,
         })
       ).not.to.be.reverted;
+    });
+
+    // how do I test this?
+    it("can be upgraded and V2 works as expected", async () => {
+      const MoonpageManagerV2Factory = await ethers.getContractFactory(
+        "MoonpageManagerV2"
+      );
+      const ManagerUpgraded = await upgrades.upgradeProxy(
+        Manager.address,
+        MoonpageManagerV2Factory
+      );
+
+      const ManagerUpgradedAsCreator = ManagerUpgraded.connect(creator);
+      const baseData = await ManagerUpgraded.baseDatas(1);
+      const isUngated = await ManagerUpgraded.ungatedProjectIds(1);
+
+      expect(baseData.subtitle).to.equal("");
+      expect(baseData.genre).to.equal("");
+      expect(baseData.originalLanguage).to.equal("ENG");
+      expect(isUngated).to.equal(false);
+
+      // updating data works
+      await expect(
+        ManagerUpgradedAsCreator.updateSubtitle(1, "updatedSubtitle")
+      ).not.to.reverted;
+      await expect(ManagerUpgradedAsCreator.updateGenre(1, "updatedGenre")).not
+        .to.reverted;
+      await expect(
+        ManagerUpgradedAsCreator.updateLanguage(1, "updatedLanguage")
+      ).not.to.reverted;
+      await expect(ManagerUpgradedAsCreator.toggleTokengating(1, false)).not.to
+        .reverted;
+
+      const updatedBaseData = await ManagerUpgraded.baseDatas(1);
+      const updatedGating = await ManagerUpgraded.ungatedProjectIds(1);
+      expect(updatedBaseData.subtitle).to.equal("updatedSubtitle");
+      expect(updatedBaseData.genre).to.equal("updatedGenre");
+      expect(updatedBaseData.originalLanguage).to.equal("updatedLanguage");
+      expect(updatedGating).to.equal(false);
+
+      // deleting works
+      await expect(
+        FactoryAsCreator.createProject(
+          "ProjectToBeDeleted",
+          textIpfsHash,
+          originalLanguage,
+          myMintPrice,
+          firstEditionMax
+        )
+      ).to.not.reverted;
+      const newlyCreated = await ManagerUpgraded.baseDatas(2);
+      const isProject2Exists = await ManagerUpgraded.existingProjectIds(2);
+      expect(newlyCreated.textIpfsHash).to.equal(textIpfsHash);
+      expect(isProject2Exists).to.equal(true);
+
+      await expect(ManagerUpgradedAsCreator.deleteProject(2)).not.to.reverted;
+      const newlyDeleted = await ManagerUpgradedAsCreator.baseDatas(2);
+      const isProject2StillExisting = await ManagerUpgraded.existingProjectIds(
+        2
+      );
+      expect(newlyDeleted.textIpfsHash).to.equal("");
+      expect(isProject2StillExisting).to.equal(false);
     });
   });
 
