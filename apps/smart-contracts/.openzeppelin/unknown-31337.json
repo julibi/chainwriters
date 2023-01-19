@@ -317,6 +317,26 @@
       "kind": "uups"
     },
     {
+      "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+      "txHash": "0xb0ccfede0baa0c22da7ca69ec0fb17bfba2661bd9827fe9dcf273c42b53f933c",
+      "kind": "uups"
+    },
+    {
+      "address": "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
+      "txHash": "0xc118c1d83c003afb0808a1a62a06524453b1410b41db6dd997ddbbf19c921ac7",
+      "kind": "uups"
+    },
+    {
+      "address": "0x0165878A594ca255338adfa4d48449f69242Eb8F",
+      "txHash": "0x35dc4a4f83d91d943691c79ce395583e0eaf34eaf22caa190eeec6002d9b1f96",
+      "kind": "uups"
+    },
+    {
+      "address": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
+      "txHash": "0x31b85dcd3a0e3b9b8a78329b42f06f538535ad93ca0954a556569b8179dfe22c",
+      "kind": "uups"
+    },
+    {
       "address": "0x68B1D87F95878fE05B998F19b66F4baba5De1aed",
       "txHash": "0xff458288d6bad139bb768ab6d69df8837f556856ad7cf1bf33d4c11ce0d29095",
       "kind": "uups"
@@ -679,26 +699,6 @@
     {
       "address": "0x683d9CDD3239E0e01E8dC6315fA50AD92aB71D2d",
       "txHash": "0x03ce3828bec6d50dd9da559e8d8178c1ae50ea150b35b20161ef4d58ca09d8e3",
-      "kind": "uups"
-    },
-    {
-      "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
-      "txHash": "0xb0ccfede0baa0c22da7ca69ec0fb17bfba2661bd9827fe9dcf273c42b53f933c",
-      "kind": "uups"
-    },
-    {
-      "address": "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
-      "txHash": "0xc118c1d83c003afb0808a1a62a06524453b1410b41db6dd997ddbbf19c921ac7",
-      "kind": "uups"
-    },
-    {
-      "address": "0x0165878A594ca255338adfa4d48449f69242Eb8F",
-      "txHash": "0x35dc4a4f83d91d943691c79ce395583e0eaf34eaf22caa190eeec6002d9b1f96",
-      "kind": "uups"
-    },
-    {
-      "address": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
-      "txHash": "0x31b85dcd3a0e3b9b8a78329b42f06f538535ad93ca0954a556569b8179dfe22c",
       "kind": "uups"
     }
   ],
@@ -2061,8 +2061,8 @@
       }
     },
     "829e4519a2acc1ee714414b3b2709890cd9ad2fc920ca21dc13587a19d64ecf4": {
-      "address": "0x0B306BF915C4d645ff596e518fAf3F9669b97016",
-      "txHash": "0xc851ead591c0cbbcd5b34ad95a922fe788448bf11892260d0d560df74baa2165",
+      "address": "0x8B190573374637f144AC8D37375d97fd84cBD3a0",
+      "txHash": "0xc7ab3b79a72128b60993b8f129cc4f154d210ad144f2b5b38f6e2433984ab5e3",
       "layout": {
         "storage": [
           {
@@ -2198,7 +2198,7 @@
             "label": "collection",
             "offset": 0,
             "slot": "307",
-            "type": "t_contract(IMoonpageCollection)14189",
+            "type": "t_contract(IMoonpageCollection)4402",
             "contract": "MoonpageManagerV2",
             "src": "contracts/MoonpageManagerV2.sol:26"
           },
@@ -2206,7 +2206,7 @@
             "label": "baseDatas",
             "offset": 0,
             "slot": "308",
-            "type": "t_mapping(t_uint256,t_struct(BaseData)11490_storage)",
+            "type": "t_mapping(t_uint256,t_struct(BaseData)2221_storage)",
             "contract": "MoonpageManagerV2",
             "src": "contracts/MoonpageManagerV2.sol:61"
           },
@@ -2214,7 +2214,7 @@
             "label": "authorShares",
             "offset": 0,
             "slot": "309",
-            "type": "t_mapping(t_uint256,t_struct(AuthorShare)11495_storage)",
+            "type": "t_mapping(t_uint256,t_struct(AuthorShare)2226_storage)",
             "contract": "MoonpageManagerV2",
             "src": "contracts/MoonpageManagerV2.sol:62"
           },
@@ -2222,7 +2222,7 @@
             "label": "editions",
             "offset": 0,
             "slot": "310",
-            "type": "t_mapping(t_uint256,t_struct(Edition)11519_storage)",
+            "type": "t_mapping(t_uint256,t_struct(Edition)2250_storage)",
             "contract": "MoonpageManagerV2",
             "src": "contracts/MoonpageManagerV2.sol:63"
           },
@@ -2230,7 +2230,7 @@
             "label": "contributions",
             "offset": 0,
             "slot": "311",
-            "type": "t_mapping(t_uint256,t_mapping(t_uint256,t_struct(Contribution)11504_storage))",
+            "type": "t_mapping(t_uint256,t_mapping(t_uint256,t_struct(Contribution)2235_storage))",
             "contract": "MoonpageManagerV2",
             "src": "contracts/MoonpageManagerV2.sol:64"
           },
@@ -2328,7 +2328,7 @@
             "label": "bytes32",
             "numberOfBytes": "32"
           },
-          "t_contract(IMoonpageCollection)14189": {
+          "t_contract(IMoonpageCollection)4402": {
             "label": "contract IMoonpageCollection",
             "numberOfBytes": "20"
           },
@@ -2344,7 +2344,7 @@
             "label": "mapping(uint256 => bool)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_uint256,t_mapping(t_uint256,t_struct(Contribution)11504_storage))": {
+          "t_mapping(t_uint256,t_mapping(t_uint256,t_struct(Contribution)2235_storage))": {
             "label": "mapping(uint256 => mapping(uint256 => struct MoonpageManagerV2.Contribution))",
             "numberOfBytes": "32"
           },
@@ -2356,19 +2356,19 @@
             "label": "mapping(uint256 => string)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_uint256,t_struct(AuthorShare)11495_storage)": {
+          "t_mapping(t_uint256,t_struct(AuthorShare)2226_storage)": {
             "label": "mapping(uint256 => struct MoonpageManagerV2.AuthorShare)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_uint256,t_struct(BaseData)11490_storage)": {
+          "t_mapping(t_uint256,t_struct(BaseData)2221_storage)": {
             "label": "mapping(uint256 => struct MoonpageManagerV2.BaseData)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_uint256,t_struct(Contribution)11504_storage)": {
+          "t_mapping(t_uint256,t_struct(Contribution)2235_storage)": {
             "label": "mapping(uint256 => struct MoonpageManagerV2.Contribution)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_uint256,t_struct(Edition)11519_storage)": {
+          "t_mapping(t_uint256,t_struct(Edition)2250_storage)": {
             "label": "mapping(uint256 => struct MoonpageManagerV2.Edition)",
             "numberOfBytes": "32"
           },
@@ -2384,7 +2384,7 @@
             "label": "string",
             "numberOfBytes": "32"
           },
-          "t_struct(AuthorShare)11495_storage": {
+          "t_struct(AuthorShare)2226_storage": {
             "label": "struct MoonpageManagerV2.AuthorShare",
             "members": [
               {
@@ -2402,7 +2402,7 @@
             ],
             "numberOfBytes": "64"
           },
-          "t_struct(BaseData)11490_storage": {
+          "t_struct(BaseData)2221_storage": {
             "label": "struct MoonpageManagerV2.BaseData",
             "members": [
               {
@@ -2474,7 +2474,7 @@
             ],
             "numberOfBytes": "352"
           },
-          "t_struct(Contribution)11504_storage": {
+          "t_struct(Contribution)2235_storage": {
             "label": "struct MoonpageManagerV2.Contribution",
             "members": [
               {
@@ -2504,7 +2504,7 @@
             ],
             "numberOfBytes": "128"
           },
-          "t_struct(Edition)11519_storage": {
+          "t_struct(Edition)2250_storage": {
             "label": "struct MoonpageManagerV2.Edition",
             "members": [
               {

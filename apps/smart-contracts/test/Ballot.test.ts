@@ -10,7 +10,6 @@ import {
   Ballot,
   AuctionsManager,
 } from "../typechain";
-import { config } from "dotenv";
 
 const advanceDays = async (days: any) => {
   await ethers.provider.send("evm_increaseTime", [60 * 60 * 24 * days]);

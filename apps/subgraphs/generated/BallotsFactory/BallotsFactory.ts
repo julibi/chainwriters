@@ -322,19 +322,37 @@ export class BallotsFactory extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
-  createBallot(_projectId: BigInt): Address {
-    let result = super.call("createBallot", "createBallot(uint256):(address)", [
-      ethereum.Value.fromUnsignedBigInt(_projectId)
-    ]);
+  createBallot(
+    _projectId: BigInt,
+    _firstVoteParams: Array<string>,
+    _firstVoteEnd: BigInt
+  ): Address {
+    let result = super.call(
+      "createBallot",
+      "createBallot(uint256,string[],uint256):(address)",
+      [
+        ethereum.Value.fromUnsignedBigInt(_projectId),
+        ethereum.Value.fromStringArray(_firstVoteParams),
+        ethereum.Value.fromUnsignedBigInt(_firstVoteEnd)
+      ]
+    );
 
     return result[0].toAddress();
   }
 
-  try_createBallot(_projectId: BigInt): ethereum.CallResult<Address> {
+  try_createBallot(
+    _projectId: BigInt,
+    _firstVoteParams: Array<string>,
+    _firstVoteEnd: BigInt
+  ): ethereum.CallResult<Address> {
     let result = super.tryCall(
       "createBallot",
-      "createBallot(uint256):(address)",
-      [ethereum.Value.fromUnsignedBigInt(_projectId)]
+      "createBallot(uint256,string[],uint256):(address)",
+      [
+        ethereum.Value.fromUnsignedBigInt(_projectId),
+        ethereum.Value.fromStringArray(_firstVoteParams),
+        ethereum.Value.fromUnsignedBigInt(_firstVoteEnd)
+      ]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -534,6 +552,14 @@ export class CreateBallotCall__Inputs {
 
   get _projectId(): BigInt {
     return this._call.inputValues[0].value.toBigInt();
+  }
+
+  get _firstVoteParams(): Array<string> {
+    return this._call.inputValues[1].value.toStringArray();
+  }
+
+  get _firstVoteEnd(): BigInt {
+    return this._call.inputValues[2].value.toBigInt();
   }
 }
 

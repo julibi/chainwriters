@@ -632,6 +632,28 @@ export class TextUpdated__Params {
   }
 }
 
+export class TokenGatingToggled extends ethereum.Event {
+  get params(): TokenGatingToggled__Params {
+    return new TokenGatingToggled__Params(this);
+  }
+}
+
+export class TokenGatingToggled__Params {
+  _event: TokenGatingToggled;
+
+  constructor(event: TokenGatingToggled) {
+    this._event = event;
+  }
+
+  get projectId(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+
+  get shouldTokenGate(): boolean {
+    return this._event.parameters[1].value.toBoolean();
+  }
+}
+
 export class TokenIdIncreased extends ethereum.Event {
   get params(): TokenIdIncreased__Params {
     return new TokenIdIncreased__Params(this);
@@ -1918,6 +1940,29 @@ export class MoonpageManager extends ethereum.SmartContract {
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toString());
   }
+
+  ungatedProjectIds(param0: BigInt): boolean {
+    let result = super.call(
+      "ungatedProjectIds",
+      "ungatedProjectIds(uint256):(bool)",
+      [ethereum.Value.fromUnsignedBigInt(param0)]
+    );
+
+    return result[0].toBoolean();
+  }
+
+  try_ungatedProjectIds(param0: BigInt): ethereum.CallResult<boolean> {
+    let result = super.tryCall(
+      "ungatedProjectIds",
+      "ungatedProjectIds(uint256):(bool)",
+      [ethereum.Value.fromUnsignedBigInt(param0)]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBoolean());
+  }
 }
 
 export class ConstructorCall extends ethereum.Call {
@@ -2668,6 +2713,40 @@ export class SetupProjectCall__Outputs {
   _call: SetupProjectCall;
 
   constructor(call: SetupProjectCall) {
+    this._call = call;
+  }
+}
+
+export class ToggleTokengatingCall extends ethereum.Call {
+  get inputs(): ToggleTokengatingCall__Inputs {
+    return new ToggleTokengatingCall__Inputs(this);
+  }
+
+  get outputs(): ToggleTokengatingCall__Outputs {
+    return new ToggleTokengatingCall__Outputs(this);
+  }
+}
+
+export class ToggleTokengatingCall__Inputs {
+  _call: ToggleTokengatingCall;
+
+  constructor(call: ToggleTokengatingCall) {
+    this._call = call;
+  }
+
+  get _projectId(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+
+  get _shouldTokenGate(): boolean {
+    return this._call.inputValues[1].value.toBoolean();
+  }
+}
+
+export class ToggleTokengatingCall__Outputs {
+  _call: ToggleTokengatingCall;
+
+  constructor(call: ToggleTokengatingCall) {
     this._call = call;
   }
 }

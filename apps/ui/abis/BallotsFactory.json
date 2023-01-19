@@ -259,6 +259,16 @@
         "internalType": "uint256",
         "name": "_projectId",
         "type": "uint256"
+      },
+      {
+        "internalType": "string[]",
+        "name": "_firstVoteParams",
+        "type": "string[]"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_firstVoteEnd",
+        "type": "uint256"
       }
     ],
     "name": "createBallot",

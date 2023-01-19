@@ -20,6 +20,16 @@
         "internalType": "address",
         "name": "_creator",
         "type": "address"
+      },
+      {
+        "internalType": "string[]",
+        "name": "_firstVoteParams",
+        "type": "string[]"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_firstVoteEnd",
+        "type": "uint256"
       }
     ],
     "stateMutability": "nonpayable",
@@ -276,13 +286,6 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "endVote",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
         "internalType": "bytes32",
@@ -508,19 +511,6 @@
     "name": "startVote",
     "outputs": [],
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "state",
-    "outputs": [
-      {
-        "internalType": "enum Ballot.State",
-        "name": "",
-        "type": "uint8"
-      }
-    ],
-    "stateMutability": "view",
     "type": "function"
   },
   {

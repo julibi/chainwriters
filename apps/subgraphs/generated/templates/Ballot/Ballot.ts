@@ -533,21 +533,6 @@ export class Ballot extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
-  state(): i32 {
-    let result = super.call("state", "state():(uint8)", []);
-
-    return result[0].toI32();
-  }
-
-  try_state(): ethereum.CallResult<i32> {
-    let result = super.tryCall("state", "state():(uint8)", []);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toI32());
-  }
-
   supportsInterface(interfaceId: Bytes): boolean {
     let result = super.call(
       "supportsInterface",
@@ -709,38 +694,20 @@ export class ConstructorCall__Inputs {
   get _creator(): Address {
     return this._call.inputValues[3].value.toAddress();
   }
+
+  get _firstVoteParams(): Array<string> {
+    return this._call.inputValues[4].value.toStringArray();
+  }
+
+  get _firstVoteEnd(): BigInt {
+    return this._call.inputValues[5].value.toBigInt();
+  }
 }
 
 export class ConstructorCall__Outputs {
   _call: ConstructorCall;
 
   constructor(call: ConstructorCall) {
-    this._call = call;
-  }
-}
-
-export class EndVoteCall extends ethereum.Call {
-  get inputs(): EndVoteCall__Inputs {
-    return new EndVoteCall__Inputs(this);
-  }
-
-  get outputs(): EndVoteCall__Outputs {
-    return new EndVoteCall__Outputs(this);
-  }
-}
-
-export class EndVoteCall__Inputs {
-  _call: EndVoteCall;
-
-  constructor(call: EndVoteCall) {
-    this._call = call;
-  }
-}
-
-export class EndVoteCall__Outputs {
-  _call: EndVoteCall;
-
-  constructor(call: EndVoteCall) {
     this._call = call;
   }
 }

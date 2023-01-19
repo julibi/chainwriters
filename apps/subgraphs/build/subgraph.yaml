@@ -6,9 +6,9 @@ dataSources:
     name: MoonpageManager
     network: mumbai
     source:
-      address: "0xb43D745d330372cF8973294712736003296ea75a"
+      address: "0x5fce69239815e7a409615426e73FDD9909E8a931"
       abi: MoonpageManager
-      startBlock: 30618080
+      startBlock: 31137530
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -66,9 +66,9 @@ dataSources:
     name: MoonpageCollection
     network: mumbai
     source:
-      address: "0xB82d3442DAdc51399A438a3a394734AA52401C99"
+      address: "0xa5A234AA62C9411A717D349D4229CaF577Fa7d19"
       abi: MoonpageCollection
-      startBlock: 30618080
+      startBlock: 31137530
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -87,9 +87,9 @@ dataSources:
     name: AuctionsManager
     network: mumbai
     source:
-      address: "0x8B65a704BF5a5d62b26D01C890b9883b3f905C56"
+      address: "0x105Fdf7e952741554DaD0bd1Bc68cB54FFC5C25D"
       abi: AuctionsManager
-      startBlock: 30618080
+      startBlock: 31137530
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -111,9 +111,9 @@ dataSources:
     name: BallotsFactory
     network: mumbai
     source:
-      address: "0x044208898F020B029bC6291Ea1eE6b5d532569B4"
+      address: "0x7040F5c4e425f54dB209aEf39224db6478243d77"
       abi: BallotsFactory
-      startBlock: 30618080
+      startBlock: 31137530
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
