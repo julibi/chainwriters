@@ -6,6 +6,7 @@ import { FONT_SERIF_BLACK, POP } from '../../themes';
 import Loading from '../Loading';
 
 import Title from '../Title';
+import VotingTeaserBox from '../VotingTeaserBox';
 
 const Root = styled.section`
   display: flex;
@@ -37,7 +38,7 @@ const Votings = styled.section`
   flex-direction: row;
   justify-content: center;
   flex-wrap: wrap;
-  padding: 3rem 3rem 6rem 3rem;
+  padding: 3rem;
 
   @media (max-width: 900px) {
     padding: 3rem;
@@ -53,41 +54,16 @@ const VotingsSection = () => {
       {votingsLoading && !votingsData && <Loading height={530} />}
       <Votings>
         {votingsData?.map(
-          (
-            {
-              id,
-              proposal,
-              option1,
-              option2,
-              option3,
-              option1Count,
-              option2Count,
-              option3Count,
-              isVoting,
-              totalCount,
-              voteStarted,
-              voteEnding,
-              project,
-            },
-            idx
-          ) => (
-            <div key={idx}>
-              <h3>{project?.title}</h3>
-              <h3>{proposal}</h3>
-            </div>
-            // <ProjectItem
-            //   key={idx}
-            //   id={id}
-            //   createdAt={createdAt}
-            //   creator={creator}
-            //   title={title}
-            //   imgIpfsHash={imgIpfsHash}
-            //   subtitle={subtitle}
-            //   genre={genre}
-            //   tvl={balance}
-            //   isFrozen={isFrozen}
-            //   isPaused={isPaused}
-            // />
+          ({ id, proposal, totalCount, voteEnding, project }, idx) => (
+            <VotingTeaserBox
+              key={id}
+              ballotAddress={project.ballotAddress}
+              projectId={project.id}
+              title={project.title}
+              proposal={proposal}
+              totalCount={totalCount}
+              voteEnding={voteEnding}
+            />
           )
         )}
       </Votings>

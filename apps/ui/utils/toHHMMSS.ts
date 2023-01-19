@@ -4,9 +4,10 @@ const toHHMMSS = (secs: number): string => {
   const seconds = secs % 60;
   const formattedSeconds = seconds < 10 ? `0${seconds}` : seconds;
   const days = Math.floor(hours / 24);
+
   if (days > 1) {
     const remainder = hours % 24;
-    return `${days} days` + ` ${remainder}h`;
+    return `${days} day${days > 1 ? 's' : ''}` + ` ${remainder}h`;
   }
   return `${hours}h ${minutes}m ${formattedSeconds}s`;
 };

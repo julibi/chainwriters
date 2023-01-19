@@ -29,6 +29,7 @@ export const GET_RECENT_VOTINGS = gql`
       voteEnding
       project {
         ballotAddress
+        id
         title
       }
     }

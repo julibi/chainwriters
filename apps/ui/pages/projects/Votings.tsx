@@ -9,24 +9,11 @@ import VotingsCreator from './VotingsCreator';
 import { useWeb3React } from '@web3-react/core';
 
 const Root = styled.div`
-  width: 90%;
-  max-width: 1200px;
+  padding: 2rem;
   display: flex;
   flex-direction: column;
   box-shadow: ${({ theme }) => theme.BASE_BOX_SHADOW};
   border-radius: ${BASE_BORDER_RADIUS};
-  animation: fadein 2s;
-  margin-block-end: 2rem;
-  padding: 2rem;
-
-  @keyframes fadein {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
 `;
 
 const VotingsWrapper = styled.div`

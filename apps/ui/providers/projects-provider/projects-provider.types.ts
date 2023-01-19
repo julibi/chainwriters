@@ -48,10 +48,15 @@ export interface Voting {
   option2Count: BigNumber;
   option3Count: BigNumber;
   isVoting: boolean;
-  totalCount: BigNumber;
-  voteStarted: BigNumber;
-  voteEnding: BigNumber;
-  project?: { ballotCreated: BigNumber; title: string };
+  totalCount: number;
+  voteStarted: number;
+  voteEnding: number;
+  project?: {
+    id?: string;
+    ballotAddress?: string;
+    ballotCreated?: BigNumber;
+    title: string;
+  };
 }
 
 export interface Project {

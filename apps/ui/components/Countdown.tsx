@@ -20,7 +20,7 @@ const Countdown = ({ end }: { end: number }) => {
 
   const timeUntilEnd = end - time;
 
-  return <>{toHHMMSS(timeUntilEnd)}</>;
+  return <>{timeUntilEnd > 0 ? toHHMMSS(timeUntilEnd) : 'Ended'}</>;
 };
 
 export default Countdown;

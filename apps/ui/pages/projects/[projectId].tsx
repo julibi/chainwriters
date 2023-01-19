@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { useRouter } from 'next/router';
 import { useWeb3React } from '@web3-react/core';
 import { BigNumber } from 'ethers';
@@ -278,8 +284,25 @@ export const CTAWrapper = styled.div`
   flex-direction: column;
 `;
 
+const VotingsWrapper = styled.div`
+  width: 90%;
+  max-width: 1200px;
+  margin-block-end: 2rem;
+  animation: fadein 2s;
+
+  @keyframes fadein {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+`;
+
 const ProjectDetailView = () => {
   const router = useRouter();
+  const votingsRef = useRef(null);
   const { account } = useWeb3React();
   const theme = useTheme();
   const projectId = useGetProjectId();
@@ -306,7 +329,10 @@ const ProjectDetailView = () => {
     [fetchedProject, updatedProject]
   );
 
-  // console.log(project?.ballotAddress);
+  const scrollToVotings = useCallback(() => {
+    setTimeout(() => votingsRef?.current?.scrollIntoView(), 1300);
+  }, [votingsRef]);
+
   const refetchAuctionStateAndCount = useCallback(async () => {
     const auctionData = await auctionsManager.auctions(projectId);
     const editionData = await mpManager.editions(projectId);
@@ -467,6 +493,13 @@ const ProjectDetailView = () => {
     getImageUrl();
   }, [getImageUrl]);
 
+  useEffect(() => {
+    const hash = router.asPath.split('#')[1];
+    if (hash === 'votings' && scrollToVotings) {
+      scrollToVotings();
+    }
+  }, [router.asPath, scrollToVotings]);
+
   if ((!project || project.isDeleted) && !isProjectLoading) {
     return (
       <Root>
@@ -570,12 +603,14 @@ const ProjectDetailView = () => {
               project?.creator.toLowerCase() === account?.toLowerCase()
             }
           />
-          <Votings
-            creator={project?.creator}
-            projectId={projectId}
-            ballotAddress={project?.ballotAddress}
-            onFinishSettingUpBallot={updateBallotAddress}
-          />
+          <VotingsWrapper ref={votingsRef}>
+            <Votings
+              creator={project?.creator}
+              projectId={projectId}
+              ballotAddress={project?.ballotAddress}
+              onFinishSettingUpBallot={updateBallotAddress}
+            />
+          </VotingsWrapper>
           <ShareSection theme={theme}>
             <Title>Contributors</Title>
             <Shares>
