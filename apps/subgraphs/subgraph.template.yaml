@@ -6,7 +6,7 @@ dataSources:
     name: MoonpageManager
     network: matic
     source:
-      address: '0xb506F8587cdb61CE205FA88BdCCcfBd90c588A6e'
+      address: '{{MoonpageManagerAddress}}'
       abi: MoonpageManager
       startBlock: 34049676
     mapping:
@@ -66,7 +66,7 @@ dataSources:
     name: MoonpageCollection
     network: matic
     source:
-      address: '0x0eC473B1BD821D386cd7209203Ba6826Fd653B96'
+      address: '{{MoonpageCollectionAddress}}'
       abi: MoonpageCollection
       startBlock: 34049676
     mapping:
@@ -87,7 +87,7 @@ dataSources:
     name: AuctionsManager
     network: matic
     source:
-      address: '0xA6AcA4DB9853234b5CAa0005549642D113443803'
+      address: '{{AuctionsManagerAddress}}'
       abi: AuctionsManager
       startBlock: 34049676
     mapping:
@@ -111,7 +111,7 @@ dataSources:
     name: BallotsFactory
     network: matic
     source:
-      address: '0x52928DA9B72B98b11F3143abb47753194c9e1FF5'
+      address: '{{BallotsFactoryAddress}}'
       abi: BallotsFactory
       startBlock: 34049676
     mapping:
@@ -131,7 +131,7 @@ dataSources:
 templates:
   - name: Ballot
     kind: ethereum/contract
-    network: matic
+    network: mumbai
     source:
       abi: Ballot
     mapping:

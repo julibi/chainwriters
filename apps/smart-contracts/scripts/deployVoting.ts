@@ -11,10 +11,15 @@ async function deployAll() {
 
   const [deployer] = await hre.ethers.getSigners();
   const provider = await hre.ethers.provider;
-  const MOONPAGE_MANAGER_ADDRESS_DEV =
-    "0x5fce69239815e7a409615426e73FDD9909E8a931";
-  const MOONPAGE_COLLECTION_ADDRESS_DEV =
-    "0xa5A234AA62C9411A717D349D4229CaF577Fa7d19";
+  // const MOONPAGE_MANAGER_ADDRESS_DEV =
+  //   "0x5fce69239815e7a409615426e73FDD9909E8a931";
+  // const MOONPAGE_COLLECTION_ADDRESS_DEV =
+  //   "0xa5A234AA62C9411A717D349D4229CaF577Fa7d19";
+
+  const MOONPAGE_MANAGER_ADDRESS = "0xb506F8587cdb61CE205FA88BdCCcfBd90c588A6e";
+  const MOONPAGE_COLLECTION_ADDRESS =
+    "0x0eC473B1BD821D386cd7209203Ba6826Fd653B96";
+
   console.log("Deployer account:", deployer.address);
 
   console.log("Account balance:", (await deployer.getBalance()).toString());
@@ -24,7 +29,7 @@ async function deployAll() {
     "MoonpageCollection"
   );
   const MoonpageCollection = MoonpageCollectionFactory.attach(
-    MOONPAGE_COLLECTION_ADDRESS_DEV
+    MOONPAGE_COLLECTION_ADDRESS
   );
   console.log(`MoonpageCollection address: ${MoonpageCollection.address}`);
 
@@ -33,7 +38,7 @@ async function deployAll() {
     "MoonpageManager"
   );
   const MoonpageManager = await MoonpageManagerFactory.attach(
-    MOONPAGE_MANAGER_ADDRESS_DEV
+    MOONPAGE_MANAGER_ADDRESS
   );
   console.log(`MoonpageManager address: ${MoonpageManager.address}`);
 
