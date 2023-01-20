@@ -51,7 +51,6 @@ export function BallotsFactoryProvider({
   children,
 }: BallotsFactoryProviderProps) {
   const ballotsFactory = useBallotsFactoryContract();
-  console.log({ ballotsFactory });
   const [createBallotStatus, setCreateBallotStatus] =
     useState<WriteActionStatus>();
   const {

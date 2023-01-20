@@ -45,7 +45,6 @@ export const GET_ALL_PROJECTS = gql`
 export function useGetAllProjects() {
   const { loading, error, data, refetch } =
     useQuery<ProjectsResult>(GET_ALL_PROJECTS);
-  console.log({ data });
 
   const formattedData = useMemo(() => {
     if (!data) return;
