@@ -139,6 +139,8 @@ function CustomApp({ Component, pageProps }: AppProps) {
     };
   }, [router.events]);
 
+  console.log(process.env.NEXT_PUBLIC_ENVIRONMENT === 'PROD');
+
   return (
     <>
       <Head>

@@ -12,7 +12,7 @@ export default async function (req, res) {
     req.body.type,
     req.body.words
   );
-  console.log({ bla });
+
   try {
     const completion = await openai.createCompletion({
       model: 'text-davinci-002',
