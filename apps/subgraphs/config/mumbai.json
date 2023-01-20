@@ -1,0 +1,8 @@
+{
+  "network": "mumbai",
+  "startBlock": 31137530,
+  "MoonpageManagerAddress": "0x5fce69239815e7a409615426e73FDD9909E8a931",
+  "MoonpageCollectionAddress": "0xa5A234AA62C9411A717D349D4229CaF577Fa7d19",
+  "AuctionsManagerAddress": "0x105Fdf7e952741554DaD0bd1Bc68cB54FFC5C25D",
+  "BallotsFactoryAddress": "0x7040F5c4e425f54dB209aEf39224db6478243d77"
+}

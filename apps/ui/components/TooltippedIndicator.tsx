@@ -3,13 +3,17 @@ import styled from 'styled-components';
 import { useTheme } from '../hooks/theme';
 import { Tooltip } from './Tooltip';
 
-const Root = styled.div`
+interface RootProps {
+  backgroundColor?: string;
+}
+
+const Root = styled.div<RootProps>`
   height: 24px;
   width: 24px;
   z-index: 1;
-  background-color: #364165;
+  background-color: ${({ backgroundColor }) => backgroundColor ?? '#364165'};
   border-radius: 50%;
-
+  font-family: sans-serif;
   margin-inline-start: 6px;
   display: flex;
   justify-content: center;
@@ -21,17 +25,19 @@ const IconWrapper = styled.div`
 `;
 
 interface TooltippedIndicatorProps {
+  backgroundColor?: string;
   tooltipContent: string;
   icon: ReactNode;
 }
 
 const TooltippedIndicator = ({
+  backgroundColor,
   tooltipContent,
   icon,
 }: TooltippedIndicatorProps) => {
   const theme = useTheme();
   return (
-    <Root>
+    <Root backgroundColor={backgroundColor}>
       <Tooltip content={tooltipContent} theme={theme}>
         <IconWrapper>{icon}</IconWrapper>
       </Tooltip>

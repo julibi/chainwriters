@@ -21,11 +21,7 @@ contract BallotsFactory is
     IMoonpageManager public moonpageManager;
     IMoonpageCollection public moonpageCollection;
     mapping(uint256 => address) public ballots;
-    event BallotCreated(
-        uint256 _projectId,
-        uint256 _timeCreated,
-        address _ballotAddress
-    );
+    event BallotCreated(uint256 projectId, address ballotAddress);
 
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
@@ -49,11 +45,11 @@ contract BallotsFactory is
         ballotsLength = 0;
     }
 
-    function createBallot(uint256 _projectId)
-        external
-        whenNotPaused
-        returns (address)
-    {
+    function createBallot(
+        uint256 _projectId,
+        string[] memory _firstVoteParams,
+        uint256 _firstVoteEnd
+    ) external whenNotPaused returns (address) {
         bool projectExists = moonpageManager.exists(_projectId);
         require(projectExists, "No collection");
         (, , , address creatorAddress, , , , , , , ) = moonpageManager
@@ -65,11 +61,13 @@ contract BallotsFactory is
             address(moonpageCollection),
             address(moonpageManager),
             _projectId,
-            msg.sender
+            msg.sender,
+            _firstVoteParams,
+            _firstVoteEnd
         );
         ballots[_projectId] = address(ballot);
         ballotsLength++;
-        emit BallotCreated(_projectId, block.timestamp, address(ballot));
+        emit BallotCreated(_projectId, address(ballot));
         return address(ballot);
     }
 

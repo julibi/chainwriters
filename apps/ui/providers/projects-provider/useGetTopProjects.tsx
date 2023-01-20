@@ -5,7 +5,12 @@ import { ProjectsResult } from '../../providers/projects-provider/projects-provi
 
 export const GET_TOP_PROJECTS = gql`
   query topProjectsQuery {
-    projects(first: 3, orderBy: mintCount, orderDirection: desc) {
+    projects(
+      first: 3
+      orderBy: mintCount
+      orderDirection: desc
+      where: { isDeleted: null }
+    ) {
       auctionsEnded
       auctionsStarted
       balance

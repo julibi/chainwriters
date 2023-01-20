@@ -123,7 +123,7 @@ const DotButton = ({ selected, onClick }) => {
 };
 
 interface EmblaCarouselComponentProps {
-  children: ReactChild[];
+  children: ReactChild[] | any[];
   controls?: 'Drops' | 'Arrows';
   preselectedIndex?: number;
   slideHeight?: string;

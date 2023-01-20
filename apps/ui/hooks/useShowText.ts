@@ -18,6 +18,7 @@ export const GET_PROJECT = gql`
       creator
       genre
       id
+      isDeleted
       originalLanguage
       subtitle
       textIpfsHash
@@ -161,6 +162,7 @@ const useShowText = (projectId: string) => {
       allowedToRead,
       isAuthor,
       isContributor,
+      isDeleted: project?.isDeleted,
       pending: pending || isLoading,
       project,
       text,

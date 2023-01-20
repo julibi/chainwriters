@@ -21,5 +21,6 @@ export const GENRES = [
   'Screenplay',
   'Short story',
 ];
+export const VOTE_ENDING_TIMES = ['1 hour', '1 day', '1 week', '1 month'];
 export const DEFAULT_COVER_IMAGE_IPFS_HASH =
   'QmcfMQgmbwUUqhpagyKNwBQ4zMe6NpMuupASNfMhRh32zS';

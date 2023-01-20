@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import toHHMMSS from "../utils/toHHMMSS";
+import React, { useEffect, useState } from 'react';
+import toHHMMSS from '../utils/toHHMMSS';
 
 const Countdown = ({ end }: { end: number }) => {
   // get current time
@@ -20,9 +20,7 @@ const Countdown = ({ end }: { end: number }) => {
 
   const timeUntilEnd = end - time;
 
-  return (
-    <>{toHHMMSS(timeUntilEnd)}</>
-  );
-}
+  return <>{timeUntilEnd > 0 ? toHHMMSS(timeUntilEnd) : 'Ended'}</>;
+};
 
 export default Countdown;

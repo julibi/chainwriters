@@ -5,7 +5,7 @@ import { ProjectsResult } from '../../providers/projects-provider/projects-provi
 
 export const GET_SEARCHED_PROJECTS = gql`
   query searchedProjectsQuery($searchTerm: String!) {
-    projects(where: { title: $searchTerm }) {
+    projects(where: { title: $searchTerm, isDeleted: null }) {
       auctionsEnded
       auctionsStarted
       createdAt

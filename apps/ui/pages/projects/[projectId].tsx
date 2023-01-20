@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { useRouter } from 'next/router';
 import { useWeb3React } from '@web3-react/core';
 import { BigNumber } from 'ethers';
@@ -43,6 +49,8 @@ import {
   Edition,
   Project,
 } from '../../providers/projects-provider/projects-provider.types';
+import Votings from './Votings';
+import { useBallotsFactory } from '../../hooks/ballotFactory';
 
 const Root = styled.div`
   display: flex;
@@ -219,6 +227,8 @@ const Shares = styled.div`
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
+  font-size: 14px;
+  font-family: ${FONT_SERIF_REGULAR};
 `;
 
 const Share = styled.div`
@@ -228,7 +238,7 @@ const Share = styled.div`
   align-items: center;
 `;
 
-const ShareTitle = styled.h5`
+const ShareTitle = styled.span`
   margin-block-end: 1rem;
   text-transform: capitalize;
 `;
@@ -274,16 +284,35 @@ export const CTAWrapper = styled.div`
   flex-direction: column;
 `;
 
+const VotingsWrapper = styled.div`
+  width: 90%;
+  max-width: 1200px;
+  margin-block-end: 2rem;
+  animation: fadein 2s;
+
+  @keyframes fadein {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+`;
+
 const ProjectDetailView = () => {
   const router = useRouter();
+  const votingsRef = useRef(null);
   const { account } = useWeb3React();
   const theme = useTheme();
   const projectId = useGetProjectId();
+  const { fetchBallotAddress } = useBallotsFactory();
   const {
     project: fetchedProject,
     refetch,
     isLoading: isProjectLoading,
   } = useGetProject(projectId);
+
   const { buy, buyStatus, startAuctions } = useCollection();
   const auctionsManager = useAuctionsManager();
   const mpManager = useMoonpageManager();
@@ -299,6 +328,16 @@ const ProjectDetailView = () => {
     () => updatedProject || fetchedProject,
     [fetchedProject, updatedProject]
   );
+
+  const scrollToVotings = useCallback(() => {
+    const timeout = setTimeout(
+      () => votingsRef?.current?.scrollIntoView(),
+      1300
+    );
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [votingsRef]);
 
   const refetchAuctionStateAndCount = useCallback(async () => {
     const auctionData = await auctionsManager.auctions(projectId);
@@ -345,6 +384,12 @@ const ProjectDetailView = () => {
       ],
     });
   }, [mpManager, project, projectId]);
+
+  const updateBallotAddress = useCallback(() => {
+    const ballotAddress = fetchBallotAddress(projectId);
+    // @ts-ignore
+    setUpdatedProject({ ...project, ballotAddress });
+  }, [fetchBallotAddress, project, projectId]);
 
   const isAuthor = useMemo(() => {
     if (
@@ -454,7 +499,14 @@ const ProjectDetailView = () => {
     getImageUrl();
   }, [getImageUrl]);
 
-  if (!project && !isProjectLoading) {
+  useEffect(() => {
+    const hash = router.asPath.split('#')[1];
+    if (hash === 'votings' && scrollToVotings) {
+      scrollToVotings();
+    }
+  }, [router.asPath, scrollToVotings]);
+
+  if ((!project || project.isDeleted) && !isProjectLoading) {
     return (
       <Root>
         <Title size="xl">{`The project you are looking for does not exist :(`}</Title>
@@ -557,6 +609,14 @@ const ProjectDetailView = () => {
               project?.creator.toLowerCase() === account?.toLowerCase()
             }
           />
+          <VotingsWrapper ref={votingsRef}>
+            <Votings
+              creator={project?.creator}
+              projectId={projectId}
+              ballotAddress={project?.ballotAddress}
+              onFinishSettingUpBallot={updateBallotAddress}
+            />
+          </VotingsWrapper>
           <ShareSection theme={theme}>
             <Title>Contributors</Title>
             <Shares>

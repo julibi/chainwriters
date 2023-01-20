@@ -19,7 +19,7 @@ const RadioInput = styled.input.attrs({ type: 'checkbox' })`
   transform: scale(1.2);
 
   :hover {
-    cursor: pointer;
+    cursor: ${({ disabled }) => (disabled ? 'auto' : 'pointer')};
   }
 `;
 

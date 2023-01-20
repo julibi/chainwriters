@@ -1,0 +1,154 @@
+specVersion: 0.0.4
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: MoonpageManager
+    network: matic
+    source:
+      address: '{{MoonpageManagerAddress}}'
+      abi: MoonpageManager
+      startBlock: 34049676
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Project
+        - Edition
+        - Contributor
+      abis:
+        - name: MoonpageManager
+          file: ./abis/MoonpageManager.json
+      eventHandlers:
+        - event: ProjectCreated(address,address,uint256,string,string,string,uint256,uint256,uint256,uint256,uint256)
+          handler: handleProjectCreated
+        - event: NextEditionEnabled(uint256,uint256,uint256,uint256,uint256,uint256)
+          handler: handleNextEditionEnabled
+        - event: Configured(uint256,string,string,string,string,string)
+          handler: handleProjectConfigured
+        - event: ContributorAdded(uint256,address,uint256,string)
+          handler: handleContributorAdded
+        - event: BaseDataFrozen(uint256,bool)
+          handler: handleBaseDataFrozen
+        - event: PremintedByAuthor(uint256,uint256)
+          handler: handlePremintedByAuthor
+        - event: TextUpdated(uint256,string)
+          handler: handleTextUpdated
+        - event: TranslationUpdated(uint256,string)
+          handler: handleTranslationUpdated
+        - event: BlurbUpdated(uint256,string)
+          handler: handleBlurbUpdated
+        - event: GenreUpdated(uint256,string)
+          handler: handleGenreUpdated
+        - event: SubtitleUpdated(uint256,string)
+          handler: handleSubtitleUpdated
+        - event: LanguageUpdated(uint256,string)
+          handler: handleLanguageUpdated
+        - event: ImageUpdated(uint256,string)
+          handler: handleImageUpdated
+        - event: AnimationUpdated(uint256,string)
+          handler: handleAnimationUpdated
+        - event: TokenIdIncreased(uint256,uint256)
+          handler: handleTokenIdIncreased
+        - event: BalanceIncreased(uint256,uint256)
+          handler: handleBalanceIncreased
+        - event: BalanceDecreased(uint256,uint256)
+          handler: handleBalanceDecreased
+        - event: ProjectPaused(uint256,bool)
+          handler: handlePaused
+        - event: ProjectDeleted(uint256)
+          handler: handleDeleted
+        - event: Curated(uint256,bool)
+          handler: handleCurated
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: MoonpageCollection
+    network: matic
+    source:
+      address: '{{MoonpageCollectionAddress}}'
+      abi: MoonpageCollection
+      startBlock: 34049676
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Project
+        - Mint
+      abis:
+        - name: MoonpageCollection
+          file: ./abis/MoonpageCollection.json
+      eventHandlers:
+        - event: Minted(uint256,uint256,address,uint256)
+          handler: handleMint
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: AuctionsManager
+    network: matic
+    source:
+      address: '{{AuctionsManagerAddress}}'
+      abi: AuctionsManager
+      startBlock: 34049676
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Project
+      abis:
+        - name: AuctionsManager
+          file: ./abis/AuctionsManager.json
+      eventHandlers:
+        - event: AuctionsStarted(uint256,uint256)
+          handler: handleAuctionsStarted
+        - event: AuctionsEnded(uint256,uint256)
+          handler: handleAuctionsEnded
+        - event: ExpirationSet(uint256,uint256)
+          handler: handleExpirationSet
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: BallotsFactory
+    network: matic
+    source:
+      address: '{{BallotsFactoryAddress}}'
+      abi: BallotsFactory
+      startBlock: 34049676
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Project
+      abis:
+        - name: BallotsFactory
+          file: ./abis/BallotsFactory.json
+      eventHandlers:
+        - event: BallotCreated(uint256,address)
+          handler: handleBallotCreated
+
+      file: ./src/mapping.ts
+templates:
+  - name: Ballot
+    kind: ethereum/contract
+    network: mumbai
+    source:
+      abi: Ballot
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      file: ./src/mapping.ts
+      entities:
+        - Voting
+        - Project
+      abis:
+        - name: Ballot
+          file: ./abis/Ballot.json
+      eventHandlers:
+        - event: VoteStarted(uint256,uint256,uint256,uint256,string,string,string,string)
+          handler: handleVoteStarted
+        - event: Voted(uint256,uint256,uint256,uint256)
+          handler: handleVoted
+        - event: VoteEnded(uint256,uint256,uint256,uint256,uint256)
+          handler: handleVoteEnded

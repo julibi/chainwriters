@@ -236,6 +236,25 @@
             {
                 "indexed": false,
                 "internalType": "string",
+                "name": "newGenre",
+                "type": "string"
+            }
+        ],
+        "name": "GenreUpdated",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "projectId",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
                 "name": "newIpfsHash",
                 "type": "string"
             }
@@ -254,6 +273,25 @@
             }
         ],
         "name": "Initialized",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "projectId",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "newLanguage",
+                "type": "string"
+            }
+        ],
+        "name": "LanguageUpdated",
         "type": "event"
     },
     {
@@ -412,6 +450,19 @@
                 "internalType": "uint256",
                 "name": "projectId",
                 "type": "uint256"
+            }
+        ],
+        "name": "ProjectDeleted",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "projectId",
+                "type": "uint256"
             },
             {
                 "indexed": false,
@@ -510,11 +561,49 @@
             {
                 "indexed": false,
                 "internalType": "string",
+                "name": "newSubtitle",
+                "type": "string"
+            }
+        ],
+        "name": "SubtitleUpdated",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "projectId",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
                 "name": "newIpfsHash",
                 "type": "string"
             }
         ],
         "name": "TextUpdated",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "projectId",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "bool",
+                "name": "shouldTokenGate",
+                "type": "bool"
+            }
+        ],
+        "name": "TokenGatingToggled",
         "type": "event"
     },
     {
@@ -867,6 +956,19 @@
             }
         ],
         "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "_projectId",
+                "type": "uint256"
+            }
+        ],
+        "name": "deleteProject",
+        "outputs": [],
+        "stateMutability": "nonpayable",
         "type": "function"
     },
     {
@@ -1781,6 +1883,24 @@
         "inputs": [
             {
                 "internalType": "uint256",
+                "name": "_projectId",
+                "type": "uint256"
+            },
+            {
+                "internalType": "bool",
+                "name": "_shouldTokenGate",
+                "type": "bool"
+            }
+        ],
+        "name": "toggleTokengating",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
                 "name": "",
                 "type": "uint256"
             }
@@ -1791,6 +1911,25 @@
                 "internalType": "string",
                 "name": "",
                 "type": "string"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "name": "ungatedProjectIds",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
             }
         ],
         "stateMutability": "view",
@@ -1848,11 +1987,65 @@
             },
             {
                 "internalType": "string",
+                "name": "_genre",
+                "type": "string"
+            }
+        ],
+        "name": "updateGenre",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "_projectId",
+                "type": "uint256"
+            },
+            {
+                "internalType": "string",
                 "name": "_ipfsHash",
                 "type": "string"
             }
         ],
         "name": "updateImgIpfsHash",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "_projectId",
+                "type": "uint256"
+            },
+            {
+                "internalType": "string",
+                "name": "_language",
+                "type": "string"
+            }
+        ],
+        "name": "updateLanguage",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "_projectId",
+                "type": "uint256"
+            },
+            {
+                "internalType": "string",
+                "name": "_subtitle",
+                "type": "string"
+            }
+        ],
+        "name": "updateSubtitle",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"

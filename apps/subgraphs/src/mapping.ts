@@ -10,10 +10,14 @@ import {
   NextEditionEnabled,
   PremintedByAuthor,
   ProjectCreated,
+  ProjectDeleted,
   ProjectPaused,
   TextUpdated,
   TranslationUpdated,
   BlurbUpdated,
+  GenreUpdated,
+  SubtitleUpdated,
+  LanguageUpdated,
   ImageUpdated,
   AnimationUpdated,
   TokenIdIncreased,
@@ -24,7 +28,20 @@ import {
   AuctionsEnded,
   ExpirationSet,
 } from '../generated/AuctionsManager/AuctionsManager';
-import { Contributor, Edition, Mint, Project } from '../generated/schema';
+import { BallotCreated } from '../generated/BallotsFactory/BallotsFactory';
+import {
+  VoteStarted,
+  Voted,
+  VoteEnded,
+} from '../generated/templates/Ballot/Ballot';
+import { Ballot } from '../generated/templates';
+import {
+  Contributor,
+  Edition,
+  Mint,
+  Project,
+  Voting,
+} from '../generated/schema';
 
 export function handleProjectCreated(event: ProjectCreated): void {
   let project = new Project(event.params.projectId.toString());
@@ -56,6 +73,21 @@ export function handleProjectCreated(event: ProjectCreated): void {
   edition.endId = event.params.currentEdLastId;
   edition.mintPrice = event.params.initialMintPrice;
   edition.save();
+}
+
+export function handleDeleted(event: ProjectDeleted): void {
+  let projectId = event.params.projectId.toString();
+  let project = Project.load(projectId);
+  if (!project) {
+    throw new Error(`Could not find project with ID`);
+  }
+  project.textIpfsHash = '';
+  project.imgIpfsHash = '';
+  project.animationIpfsHash = '';
+  project.blurbIpfsHash = '';
+  project.translationIpfsHash = '';
+  project.isDeleted = true;
+  project.save();
 }
 
 export function handleNextEditionEnabled(event: NextEditionEnabled): void {
@@ -154,6 +186,39 @@ export function handleBlurbUpdated(event: BlurbUpdated): void {
   }
 
   project.blurbIpfsHash = event.params.newIpfsHash;
+  project.save();
+}
+
+export function handleGenreUpdated(event: GenreUpdated): void {
+  let projectId = event.params.projectId.toString();
+  let project = Project.load(projectId);
+  if (!project) {
+    throw new Error(`Could not find project with ID`);
+  }
+
+  project.genre = event.params.newGenre;
+  project.save();
+}
+
+export function handleSubtitleUpdated(event: SubtitleUpdated): void {
+  let projectId = event.params.projectId.toString();
+  let project = Project.load(projectId);
+  if (!project) {
+    throw new Error(`Could not find project with ID`);
+  }
+
+  project.subtitle = event.params.newSubtitle;
+  project.save();
+}
+
+export function handleLanguageUpdated(event: LanguageUpdated): void {
+  let projectId = event.params.projectId.toString();
+  let project = Project.load(projectId);
+  if (!project) {
+    throw new Error(`Could not find project with ID`);
+  }
+
+  project.originalLanguage = event.params.newLanguage;
   project.save();
 }
 
@@ -281,4 +346,77 @@ export function handleExpirationSet(event: ExpirationSet): void {
   }
   project.currentAuctionExpiresAt = expiration;
   project.save();
+}
+
+export function handleBallotCreated(event: BallotCreated): void {
+  let projectId = event.params.projectId.toString();
+  let project = Project.load(projectId);
+  if (!project) {
+    throw new Error(`Could not find project with ID`);
+  }
+
+  project.ballotCreated = event.block.timestamp;
+  project.ballotAddress = event.params.ballotAddress;
+  project.save();
+
+  Ballot.create(event.params.ballotAddress);
+}
+
+export function handleVoteStarted(event: VoteStarted): void {
+  let projectId = event.params.projectId.toString();
+
+  let voting = new Voting(projectId + '-' + event.params.votingId.toString());
+  if (!voting) {
+    throw new Error('Could not create voting for project');
+  }
+  voting.project = projectId;
+  voting.proposal = event.params.proposal;
+  voting.option1 = event.params.option1;
+  voting.option2 = event.params.option2;
+  voting.option3 = event.params.option3;
+  voting.option1Count = BigInt.fromString('0');
+  voting.option2Count = BigInt.fromString('0');
+  voting.option3Count = BigInt.fromString('0');
+  voting.totalCount = BigInt.fromString('0');
+  voting.voteStarted = event.block.timestamp;
+  voting.voteEnding = event.params.endTime;
+  voting.isVoting = true;
+  voting.save();
+}
+
+export function handleVoted(event: Voted): void {
+  let projectId = event.params.projectId.toString();
+  let voting = Voting.load(projectId + '-' + event.params.votingId.toString());
+
+  if (!voting) {
+    throw new Error(`Could not find voting with ID`);
+  }
+
+  let upvotedCount = event.params.counts;
+  let upvotedOption = event.params.option;
+
+  if (upvotedOption == BigInt.fromString('0')) {
+    voting.option1Count = voting.option1Count.plus(upvotedCount);
+  }
+  if (upvotedOption == BigInt.fromString('1')) {
+    voting.option2Count = voting.option2Count.plus(upvotedCount);
+  }
+  if (upvotedOption == BigInt.fromString('2')) {
+    voting.option3Count = voting.option3Count.plus(upvotedCount);
+  }
+  voting.totalCount = voting.totalCount.plus(upvotedCount);
+  voting.save();
+}
+
+export function handleVoteEnded(event: VoteEnded): void {
+  let projectId = event.params.projectId.toString();
+  let voting = Voting.load(projectId + '-' + event.params.votingId.toString());
+
+  if (!voting) {
+    throw new Error(`Could not find voting with ID`);
+  }
+
+  voting.voteEnding = event.block.timestamp;
+  voting.isVoting = false;
+  voting.save();
 }

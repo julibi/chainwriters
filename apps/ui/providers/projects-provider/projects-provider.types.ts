@@ -38,10 +38,34 @@ export interface Edition {
   mintPrice: BigNumber;
 }
 
+export interface Voting {
+  id: string;
+  proposal: string;
+  option1: string;
+  option2: string;
+  option3: string;
+  option1Count: number;
+  option2Count: number;
+  option3Count: number;
+  isVoting: boolean;
+  totalCount: number;
+  voteStarted: number;
+  voteEnding: number;
+  project?: {
+    id?: string;
+    ballotAddress?: string;
+    ballotCreated?: number;
+    title: string;
+  };
+}
+
 export interface Project {
   auctionsEnded: boolean;
   auctionsStarted: boolean;
   balance: BigNumber;
+  ballotAddress?: string;
+  ballotCreated?: BigNumber;
+  votings?: Voting[];
   blurbIpfsHash: string | null;
   contributors: Contributor[] | null;
   createdAt: string;
@@ -54,6 +78,7 @@ export interface Project {
   id: string;
   imgIpfsHash: string | null;
   initialMintPrice: BigNumber;
+  isDeleted?: boolean | null;
   isFrozen: boolean;
   isPaused: boolean;
   mintCount: BigNumber;
@@ -73,4 +98,8 @@ export type ProjectResult = {
 
 export type ProjectsResult = {
   projects: Project[];
+};
+
+export type VotingsResult = {
+  votings: Voting[];
 };

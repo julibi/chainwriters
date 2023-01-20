@@ -259,6 +259,147 @@ export class Mint extends Entity {
   }
 }
 
+export class Voting extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save Voting entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save Voting entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("Voting", id.toString(), this);
+    }
+  }
+
+  static load(id: string): Voting | null {
+    return changetype<Voting | null>(store.get("Voting", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get project(): string {
+    let value = this.get("project");
+    return value!.toString();
+  }
+
+  set project(value: string) {
+    this.set("project", Value.fromString(value));
+  }
+
+  get proposal(): string {
+    let value = this.get("proposal");
+    return value!.toString();
+  }
+
+  set proposal(value: string) {
+    this.set("proposal", Value.fromString(value));
+  }
+
+  get option1(): string {
+    let value = this.get("option1");
+    return value!.toString();
+  }
+
+  set option1(value: string) {
+    this.set("option1", Value.fromString(value));
+  }
+
+  get option2(): string {
+    let value = this.get("option2");
+    return value!.toString();
+  }
+
+  set option2(value: string) {
+    this.set("option2", Value.fromString(value));
+  }
+
+  get option3(): string {
+    let value = this.get("option3");
+    return value!.toString();
+  }
+
+  set option3(value: string) {
+    this.set("option3", Value.fromString(value));
+  }
+
+  get option1Count(): BigInt {
+    let value = this.get("option1Count");
+    return value!.toBigInt();
+  }
+
+  set option1Count(value: BigInt) {
+    this.set("option1Count", Value.fromBigInt(value));
+  }
+
+  get option2Count(): BigInt {
+    let value = this.get("option2Count");
+    return value!.toBigInt();
+  }
+
+  set option2Count(value: BigInt) {
+    this.set("option2Count", Value.fromBigInt(value));
+  }
+
+  get option3Count(): BigInt {
+    let value = this.get("option3Count");
+    return value!.toBigInt();
+  }
+
+  set option3Count(value: BigInt) {
+    this.set("option3Count", Value.fromBigInt(value));
+  }
+
+  get totalCount(): BigInt {
+    let value = this.get("totalCount");
+    return value!.toBigInt();
+  }
+
+  set totalCount(value: BigInt) {
+    this.set("totalCount", Value.fromBigInt(value));
+  }
+
+  get voteStarted(): BigInt {
+    let value = this.get("voteStarted");
+    return value!.toBigInt();
+  }
+
+  set voteStarted(value: BigInt) {
+    this.set("voteStarted", Value.fromBigInt(value));
+  }
+
+  get voteEnding(): BigInt {
+    let value = this.get("voteEnding");
+    return value!.toBigInt();
+  }
+
+  set voteEnding(value: BigInt) {
+    this.set("voteEnding", Value.fromBigInt(value));
+  }
+
+  get isVoting(): boolean {
+    let value = this.get("isVoting");
+    return value!.toBoolean();
+  }
+
+  set isVoting(value: boolean) {
+    this.set("isVoting", Value.fromBoolean(value));
+  }
+}
+
 export class Project extends Entity {
   constructor(id: string) {
     super();
@@ -570,6 +711,15 @@ export class Project extends Entity {
     this.set("isPaused", Value.fromBoolean(value));
   }
 
+  get isDeleted(): boolean {
+    let value = this.get("isDeleted");
+    return value!.toBoolean();
+  }
+
+  set isDeleted(value: boolean) {
+    this.set("isDeleted", Value.fromBoolean(value));
+  }
+
   get premintedByAuthor(): BigInt | null {
     let value = this.get("premintedByAuthor");
     if (!value || value.kind == ValueKind.NULL) {
@@ -661,6 +811,57 @@ export class Project extends Entity {
       this.unset("editions");
     } else {
       this.set("editions", Value.fromStringArray(<Array<string>>value));
+    }
+  }
+
+  get ballotAddress(): Bytes | null {
+    let value = this.get("ballotAddress");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBytes();
+    }
+  }
+
+  set ballotAddress(value: Bytes | null) {
+    if (!value) {
+      this.unset("ballotAddress");
+    } else {
+      this.set("ballotAddress", Value.fromBytes(<Bytes>value));
+    }
+  }
+
+  get ballotCreated(): BigInt | null {
+    let value = this.get("ballotCreated");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set ballotCreated(value: BigInt | null) {
+    if (!value) {
+      this.unset("ballotCreated");
+    } else {
+      this.set("ballotCreated", Value.fromBigInt(<BigInt>value));
+    }
+  }
+
+  get votings(): Array<string> | null {
+    let value = this.get("votings");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toStringArray();
+    }
+  }
+
+  set votings(value: Array<string> | null) {
+    if (!value) {
+      this.unset("votings");
+    } else {
+      this.set("votings", Value.fromStringArray(<Array<string>>value));
     }
   }
 }

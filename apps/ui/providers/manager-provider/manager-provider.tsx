@@ -2,6 +2,7 @@ import useMoonpageManager from '../../hooks/useMoonpageManager';
 import { createContext, useCallback, useMemo, useState } from 'react';
 import {
   ConfigureProjectArgs,
+  DeleteProjectArgs,
   EnableNextEditionArgs,
   ManagerApi,
   ManagerProviderProps,
@@ -23,6 +24,8 @@ import unpinFromPinata from '../../utils/unpinFromPinata';
 const defaultContext: ManagerApi = {
   configureProject: async () => undefined,
   configureStatus: 'idle',
+  deleteProject: async () => undefined,
+  deleteProjectStatus: 'idle',
   setContributors: async () => undefined,
   setContributorsStatus: 'idle',
   enableNextEdition: async () => undefined,
@@ -48,6 +51,8 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
     useState<WriteActionStatus>();
   const [updateTextStatus, setUpdateTextStatus] = useState<WriteActionStatus>();
   const [enableNextEditionStatus, setEnableNextEditionStatus] =
+    useState<WriteActionStatus>();
+  const [deleteProjectStatus, setDeleteProjectStatus] =
     useState<WriteActionStatus>();
 
   const configureProject = useCallback(
@@ -435,10 +440,73 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
     [mpManager]
   );
 
+  const deleteProject = useCallback(
+    async ({
+      projectId,
+      textHash,
+      imgHash,
+      blurbHash,
+      translationHash,
+      onError,
+      onSuccess,
+    }: DeleteProjectArgs) => {
+      try {
+        setDeleteProjectStatus('confirming');
+
+        const { maxFeePerGas, maxPriorityFeePerGas } = await getGasMargin();
+        const Tx = await mpManager.deleteProject(projectId, {
+          maxFeePerGas,
+          maxPriorityFeePerGas,
+        });
+        const { hash } = Tx;
+        setDeleteProjectStatus('waiting');
+        toast.info(<ToastLink message={'Deleting project...'} />);
+        mpManager.provider.once(hash, async (transaction) => {
+          // unpin hashes
+          textHash && unpinFromPinata(textHash);
+          imgHash && unpinFromPinata(imgHash);
+          blurbHash && unpinFromPinata(blurbHash);
+          translationHash && unpinFromPinata(translationHash);
+
+          // delete metadata in BE
+          try {
+            const deleteProjectRequestOptions = {
+              method: 'DELETE',
+              headers: { 'Content-Type': 'application/json' },
+            };
+            // fire and forget
+            await fetch(
+              `${process.env.NEXT_PUBLIC_MOONPAGE_METADATA_API}/projects/${projectId}`,
+              deleteProjectRequestOptions
+            );
+            await fetch(
+              `${process.env.NEXT_PUBLIC_MOONPAGE_METADATA_API}/file/project-${projectId}`,
+              deleteProjectRequestOptions
+            );
+          } catch (e) {
+            console.log('something went wrong while deleting BE stuff', { e });
+            // do nothing
+          }
+
+          setDeleteProjectStatus('success');
+          toast.success(<ToastLink message={'Success!'} />);
+          onSuccess?.();
+        });
+      } catch (e: unknown) {
+        setDeleteProjectStatus('error');
+        toast.error(<ToastLink message={'Something went wrong!'} />);
+        onError?.(e);
+      }
+    },
+    [mpManager]
+  );
+
   const api = useMemo(
     () => ({
       configureProject,
       configureStatus,
+      deleteProject,
+      deleteProjectStatus,
       setContributors,
       setContributorsStatus,
       enableNextEdition,
@@ -453,6 +521,8 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
     [
       configureProject,
       configureStatus,
+      deleteProject,
+      deleteProjectStatus,
       enableNextEdition,
       enableNextEditionStatus,
       setContributors,

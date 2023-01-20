@@ -1,7 +1,12 @@
 import React, { useCallback, useMemo, useState } from 'react';
+import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import Emoji from '../Emojis';
-import { BASE_BORDER_RADIUS, ElementThemeProps } from '../../themes';
+import {
+  BASE_BORDER_RADIUS,
+  ElementThemeProps,
+  FONT_SERIF_REGULAR,
+} from '../../themes';
 import { useTheme } from '../../hooks/theme';
 import Checkmark from '../Checkmark';
 import MoreDetails from '../../components/MoreDetails';
@@ -18,6 +23,11 @@ import StartAuctionsModal from './StartAuctionsModal';
 import { useCollection } from '../../hooks/collection';
 import EnableNextEditionModal from './EnableNextEditionModal';
 import Title from '../Title';
+import TooltippedIndicator from '../TooltippedIndicator';
+import { PriorityHigh } from '@material-ui/icons';
+import { useGetProjectIpfsHashes } from '../../hooks/projects/useGetProjectIpfsHashes';
+import { useBallotsFactory } from '../../hooks/ballotFactory/useBallotsFactory';
+import useBallot from '../../hooks/useBallot';
 
 const Root = styled.section<ElementThemeProps>`
   display: flex;
@@ -48,6 +58,13 @@ const ProgressBarIndicator = styled.span`
   margin-block-start: 0.5rem;
 `;
 
+const DeleteWrapper = styled.div`
+  margin-block-start: 1rem;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+`;
+
 const ActionItems = styled.div`
   display: flex;
   justify-content: center;
@@ -59,6 +76,11 @@ const Flex = styled.div`
   display: flex;
   justify-content: flex-start;
   align-items: center;
+`;
+
+const Text = styled.p`
+  font-family: ${FONT_SERIF_REGULAR};
+  font-size: 14px;
 `;
 
 interface AuthorSectionProps {
@@ -74,16 +96,20 @@ const AuthorSection = ({
   projectId,
   refetch,
 }: AuthorSectionProps) => {
+  const router = useRouter();
   const theme = useTheme();
   const {
     configureProject,
     configureStatus,
+    deleteProject,
+    deleteProjectStatus,
     setContributors,
     setContributorsStatus,
     enableNextEdition,
     enableNextEditionStatus,
   } = useManager();
   const { startAuctions, startAuctionsStatus } = useCollection();
+  const { project: hashes } = useGetProjectIpfsHashes(projectId);
   const [showConfigureModal, setShowConfigureModal] = useState<boolean>(false);
   const [showContributorsModal, setShowContributorsModal] =
     useState<boolean>(false);
@@ -91,6 +117,7 @@ const AuthorSection = ({
     useState<boolean>(false);
   const [showEnableNextEditionModal, setShowEnableNextEditionModal] =
     useState(false);
+  const [showVotingModal, setShowVotingModal] = useState(false);
 
   const configured = useMemo(() => {
     let hasConfigured = false;
@@ -110,6 +137,16 @@ const AuthorSection = ({
   const currentEndId = useMemo(
     () => (currentEdition ? Number(currentEdition.endId) : 0),
     [currentEdition]
+  );
+
+  const canDeleteProject = useMemo(
+    () => !project?.auctionsStarted,
+    [project?.auctionsStarted]
+  );
+
+  const isDeleting = useMemo(
+    () => ['confirming', 'waiting'].includes(deleteProjectStatus),
+    [deleteProjectStatus]
   );
 
   const canTriggerNextEdition = useMemo(
@@ -208,6 +245,22 @@ const AuthorSection = ({
     [enableNextEdition, projectId, refetch]
   );
 
+  const handleDelete = useCallback(
+    async () =>
+      await deleteProject({
+        projectId,
+        textHash: hashes.textIpfsHash,
+        blurbHash: hashes.blurbIpfsHash,
+        imgHash: hashes.imgIpfsHash,
+        translationHash: hashes.translationIpfsHash,
+        onError: undefined,
+        onSuccess: () => {
+          router.push(`/projects`);
+        },
+      }),
+    [deleteProject, hashes, projectId, router]
+  );
+
   const beforeAuction = () => {
     return (
       <>
@@ -235,10 +288,10 @@ const AuthorSection = ({
             styles={{ marginBlockEnd: '1rem' }}
           >
             <>
-              <p>
+              <Text>
                 Save more information about this work in the contract, to make
                 your project more appealing and trustworthy.
-              </p>
+              </Text>
               <ActionButton
                 disabled={configured || project.auctionsStarted}
                 text="Configure Your Project"
@@ -264,11 +317,11 @@ const AuthorSection = ({
             styles={{ marginBlockEnd: '1rem' }}
           >
             <>
-              <p>
+              <Text>
                 This is optional. You can specify what share of the fund
                 contributors to your project will receive. This action can only
                 be done before triggering the auctions.
-              </p>
+              </Text>
               <ActionButton
                 disabled={
                   setContributorsStatus === 'confirming' ||
@@ -302,12 +355,13 @@ const AuthorSection = ({
             styles={{ marginBlockEnd: '1rem' }}
           >
             <>
-              <p>
+              <Text>
                 Start the auctions for your Genesis Edition. Make sure to claim
                 an amount of NFTs for yourself. At least 1 and max 4.
-              </p>
+              </Text>
               <ActionButton
                 disabled={
+                  isDeleting ||
                   startAuctionsStatus === 'confirming' ||
                   startAuctionsStatus === 'waiting' ||
                   project.auctionsStarted ||
@@ -331,20 +385,62 @@ const AuthorSection = ({
     <Root theme={theme}>
       <Title size="l">Project Settings</Title>
       {!project.auctionsStarted && beforeAuction()}
-      <Title size="m" margin="3rem 0 3rem 0">
-        Editions
-      </Title>
+
       <ActionItems>
+        {/* <Title size="m" margin="1rem 0 1rem 0">
+          Voting
+        </Title>
+        <MoreDetails
+          open={canTriggerNextEdition}
+          title={'Let NFT holders of your project vote'}
+          styles={{ marginBlockEnd: '1rem' }}
+        >
+          <>
+            <p>
+              You can setup a voting ballot. Once you have created one, you can
+              let people vote. Only one vote can happen after another.
+            </p>
+            <ActionButton
+              disabled={
+                !!project?.ballotAddress ||
+                createBallotStatus === 'confirming' ||
+                createBallotStatus === 'waiting'
+              }
+              text="Set up voting ballot"
+              loading={
+                createBallotStatus === 'confirming' ||
+                createBallotStatus === 'waiting'
+              }
+              onClick={handleCreateBallot}
+            />
+            <ActionButton
+              disabled={
+                !!project?.ballotAddress ||
+                createBallotStatus === 'confirming' ||
+                createBallotStatus === 'waiting'
+              }
+              text="Start a vote"
+              loading={
+                createBallotStatus === 'confirming' ||
+                createBallotStatus === 'waiting'
+              }
+              onClick={handleCreateBallot}
+            />
+          </>
+        </MoreDetails> */}
+        <Title size="m" margin="1rem 0 1rem 0">
+          Editions
+        </Title>
         <MoreDetails
           open={canTriggerNextEdition}
           title={'Unlock Next Edition'}
           styles={{ marginBlockEnd: '1rem' }}
         >
           <>
-            <p>
+            <Text>
               When all NFTs of the last editions have sold out, you can start
               the next one!
-            </p>
+            </Text>
             <ActionButton
               disabled={
                 !canTriggerNextEdition ||
@@ -358,6 +454,35 @@ const AuthorSection = ({
               }
               onClick={() => setShowEnableNextEditionModal(true)}
             />
+          </>
+        </MoreDetails>
+        <Title size="m" margin="1rem 0 1rem 0">
+          Danger Zone
+        </Title>
+        <MoreDetails
+          open={canDeleteProject}
+          title={'Delete Project'}
+          styles={{ marginBlockEnd: '1rem' }}
+        >
+          <>
+            <Text>
+              You can only delete a project when auctions have not started. Once
+              NFTs have been minted (by you or collectors) deleting becomes
+              impossible. Deleting cannot be undone!
+            </Text>
+            <DeleteWrapper>
+              <ActionButton
+                margin="0 1rem 0 0"
+                disabled={!canDeleteProject || isDeleting}
+                text="Delete Project"
+                loading={isDeleting}
+                onClick={handleDelete}
+              />
+              <TooltippedIndicator
+                tooltipContent="Are you sure? This cannot be undone."
+                icon={<PriorityHigh htmlColor="#fff" fontSize="inherit" />}
+              />
+            </DeleteWrapper>
           </>
         </MoreDetails>
       </ActionItems>
@@ -380,7 +505,6 @@ const AuthorSection = ({
           }
         />
       )}
-
       {showAuthorMintModal && (
         <StartAuctionsModal
           onClose={() => setShowAuthorMintModal(false)}

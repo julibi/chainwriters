@@ -23,6 +23,22 @@ type Mint @entity {
   tokenId: BigInt!
 }
 
+type Voting @entity {
+  id: ID!
+  project: Project!
+  proposal: String!
+  option1: String!
+  option2: String!
+  option3: String!
+  option1Count: BigInt!
+  option2Count: BigInt!
+  option3Count: BigInt!
+  totalCount: BigInt!
+  voteStarted: BigInt!
+  voteEnding: BigInt!
+  isVoting: Boolean!
+}
+
 type Project @entity {
   id: ID!
   creator: Bytes!
@@ -48,10 +64,14 @@ type Project @entity {
   isCurated: Boolean
   isFrozen: Boolean
   isPaused: Boolean
+  isDeleted: Boolean
   premintedByAuthor: BigInt
   mintCount: BigInt!
   currentAuctionExpiresAt: BigInt
   minted: [Mint!] @derivedFrom(field: "project")
   contributors: [Contributor!] @derivedFrom(field: "project")
   editions: [Edition!] @derivedFrom(field: "project")
+  ballotAddress: Bytes
+  ballotCreated: BigInt
+  votings: [Voting!] @derivedFrom(field: "project")
 }
