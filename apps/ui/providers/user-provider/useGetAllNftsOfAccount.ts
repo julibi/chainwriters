@@ -16,6 +16,7 @@ import ABI from '../../abis/MoonpageCollection.json';
 import { BigNumber } from '@ethersproject/bignumber';
 
 const useGetAllNftsOfAccount = (account: string) => {
+  console.log({ account });
   const { chainId } = useWeb3React();
   const collection = useMoonpageCollection();
   const { allProjects, areAllProjectsLoading, allProjectsFetchError } =
@@ -110,7 +111,7 @@ const useGetAllNftsOfAccount = (account: string) => {
       tokens = result.map((el) =>
         Number(BigNumber.from(el.returnValues[0].hex))
       );
-
+      console.log({ tokens });
       setBalance(fetchedBalance);
       setNfts(tokens);
       setIsLoading(false);
