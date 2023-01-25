@@ -111,7 +111,7 @@ const useGetAllNftsOfAccount = (account: string) => {
       tokens = result.map((el) =>
         Number(BigNumber.from(el.returnValues[0].hex))
       );
-      console.log({ tokens, allProjects });
+
       setBalance(fetchedBalance);
       setNfts(tokens);
       setIsLoading(false);
@@ -120,9 +120,11 @@ const useGetAllNftsOfAccount = (account: string) => {
       );
       console.log(nftsWithIdAndEdition);
       const groupByProjectId = nftsWithIdAndEdition.reduce((group, product) => {
+        console.log({ group, product });
         const { projectId } = product;
         group[projectId] = group[projectId] ?? [];
         group[projectId].push(product);
+        console.log({ group });
         return group;
       }, {});
       console.log(groupByProjectId);
