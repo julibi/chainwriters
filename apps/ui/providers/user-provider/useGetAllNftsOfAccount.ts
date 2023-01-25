@@ -112,8 +112,6 @@ const useGetAllNftsOfAccount = (account: string) => {
         Number(BigNumber.from(el.returnValues[0].hex))
       );
 
-      console.log({ tokens });
-
       setBalance(fetchedBalance);
       setNfts(tokens);
       setIsLoading(false);
@@ -123,21 +121,18 @@ const useGetAllNftsOfAccount = (account: string) => {
           // remove from tokens when from deletedProject
         )
         .filter((el) => el !== null);
-      console.log(nftsWithIdAndEdition);
+
       const groupByProjectId = nftsWithIdAndEdition.reduce((group, product) => {
-        console.log({ group, product });
         const { projectId } = product;
         group[projectId] = group[projectId] ?? [];
         group[projectId].push(product);
-        console.log({ group });
         return group;
       }, {});
-      console.log(groupByProjectId);
+
       const groupedInArray = [];
       for (const [key, value] of Object.entries(groupByProjectId)) {
         groupedInArray.push(value);
       }
-      console.log(groupedInArray);
       setDetailedNfts(nftsWithIdAndEdition);
       setGroupedNfts(groupedInArray);
       setIsLoading(false);
