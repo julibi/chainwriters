@@ -74,7 +74,6 @@ const useGetAllNftsOfAccount = (account: string) => {
       ethersProvider: provider,
       tryAggregate: false,
     });
-    console.log({ provider, multicall });
 
     try {
       setIsLoading(true);
@@ -107,31 +106,31 @@ const useGetAllNftsOfAccount = (account: string) => {
       ).results.NFTS_OF_USER.callsReturnContext.filter(
         (returnElement) => returnElement.success
       );
-      console.log({ result });
+
       // get all token Ids of user
       tokens = result.map((el) =>
         Number(BigNumber.from(el.returnValues[0].hex))
       );
-      console.log({ tokens });
+      console.log({ tokens, allProjects });
       setBalance(fetchedBalance);
       setNfts(tokens);
       setIsLoading(false);
       const nftsWithIdAndEdition = tokens.map((token) =>
         getEditionAndIdOfToken(token, allProjects)
       );
-
+      console.log(nftsWithIdAndEdition);
       const groupByProjectId = nftsWithIdAndEdition.reduce((group, product) => {
         const { projectId } = product;
         group[projectId] = group[projectId] ?? [];
         group[projectId].push(product);
         return group;
       }, {});
-      console.log({ groupByProjectId });
+      console.log(groupByProjectId);
       const groupedInArray = [];
       for (const [key, value] of Object.entries(groupByProjectId)) {
         groupedInArray.push(value);
       }
-      console.log({ groupedInArray });
+      console.log(groupedInArray);
       setDetailedNfts(nftsWithIdAndEdition);
       setGroupedNfts(groupedInArray);
       setIsLoading(false);
