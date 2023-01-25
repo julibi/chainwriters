@@ -8,9 +8,9 @@ import useContract from './useContract';
 
 const useMoonpageFactoryContract = () => {
   const address =
-    process.env.NX_PUBLIC_ENVIRONMENT === 'PROD'
-      ? MOONPAGE_FACTORY_ADDRESS
-      : MOONPAGE_FACTORY_ADDRESS_DEV;
+    process.env.NX_PUBLIC_ENVIRONMENT === 'DEV'
+      ? MOONPAGE_FACTORY_ADDRESS_DEV
+      : MOONPAGE_FACTORY_ADDRESS;
   const Factory = useContract({ address, abi: ABI });
 
   const FactoryContract = useMemo(() => Factory, [Factory]);

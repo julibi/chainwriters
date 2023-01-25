@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { isProd } from '../utils/isProd';
+import { isDev } from '../utils/isDev';
 
 export const Link = styled.a`
   color: #232630;
@@ -19,7 +19,7 @@ const ToastLink = ({ message, linkText }: ToastLinkTypes) => {
         <Link
           rel="noreferrer"
           target="_blank"
-          href={`https://${isProd() ? '' : 'testnets.'}opensea.io/account`}
+          href={`https://${isDev() ? 'testnets.' : ''}opensea.io/account`}
         >
           {linkText}
         </Link>

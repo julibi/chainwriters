@@ -11,7 +11,7 @@ import {
   POP,
   Theme,
 } from '../themes';
-import { isProd } from '../utils/isProd';
+import { isDev } from '../utils/isDev';
 import { switchNetwork } from '../utils/switchNetwork';
 import Loading from './Loading';
 import WalletConnectionModal from './WalletConnectionModal';
@@ -92,7 +92,7 @@ const ActionButton = ({
         color={color}
         onClick={() =>
           switchNetwork(
-            isProd() ? 137 : 80001,
+            isDev() ? 80001 : 137,
             () => toast.error('Switching Network failed.'),
             async () => {
               // onSuccess reattempt connect and close modal

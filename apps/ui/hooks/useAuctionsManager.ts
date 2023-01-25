@@ -8,9 +8,9 @@ import useContract from './useContract';
 
 const useAuctionsManager = () => {
   const address =
-    process.env.NX_PUBLIC_ENVIRONMENT === 'PROD'
-      ? AUCTIONS_MANAGER_ADDRESS
-      : AUCTIONS_MANAGER_ADDRESS_DEV;
+    process.env.NX_PUBLIC_ENVIRONMENT === 'DEV'
+      ? AUCTIONS_MANAGER_ADDRESS_DEV
+      : AUCTIONS_MANAGER_ADDRESS;
   const AuctionsManager = useContract({
     address,
     abi: ABI,

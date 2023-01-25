@@ -13,13 +13,13 @@ export const getGasMargin = async () => {
   let maxFeePerGas = BigNumber.from(40000000000); // fallback to 40 gwei
   let maxPriorityFeePerGas = BigNumber.from(40000000000); // fallback to 40 gwei
 
-  const isProd = process.env.NX_PUBLIC_ENVIRONMENT === 'PROD';
+  const isDev = process.env.NX_PUBLIC_ENVIRONMENT === 'DEV';
   try {
     const { data } = await axios({
       method: 'get',
-      url: isProd
-        ? 'https://gasstation-mainnet.matic.network/v2'
-        : 'https://gasstation-mumbai.matic.today/v2',
+      url: isDev
+        ? 'https://gasstation-mumbai.matic.today/v2'
+        : 'https://gasstation-mainnet.matic.network/v2',
     });
 
     maxFeePerGas = utils.parseUnits(Math.ceil(data.fast.maxFee) + '', 'gwei');

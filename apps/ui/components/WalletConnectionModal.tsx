@@ -72,8 +72,8 @@ const ConnectorName = styled.span`
 
 const WalletConnectionModal = ({ onClose }: WalletConnectionModalProps) => {
   const theme = useTheme();
-  const isProd = process.env.NX_PUBLIC_ENVIRONMENT === 'PROD';
-  const [selectedNetwork, setSelectedNetwork] = useState(isProd ? 137 : 80001);
+  const isDev = process.env.NX_PUBLIC_ENVIRONMENT === 'DEV';
+  const [selectedNetwork, setSelectedNetwork] = useState(isDev ? 80001 : 137);
   const [isTermsAccepted, setIsTermsAccepted] = useState(false);
   const { activate, chainId } = useWeb3React();
 
@@ -168,8 +168,8 @@ const WalletConnectionModal = ({ onClose }: WalletConnectionModalProps) => {
         <DropdownWrapper>
           <Dropdown
             isDisabled
-            preselected={networkDropdownItems[isProd ? 0 : 1]}
-            options={[networkDropdownItems[isProd ? 0 : 1]]}
+            preselected={networkDropdownItems[isDev ? 1 : 0]}
+            options={[networkDropdownItems[isDev ? 1 : 0]]}
             width={'100%'}
           />
         </DropdownWrapper>

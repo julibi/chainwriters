@@ -8,9 +8,9 @@ import useContract from './useContract';
 
 const useMoonpageManager = () => {
   const address =
-    process.env.NX_PUBLIC_ENVIRONMENT === 'PROD'
-      ? MOONPAGE_MANAGER_ADDRESS
-      : MOONPAGE_MANAGER_ADDRESS_DEV;
+    process.env.NX_PUBLIC_ENVIRONMENT === 'DEV'
+      ? MOONPAGE_MANAGER_ADDRESS_DEV
+      : MOONPAGE_MANAGER_ADDRESS;
   const MoonpageManager = useContract({
     address,
     abi: ABI,
