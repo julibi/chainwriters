@@ -17,6 +17,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   const { account } = useWeb3React();
   const { balance, nfts, isLoading, detailedNfts, groupedNfts } =
     useGetAllNftsOfAccount(account);
+  console.log({ groupedNfts });
 
   const api = useMemo(
     () => ({

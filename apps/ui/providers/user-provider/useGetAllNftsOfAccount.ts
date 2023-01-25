@@ -16,7 +16,6 @@ import ABI from '../../abis/MoonpageCollection.json';
 import { BigNumber } from '@ethersproject/bignumber';
 
 const useGetAllNftsOfAccount = (account: string) => {
-  console.log({ account });
   const { chainId } = useWeb3React();
   const collection = useMoonpageCollection();
   const { allProjects, areAllProjectsLoading, allProjectsFetchError } =
@@ -127,11 +126,12 @@ const useGetAllNftsOfAccount = (account: string) => {
         group[projectId].push(product);
         return group;
       }, {});
+      console.log({ groupByProjectId });
       const groupedInArray = [];
       for (const [key, value] of Object.entries(groupByProjectId)) {
         groupedInArray.push(value);
       }
-
+      console.log({ groupedInArray });
       setDetailedNfts(nftsWithIdAndEdition);
       setGroupedNfts(groupedInArray);
       setIsLoading(false);
