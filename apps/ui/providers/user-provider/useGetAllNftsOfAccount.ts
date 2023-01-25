@@ -108,19 +108,21 @@ const useGetAllNftsOfAccount = (account: string) => {
       );
 
       // get all token Ids of user
-      // and remove nulls (deleted projects)
-      tokens = result
-        .filter((el) => el !== null)
-        .map((el) => Number(BigNumber.from(el.returnValues[0].hex)));
+      tokens = result.map((el) =>
+        Number(BigNumber.from(el.returnValues[0].hex))
+      );
 
       console.log({ tokens });
-      // remove from tokens when from deletedProject
+
       setBalance(fetchedBalance);
       setNfts(tokens);
       setIsLoading(false);
-      const nftsWithIdAndEdition = tokens.map((token) =>
-        getEditionAndIdOfToken(token, allProjects)
-      );
+      const nftsWithIdAndEdition = tokens
+        .map(
+          (token) => getEditionAndIdOfToken(token, allProjects)
+          // remove from tokens when from deletedProject
+        )
+        .filter((el) => el !== null);
       console.log(nftsWithIdAndEdition);
       const groupByProjectId = nftsWithIdAndEdition.reduce((group, product) => {
         console.log({ group, product });
