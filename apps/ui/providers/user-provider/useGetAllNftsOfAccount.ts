@@ -112,6 +112,8 @@ const useGetAllNftsOfAccount = (account: string) => {
         Number(BigNumber.from(el.returnValues[0].hex))
       );
 
+      console.log({ tokens });
+      // remove from tokens when from deletedProject
       setBalance(fetchedBalance);
       setNfts(tokens);
       setIsLoading(false);
