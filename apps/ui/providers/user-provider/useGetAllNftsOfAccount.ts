@@ -108,9 +108,10 @@ const useGetAllNftsOfAccount = (account: string) => {
       );
 
       // get all token Ids of user
-      tokens = result.map((el) =>
-        Number(BigNumber.from(el.returnValues[0].hex))
-      );
+      // and remove nulls (deleted projects)
+      tokens = result
+        .map((el) => Number(BigNumber.from(el.returnValues[0].hex)))
+        .filter((el) => el !== null);
 
       console.log({ tokens });
       // remove from tokens when from deletedProject
