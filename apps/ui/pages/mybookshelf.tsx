@@ -68,6 +68,7 @@ const MyBookShelf = () => {
   const theme = useTheme();
   const { account } = useWeb3React();
   const { groupedNfts, isLoading: ownedNftsLoading } = useUser();
+  console.log({ groupedNfts });
   const { projects: ownProjects, isLoading: ownProjectsLoading } =
     useGetProjectsOfAccount();
   const { contributions, isLoading: contributionsLoading } =

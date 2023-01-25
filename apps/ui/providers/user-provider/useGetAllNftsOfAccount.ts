@@ -75,6 +75,7 @@ const useGetAllNftsOfAccount = (account: string) => {
       ethersProvider: provider,
       tryAggregate: false,
     });
+    console.log({ provider, multicall });
 
     try {
       setIsLoading(true);
@@ -107,6 +108,7 @@ const useGetAllNftsOfAccount = (account: string) => {
       ).results.NFTS_OF_USER.callsReturnContext.filter(
         (returnElement) => returnElement.success
       );
+      console.log({ result });
       // get all token Ids of user
       tokens = result.map((el) =>
         Number(BigNumber.from(el.returnValues[0].hex))
@@ -134,6 +136,7 @@ const useGetAllNftsOfAccount = (account: string) => {
       setGroupedNfts(groupedInArray);
       setIsLoading(false);
     } catch (e: unknown) {
+      console.log({ e });
       setIsLoading(false);
     }
   }, [account, allProjects, chainId, collection, getEditionAndIdOfToken]);
