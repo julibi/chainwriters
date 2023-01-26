@@ -115,7 +115,7 @@ const useBallot = (ballotAddress: string, projectId: string) => {
             toast.info('Success! Voting is open.');
             onSuccess?.();
             refetchVotingData();
-          }, 10000);
+          }, 5000);
         });
       } catch (e) {
         setStartVoteStatus('error');
@@ -146,7 +146,7 @@ const useBallot = (ballotAddress: string, projectId: string) => {
             toast.info('Vote was cast successfully.');
             refetchVotingData();
             onSuccess?.();
-          }, 10000);
+          }, 5000);
         });
       } catch (e) {
         setVoteStatus('error');

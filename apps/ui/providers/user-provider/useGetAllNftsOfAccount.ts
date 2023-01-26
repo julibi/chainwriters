@@ -18,8 +18,7 @@ import { BigNumber } from '@ethersproject/bignumber';
 const useGetAllNftsOfAccount = (account: string) => {
   const { chainId } = useWeb3React();
   const collection = useMoonpageCollection();
-  const { allProjects, areAllProjectsLoading, allProjectsFetchError } =
-    useProjects();
+  const { allProjects, refetchAllProjects } = useProjects();
   const [balance, setBalance] = useState<number>(0);
   const [nfts, setNfts] = useState<number[]>([]);
   const [loading, setIsLoading] = useState<boolean>(false);
@@ -77,6 +76,7 @@ const useGetAllNftsOfAccount = (account: string) => {
 
     try {
       setIsLoading(true);
+      refetchAllProjects();
       // fetch the balance
       const fetchedBalanceBig = await collection.balanceOf(account);
       const fetchedBalance = Number(fetchedBalanceBig);
@@ -140,23 +140,31 @@ const useGetAllNftsOfAccount = (account: string) => {
       console.log({ e });
       setIsLoading(false);
     }
-  }, [account, allProjects, chainId, collection, getEditionAndIdOfToken]);
+  }, [
+    account,
+    allProjects,
+    chainId,
+    collection,
+    getEditionAndIdOfToken,
+    refetchAllProjects,
+  ]);
 
   useEffect(() => {
-    if (account && !areAllProjectsLoading && !allProjectsFetchError) {
+    if (account) {
       fetchBalance();
     }
-  }, [account, allProjectsFetchError, areAllProjectsLoading, fetchBalance]);
+  }, [account, fetchBalance]);
 
   return useMemo(
     () => ({
+      fetchBalance,
       balance,
       nfts,
       isLoading: loading,
       detailedNfts,
       groupedNfts,
     }),
-    [balance, nfts, loading, detailedNfts, groupedNfts]
+    [fetchBalance, balance, nfts, loading, detailedNfts, groupedNfts]
   );
 };
 

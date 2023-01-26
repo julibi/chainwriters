@@ -1,3 +1,4 @@
+import { useWeb3React } from '@web3-react/core';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
 import styled from 'styled-components';
@@ -102,8 +103,9 @@ const Voting = ({
   ballotAddress,
   projectId,
 }: VotingProps) => {
+  const { account } = useWeb3React();
   const theme = useTheme();
-  const { groupedNfts } = useUser();
+  const { groupedNfts, fetchBalance } = useUser();
   const {
     Ballot,
     vote,
@@ -114,6 +116,7 @@ const Voting = ({
   } = useBallot(ballotAddress, projectId);
   const [selectedOption, setSelectedOption] = useState<number>(0);
   const [votableNFTs, setVotableNFTs] = useState<string[] | null>(null);
+
   const percentageVoted = useMemo(
     () => Math.round((Number(totalCount) / Number(maxNFTCount)) * 100),
     [maxNFTCount, totalCount]
@@ -149,6 +152,7 @@ const Voting = ({
     () => ['confirming', 'waiting'].includes(voteStatus),
     [voteStatus]
   );
+
   const hasVoted = useMemo(() => {
     if (userNFTsOfProject?.length) {
       if (!votableNFTs?.length) {
@@ -164,6 +168,7 @@ const Voting = ({
 
   const fetchVotableNFTs = useCallback(async () => {
     if (!userNFTsOfProject) return;
+
     const result = [];
     try {
       for (let i = 0; i < userNFTsOfProject.length; i++) {
@@ -181,6 +186,12 @@ const Voting = ({
     }
   }, [Ballot, userNFTsOfProject, votingsIndex]);
 
+  const votableNFTsWrapperCall = useCallback(async () => {
+    if (!account || !Ballot) return;
+    const nfts = await fetchVotableNFTs();
+    setVotableNFTs(nfts?.length ? nfts : null);
+  }, [account, Ballot, fetchVotableNFTs]);
+
   const handleVote = useCallback(async () => {
     if (!votableNFTs?.length) {
       return toast.error('No NFTs of this project or already voted.');
@@ -194,25 +205,23 @@ const Voting = ({
     });
   }, [selectedOption, votableNFTs, vote]);
 
-  const votableNFTsWrapperCall = useCallback(async () => {
-    const nfts = await fetchVotableNFTs();
-    setVotableNFTs(nfts);
-  }, [fetchVotableNFTs]);
-
-  useEffect(() => {
-    votableNFTsWrapperCall();
-  }, [Ballot, votableNFTsWrapperCall, userNFTsOfProject]);
-
   useEffect(() => {
     const interval = setInterval(() => {
       refetchMintCount();
       refetchVotingData();
-    }, 50000);
+      fetchBalance();
+      votableNFTsWrapperCall();
+    }, 5000);
 
     return () => {
       clearInterval(interval);
     };
-  }, [refetchMintCount, refetchVotingData]);
+  }, [
+    fetchBalance,
+    refetchMintCount,
+    refetchVotingData,
+    votableNFTsWrapperCall,
+  ]);
 
   return (
     <Root theme={theme}>
@@ -277,7 +286,7 @@ const Voting = ({
           <ActionButton
             onClick={handleVote}
             text={hasVoted ? 'Voted' : 'Vote'}
-            disabled={hasEnded || isVotingStatus || hasVoted}
+            disabled={hasEnded || isVotingStatus || hasVoted || !votableNFTs}
             loading={isVotingStatus}
             margin="2rem 0 0 0"
             web3Connectable

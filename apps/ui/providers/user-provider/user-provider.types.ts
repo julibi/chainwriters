@@ -1,4 +1,4 @@
-import { ReactChild, ReactChildren } from 'react';
+import { ReactChild } from 'react';
 
 export type NftWithTechData = {
   projectId: number;
@@ -28,6 +28,7 @@ export type UserApi = {
   isLoading: boolean;
   groupedNfts: OwnedUserNft[][];
   detailedNfts: OwnedUserNft[];
+  fetchBalance: () => void;
 };
 
 export type UserProviderProps = {

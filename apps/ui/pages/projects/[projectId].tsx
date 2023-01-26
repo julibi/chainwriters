@@ -385,8 +385,8 @@ const ProjectDetailView = () => {
     });
   }, [mpManager, project, projectId]);
 
-  const updateBallotAddress = useCallback(() => {
-    const ballotAddress = fetchBallotAddress(projectId);
+  const updateBallotAddress = useCallback(async () => {
+    const ballotAddress = await fetchBallotAddress(projectId);
     // @ts-ignore
     setUpdatedProject({ ...project, ballotAddress });
   }, [fetchBallotAddress, project, projectId]);

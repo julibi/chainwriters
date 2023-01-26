@@ -95,6 +95,7 @@ const VotingsCreator = ({
             ],
             end: getTimestampOfVoteEnding(startVoteProps.endingTime),
             onSuccess: () => {
+              // update Data
               setShowStartVotingModal(false);
             },
             onError: (e) => {
@@ -111,6 +112,7 @@ const VotingsCreator = ({
             ],
             endTime: getTimestampOfVoteEnding(startVoteProps.endingTime),
             onSuccess: () => {
+              onFinishSettingUpBallot();
               setShowStartVotingModal(false);
             },
             onError: (e) => {
@@ -118,7 +120,13 @@ const VotingsCreator = ({
             },
           });
     },
-    [createBallot, isBallotExisting, projectId, startVote]
+    [
+      createBallot,
+      isBallotExisting,
+      onFinishSettingUpBallot,
+      projectId,
+      startVote,
+    ]
   );
 
   const handleClose = () => {

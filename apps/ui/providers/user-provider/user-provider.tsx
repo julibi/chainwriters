@@ -9,24 +9,26 @@ const defaultContext: UserApi = {
   isLoading: false,
   groupedNfts: [],
   detailedNfts: [],
+  fetchBalance: () => null,
 };
 
 export const UserContext = createContext(defaultContext);
 
 export const UserProvider = ({ children }: UserProviderProps) => {
   const { account } = useWeb3React();
-  const { balance, nfts, isLoading, detailedNfts, groupedNfts } =
+  const { balance, nfts, isLoading, detailedNfts, groupedNfts, fetchBalance } =
     useGetAllNftsOfAccount(account);
 
   const api = useMemo(
     () => ({
+      fetchBalance,
       balance,
       nfts,
       isLoading,
       detailedNfts,
       groupedNfts,
     }),
-    [balance, nfts, detailedNfts, isLoading, groupedNfts]
+    [fetchBalance, balance, nfts, detailedNfts, isLoading, groupedNfts]
   );
   return <UserContext.Provider value={api}>{children}</UserContext.Provider>;
 };
