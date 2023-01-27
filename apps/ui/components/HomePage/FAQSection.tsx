@@ -64,14 +64,14 @@ const FAQSection = () => {
           </>
         </MoreDetails>
         <br></br>
-        <MoreDetails title={'Why text NFTs?'}>
+        <MoreDetails title={'Why literary NFTs?'}>
           <>
             <FAQAnswer>
               PFP NFTs have already taken over the world in summer 2021. But
               NFTs are still a relatively new phenomenon. More areas can be
               explored with the power of NFTs.
               <br />
-              Let's take the example of a text NFT:they can support writers
+              Let's take the example of a literary NFT:they can support writers
               financially and help them gather a community around them. They can
               unlock exclusive content. But they can also be collected and shown
               off in a digital bookshelf. They could even give access to

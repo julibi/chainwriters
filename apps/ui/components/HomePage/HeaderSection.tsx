@@ -78,7 +78,7 @@ const HeaderSection = () => {
     <Root>
       <LandingHeader>
         <Title color={POP} size="s" textAlign="left">
-          Text NFT Platform
+          Literary NFT Platform
         </Title>
         <HeaderMobile>
           <Title
@@ -114,7 +114,7 @@ const HeaderSection = () => {
           </Title>
         </HeaderDesktop>
         <Title size="s" textAlign="left">
-          Moonpage is a free and easy platform for turning your text into NFTs.
+          Moonpage is a free and easy launchpad for turning your text into NFTs.
         </Title>
         <Buttons>
           <ActionButton

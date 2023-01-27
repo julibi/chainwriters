@@ -12,9 +12,8 @@ const Layout = ({ children }: LayoutProps) => {
     <div>
       <Navbar />
       <Marquee gradient={false} speed={70}>
-        Go to the "Experimental" tab and create the first AI infused text NFTs
-        with ChatGPT. Tell the AI what kind of text you want and it creates a
-        draft for you to use.
+        Start a vote regarding your project now! Go to your project's page and
+        scroll down to the Voting section.
       </Marquee>
       {children}
 
