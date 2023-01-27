@@ -78,7 +78,7 @@ const HeaderSection = () => {
     <Root>
       <LandingHeader>
         <Title color={POP} size="s" textAlign="left">
-          Literary NFT Platform
+          Literary NFT Launchpad
         </Title>
         <HeaderMobile>
           <Title
