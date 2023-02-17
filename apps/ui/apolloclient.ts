@@ -8,4 +8,11 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
 });
 
+const APIURL = process.env.NEXT_PUBLIC_LENS_API;
+
+export const lensClient = new ApolloClient({
+  uri: APIURL,
+  cache: new InMemoryCache(),
+});
+
 export default client;
