@@ -3,6 +3,7 @@ import { gql, useQuery } from '@apollo/client';
 import { useWeb3React } from '@web3-react/core';
 import { ProjectsResult } from '../../providers/projects-provider/projects-provider.types';
 import { AccountQueryVar } from '../../providers/user-provider/user-provider.types';
+import useAddressInRoute from '../useAddressInRoute';
 
 export const GET_PROJECTS_OF_ACCOUNT = gql`
   query oneProjectQuery($account: String!) {
@@ -42,7 +43,13 @@ export const GET_PROJECTS_OF_ACCOUNT = gql`
 `;
 
 export function useGetProjectsOfAccount() {
-  const { account } = useWeb3React();
+  const { account: loggedInAccount } = useWeb3React();
+  const addressInRoute: string | undefined = useAddressInRoute();
+  const account = useMemo(
+    () => addressInRoute ?? loggedInAccount,
+
+    [addressInRoute, loggedInAccount]
+  );
   const { loading, error, data, refetch } = useQuery<
     ProjectsResult,
     AccountQueryVar
