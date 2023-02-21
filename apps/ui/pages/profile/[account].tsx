@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect } from 'react';
 import { useWeb3React } from '@web3-react/core';
-import Image from 'next/image';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import {
@@ -36,6 +35,7 @@ const Root = styled.div`
 const ItemsWrapper = styled.div`
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
 `;
 
 const NotExist = styled.div`

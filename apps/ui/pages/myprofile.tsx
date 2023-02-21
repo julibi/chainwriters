@@ -34,6 +34,7 @@ const Root = styled.div`
 const ItemsWrapper = styled.div`
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
 `;
 
 const NotExist = styled.div`
