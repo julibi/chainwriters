@@ -51,6 +51,7 @@ import {
 } from '../../providers/projects-provider/projects-provider.types';
 import Votings from './Votings';
 import { useBallotsFactory } from '../../hooks/ballotFactory';
+import ProfileLink from '../../components/ProfileLink';
 
 const Root = styled.div`
   display: flex;
@@ -562,7 +563,7 @@ const ProjectDetailView = () => {
                   {'Author '}
                 </Title>
                 <Title padding="0" size="xs" width="fit-content">
-                  {truncateAddress(project.creator)}
+                  <ProfileLink account={project.creator} />
                 </Title>
               </Author>
               <Genre>
@@ -622,7 +623,9 @@ const ProjectDetailView = () => {
             <Shares>
               <Share>
                 <ShareTitle>Creator</ShareTitle>
-                <ShareAddress>{truncateAddress(project?.creator)}</ShareAddress>
+                <ShareAddress>
+                  <ProfileLink account={project?.creator} />
+                </ShareAddress>
                 <SharePercentage>{`${authorShare} %`}</SharePercentage>
               </Share>
               {project.contributors?.map((cntrb, i) => (
@@ -630,14 +633,16 @@ const ProjectDetailView = () => {
                   <ShareTitle>
                     {cntrb.role?.length ? cntrb.role : 'Unknown role'}
                   </ShareTitle>
-                  <ShareAddress>{truncateAddress(cntrb.address)}</ShareAddress>
+                  <ShareAddress>
+                    <ProfileLink account={cntrb.address} />
+                  </ShareAddress>
                   <SharePercentage>{`${cntrb.sharePercentage} %`}</SharePercentage>
                 </Share>
               ))}
               <Share>
                 <ShareTitle>Moonpage</ShareTitle>
                 <ShareAddress>
-                  {truncateAddress(MOONPAGE_DEV_ADDRESS)}
+                  <ProfileLink account={MOONPAGE_DEV_ADDRESS} />
                 </ShareAddress>
                 <SharePercentage>15 %</SharePercentage>
               </Share>

@@ -21,6 +21,7 @@ import { useManager } from '../../../hooks/manager';
 import useUploadTextToIpfs from '../../../hooks/useUploadTextToIpfs';
 import ActionButton from '../../../components/ActionButton';
 import { useTheme } from '../../../hooks/theme';
+import ProfileLink from 'apps/ui/components/ProfileLink';
 
 const animation = (animationseconds: number) => `
   animation: fadein ${animationseconds}s;
@@ -294,7 +295,10 @@ const Read = () => {
           </Wrapper>
         )}
         <Wrapper>
-          <Author>{`By ${truncateAddress(project.creator)}`}</Author>
+          <Author>
+            <span>By </span>
+            <ProfileLink account={project.creator} />
+          </Author>
         </Wrapper>
       </FlexWrapper>
       {project.originalLanguage && (

@@ -13,6 +13,7 @@ import LinkWrapper from '../components/LinkWrapper';
 import { useTheme } from '../hooks/theme';
 import { useDarkMode } from '../hooks/useDarkMode';
 import { useEagerConnect } from '../hooks/useEagerConnect';
+import { useWeb3React } from '@web3-react/core';
 
 const Root = styled.div`
   display: block;
@@ -119,7 +120,7 @@ const routes = [
   { name: 'Home', path: '/' },
   { name: 'Projects', path: '/projects' },
   { name: 'Create', path: '/create' },
-  { name: 'Bookshelf', path: '/mybookshelf' },
+  { name: 'Profile', path: '/myprofile' },
   { name: 'About', path: '/about' },
   { name: 'Experimental', path: '/experimental' },
 ];

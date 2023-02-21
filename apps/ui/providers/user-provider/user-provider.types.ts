@@ -13,6 +13,7 @@ export type OwnedUserNft = {
   projectId: number;
   edition?: number;
   title: string;
+  imgIpfsHash?: string;
   creator?: string;
   contributionRole?: string;
   contributionSharePercentage?: number;

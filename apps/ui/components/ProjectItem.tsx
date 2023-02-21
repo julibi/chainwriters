@@ -18,6 +18,7 @@ import { getCoverImageUrl } from '../utils/getCoverImageUrl';
 import { Tooltip } from './Tooltip';
 import { formatEtherBigNumber } from '../utils/formatEtherBigNumber';
 import TooltippedIndicator from './TooltippedIndicator';
+import ProfileLink from './ProfileLink';
 
 const Root = styled.div<ElementThemeProps>`
   display: flex;
@@ -169,7 +170,7 @@ const ProjectItem = ({
         </Flex>
         <Flex>
           <Label theme={theme}>Author</Label>
-          <div>{truncateAddress(creator)}</div>
+          <ProfileLink account={creator} />
         </Flex>
         <Flex>
           <Tooltip

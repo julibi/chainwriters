@@ -93,7 +93,8 @@ const Roadmap = () => {
             Profile Pages
           </Title>
           <RoadBlockText>
-            Let writers create profile pages and link projects to them
+            Every address is visible as profile configurable by the according
+            user
           </RoadBlockText>
           <RoadBlockDate>March 2023</RoadBlockDate>
         </RoadBlock>

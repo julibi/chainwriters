@@ -41,7 +41,7 @@ const useGetAllNftsOfAccount = (account: string) => {
   );
 
   // returns null when a tokenId is valid but not in an edition yet
-  const getEditionAndIdOfToken = useCallback(
+  const getNFTDetails = useCallback(
     (tokenId: number, projects: Project[]) => {
       const projectId = Number(getProjectIdOfToken(tokenId, projects));
       if (projects?.length > 0 && projectId) {
@@ -53,7 +53,9 @@ const useGetAllNftsOfAccount = (account: string) => {
           (ed) => tokenId >= Number(ed.startId) && tokenId <= Number(ed.endId)
         );
         if (!edition) return null;
+
         return {
+          imgIpfsHash: project.imgIpfsHash,
           tokenId,
           projectId,
           edition: Number(edition.edition),
@@ -115,14 +117,14 @@ const useGetAllNftsOfAccount = (account: string) => {
       setBalance(fetchedBalance);
       setNfts(tokens);
       setIsLoading(false);
-      const nftsWithIdAndEdition = tokens
+      const nftsWithDetails = tokens
         .map(
-          (token) => getEditionAndIdOfToken(token, allProjects)
+          (token) => getNFTDetails(token, allProjects)
           // remove from tokens when from deletedProject
         )
         .filter((el) => el !== null);
 
-      const groupByProjectId = nftsWithIdAndEdition.reduce((group, product) => {
+      const groupByProjectId = nftsWithDetails.reduce((group, product) => {
         const { projectId } = product;
         group[projectId] = group[projectId] ?? [];
         group[projectId].push(product);
@@ -133,7 +135,7 @@ const useGetAllNftsOfAccount = (account: string) => {
       for (const [key, value] of Object.entries(groupByProjectId)) {
         groupedInArray.push(value);
       }
-      setDetailedNfts(nftsWithIdAndEdition);
+      setDetailedNfts(nftsWithDetails);
       setGroupedNfts(groupedInArray);
       setIsLoading(false);
     } catch (e: unknown) {
@@ -145,7 +147,7 @@ const useGetAllNftsOfAccount = (account: string) => {
     allProjects,
     chainId,
     collection,
-    getEditionAndIdOfToken,
+    getNFTDetails,
     refetchAllProjects,
   ]);
 

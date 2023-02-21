@@ -14,10 +14,12 @@ import {
 } from '../themes';
 import Loading from '../components/Loading';
 import { useGetProjectsOfAccount } from '../hooks/user/useGetProjectsOfAccount';
-import BookshelfItem from '../components/Bookshelf/BookshelfItem';
+import BookshelfItem from '../components/Profile/BookshelfItem';
 import { useGetContributionsOfAccount } from '../hooks/user/useGetContributionsOfAccount';
 import { useUser } from '../hooks/user/useUser';
 import { useTheme } from '../hooks/theme';
+import OwnProject from '../components/Profile/OwnProject';
+import ContributorProject from '../components/Profile/ContributorProject';
 
 const Root = styled.div`
   display: flex;
@@ -27,6 +29,11 @@ const Root = styled.div`
   @media (max-width: 900px) {
     margin: 3rem 2rem;
   }
+`;
+
+const ItemsWrapper = styled.div`
+  display: flex;
+  flex-wrap: wrap;
 `;
 
 const NotExist = styled.div`
@@ -63,11 +70,11 @@ const SubHeader = styled.h3<ElementThemeProps>`
   width: fit-content;
 `;
 
-const MyBookShelf = () => {
+const MyProfile = () => {
   const router = useRouter();
   const theme = useTheme();
   const { account } = useWeb3React();
-  const { groupedNfts, isLoading: ownedNftsLoading } = useUser();
+  const { detailedNfts, isLoading: ownedNftsLoading } = useUser();
 
   const { projects: ownProjects, isLoading: ownProjectsLoading } =
     useGetProjectsOfAccount();
@@ -93,7 +100,7 @@ const MyBookShelf = () => {
   return (
     <Root>
       <SectionTitleWrapper>
-        <SectionTitle>My Bookshelf</SectionTitle>
+        <SectionTitle>My Profile</SectionTitle>
       </SectionTitleWrapper>
       {!account ? (
         <NotExist>
@@ -104,22 +111,23 @@ const MyBookShelf = () => {
           <Section>
             <SubHeader theme={theme}>My NFTs</SubHeader>
             {ownedNftsLoading && <Loading height={300} />}
-            {!ownedNftsLoading && !groupedNfts && (
+            {!ownedNftsLoading && !detailedNfts && (
               <NotExist>
                 <NotExistText>{`You do not own any Moonpage NFTs :(`}</NotExistText>
               </NotExist>
             )}
-            {!ownedNftsLoading &&
-              groupedNfts?.map((group, idx) => (
-                <BookshelfItem
-                  key={idx}
-                  group={group}
-                  onClickDetails={(e) =>
-                    handleClickDetails(e, group[0].projectId)
-                  }
-                  onClickRead={(e) => handleClickRead(e, group[0].projectId)}
-                />
-              ))}
+            {!ownedNftsLoading && detailedNfts && (
+              <ItemsWrapper>
+                {detailedNfts.map((nft, idx) => (
+                  <BookshelfItem
+                    key={idx}
+                    nft={nft}
+                    onClickDetails={(e) => handleClickDetails(e, nft.projectId)}
+                    onClickRead={(e) => handleClickRead(e, nft.projectId)}
+                  />
+                ))}
+              </ItemsWrapper>
+            )}
           </Section>
           <Section>
             <SubHeader theme={theme}>My Projects</SubHeader>
@@ -131,11 +139,9 @@ const MyBookShelf = () => {
             )}
             {!ownProjectsLoading &&
               ownProjects?.map((project, idx) => (
-                <BookshelfItem
+                <OwnProject
                   key={idx}
-                  group={[
-                    { title: project.title, projectId: Number(project.id) },
-                  ]}
+                  title={project.title}
                   onClickDetails={(e) => handleClickDetails(e, project.id)}
                   onClickRead={(e) => handleClickRead(e, project.id)}
                 />
@@ -151,19 +157,13 @@ const MyBookShelf = () => {
             )}
             {!contributionsLoading &&
               contributions?.map((contrib, idx) => (
-                <BookshelfItem
+                <ContributorProject
                   key={idx}
-                  group={[
-                    {
-                      creator: contrib.project.creator,
-                      title: contrib.project.title,
-                      projectId: Number(contrib.project.id),
-                      contributionRole: contrib.role,
-                      contributionSharePercentage: Number(
-                        contrib.sharePercentage
-                      ),
-                    },
-                  ]}
+                  creator={contrib.project.creator}
+                  title={contrib.project.title}
+                  projectId={Number(contrib.project.id)}
+                  contributionRole={contrib.role}
+                  contributionSharePercentage={Number(contrib.sharePercentage)}
                   onClickDetails={(e) =>
                     handleClickDetails(e, contrib.project.id)
                   }
@@ -177,4 +177,4 @@ const MyBookShelf = () => {
   );
 };
 
-export default MyBookShelf;
+export default MyProfile;
