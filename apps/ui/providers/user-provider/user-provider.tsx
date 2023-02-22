@@ -1,7 +1,8 @@
-import useGetAllNftsOfAccount from './useGetAllNftsOfAccount';
 import { createContext, useMemo } from 'react';
-import { UserProviderProps, UserApi } from './user-provider.types';
 import { useWeb3React } from '@web3-react/core';
+import useGetAllNftsOfAccount from './useGetAllNftsOfAccount';
+import { UserProviderProps, UserApi } from './user-provider.types';
+import useAddressInRoute from '../../hooks/useAddressInRoute';
 
 const defaultContext: UserApi = {
   balance: 0,
@@ -15,7 +16,15 @@ const defaultContext: UserApi = {
 export const UserContext = createContext(defaultContext);
 
 export const UserProvider = ({ children }: UserProviderProps) => {
-  const { account } = useWeb3React();
+  const { account: loggedInAccount } = useWeb3React();
+  const addressInRoute: string | undefined = useAddressInRoute();
+
+  const account = useMemo(
+    () => addressInRoute ?? loggedInAccount,
+
+    [addressInRoute, loggedInAccount]
+  );
+
   const { balance, nfts, isLoading, detailedNfts, groupedNfts, fetchBalance } =
     useGetAllNftsOfAccount(account);
 

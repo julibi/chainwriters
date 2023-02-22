@@ -15,6 +15,7 @@ const nextConfig = {
       'ipfs.io',
       'moonpage-metadata-backend-dev.herokuapp.com',
       'moonpage-metadata-backend-prod.herokuapp.com',
+      'moonpage.mypinata.cloud',
     ],
   },
   env: {
@@ -42,6 +43,7 @@ const nextConfig = {
     NEXT_PUBLIC_MOONPAGE_METADATA_API:
       process.env.NX_PUBLIC_MOONPAGE_METADATA_API,
     NEXT_PUBLIC_OPENAI_API_KEY: process.env.NX_PUBLIC_OPENAI_API_KEY,
+    NEXT_PUBLIC_LENS_API: process.env.NX_PUBLIC_LENS_API,
   },
 };
 

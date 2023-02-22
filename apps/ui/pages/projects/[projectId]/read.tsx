@@ -2,7 +2,6 @@ import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import React, { useCallback, useMemo, useState } from 'react';
 import { Node } from 'slate';
-import { truncateAddress } from '../../../components/WalletIndicator';
 import useShowText from '../../../hooks/useShowText';
 import { useGetProjectId } from '../../../hooks/projects';
 import Loading from '../../../components/Loading';
@@ -17,9 +16,10 @@ import RichTextRead from '../../../components/RichTextRead';
 import Title from '../../../components/Title';
 import RichText from '../../../components/Create/RichText';
 import EditButton from '../../../components/EditButton';
+import ActionButton from '../../../components/ActionButton';
+import ProfileLink from '../../../components/ProfileLink';
 import { useManager } from '../../../hooks/manager';
 import useUploadTextToIpfs from '../../../hooks/useUploadTextToIpfs';
-import ActionButton from '../../../components/ActionButton';
 import { useTheme } from '../../../hooks/theme';
 
 const animation = (animationseconds: number) => `
@@ -294,7 +294,10 @@ const Read = () => {
           </Wrapper>
         )}
         <Wrapper>
-          <Author>{`By ${truncateAddress(project.creator)}`}</Author>
+          <Author>
+            <span>By </span>
+            <ProfileLink account={project.creator} />
+          </Author>
         </Wrapper>
       </FlexWrapper>
       {project.originalLanguage && (
