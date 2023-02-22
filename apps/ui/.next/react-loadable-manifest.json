@@ -1,9 +1,16 @@
 {
   "../../../node_modules/@web3-react/walletconnect-connector/dist/walletconnect-connector.esm.js -> @walletconnect/ethereum-provider": {
-    "id": 6566,
+    "id": 16566,
     "files": [
-      "static/chunks/566.5df558fc5a275707.js",
-      "static/chunks/314.4e802d479aa19d4e.js"
+      "static/chunks/566.f4643e4785a12e02.js",
+      "static/chunks/314.d81512d262fd06c9.js"
+    ]
+  },
+  "../../../node_modules/@web3-react/walletlink-connector/dist/walletlink-connector.esm.js -> @coinbase/wallet-sdk": {
+    "id": 16221,
+    "files": [
+      "static/chunks/221.6ac3013c65a49c83.js",
+      "static/chunks/806.a654a2c936de7319.js"
     ]
   }
 }
