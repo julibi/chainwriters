@@ -50,7 +50,7 @@ contract MoonpageProfiles is
     );
     event DiscordConfigured(address userAddress, string discord);
     event InstagramConfigured(address userAddress, string instagram);
-    event ParagraphxyzConfigured(address userAddress, string paragraphyxyz);
+    event ParagraphxyzConfigured(address userAddress, string paragraphxyz);
     event SubstackConfigured(address userAddress, string substack);
     event TwitterConfigured(address userAddress, string twitter);
     event YoutubeConfigured(address userAddress, string youtube);
@@ -77,21 +77,19 @@ contract MoonpageProfiles is
     // ------------------
 
     function configureProfile(
-        address _userAddress,
         string memory _name,
         string memory _imageIPFSHash,
         string memory _descriptionIPFSHash,
         string memory _website
     ) external whenNotPaused {
-        require(msg.sender == address(_userAddress), "Not authorized");
-        profiles[_userAddress].name = _name;
-        profiles[_userAddress].imageIPFSHash = _imageIPFSHash;
-        profiles[_userAddress].descriptionIPFSHash = _descriptionIPFSHash;
-        profiles[_userAddress].website = _website;
-        profiles[_userAddress].isVerified = false;
+        profiles[msg.sender].name = _name;
+        profiles[msg.sender].imageIPFSHash = _imageIPFSHash;
+        profiles[msg.sender].descriptionIPFSHash = _descriptionIPFSHash;
+        profiles[msg.sender].website = _website;
+        profiles[msg.sender].isVerified = false;
 
         emit ProfileConfigured(
-            _userAddress,
+            msg.sender,
             _name,
             _imageIPFSHash,
             _descriptionIPFSHash,
@@ -133,20 +131,18 @@ contract MoonpageProfiles is
         emit DiscordConfigured(msg.sender, _discord);
     }
 
-    function configureInstagram(string memory _instagram)
-        external
-        whenNotPaused
-    {
+    function configureInstagram(
+        string memory _instagram
+    ) external whenNotPaused {
         profiles[msg.sender].instagram = _instagram;
         profiles[msg.sender].isVerified = false;
 
         emit InstagramConfigured(msg.sender, _instagram);
     }
 
-    function configureParagraphxyz(string memory _paragraphxyz)
-        external
-        whenNotPaused
-    {
+    function configureParagraphxyz(
+        string memory _paragraphxyz
+    ) external whenNotPaused {
         profiles[msg.sender].paragraphxyz = _paragraphxyz;
         profiles[msg.sender].isVerified = false;
 
@@ -174,10 +170,7 @@ contract MoonpageProfiles is
         emit YoutubeConfigured(msg.sender, _youtube);
     }
 
-    function resetProfile(address _userAddress) external whenNotPaused {
-        require(msg.sender == address(_userAddress), "Not authorized");
-
-        // TODO: should be empty string or null??
+    function resetProfile() external whenNotPaused {
         profiles[msg.sender].name = "";
         profiles[msg.sender].imageIPFSHash = "";
         profiles[msg.sender].descriptionIPFSHash = "";
@@ -215,11 +208,9 @@ contract MoonpageProfiles is
 
     receive() external payable {}
 
-    function withdraw(address _to)
-        external
-        payable
-        onlyRole(DEFAULT_ADMIN_ROLE)
-    {
+    function withdraw(
+        address _to
+    ) external payable onlyRole(DEFAULT_ADMIN_ROLE) {
         require(_to != address(0), "Cannot withdraw to the 0 address");
         payable(_to).transfer(address(this).balance);
     }
@@ -228,9 +219,7 @@ contract MoonpageProfiles is
     // Explicit overrides
     // ------------------
 
-    function _authorizeUpgrade(address newImplementation)
-        internal
-        override
-        onlyRole(UPGRADER_ROLE)
-    {}
+    function _authorizeUpgrade(
+        address newImplementation
+    ) internal override onlyRole(UPGRADER_ROLE) {}
 }

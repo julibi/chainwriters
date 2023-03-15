@@ -75,3 +75,19 @@ type Project @entity {
   ballotCreated: BigInt
   votings: [Voting!] @derivedFrom(field: "project")
 }
+
+type Profile @entity {
+  id: ID!
+  address: Bytes!
+  name: String
+  imageIPFSHash: String
+  descriptionIPFSHash: String
+  website: String
+  discord: String
+  instagram: String
+  paragraphxyz: String
+  substack: String
+  twitter: String
+  youtube: String
+  isVerified: Boolean
+}

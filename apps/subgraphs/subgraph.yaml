@@ -4,11 +4,11 @@ schema:
 dataSources:
   - kind: ethereum
     name: MoonpageManager
-    network: matic
+    network: mumbai
     source:
-      address: '0xb506F8587cdb61CE205FA88BdCCcfBd90c588A6e'
+      address: '0x5fce69239815e7a409615426e73FDD9909E8a931'
       abi: MoonpageManager
-      startBlock: 34049676
+      startBlock: 31137530
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -64,11 +64,11 @@ dataSources:
       file: ./src/mapping.ts
   - kind: ethereum
     name: MoonpageCollection
-    network: matic
+    network: mumbai
     source:
-      address: '0x0eC473B1BD821D386cd7209203Ba6826Fd653B96'
+      address: '0xa5A234AA62C9411A717D349D4229CaF577Fa7d19'
       abi: MoonpageCollection
-      startBlock: 34049676
+      startBlock: 31137530
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -85,11 +85,11 @@ dataSources:
       file: ./src/mapping.ts
   - kind: ethereum
     name: AuctionsManager
-    network: matic
+    network: mumbai
     source:
-      address: '0xA6AcA4DB9853234b5CAa0005549642D113443803'
+      address: '0x105Fdf7e952741554DaD0bd1Bc68cB54FFC5C25D'
       abi: AuctionsManager
-      startBlock: 34049676
+      startBlock: 31137530
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -109,11 +109,11 @@ dataSources:
       file: ./src/mapping.ts
   - kind: ethereum
     name: BallotsFactory
-    network: matic
+    network: mumbai
     source:
-      address: '0x52928DA9B72B98b11F3143abb47753194c9e1FF5'
+      address: '0x7040F5c4e425f54dB209aEf39224db6478243d77'
       abi: BallotsFactory
-      startBlock: 34049676
+      startBlock: 31137530
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -126,12 +126,49 @@ dataSources:
       eventHandlers:
         - event: BallotCreated(uint256,address)
           handler: handleBallotCreated
-
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: MoonpageProfiles
+    network: mumbai
+    source:
+      address: '0xf2BFBd1ac95c3303642fCD06DB4b100d418D92d8'
+      abi: MoonpageProfiles
+      startBlock: 31137530
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Project
+      abis:
+        - name: MoonpageProfiles
+          file: ./abis/MoonpageProfiles.json
+      eventHandlers:
+        - event: ProfileConfigured(address,string,string,string,string)
+          handler: handleProfileConfigured
+        - event: SocialsConfigured(address,string,string,string,string,string,string)
+          handler: handleSocialsConfigured
+        - event: DiscordConfigured(address,string)
+          handler: handleDiscordConfigured
+        - event: InstagramConfigured(address,string)
+          handler: handleInstagramConfigured
+        - event: ParagraphxyzConfigured(address,string)
+          handler: handleParagraphxyzConfigured
+        - event: SubstackConfigured(address,string)
+          handler: handleSubstackConfigured
+        - event: TwitterConfigured(address,string)
+          handler: handleTwitterConfigured
+        - event: YoutubeConfigured(address,string)
+          handler: handleYoutubeConfigured
+        - event: ProfileReset(address)
+          handler: handleProfileReset
+        - event: VerificationSet(address,bool)
+          handler: handleVerificationSet
       file: ./src/mapping.ts
 templates:
   - name: Ballot
     kind: ethereum/contract
-    network: matic
+    network: mumbai
     source:
       abi: Ballot
     mapping:

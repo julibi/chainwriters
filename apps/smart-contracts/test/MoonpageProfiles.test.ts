@@ -33,7 +33,6 @@ describe("MoonpageProfiles", function () {
   describe("Profiles", () => {
     it("Profiles can be setup as expected", async () => {
       await profilesAsCreatorA.configureProfile(
-        creatorA.address,
         "Zoe Jeremy Miller",
         "QmTw3pWBQinwuHS57FcWyUGBpvGqLHQZkn1eKjp89XXyFg",
         "QmTw3pWBQinwuHS57FcWyUGBpvGqLHQZkn1eKjp89XXyFg",
@@ -60,7 +59,6 @@ describe("MoonpageProfiles", function () {
 
     it("Profiles can be configured", async () => {
       await profilesAsCreatorA.configureProfile(
-        creatorA.address,
         "Zoe Jeremy Miller",
         "QmTw3pWBQinwuHS57FcWyUGBpvGqLHQZkn1eKjp89XXyFg",
         "QmTw3pWBQinwuHS57FcWyUGBpvGqLHQZkn1eKjp89XXyFg",
@@ -86,7 +84,6 @@ describe("MoonpageProfiles", function () {
     });
     it("Profiles can be verified only by owner", async () => {
       await profilesAsCreatorA.configureProfile(
-        creatorA.address,
         "Zoe Jeremy Miller",
         "QmTw3pWBQinwuHS57FcWyUGBpvGqLHQZkn1eKjp89XXyFg",
         "QmTw3pWBQinwuHS57FcWyUGBpvGqLHQZkn1eKjp89XXyFg",
@@ -106,7 +103,6 @@ describe("MoonpageProfiles", function () {
 
     it("Profiles need to be verified once name or socials are changed", async () => {
       await profilesAsCreatorA.configureProfile(
-        creatorA.address,
         "Zoe Jeremy Miller",
         "QmTw3pWBQinwuHS57FcWyUGBpvGqLHQZkn1eKjp89XXyFg",
         "QmTw3pWBQinwuHS57FcWyUGBpvGqLHQZkn1eKjp89XXyFg",
@@ -119,7 +115,6 @@ describe("MoonpageProfiles", function () {
       );
       expect(verifiedProfileA.isVerified).to.equal(true);
       await profilesAsCreatorA.configureProfile(
-        creatorA.address,
         "JUST Zoeeee",
         "QmTw3pWBQinwuHS57FcWyUGBpvGqLHQZkn1eKjp89XXyFg",
         "QmTw3pWBQinwuHS57FcWyUGBpvGqLHQZkn1eKjp89XXyFg",
@@ -132,7 +127,6 @@ describe("MoonpageProfiles", function () {
     });
     it("Socials can be configured at once", async () => {
       await profilesAsCreatorA.configureProfile(
-        creatorA.address,
         "Zoe Jeremy Miller",
         "QmTw3pWBQinwuHS57FcWyUGBpvGqLHQZkn1eKjp89XXyFg",
         "QmTw3pWBQinwuHS57FcWyUGBpvGqLHQZkn1eKjp89XXyFg",
@@ -154,7 +148,6 @@ describe("MoonpageProfiles", function () {
     });
     it("Socials can be configured individually", async () => {
       await profilesAsCreatorA.configureProfile(
-        creatorA.address,
         "Zoe Jeremy Miller",
         "QmTw3pWBQinwuHS57FcWyUGBpvGqLHQZkn1eKjp89XXyFg",
         "QmTw3pWBQinwuHS57FcWyUGBpvGqLHQZkn1eKjp89XXyFg",
@@ -175,7 +168,6 @@ describe("MoonpageProfiles", function () {
       const profileA = await profilesAsCreatorA.profiles(creatorA.address);
       expect(profileA.name).to.equal("");
       await profilesAsCreatorA.configureProfile(
-        creatorA.address,
         "Zoe Jeremy Miller",
         "QmTw3pWBQinwuHS57FcWyUGBpvGqLHQZkn1eKjp89XXyFg",
         "QmTw3pWBQinwuHS57FcWyUGBpvGqLHQZkn1eKjp89XXyFg",
@@ -195,7 +187,7 @@ describe("MoonpageProfiles", function () {
         creatorA.address
       );
       expect(updatedProfileA.name).to.equal("Zoe Jeremy Miller");
-      await profilesAsCreatorA.resetProfile(creatorA.address);
+      await profilesAsCreatorA.resetProfile();
       const resetProfileA = await profilesAsCreatorA.profiles(creatorA.address);
       expect(resetProfileA.name).to.equal("");
     });
