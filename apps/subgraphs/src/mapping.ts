@@ -1,5 +1,4 @@
-import { log } from '@graphprotocol/graph-ts';
-import { BigInt } from '@graphprotocol/graph-ts';
+import { Address, BigInt } from '@graphprotocol/graph-ts';
 import {
   BalanceDecreased,
   BalanceIncreased,
@@ -40,8 +39,21 @@ import {
   Edition,
   Mint,
   Project,
+  Profile,
   Voting,
 } from '../generated/schema';
+import {
+  ProfileConfigured,
+  SocialsConfigured,
+  DiscordConfigured,
+  InstagramConfigured,
+  ParagraphxyzConfigured,
+  SubstackConfigured,
+  TwitterConfigured,
+  YoutubeConfigured,
+  ProfileReset,
+  VerificationSet,
+} from '../generated/MoonpageProfiles/MoonpageProfiles';
 
 export function handleProjectCreated(event: ProjectCreated): void {
   let project = new Project(event.params.projectId.toString());
@@ -348,6 +360,10 @@ export function handleExpirationSet(event: ExpirationSet): void {
   project.save();
 }
 
+// ------------------
+// Voting Related
+// ------------------
+
 export function handleBallotCreated(event: BallotCreated): void {
   let projectId = event.params.projectId.toString();
   let project = Project.load(projectId);
@@ -419,4 +435,166 @@ export function handleVoteEnded(event: VoteEnded): void {
   voting.voteEnding = event.block.timestamp;
   voting.isVoting = false;
   voting.save();
+}
+
+// ------------------
+// Profiles Related
+// ------------------
+
+export function handleProfileConfigured(event: ProfileConfigured): void {
+  let userAddress = event.params.userAddress.toString();
+  let profile = Profile.load(userAddress);
+
+  if (!profile) {
+    profile = new Profile(event.params.userAddress.toString());
+  }
+
+  profile.address = event.params.userAddress;
+  profile.name = event.params.name;
+  profile.imageIPFSHash = event.params.imageIPFSHash;
+  profile.descriptionIPFSHash = event.params.descriptionIPFSHash;
+  profile.website = event.params.website;
+  profile.isVerified = false;
+  profile.save();
+}
+
+export function handleSocialsConfigured(event: SocialsConfigured): void {
+  let userAddress = event.params.userAddress.toString();
+  let profile = Profile.load(userAddress);
+
+  if (!profile) {
+    profile = new Profile(event.params.userAddress.toString());
+  }
+
+  profile.address = event.params.userAddress;
+  profile.discord = event.params.discord;
+  profile.instagram = event.params.instagram;
+  profile.paragraphxyz = event.params.paragraphxyz;
+  profile.substack = event.params.substack;
+  profile.twitter = event.params.twitter;
+  profile.youtube = event.params.youtube;
+  profile.isVerified = false;
+  profile.save();
+}
+
+export function handleDiscordConfigured(event: DiscordConfigured): void {
+  let userAddress = event.params.userAddress.toString();
+  let profile = Profile.load(userAddress);
+
+  if (!profile) {
+    profile = new Profile(event.params.userAddress.toString());
+  }
+
+  profile.address = event.params.userAddress;
+  profile.discord = event.params.discord;
+  profile.isVerified = false;
+  profile.save();
+}
+
+export function handleInstagramConfigured(event: InstagramConfigured): void {
+  let userAddress = event.params.userAddress.toString();
+  let profile = Profile.load(userAddress);
+
+  if (!profile) {
+    profile = new Profile(event.params.userAddress.toString());
+  }
+
+  profile.address = event.params.userAddress;
+  profile.instagram = event.params.instagram;
+  profile.isVerified = false;
+  profile.save();
+}
+
+export function handleParagraphxyzConfigured(
+  event: ParagraphxyzConfigured
+): void {
+  let userAddress = event.params.userAddress.toString();
+  let profile = Profile.load(userAddress);
+
+  if (!profile) {
+    profile = new Profile(event.params.userAddress.toString());
+  }
+
+  profile.address = event.params.userAddress;
+  profile.paragraphxyz = event.params.paragraphxyz;
+  profile.isVerified = false;
+  profile.save();
+}
+
+export function handleSubstackConfigured(event: SubstackConfigured): void {
+  let userAddress = event.params.userAddress.toString();
+  let profile = Profile.load(userAddress);
+
+  if (!profile) {
+    profile = new Profile(event.params.userAddress.toString());
+  }
+
+  profile.address = event.params.userAddress;
+  profile.substack = event.params.substack;
+  profile.isVerified = false;
+  profile.save();
+}
+
+export function handleTwitterConfigured(event: TwitterConfigured): void {
+  let userAddress = event.params.userAddress.toString();
+  let profile = Profile.load(userAddress);
+
+  if (!profile) {
+    profile = new Profile(event.params.userAddress.toString());
+  }
+
+  profile.address = event.params.userAddress;
+  profile.twitter = event.params.twitter;
+  profile.isVerified = false;
+  profile.save();
+}
+
+export function handleYoutubeConfigured(event: YoutubeConfigured): void {
+  let userAddress = event.params.userAddress.toString();
+  let profile = Profile.load(userAddress);
+
+  if (!profile) {
+    profile = new Profile(event.params.userAddress.toString());
+  }
+
+  profile.address = event.params.userAddress;
+  profile.youtube = event.params.youtube;
+  profile.isVerified = false;
+  profile.save();
+}
+
+export function handleProfileReset(event: ProfileReset): void {
+  let userAddress = event.params.userAddress.toString();
+  let profile = Profile.load(userAddress);
+
+  if (!profile) {
+    profile = new Profile(event.params.userAddress.toString());
+  }
+
+  profile.address = Address.fromString(
+    '0x0000000000000000000000000000000000000000'
+  );
+  profile.name = '';
+  profile.imageIPFSHash = '';
+  profile.descriptionIPFSHash = '';
+  profile.website = '';
+  profile.discord = '';
+  profile.instagram = '';
+  profile.paragraphxyz = '';
+  profile.substack = '';
+  profile.twitter = '';
+  profile.youtube = '';
+  profile.isVerified = false;
+  profile.save();
+}
+
+export function handleVerificationSet(event: VerificationSet): void {
+  let userAddress = event.params.userAddress.toString();
+  let profile = Profile.load(userAddress);
+
+  if (!profile) {
+    profile = new Profile(event.params.userAddress.toString());
+  }
+  profile.isVerified = event.params.isVerified;
+  profile.save();
 }

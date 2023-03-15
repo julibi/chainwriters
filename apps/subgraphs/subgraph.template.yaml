@@ -4,11 +4,11 @@ schema:
 dataSources:
   - kind: ethereum
     name: MoonpageManager
-    network: matic
+    network: mumbai
     source:
       address: '{{MoonpageManagerAddress}}'
       abi: MoonpageManager
-      startBlock: 34049676
+      startBlock: 31137530
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -64,11 +64,11 @@ dataSources:
       file: ./src/mapping.ts
   - kind: ethereum
     name: MoonpageCollection
-    network: matic
+    network: mumbai
     source:
       address: '{{MoonpageCollectionAddress}}'
       abi: MoonpageCollection
-      startBlock: 34049676
+      startBlock: 31137530
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -85,11 +85,11 @@ dataSources:
       file: ./src/mapping.ts
   - kind: ethereum
     name: AuctionsManager
-    network: matic
+    network: mumbai
     source:
       address: '{{AuctionsManagerAddress}}'
       abi: AuctionsManager
-      startBlock: 34049676
+      startBlock: 31137530
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -109,11 +109,11 @@ dataSources:
       file: ./src/mapping.ts
   - kind: ethereum
     name: BallotsFactory
-    network: matic
+    network: mumbai
     source:
       address: '{{BallotsFactoryAddress}}'
       abi: BallotsFactory
-      startBlock: 34049676
+      startBlock: 31137530
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -126,7 +126,44 @@ dataSources:
       eventHandlers:
         - event: BallotCreated(uint256,address)
           handler: handleBallotCreated
-
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: MoonpageProfiles
+    network: mumbai
+    source:
+      address: '{{MoonpageProfilesAddress}}'
+      abi: MoonpageProfiles
+      startBlock: 31137530
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Project
+      abis:
+        - name: MoonpageProfiles
+          file: ./abis/MoonpageProfiles.json
+      eventHandlers:
+        - event: ProfileConfigured(address,string,string,string,string)
+          handler: handleProfileConfigured
+        - event: SocialsConfigured(address,string,string,string,string,string,string)
+          handler: handleSocialsConfigured
+        - event: DiscordConfigured(address,string)
+          handler: handleDiscordConfigured
+        - event: InstagramConfigured(address,string)
+          handler: handleInstagramConfigured
+        - event: ParagraphxyzConfigured(address,string)
+          handler: handleParagraphxyzConfigured
+        - event: SubstackConfigured(address,string)
+          handler: handleSubstackConfigured
+        - event: TwitterConfigured(address,string)
+          handler: handleTwitterConfigured
+        - event: YoutubeConfigured(address,string)
+          handler: handleYoutubeConfigured
+        - event: ProfileReset(address)
+          handler: handleProfileReset
+        - event: VerificationSet(address,bool)
+          handler: handleVerificationSet
       file: ./src/mapping.ts
 templates:
   - name: Ballot

@@ -865,3 +865,224 @@ export class Project extends Entity {
     }
   }
 }
+
+export class Profile extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save Profile entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save Profile entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("Profile", id.toString(), this);
+    }
+  }
+
+  static load(id: string): Profile | null {
+    return changetype<Profile | null>(store.get("Profile", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get address(): Bytes {
+    let value = this.get("address");
+    return value!.toBytes();
+  }
+
+  set address(value: Bytes) {
+    this.set("address", Value.fromBytes(value));
+  }
+
+  get name(): string | null {
+    let value = this.get("name");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set name(value: string | null) {
+    if (!value) {
+      this.unset("name");
+    } else {
+      this.set("name", Value.fromString(<string>value));
+    }
+  }
+
+  get imageIPFSHash(): string | null {
+    let value = this.get("imageIPFSHash");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set imageIPFSHash(value: string | null) {
+    if (!value) {
+      this.unset("imageIPFSHash");
+    } else {
+      this.set("imageIPFSHash", Value.fromString(<string>value));
+    }
+  }
+
+  get descriptionIPFSHash(): string | null {
+    let value = this.get("descriptionIPFSHash");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set descriptionIPFSHash(value: string | null) {
+    if (!value) {
+      this.unset("descriptionIPFSHash");
+    } else {
+      this.set("descriptionIPFSHash", Value.fromString(<string>value));
+    }
+  }
+
+  get website(): string | null {
+    let value = this.get("website");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set website(value: string | null) {
+    if (!value) {
+      this.unset("website");
+    } else {
+      this.set("website", Value.fromString(<string>value));
+    }
+  }
+
+  get discord(): string | null {
+    let value = this.get("discord");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set discord(value: string | null) {
+    if (!value) {
+      this.unset("discord");
+    } else {
+      this.set("discord", Value.fromString(<string>value));
+    }
+  }
+
+  get instagram(): string | null {
+    let value = this.get("instagram");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set instagram(value: string | null) {
+    if (!value) {
+      this.unset("instagram");
+    } else {
+      this.set("instagram", Value.fromString(<string>value));
+    }
+  }
+
+  get paragraphxyz(): string | null {
+    let value = this.get("paragraphxyz");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set paragraphxyz(value: string | null) {
+    if (!value) {
+      this.unset("paragraphxyz");
+    } else {
+      this.set("paragraphxyz", Value.fromString(<string>value));
+    }
+  }
+
+  get substack(): string | null {
+    let value = this.get("substack");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set substack(value: string | null) {
+    if (!value) {
+      this.unset("substack");
+    } else {
+      this.set("substack", Value.fromString(<string>value));
+    }
+  }
+
+  get twitter(): string | null {
+    let value = this.get("twitter");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set twitter(value: string | null) {
+    if (!value) {
+      this.unset("twitter");
+    } else {
+      this.set("twitter", Value.fromString(<string>value));
+    }
+  }
+
+  get youtube(): string | null {
+    let value = this.get("youtube");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set youtube(value: string | null) {
+    if (!value) {
+      this.unset("youtube");
+    } else {
+      this.set("youtube", Value.fromString(<string>value));
+    }
+  }
+
+  get isVerified(): boolean {
+    let value = this.get("isVerified");
+    return value!.toBoolean();
+  }
+
+  set isVerified(value: boolean) {
+    this.set("isVerified", Value.fromBoolean(value));
+  }
+}
