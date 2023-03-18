@@ -3,10 +3,6 @@ import { useWeb3React } from '@web3-react/core';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import {
-  SectionTitle,
-  SectionTitleWrapper,
-} from '../components/HomePage/ProjectSection';
-import {
   BASE_BORDER_RADIUS,
   ElementThemeProps,
   FONT_SERIF_BOLD,
@@ -20,6 +16,7 @@ import { useUser } from '../hooks/user/useUser';
 import { useTheme } from '../hooks/theme';
 import OwnProject from '../components/Profile/OwnProject';
 import ContributorProject from '../components/Profile/ContributorProject';
+import ProfileSection from '../components/Profile/ProfileSection';
 
 const Root = styled.div`
   display: flex;
@@ -100,9 +97,6 @@ const MyProfile = () => {
 
   return (
     <Root>
-      <SectionTitleWrapper>
-        <SectionTitle>My Profile</SectionTitle>
-      </SectionTitleWrapper>
       {!account ? (
         <NotExist>
           <NotExistText>{`Looks like you're not connected.`}</NotExistText>
@@ -110,6 +104,7 @@ const MyProfile = () => {
       ) : (
         <>
           <Section>
+            <ProfileSection />
             <SubHeader theme={theme}>My NFTs</SubHeader>
             {ownedNftsLoading && <Loading height={300} />}
             {!ownedNftsLoading && !detailedNfts && (

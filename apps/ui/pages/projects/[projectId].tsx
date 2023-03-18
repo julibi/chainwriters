@@ -102,15 +102,19 @@ const InfoRight = styled.div<ElementThemeProps>`
 `;
 
 const ImageWrapper = styled.div`
-  position: relative;
-  height: 100%;
-  margin-block-end: 2rem;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-block-end: 3rem;
+
   span {
     width: 100% !important;
     height: 100% !important;
 
     img {
-      object-fit: contain;
+      object-fit: cover;
+      // filter: grayscale(100%);
     }
   }
 `;
