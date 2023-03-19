@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import Image from 'next/image';
 import { utils } from 'ethers';
 import { useENSName } from 'use-ens-name';
 import { useWeb3React } from '@web3-react/core';
+import Jazzicon from '@metamask/jazzicon';
 import Loading from '../Loading';
 import { truncateAddress } from '../WalletIndicator';
 import { PINATA_GATE_URI } from '../../constants';
@@ -11,6 +12,7 @@ import useProfile from '../../hooks/useProfile';
 import { useTheme } from '../../hooks/theme/useTheme';
 import { useName } from '../../hooks/useName';
 import { ElementThemeProps } from '../../themes';
+import AccountAvatar from '../AccountAvatar';
 
 const Root = styled.div`
   width: 100%;
@@ -79,11 +81,17 @@ const Website = styled.div``;
 
 const ProfileSection = () => {
   // is this my profile or someone elses'?
+  const ref = useRef(null);
   const theme = useTheme();
   const { account } = useWeb3React();
   const { profile, isProfileLoading } = useProfile(account);
   const name = useName(account);
   const ensName = useENSName(account);
+  const [height, setHeight] = useState(150);
+
+  useEffect(() => {
+    setHeight(ref?.current?.clientHeight);
+  }, [ref]);
 
   if (isProfileLoading) {
     return <Loading height={200} />;
@@ -92,19 +100,30 @@ const ProfileSection = () => {
   return (
     <Root>
       <Frame theme={theme}>
-        <ImageWrapper>
-          <Image
-            height={'100%'}
-            width={'100%'}
-            src={
-              profile?.imageIPFSHash
-                ? `${PINATA_GATE_URI}${profile.imageIPFSHash}`
-                : '/ImgPlaceholder.png'
-            }
-            alt={`Image of ${profile?.name}`}
-            priority
-            layout="responsive"
-          />
+        <ImageWrapper ref={ref as any}>
+          {profile?.imageIPFSHash && (
+            <Image
+              height={'100%'}
+              width={'100%'}
+              src={`${PINATA_GATE_URI}${profile.imageIPFSHash}`}
+              alt={`Image of ${profile?.name}`}
+              priority
+              layout="responsive"
+            />
+          )}
+          {!profile?.imageIPFSHash && account && (
+            <AccountAvatar address={account} size={height} />
+          )}
+          {!profile?.imageIPFSHash && !account && (
+            <Image
+              height={'100%'}
+              width={'100%'}
+              src="./ImagePlaceholder.png"
+              alt={`Placeholder Image`}
+              priority
+              layout="responsive"
+            />
+          )}
         </ImageWrapper>
       </Frame>
       <ProfileInfo>

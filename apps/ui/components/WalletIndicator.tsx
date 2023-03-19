@@ -45,6 +45,12 @@ const Item = styled.div`
   margin-inline-end: 1rem;
 `;
 
+const AvatarWrapper = styled.div`
+  @media (max-width: 768px) {
+    display: none;
+  }
+`;
+
 export interface WalletIndicatorProps {
   address: string | undefined | null;
   chain: number | undefined | null;
@@ -103,7 +109,9 @@ const WalletIndicator = ({
           )}
 
           {chain && supportedChainIds.includes(chain) && (
-            <AccountAvatar address={address} />
+            <AvatarWrapper>
+              <AccountAvatar address={address} />
+            </AvatarWrapper>
           )}
           {address && (
             <Tooltip content="Disconnect wallet">
