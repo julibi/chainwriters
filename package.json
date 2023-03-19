@@ -56,7 +56,8 @@
     "slate-history": "^0.66.0",
     "slate-react": "^0.81.0",
     "styled-components": "5.3.3",
-    "tslib": "^2.0.0"
+    "tslib": "^2.0.0",
+    "use-ens-name": "^0.1.8"
   },
   "devDependencies": {
     "@nrwl/cli": "13.8.5",

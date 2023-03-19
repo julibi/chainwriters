@@ -1,17 +1,22 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import Image from 'next/image';
+import { utils } from 'ethers';
+import { useENSName } from 'use-ens-name';
 import { useWeb3React } from '@web3-react/core';
+import Loading from '../Loading';
+import { truncateAddress } from '../WalletIndicator';
+import { PINATA_GATE_URI } from '../../constants';
 import useProfile from '../../hooks/useProfile';
-import { ElementThemeProps } from '../../themes';
 import { useTheme } from '../../hooks/theme/useTheme';
 import { useName } from '../../hooks/useName';
-import { useENS } from '../../hooks/useENS';
+import { ElementThemeProps } from '../../themes';
 
 const Root = styled.div`
   width: 100%;
   display: flex;
   align-items: center;
+  justify-content: center;
 
   @media (max-width: 900px) {
     flex-direction: column;
@@ -57,19 +62,32 @@ const ImageWrapper = styled.div`
   }
 `;
 const ProfileInfo = styled.div`
-  flex: 1;
-  disply: flex;
+  height: 300px;
+  display: flex;
   flex-direction: column;
+  justify-content: space-between;
+
+  @media (max-width: 900px) {
+    width: 170px;
+    height: 170px;
+  }
 `;
 
+const AddressGroup = styled.div``;
+const Description = styled.div``;
+const Website = styled.div``;
+
 const ProfileSection = () => {
-  // is this my profile or someone elses?
+  // is this my profile or someone elses'?
   const theme = useTheme();
   const { account } = useWeb3React();
-
   const { profile, isProfileLoading } = useProfile(account);
   const name = useName(account);
-  const { ensName } = useENS(account);
+  const ensName = useENSName(account);
+
+  if (isProfileLoading) {
+    return <Loading height={200} />;
+  }
 
   return (
     <Root>
@@ -78,19 +96,27 @@ const ProfileSection = () => {
           <Image
             height={'100%'}
             width={'100%'}
-            src="/Juli.jpg"
-            alt="Testimage"
+            src={
+              profile?.imageIPFSHash
+                ? `${PINATA_GATE_URI}${profile.imageIPFSHash}`
+                : '/ImgPlaceholder.png'
+            }
+            alt={`Image of ${profile?.name}`}
             priority
             layout="responsive"
           />
         </ImageWrapper>
       </Frame>
       <ProfileInfo>
-        <h2>{name}</h2>
-        <p>{ensName}</p>
-        <p>{account}</p>
-        <p>{'description'}</p>
-        <p>{'website'}</p>
+        <AddressGroup>
+          <h2>{utils.isAddress(name) ? truncateAddress(name) : name}</h2>
+          <p>{ensName}</p>
+          <p>{profile?.address ?? account}</p>
+        </AddressGroup>
+        {profile?.descriptionIPFSHash && (
+          <Description>{profile?.descriptionIPFSHash}</Description>
+        )}
+        {profile?.website && <Website>{profile?.website}</Website>}
       </ProfileInfo>
     </Root>
   );

@@ -14,6 +14,7 @@ const useProfile = (profileAddress: string) => {
       const {
         address,
         id,
+        imageIPFSHash,
         name,
         website,
         descriptionIPFSHash,
@@ -29,6 +30,7 @@ const useProfile = (profileAddress: string) => {
         setProfile({
           address,
           id,
+          imageIPFSHash,
           name,
           website,
           descriptionIPFSHash,
