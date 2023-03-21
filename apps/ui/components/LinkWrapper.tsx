@@ -9,11 +9,13 @@ interface LinkWrapperProps {
   children: ReactNode;
   url: string;
   target?: '_blank' | '_self';
+  passHref: boolean;
 }
 type RootProps = {
   underline: LinkWrapperProps['underline'];
   flex: LinkWrapperProps['flex'];
   theme: Theme;
+  passHref: boolean;
 };
 const Root = styled.a<RootProps>`
   color: ${({ theme }) => theme.MAIN_TEXT_COLOR};
@@ -27,6 +29,7 @@ const LinkWrapper = ({
   target = '_blank',
   underline = true,
   flex = false,
+  passHref = false,
 }: LinkWrapperProps) => {
   const theme = useTheme();
 
@@ -38,6 +41,7 @@ const LinkWrapper = ({
       rel="noopener noreferrer"
       href={url}
       theme={theme}
+      passHref={passHref}
     >
       {children}
     </Root>

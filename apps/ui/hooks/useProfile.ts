@@ -56,8 +56,8 @@ const useProfile = (profileAddress: string) => {
   }, [profileAddress, ProfilesContract, fetchProfile]);
 
   return useMemo(
-    () => ({ profile, isProfileLoading: isLoading }),
-    [profile, isLoading]
+    () => ({ profile, isProfileLoading: isLoading, fetchProfile }),
+    [profile, isLoading, fetchProfile]
   );
 };
 

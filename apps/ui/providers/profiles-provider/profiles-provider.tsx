@@ -18,6 +18,8 @@ import { WriteActionStatus } from '../manager-provider/manager-provider.types';
 
 import { getGasMargin } from '../../utils/getGasMargin';
 import useProfilesContract from '../../hooks/useProfilesContract';
+import pinProfileToPinata from '../../utils/pinProfileToPinata';
+import unpinFromPinata from '../../utils/unpinFromPinata';
 
 const defaultContext: ProfilesApi = {
   configureProfile: async () => undefined,
@@ -49,6 +51,7 @@ export function ProfilesProvider({ children }: ProfilesProviderProps) {
 
   const configureProfile = useCallback(
     async ({
+      account,
       name,
       imageIPFSHash,
       descriptionIPFSHash,
@@ -71,12 +74,16 @@ export function ProfilesProvider({ children }: ProfilesProviderProps) {
         toast.info(<ToastLink message={'Configuring profile...'} />);
         Profiles.provider.once(hash, async (transaction) => {
           await Tx.wait();
+
+          // pin metadata to IPFS
+          await pinProfileToPinata(imageIPFSHash, account, 'image');
+          await pinProfileToPinata(descriptionIPFSHash, account, 'description');
+
           setConfigureProfileStatus('success');
           toast.info(<ToastLink message={'Success!'} />);
           onSuccess?.();
         });
       } catch (e) {
-        console.log({ e });
         setConfigureProfileStatus('error');
         toast.error(<ToastLink message={'Something went wrong!'} />);
         onError?.(e);
@@ -128,10 +135,11 @@ export function ProfilesProvider({ children }: ProfilesProviderProps) {
   );
 
   const resetProfile = useCallback(
-    async ({ onSuccess, onError }: ResetProfileArgs) => {
+    async ({ account, onSuccess, onError }: ResetProfileArgs) => {
       try {
         setResetProfileStatus('confirming');
         const { maxFeePerGas, maxPriorityFeePerGas } = await getGasMargin();
+        const profileData = await Profiles.profile(account);
         const Tx = await Profiles.resetProfile({
           maxFeePerGas,
           maxPriorityFeePerGas,
@@ -141,6 +149,11 @@ export function ProfilesProvider({ children }: ProfilesProviderProps) {
         toast.info(<ToastLink message={'Resetting socials...'} />);
         Profiles.provider.once(hash, async (transaction) => {
           await Tx.wait();
+
+          // unpin metadata from IPFS
+          await unpinFromPinata(profileData.imageIPFSHash);
+          await unpinFromPinata(profileData.descriptionIPFSHash);
+
           setResetProfileStatus('success');
           toast.info(<ToastLink message={'Success!'} />);
           onSuccess?.();

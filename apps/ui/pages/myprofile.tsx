@@ -104,7 +104,7 @@ const MyProfile = () => {
       ) : (
         <>
           <Section>
-            <ProfileSection />
+            <ProfileSection isMyProfile />
             <SubHeader theme={theme}>My NFTs</SubHeader>
             {ownedNftsLoading && <Loading height={300} />}
             {!ownedNftsLoading && !detailedNfts && (

@@ -27,6 +27,7 @@ export type ProfilesProviderProps = {
 };
 
 export type ConfigureProfileArgs = {
+  account: string;
   name: string;
   imageIPFSHash: string;
   descriptionIPFSHash: string;
@@ -47,6 +48,7 @@ export type ConfigureSocialsArgs = {
 };
 
 export type ResetProfileArgs = {
+  account: string;
   onSuccess?: () => void;
   onError?: (e: any) => void;
 };
