@@ -63,6 +63,10 @@ export function ProfilesProvider({ children }: ProfilesProviderProps) {
     }: ConfigureProfileArgs) => {
       try {
         setConfigureProfileStatus('confirming');
+        const {
+          descriptionIPFSHash: oldDescriptionCID,
+          imageIPFSHash: oldImageCID,
+        } = await Profiles.profiles(account);
         const { maxFeePerGas, maxPriorityFeePerGas } = await getGasMargin();
         const Tx = await Profiles.configureProfile(
           name,
@@ -77,15 +81,22 @@ export function ProfilesProvider({ children }: ProfilesProviderProps) {
         Profiles.provider.once(hash, async (transaction) => {
           await Tx.wait();
 
-          // pin metadata to IPFS
-          hasNewImageHash &&
-            (await pinProfileToPinata(imageIPFSHash, account, 'image'));
-          hasNewDescriptionHash &&
-            (await pinProfileToPinata(
+          // pin new metadata to IPFS & unpin if needed
+          if (hasNewImageHash) {
+            await pinProfileToPinata(imageIPFSHash, account, 'image');
+
+            oldImageCID && (await unpinFromPinata(oldImageCID));
+          }
+
+          if (hasNewDescriptionHash) {
+            await pinProfileToPinata(
               descriptionIPFSHash,
               account,
               'description'
-            ));
+            );
+
+            oldDescriptionCID && (await unpinFromPinata(oldDescriptionCID));
+          }
 
           setConfigureProfileStatus('success');
           toast.info(<ToastLink message={'Success!'} />);

@@ -10,7 +10,7 @@ const pinProfileToPinata = async (
   address: string,
   type: DataType
 ) => {
-  // if (process.env.NEXT_PUBLIC_ENVIRONMENT === 'DEV') return;
+  if (process.env.NEXT_PUBLIC_ENVIRONMENT === 'DEV') return;
   const timestamp = new Date().getTime();
   const name = `${address}-${type}–${timestamp}`;
   try {
