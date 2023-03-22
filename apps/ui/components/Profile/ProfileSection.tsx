@@ -1,25 +1,28 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import Image from 'next/image';
+import Link from 'next/link';
 import { utils } from 'ethers';
 import { useENSName } from 'use-ens-name';
-import { useWeb3React } from '@web3-react/core';
+import CheckCircle from '@material-ui/icons/CheckCircle';
+import ConfigureProfileModal from './ConfigureProfileModal';
+import AccountAvatar from '../AccountAvatar';
+import EditButton from '../EditButton';
 import Loading from '../Loading';
+import { Tooltip } from '../Tooltip';
 import { truncateAddress } from '../WalletIndicator';
 import { IPFS_BASE_URI, PINATA_GATE_URI } from '../../constants';
-import useProfile from '../../hooks/useProfile';
 import { useTheme } from '../../hooks/theme/useTheme';
+import useProfile from '../../hooks/useProfile';
 import { useName } from '../../hooks/useName';
-import { BASE_BORDER_RADIUS, ElementThemeProps } from '../../themes';
-import AccountAvatar from '../AccountAvatar';
-import Link from 'next/link';
-import EditButton from '../EditButton';
-import ConfigureProfileModal from './ConfigureProfileModal';
 import { useProfiles } from '../../hooks/profiles';
+import { BASE_BORDER_RADIUS, ElementThemeProps, POP } from '../../themes';
+import { checkTargetForNewValues } from 'framer-motion';
 
 const Root = styled.div`
   position: relative;
   width: 100%;
+  max-width: 1200px;
   display: flex;
   flex-direction: column;
   margin-block-end: 3rem;
@@ -94,6 +97,7 @@ const Description = styled.div`
 `;
 const Website = styled.div`
   margin-block-end: 1rem;
+  word-break: break-all;
 `;
 
 const SocialsWrapper = styled.div`
@@ -115,15 +119,15 @@ const Social = styled.div<ElementThemeProps>`
 `;
 
 type ProfileSectionProps = {
+  account: string;
   isMyProfile: boolean;
 };
 
-const ProfileSection = ({ isMyProfile }: ProfileSectionProps) => {
+const ProfileSection = ({ account, isMyProfile }: ProfileSectionProps) => {
   // is this my profile or someone elses'?
-
   const ref = useRef(null);
   const theme = useTheme();
-  const { account } = useWeb3React();
+
   const { profile, isProfileLoading, fetchProfile } = useProfile(account);
   const { configureProfile } = useProfiles();
   const name = useName(account);
@@ -163,13 +167,22 @@ const ProfileSection = ({ isMyProfile }: ProfileSectionProps) => {
   }, [profile?.descriptionIPFSHash]);
 
   const handleConfigureProfile = useCallback(
-    async ({ name, imageIPFSHash, descriptionIPFSHash, website }) => {
+    async ({
+      name,
+      imageIPFSHash,
+      descriptionIPFSHash,
+      website,
+      hasNewDescriptionHash,
+      hasNewImageHash,
+    }) => {
       setIsConfiguringProfile(true);
       await configureProfile({
         account,
         name,
         imageIPFSHash,
         descriptionIPFSHash,
+        hasNewDescriptionHash,
+        hasNewImageHash,
         website,
         onError: () => {
           setIsConfiguringProfile(false);
@@ -236,7 +249,7 @@ const ProfileSection = ({ isMyProfile }: ProfileSectionProps) => {
               <Image
                 height={'100%'}
                 width={'100%'}
-                src="./ImagePlaceholder.png"
+                src="/ImagePlaceholder.png"
                 alt={`Placeholder Image`}
                 priority
                 layout="responsive"
@@ -246,7 +259,14 @@ const ProfileSection = ({ isMyProfile }: ProfileSectionProps) => {
         </Frame>
         <ProfileInfo>
           <AddressGroup>
-            <h2>{utils.isAddress(name) ? truncateAddress(name) : name}</h2>
+            <h2>
+              {utils.isAddress(name) ? truncateAddress(name) : name}{' '}
+              {profile?.isVerified && (
+                <Tooltip content="Verified Member">
+                  <CheckCircle htmlColor={POP} />
+                </Tooltip>
+              )}
+            </h2>
             <p>{ensName}</p>
             <p>
               {profile?.address
@@ -279,6 +299,7 @@ const ProfileSection = ({ isMyProfile }: ProfileSectionProps) => {
         <ConfigureProfileModal
           currentName={utils.isAddress(name) ? null : name} // if plain address, name is null
           currentDescription={description}
+          currentDescriptionIPFSHash={profile?.descriptionIPFSHash}
           currentWebsite={profile?.website}
           currentImageIPFSHash={profile?.imageIPFSHash}
           onClose={() => setShowProfileConfigureModal(false)}

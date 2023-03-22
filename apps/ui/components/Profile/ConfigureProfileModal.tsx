@@ -36,8 +36,16 @@ interface ConfigureProfileModalProps {
   currentName: string | null;
   currentWebsite: string | null;
   currentDescription: string | null;
+  currentDescriptionIPFSHash: string | null;
   currentImageIPFSHash: string | null;
-  onConfigure: ({ name, imageIPFSHash, descriptionIPFSHash, website }) => void;
+  onConfigure: ({
+    name,
+    imageIPFSHash,
+    descriptionIPFSHash,
+    website,
+    hasNewDescriptionHash,
+    hasNewImageHash,
+  }) => void;
   pending: boolean;
 }
 
@@ -45,6 +53,7 @@ const ConfigureProfileModal = ({
   currentName,
   currentWebsite,
   currentDescription,
+  currentDescriptionIPFSHash,
   currentImageIPFSHash,
   onClose,
   onConfigure,
@@ -93,11 +102,23 @@ const ConfigureProfileModal = ({
 
       let profileImgCID = '';
       let descriptionCID = '';
+      let hasNewDescriptionHash = false;
+      let hasNewImageHash = false;
       if (imgBuffer) {
         profileImgCID = (await client.add(imgBuffer)).path;
+        hasNewImageHash = true;
+      } else {
+        if (currentImageIPFSHash) {
+          profileImgCID = currentImageIPFSHash;
+        }
       }
-      if (description) {
+      if (description && description !== currentDescription) {
         descriptionCID = (await client.add(description)).path;
+        hasNewDescriptionHash = true;
+      } else {
+        if (currentDescriptionIPFSHash) {
+          descriptionCID = currentDescriptionIPFSHash;
+        }
       }
       setIsUploadingToIPFS(false);
 
@@ -106,13 +127,25 @@ const ConfigureProfileModal = ({
         imageIPFSHash: profileImgCID,
         descriptionIPFSHash: descriptionCID,
         website,
+        hasNewDescriptionHash,
+        hasNewImageHash,
       });
     } catch (e: unknown) {
       toast.error(
         'Something went wrong while trying to uplod your data to IPFS.'
       );
     }
-  }, [client, description, imgBuffer, name, onConfigure, website]);
+  }, [
+    client,
+    currentDescription,
+    currentDescriptionIPFSHash,
+    currentImageIPFSHash,
+    description,
+    imgBuffer,
+    name,
+    onConfigure,
+    website,
+  ]);
 
   return (
     <BaseModal onClose={onClose}>

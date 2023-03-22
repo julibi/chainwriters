@@ -32,6 +32,8 @@ export type ConfigureProfileArgs = {
   imageIPFSHash: string;
   descriptionIPFSHash: string;
   website: string;
+  hasNewDescriptionHash: boolean;
+  hasNewImageHash: boolean;
   onSuccess?: () => void;
   onError?: (e: any) => void;
 };

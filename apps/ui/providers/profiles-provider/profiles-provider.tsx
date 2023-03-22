@@ -55,6 +55,8 @@ export function ProfilesProvider({ children }: ProfilesProviderProps) {
       name,
       imageIPFSHash,
       descriptionIPFSHash,
+      hasNewDescriptionHash,
+      hasNewImageHash,
       website,
       onSuccess,
       onError,
@@ -76,8 +78,14 @@ export function ProfilesProvider({ children }: ProfilesProviderProps) {
           await Tx.wait();
 
           // pin metadata to IPFS
-          await pinProfileToPinata(imageIPFSHash, account, 'image');
-          await pinProfileToPinata(descriptionIPFSHash, account, 'description');
+          hasNewImageHash &&
+            (await pinProfileToPinata(imageIPFSHash, account, 'image'));
+          hasNewDescriptionHash &&
+            (await pinProfileToPinata(
+              descriptionIPFSHash,
+              account,
+              'description'
+            ));
 
           setConfigureProfileStatus('success');
           toast.info(<ToastLink message={'Success!'} />);

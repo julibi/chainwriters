@@ -19,6 +19,7 @@ import ContributorProject from '../components/Profile/ContributorProject';
 import ProfileSection from '../components/Profile/ProfileSection';
 
 const Root = styled.div`
+  width: 100%;
   display: flex;
   flex-direction: column;
   margin: 3rem;
@@ -104,7 +105,49 @@ const MyProfile = () => {
       ) : (
         <>
           <Section>
-            <ProfileSection isMyProfile />
+            <ProfileSection account={account} isMyProfile />
+            <SubHeader theme={theme}>My Projects</SubHeader>
+            {ownProjectsLoading && <Loading height={300} />}
+            {!ownProjectsLoading && !ownProjects?.length && (
+              <NotExist>
+                <NotExistText>{`You have not created any projects on Moonpage.`}</NotExistText>
+              </NotExist>
+            )}
+            {!ownProjectsLoading &&
+              ownProjects?.map((project, idx) => (
+                <OwnProject
+                  key={idx}
+                  title={project.title}
+                  onClickDetails={(e) => handleClickDetails(e, project.id)}
+                  onClickRead={(e) => handleClickRead(e, project.id)}
+                />
+              ))}
+          </Section>
+          <Section>
+            <SubHeader theme={theme}>My Contributions</SubHeader>
+            {contributionsLoading && <Loading height={300} />}
+            {!contributionsLoading && !contributions?.length && (
+              <NotExist>
+                <NotExistText>{`You have not contributed to any Moonpage project.`}</NotExistText>
+              </NotExist>
+            )}
+            {!contributionsLoading &&
+              contributions?.map((contrib, idx) => (
+                <ContributorProject
+                  key={idx}
+                  creator={contrib.project.creator}
+                  title={contrib.project.title}
+                  projectId={Number(contrib.project.id)}
+                  contributionRole={contrib.role}
+                  contributionSharePercentage={Number(contrib.sharePercentage)}
+                  onClickDetails={(e) =>
+                    handleClickDetails(e, contrib.project.id)
+                  }
+                  onClickRead={(e) => handleClickRead(e, contrib.project.id)}
+                />
+              ))}
+          </Section>
+          <Section>
             <SubHeader theme={theme}>My NFTs</SubHeader>
             {ownedNftsLoading && <Loading height={300} />}
             {!ownedNftsLoading && !detailedNfts && (
@@ -124,48 +167,6 @@ const MyProfile = () => {
                 ))}
               </ItemsWrapper>
             )}
-          </Section>
-          <Section>
-            <SubHeader theme={theme}>My Projects</SubHeader>
-            {ownProjectsLoading && <Loading height={300} />}
-            {!ownProjectsLoading && !ownProjects?.length && (
-              <NotExist>
-                <NotExistText>{`You have not created any Moonpage subcollections.`}</NotExistText>
-              </NotExist>
-            )}
-            {!ownProjectsLoading &&
-              ownProjects?.map((project, idx) => (
-                <OwnProject
-                  key={idx}
-                  title={project.title}
-                  onClickDetails={(e) => handleClickDetails(e, project.id)}
-                  onClickRead={(e) => handleClickRead(e, project.id)}
-                />
-              ))}
-          </Section>
-          <Section>
-            <SubHeader theme={theme}>My Contributions</SubHeader>
-            {contributionsLoading && <Loading height={300} />}
-            {!contributionsLoading && !contributions?.length && (
-              <NotExist>
-                <NotExistText>{`You have not created any Moonpage subcollections.`}</NotExistText>
-              </NotExist>
-            )}
-            {!contributionsLoading &&
-              contributions?.map((contrib, idx) => (
-                <ContributorProject
-                  key={idx}
-                  creator={contrib.project.creator}
-                  title={contrib.project.title}
-                  projectId={Number(contrib.project.id)}
-                  contributionRole={contrib.role}
-                  contributionSharePercentage={Number(contrib.sharePercentage)}
-                  onClickDetails={(e) =>
-                    handleClickDetails(e, contrib.project.id)
-                  }
-                  onClickRead={(e) => handleClickRead(e, contrib.project.id)}
-                />
-              ))}
           </Section>
         </>
       )}
