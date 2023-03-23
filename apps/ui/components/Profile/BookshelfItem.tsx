@@ -26,7 +26,7 @@ const Item = styled.div<ElementThemeProps>`
   flex-direction: column;
   justify-content: space-between;
   width: 260px;
-  height: 360px;
+  height: 400px;
   margin: 1rem;
   padding: 1rem;
 
@@ -73,6 +73,12 @@ const Title = styled.h4`
 const Flex = styled.div`
   display: flex;
   justify-content: space-between;
+`;
+
+const FlexAlign = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 `;
 
 const Label = styled.span<ElementThemeProps>`
@@ -138,10 +144,10 @@ const BookshelfItem = ({
           <Label>Edition</Label>
           <div>{edition}</div>
         </Flex>
-        <Flex>
+        <FlexAlign>
           <Label theme={theme}>Author</Label>
           <ProfileLink account={creator} />
-        </Flex>
+        </FlexAlign>
         <Flex>
           <DetailsButton onClick={onClickDetails}>Project</DetailsButton>
           <ReadButton onClick={onClickRead}>Read</ReadButton>
