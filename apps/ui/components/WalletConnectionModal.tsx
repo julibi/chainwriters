@@ -18,6 +18,7 @@ import Title from './Title';
 import { switchNetwork } from '../utils/switchNetwork';
 import Checkbox from './Checkbox';
 import NextLink from './NextLink';
+import { isDev } from '../utils/isDev';
 
 type WalletConnectionModalProps = {
   onClose: () => void;
@@ -72,8 +73,7 @@ const ConnectorName = styled.span`
 
 const WalletConnectionModal = ({ onClose }: WalletConnectionModalProps) => {
   const theme = useTheme();
-  const isDev = process.env.NX_PUBLIC_ENVIRONMENT === 'DEV';
-  const [selectedNetwork, setSelectedNetwork] = useState(isDev ? 80001 : 137);
+  const [selectedNetwork, setSelectedNetwork] = useState(isDev() ? 80001 : 137);
   const [isTermsAccepted, setIsTermsAccepted] = useState(false);
   const { activate, chainId } = useWeb3React();
 
@@ -168,8 +168,8 @@ const WalletConnectionModal = ({ onClose }: WalletConnectionModalProps) => {
         <DropdownWrapper>
           <Dropdown
             isDisabled
-            preselected={networkDropdownItems[isDev ? 1 : 0]}
-            options={[networkDropdownItems[isDev ? 1 : 0]]}
+            preselected={networkDropdownItems[isDev() ? 1 : 0]}
+            options={[networkDropdownItems[isDev() ? 1 : 0]]}
             width={'100%'}
           />
         </DropdownWrapper>

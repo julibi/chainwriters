@@ -1,5 +1,6 @@
 import { BigNumber, utils } from 'ethers';
 import axios from 'axios';
+import { isDev } from './isDev';
 
 // add 15%
 // export const getGasMargin = (value?: any) => {
@@ -13,11 +14,10 @@ export const getGasMargin = async () => {
   let maxFeePerGas = BigNumber.from(40000000000); // fallback to 40 gwei
   let maxPriorityFeePerGas = BigNumber.from(40000000000); // fallback to 40 gwei
 
-  const isDev = process.env.NX_PUBLIC_ENVIRONMENT === 'DEV';
   try {
     const { data } = await axios({
       method: 'get',
-      url: isDev
+      url: isDev()
         ? 'https://gasstation-mumbai.matic.today/v2'
         : 'https://gasstation-mainnet.matic.network/v2',
     });
