@@ -7,13 +7,19 @@ import useProfile from '../hooks/useProfile';
 import { useName } from '../hooks/useName';
 import { utils } from 'ethers';
 import ProfileImage from './Profile/ProfileImage';
+import { CheckCircle } from '@material-ui/icons';
+import { FONT_SERIF_REGULAR, POP } from '../themes';
+import TooltippedIndicator from './TooltippedIndicator';
 
-const Root = styled.div`
+const Root = styled.span`
   display: flex;
+  align-items: center;
+  cursor: pointer;
 `;
 
 const ProfileSpan = styled.span`
   text-decoration: underline;
+  font-family: ${FONT_SERIF_REGULAR};
 
   :hover {
     cursor: pointer;
@@ -22,8 +28,8 @@ const ProfileSpan = styled.span`
 
 const ImageWrapper = styled.div`
   margin-inline-start: 10px;
-  width: 25px;
-  height: 25px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   overflow: hidden;
 
@@ -35,11 +41,10 @@ const ImageWrapper = styled.div`
       object-fit: cover;
     }
   }
+`;
 
-  @media (max-width: 900px) {
-    width: 20px;
-    height: 20px;
-  }
+const VerificationBadge = styled.div`
+  margin-block-start: 3px;
 `;
 
 type ProfileLinkProps = { account: string };
@@ -69,8 +74,17 @@ const ProfileLink = ({ account }: ProfileLinkProps) => {
   }, [ref]);
 
   return (
-    <Root>
-      <ProfileSpan onClick={handleClick}>
+    <Root onClick={handleClick}>
+      {profile?.isVerified && (
+        <VerificationBadge>
+          <TooltippedIndicator
+            backgroundColor="transparent"
+            tooltipContent={'Verified Member'}
+            icon={<CheckCircle htmlColor={POP} fontSize={'small'} />}
+          />
+        </VerificationBadge>
+      )}
+      <ProfileSpan>
         {utils.isAddress(name) ? truncateAddress(name) : name}
       </ProfileSpan>
       <ImageWrapper ref={ref as any}>

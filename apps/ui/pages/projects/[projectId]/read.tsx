@@ -99,12 +99,23 @@ const Wrapper = styled.div`
   ${animation(2)}
 `;
 
+const AuthorWrapper = styled.div`
+  display: flex;
+
+  padding-inline: 2rem;
+  margin-block-end: 1rem;
+
+  ${animation(2)}
+`;
+
 const SubTitle = styled.h3`
   font-family: ${FONT_SERIF_BOLD};
 `;
 
 const Author = styled.h3`
+  display: inline-block;
   font-family: ${FONT_SERIF_BOLD};
+  margin: 0 0.5rem 0 0;
 `;
 
 const TextWrapper = styled.div`
@@ -293,12 +304,10 @@ const Read = () => {
             <SubTitle>{project.subtitle}</SubTitle>
           </Wrapper>
         )}
-        <Wrapper>
-          <Author>
-            <span>By </span>
-            <ProfileLink account={project.creator} />
-          </Author>
-        </Wrapper>
+        <AuthorWrapper>
+          <Author>By</Author>
+          <ProfileLink account={project.creator} />
+        </AuthorWrapper>
       </FlexWrapper>
       {project.originalLanguage && (
         <Wrapper>

@@ -14,7 +14,6 @@ const Root = styled.div<RootProps>`
   background-color: ${({ backgroundColor }) => backgroundColor ?? '#364165'};
   border-radius: 50%;
   font-family: sans-serif;
-  margin-inline-start: 6px;
   display: flex;
   justify-content: center;
 `;
