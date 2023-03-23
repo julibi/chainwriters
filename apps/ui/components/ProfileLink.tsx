@@ -3,6 +3,9 @@ import { useWeb3React } from '@web3-react/core';
 import { useRouter } from 'next/router';
 import { useCallback } from 'react';
 import { truncateAddress } from './WalletIndicator';
+import useProfile from '../hooks/useProfile';
+import { useName } from '../hooks/useName';
+import { utils } from 'ethers';
 
 const ProfileSpan = styled.span`
   text-decoration: underline;
@@ -15,8 +18,10 @@ const ProfileSpan = styled.span`
 type ProfileLinkProps = { account: string };
 
 const ProfileLink = ({ account }: ProfileLinkProps) => {
+  const name = useName(account);
   const router = useRouter();
   const { account: loggedInAccount } = useWeb3React();
+
   const handleClick = useCallback(
     (e) => {
       e.preventDefault();
@@ -28,8 +33,11 @@ const ProfileLink = ({ account }: ProfileLinkProps) => {
     },
     [account, loggedInAccount, router]
   );
+
   return (
-    <ProfileSpan onClick={handleClick}>{truncateAddress(account)}</ProfileSpan>
+    <ProfileSpan onClick={handleClick}>
+      {utils.isAddress(name) ? truncateAddress(name) : name}
+    </ProfileSpan>
   );
 };
 

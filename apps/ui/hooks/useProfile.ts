@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Profile } from '../providers/profiles-provider/profiles-provider.types';
 import useProfilesContract from './useProfilesContract';
 
@@ -50,10 +50,13 @@ const useProfile = (profileAddress: string) => {
   }, [ProfilesContract, profileAddress]);
 
   useEffect(() => {
-    if (profileAddress && ProfilesContract) {
-      fetchProfile();
-    }
-  }, [profileAddress, ProfilesContract, fetchProfile]);
+    fetchProfile();
+
+    return () => {
+      setProfile(null);
+      setIsLoading(false);
+    };
+  }, [fetchProfile]);
 
   return useMemo(
     () => ({ profile, isProfileLoading: isLoading, fetchProfile }),

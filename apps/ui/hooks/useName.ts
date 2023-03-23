@@ -1,6 +1,5 @@
-import { useCallback, useEffect, useState } from 'react';
 import { useENSName } from 'use-ens-name';
-import useProfilesContract from './useProfilesContract';
+import useProfile from './useProfile';
 
 // tries to show custom Moonpage name from contract
 // then tries to get eth domain
@@ -8,19 +7,7 @@ import useProfilesContract from './useProfilesContract';
 
 export const useName = (address: string) => {
   const ensName = useENSName(address);
-  const ProfilesContract = useProfilesContract();
-  const [customName, setCustomName] = useState<string | null>(null);
+  const { profile } = useProfile(address);
 
-  const fetchName = useCallback(async () => {
-    if (!address || !ProfilesContract) return;
-    const profile = await ProfilesContract.profiles(address);
-
-    setCustomName(profile.name.length ? profile.name : null);
-  }, [address, ProfilesContract]);
-
-  useEffect(() => {
-    fetchName();
-  }, [fetchName]);
-
-  return customName ?? ensName ?? address;
+  return profile?.name?.length ? profile.name : ensName ?? address;
 };

@@ -17,7 +17,6 @@ import useProfile from '../../hooks/useProfile';
 import { useName } from '../../hooks/useName';
 import { useProfiles } from '../../hooks/profiles';
 import { BASE_BORDER_RADIUS, ElementThemeProps, POP } from '../../themes';
-import { checkTargetForNewValues } from 'framer-motion';
 
 const Root = styled.div`
   position: relative;
@@ -260,7 +259,7 @@ const ProfileSection = ({ account, isMyProfile }: ProfileSectionProps) => {
         <ProfileInfo>
           <AddressGroup>
             <h2>
-              {utils.isAddress(name) ? truncateAddress(name) : name}{' '}
+              {utils.isAddress(name) ? truncateAddress(name) : name}
               {profile?.isVerified && (
                 <Tooltip content="Verified Member">
                   <CheckCircle htmlColor={POP} />
