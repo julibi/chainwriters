@@ -24,7 +24,6 @@ import Title from '../../components/Title';
 import Loading from '../../components/Loading';
 import MintSection from '../../components/ProjectDetails/MintSection';
 import TooltippedIndicator from '../../components/TooltippedIndicator';
-import { truncateAddress } from '../../components/WalletIndicator';
 import { useCollection } from '../../hooks/collection';
 import { useAuctions } from '../../hooks/auctions';
 import { useGetProject } from '../../hooks/projects/useGetProject';
@@ -102,8 +101,8 @@ const InfoRight = styled.div<ElementThemeProps>`
 `;
 
 const ImageWrapper = styled.div`
-  width: 300px;
-  height: 300px;
+  position: relative;
+  height: 100%;
   border-radius: 50%;
   overflow: hidden;
   margin-block-end: 3rem;

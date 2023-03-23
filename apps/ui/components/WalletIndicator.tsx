@@ -1,10 +1,10 @@
 import React, { ReactElement } from 'react';
 import PowerSettingsNewIcon from '@material-ui/icons/PowerSettingsNew';
 import styled from 'styled-components';
-import AccountAvatar from './AccountAvatar';
 import { supportedChainIds, supportedChainMapping } from '../connectors';
 import { PrimaryButton, FONT_SERIF_BOLD } from '../themes';
 import { Tooltip } from './Tooltip';
+import ProfileLink from './ProfileLink';
 
 const Root = styled.div`
   display: flex;
@@ -31,7 +31,7 @@ const LogoutButton = styled(PrimaryButton)`
   padding: 0.3rem;
 
   @media (max-width: 900px) {
-    margin-inline: 0 1rem;
+    margin-inline: 1rem;
   }
 `;
 
@@ -43,12 +43,6 @@ const OnlyOnDesktop = styled.div`
 
 const Item = styled.div`
   margin-inline-end: 1rem;
-`;
-
-const AvatarWrapper = styled.div`
-  @media (max-width: 768px) {
-    display: none;
-  }
 `;
 
 export interface WalletIndicatorProps {
@@ -104,15 +98,7 @@ const WalletIndicator = ({
       ) : (
         <>
           <div>{getNetwork(chain)}</div>
-          {address && chain && supportedChainIds.includes(chain) && (
-            <Item>{truncateAddress(address)}</Item>
-          )}
-
-          {chain && supportedChainIds.includes(chain) && (
-            <AvatarWrapper>
-              <AccountAvatar address={address} />
-            </AvatarWrapper>
-          )}
+          {address && <ProfileLink account={address} />}
           {address && (
             <Tooltip content="Disconnect wallet">
               <LogoutButton onClick={deactivate}>

@@ -1,12 +1,10 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
-import Image from 'next/image';
 import Link from 'next/link';
 import { utils } from 'ethers';
 import { useENSName } from 'use-ens-name';
 import CheckCircle from '@material-ui/icons/CheckCircle';
 import ConfigureProfileModal from './ConfigureProfileModal';
-import AccountAvatar from '../AccountAvatar';
 import EditButton from '../EditButton';
 import Loading from '../Loading';
 import { Tooltip } from '../Tooltip';
@@ -17,6 +15,7 @@ import useProfile from '../../hooks/useProfile';
 import { useName } from '../../hooks/useName';
 import { useProfiles } from '../../hooks/profiles';
 import { BASE_BORDER_RADIUS, ElementThemeProps, POP } from '../../themes';
+import ProfileImage from './ProfileImage';
 
 const Root = styled.div`
   position: relative;
@@ -125,17 +124,14 @@ type ProfileSectionProps = {
 };
 
 const ProfileSection = ({ account, isMyProfile }: ProfileSectionProps) => {
-  // is this my profile or someone elses'?
   const ref = useRef(null);
   const theme = useTheme();
-
   const { profile, isProfileLoading, fetchProfile } = useProfile(account);
   const { configureProfile } = useProfiles();
   const name = useName(account);
   const ensName = useENSName(account);
   const [height, setHeight] = useState(150);
   const [description, setDescription] = useState<string | null>(null);
-  const [fallbackImageUrl, setFallbackImageUrl] = useState<string | null>(null);
   const [showProfileConfigureModal, setShowProfileConfigureModal] =
     useState<boolean>(false);
   const [isConfiguringProfile, setIsConfiguringProfile] =
@@ -200,12 +196,12 @@ const ProfileSection = ({ account, isMyProfile }: ProfileSectionProps) => {
   );
 
   useEffect(() => {
-    setHeight(ref?.current?.clientHeight);
-  }, [ref]);
-
-  useEffect(() => {
     fetchDescription();
   }, [fetchDescription]);
+
+  useEffect(() => {
+    setHeight(ref?.current?.clientHeight);
+  }, [ref]);
 
   if (isProfileLoading) {
     return <Loading height={200} />;
@@ -216,37 +212,11 @@ const ProfileSection = ({ account, isMyProfile }: ProfileSectionProps) => {
       <MainProfileData>
         <Frame theme={theme}>
           <ImageWrapper ref={ref as any}>
-            {profile?.imageIPFSHash && (
-              <Image
-                onError={() => {
-                  setFallbackImageUrl(
-                    `${IPFS_BASE_URI}${profile.imageIPFSHash}`
-                  );
-                }}
-                height={'100%'}
-                width={'100%'}
-                src={
-                  fallbackImageUrl ??
-                  `${PINATA_GATE_URI}${profile.imageIPFSHash}`
-                }
-                alt={`Image of ${profile?.name}`}
-                priority
-                layout="responsive"
-              />
-            )}
-            {!profile?.imageIPFSHash && account && (
-              <AccountAvatar address={account} size={height} />
-            )}
-            {!profile?.imageIPFSHash && !account && (
-              <Image
-                height={'100%'}
-                width={'100%'}
-                src="/ImagePlaceholder.png"
-                alt={`Placeholder Image`}
-                priority
-                layout="responsive"
-              />
-            )}
+            <ProfileImage
+              account={account}
+              imageIPFSHash={profile?.imageIPFSHash}
+              height={height}
+            />
           </ImageWrapper>
         </Frame>
         <ProfileInfo>
