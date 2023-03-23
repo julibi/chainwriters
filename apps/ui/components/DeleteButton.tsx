@@ -1,14 +1,13 @@
 import React, { FormEvent } from 'react';
-import EditIcon from '@material-ui/icons/Edit';
-import CloseIcon from '@material-ui/icons/Close';
+import DeleteIcon from '@material-ui/icons/Delete';
 import { BaseButton, DISABLED_WHITE, FONT_SERIF_BOLD, Theme } from '../themes';
 import styled from 'styled-components';
 import { useTheme } from '../hooks/theme';
 import TooltippedIndicator from './TooltippedIndicator';
 
-interface EditButtonTypes {
+interface DeleteButtonTypes {
   disabled?: boolean;
-  isEditing: boolean;
+  isDeleting: boolean;
   onClick?: (e?: FormEvent<HTMLButtonElement>) => void;
   margin?: string;
   width?: string;
@@ -27,7 +26,7 @@ interface ButtonTypes {
 const RootButton = styled(BaseButton)<ButtonTypes>`
   position: absolute;
   top: 0;
-  right: 0;
+  right: 90px;
   background-color: ${({ theme }) => theme.BG_NORMAL};
   color: ${({ color, disabled, theme }) =>
     disabled ? DISABLED_WHITE : color ? color : theme.MAIN_TEXT_COLOR};
@@ -42,28 +41,28 @@ const RootButton = styled(BaseButton)<ButtonTypes>`
   }
 `;
 
-const EditButton = ({
-  isEditing,
+const DeleteButton = ({
+  isDeleting,
   disabled = false,
   onClick,
   margin,
   width,
   color,
   tooltipText,
-}: EditButtonTypes) => {
+}: DeleteButtonTypes) => {
   const theme = useTheme();
 
-  const EditIconWithTooltip = () => {
+  const DeleteIconWithTooltip = () => {
     if (tooltipText?.trim()?.length) {
       return (
         <TooltippedIndicator
           backgroundColor="transparent"
           tooltipContent={tooltipText}
-          icon={<EditIcon />}
+          icon={<DeleteIcon />}
         />
       );
     }
-    return <EditIcon />;
+    return <DeleteIcon />;
   };
 
   return (
@@ -75,9 +74,9 @@ const EditButton = ({
       theme={theme}
       width={width}
     >
-      {isEditing ? <CloseIcon /> : EditIconWithTooltip()}
+      {isDeleting ? <DeleteIcon /> : DeleteIconWithTooltip()}
     </RootButton>
   );
 };
 
-export default EditButton;
+export default DeleteButton;

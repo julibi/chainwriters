@@ -24,6 +24,8 @@ import unpinFromPinata from '../../utils/unpinFromPinata';
 const defaultContext: ProfilesApi = {
   configureProfile: async () => undefined,
   configureProfileStatus: 'idle',
+  resetProfile: async () => undefined,
+  resetProfileStatus: 'idle',
 };
 
 export const ProfilesContext = createContext(defaultContext);
@@ -157,8 +159,11 @@ export function ProfilesProvider({ children }: ProfilesProviderProps) {
     async ({ account, onSuccess, onError }: ResetProfileArgs) => {
       try {
         setResetProfileStatus('confirming');
+        const { descriptionIPFSHash, imageIPFSHash } = await Profiles.profiles(
+          account
+        );
         const { maxFeePerGas, maxPriorityFeePerGas } = await getGasMargin();
-        const profileData = await Profiles.profile(account);
+
         const Tx = await Profiles.resetProfile({
           maxFeePerGas,
           maxPriorityFeePerGas,
@@ -170,8 +175,8 @@ export function ProfilesProvider({ children }: ProfilesProviderProps) {
           await Tx.wait();
 
           // unpin metadata from IPFS
-          await unpinFromPinata(profileData.imageIPFSHash);
-          await unpinFromPinata(profileData.descriptionIPFSHash);
+          await unpinFromPinata(imageIPFSHash);
+          await unpinFromPinata(descriptionIPFSHash);
 
           setResetProfileStatus('success');
           toast.info(<ToastLink message={'Success!'} />);

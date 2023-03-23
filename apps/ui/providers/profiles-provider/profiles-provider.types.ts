@@ -17,9 +17,17 @@ export type Profile = {
   isVerified: boolean;
 };
 
+export type ResetProfileArgs = {
+  account: string;
+  onSuccess?: () => void;
+  onError?: (e: any) => void;
+};
+
 export type ProfilesApi = {
   configureProfile: (x: ConfigureProfileArgs) => Promise<void>;
   configureProfileStatus: WriteActionStatus;
+  resetProfile: (x: ResetProfileArgs) => Promise<void>;
+  resetProfileStatus: WriteActionStatus;
 };
 
 export type ProfilesProviderProps = {
@@ -45,12 +53,6 @@ export type ConfigureSocialsArgs = {
   substack: string;
   twitter: string;
   youtube: string;
-  onSuccess?: () => void;
-  onError?: (e: any) => void;
-};
-
-export type ResetProfileArgs = {
-  account: string;
   onSuccess?: () => void;
   onError?: (e: any) => void;
 };

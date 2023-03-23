@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
 import { utils } from 'ethers';
@@ -16,6 +22,8 @@ import { useName } from '../../hooks/useName';
 import { useProfiles } from '../../hooks/profiles';
 import { BASE_BORDER_RADIUS, ElementThemeProps, POP } from '../../themes';
 import ProfileImage from './ProfileImage';
+import ResetProfileModal from './ResetProfileModal';
+import DeleteButton from '../DeleteButton';
 
 const Root = styled.div`
   position: relative;
@@ -127,15 +135,22 @@ const ProfileSection = ({ account, isMyProfile }: ProfileSectionProps) => {
   const ref = useRef(null);
   const theme = useTheme();
   const { profile, isProfileLoading, fetchProfile } = useProfile(account);
-  const { configureProfile } = useProfiles();
+  const { configureProfile, resetProfile, resetProfileStatus } = useProfiles();
   const name = useName(account);
   const ensName = useENSName(account);
   const [height, setHeight] = useState(150);
   const [description, setDescription] = useState<string | null>(null);
   const [showProfileConfigureModal, setShowProfileConfigureModal] =
     useState<boolean>(false);
+  const [showProfileResetModal, setShowProfileResetModal] =
+    useState<boolean>(false);
   const [isConfiguringProfile, setIsConfiguringProfile] =
     useState<boolean>(false);
+
+  const isResetting = useMemo(
+    () => ['confirming', 'waiting'].includes(resetProfileStatus),
+    [resetProfileStatus]
+  );
 
   const fetchDescription = useCallback(async () => {
     if (!profile?.descriptionIPFSHash) return;
@@ -195,6 +210,20 @@ const ProfileSection = ({ account, isMyProfile }: ProfileSectionProps) => {
     [account, configureProfile, fetchProfile]
   );
 
+  const handleResetProfile = useCallback(async () => {
+    setIsConfiguringProfile(true);
+    await resetProfile({
+      account,
+      onError: () => {},
+      onSuccess: () => {
+        setShowProfileResetModal(false);
+
+        // refetch
+        fetchProfile();
+      },
+    });
+  }, [account, resetProfile, fetchProfile]);
+
   useEffect(() => {
     fetchDescription();
   }, [fetchDescription]);
@@ -227,8 +256,19 @@ const ProfileSection = ({ account, isMyProfile }: ProfileSectionProps) => {
               onClick={() => {
                 setShowProfileConfigureModal(true);
               }}
-              isEditing={false}
+              isEditing={showProfileConfigureModal}
               tooltipText="Edit Profile"
+            />
+          )}
+          {isMyProfile && (
+            <DeleteButton
+              margin="0 1rem 1rem 0"
+              disabled={isResetting}
+              onClick={() => {
+                setShowProfileResetModal(true);
+              }}
+              isDeleting={showProfileResetModal}
+              tooltipText="Reset Profile"
             />
           )}
           <AddressGroup>
@@ -278,6 +318,13 @@ const ProfileSection = ({ account, isMyProfile }: ProfileSectionProps) => {
           onClose={() => setShowProfileConfigureModal(false)}
           onConfigure={handleConfigureProfile}
           pending={isConfiguringProfile}
+        />
+      )}
+      {showProfileResetModal && (
+        <ResetProfileModal
+          onClose={() => setShowProfileResetModal(false)}
+          onReset={handleResetProfile}
+          pending={isResetting}
         />
       )}
     </Root>
