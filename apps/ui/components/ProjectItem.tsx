@@ -78,6 +78,12 @@ const Flex = styled.div`
   justify-content: space-between;
 `;
 
+const FlexAlign = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
 const Label = styled.span<ElementThemeProps>`
   color: ${({ theme }) => theme.MAIN_TEXT_COLOR};
 `;
@@ -167,10 +173,10 @@ const ProjectItem = ({
           <Label>Created</Label>
           <div>{created}</div>
         </Flex>
-        <Flex>
+        <FlexAlign>
           <Label theme={theme}>Author</Label>
           <ProfileLink account={creator} />
-        </Flex>
+        </FlexAlign>
         <Flex>
           <Tooltip
             content="Total Value Locked. Matic collected in this edition."

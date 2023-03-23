@@ -17,7 +17,7 @@ async function verifyProfiles() {
     "MoonpageProfiles"
   );
   const contract = await ProfilesContract.attach(
-    "0xf2BFBd1ac95c3303642fCD06DB4b100d418D92d8"
+    "0x9daC041339ed137F3d28DB6279CB405A05d4c401"
   );
 
   const ContractAsDeployer = await contract.connect(deployer);
