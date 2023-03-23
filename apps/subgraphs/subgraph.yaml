@@ -4,11 +4,11 @@ schema:
 dataSources:
   - kind: ethereum
     name: MoonpageManager
-    network: mumbai
+    network: matic
     source:
-      address: '0x5fce69239815e7a409615426e73FDD9909E8a931'
+      address: '0xb506F8587cdb61CE205FA88BdCCcfBd90c588A6e'
       abi: MoonpageManager
-      startBlock: 31137530
+      startBlock: 34049670
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -64,11 +64,11 @@ dataSources:
       file: ./src/mapping.ts
   - kind: ethereum
     name: MoonpageCollection
-    network: mumbai
+    network: matic
     source:
-      address: '0xa5A234AA62C9411A717D349D4229CaF577Fa7d19'
+      address: '0x0eC473B1BD821D386cd7209203Ba6826Fd653B96'
       abi: MoonpageCollection
-      startBlock: 31137530
+      startBlock: 34049670
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -85,11 +85,11 @@ dataSources:
       file: ./src/mapping.ts
   - kind: ethereum
     name: AuctionsManager
-    network: mumbai
+    network: matic
     source:
-      address: '0x105Fdf7e952741554DaD0bd1Bc68cB54FFC5C25D'
+      address: '0xA6AcA4DB9853234b5CAa0005549642D113443803'
       abi: AuctionsManager
-      startBlock: 31137530
+      startBlock: 34049670
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -109,11 +109,11 @@ dataSources:
       file: ./src/mapping.ts
   - kind: ethereum
     name: BallotsFactory
-    network: mumbai
+    network: matic
     source:
-      address: '0x7040F5c4e425f54dB209aEf39224db6478243d77'
+      address: '0x52928DA9B72B98b11F3143abb47753194c9e1FF5'
       abi: BallotsFactory
-      startBlock: 31137530
+      startBlock: 34049670
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -129,11 +129,11 @@ dataSources:
       file: ./src/mapping.ts
   - kind: ethereum
     name: MoonpageProfiles
-    network: mumbai
+    network: matic
     source:
-      address: '0xf2BFBd1ac95c3303642fCD06DB4b100d418D92d8'
+      address: '0x9daC041339ed137F3d28DB6279CB405A05d4c401'
       abi: MoonpageProfiles
-      startBlock: 31137530
+      startBlock: 34049670
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -168,7 +168,7 @@ dataSources:
 templates:
   - name: Ballot
     kind: ethereum/contract
-    network: mumbai
+    network: matic
     source:
       abi: Ballot
     mapping:
