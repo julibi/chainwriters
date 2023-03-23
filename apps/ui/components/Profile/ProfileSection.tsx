@@ -78,7 +78,9 @@ const ImageWrapper = styled.div`
 `;
 
 const ProfileInfo = styled.div`
+  position: relative;
   flex: 1;
+  max-width: 600px;
   height: 300px;
   display: flex;
   flex-direction: column;
@@ -211,15 +213,6 @@ const ProfileSection = ({ account, isMyProfile }: ProfileSectionProps) => {
 
   return (
     <Root>
-      {isMyProfile && (
-        <EditButton
-          disabled={isConfiguringProfile}
-          onClick={() => {
-            setShowProfileConfigureModal(true);
-          }}
-          isEditing={false}
-        />
-      )}
       <MainProfileData>
         <Frame theme={theme}>
           <ImageWrapper ref={ref as any}>
@@ -257,6 +250,17 @@ const ProfileSection = ({ account, isMyProfile }: ProfileSectionProps) => {
           </ImageWrapper>
         </Frame>
         <ProfileInfo>
+          {isMyProfile && (
+            <EditButton
+              margin="0 1rem 1rem 0"
+              disabled={isConfiguringProfile}
+              onClick={() => {
+                setShowProfileConfigureModal(true);
+              }}
+              isEditing={false}
+              tooltipText="Edit Profile"
+            />
+          )}
           <AddressGroup>
             <h2>
               {utils.isAddress(name) ? truncateAddress(name) : name}

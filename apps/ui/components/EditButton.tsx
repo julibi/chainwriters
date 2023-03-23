@@ -4,6 +4,8 @@ import CloseIcon from '@material-ui/icons/Close';
 import { BaseButton, DISABLED_WHITE, FONT_SERIF_BOLD, Theme } from '../themes';
 import styled from 'styled-components';
 import { useTheme } from '../hooks/theme';
+import { Tooltip } from './Tooltip';
+import TooltippedIndicator from './TooltippedIndicator';
 
 interface EditButtonTypes {
   disabled?: boolean;
@@ -12,6 +14,7 @@ interface EditButtonTypes {
   margin?: string;
   width?: string;
   color?: string;
+  tooltipText?: string;
 }
 
 interface ButtonTypes {
@@ -47,8 +50,23 @@ const EditButton = ({
   margin,
   width,
   color,
+  tooltipText,
 }: EditButtonTypes) => {
   const theme = useTheme();
+
+  const EditIconWithTooltip = () => {
+    if (tooltipText?.trim()?.length) {
+      return (
+        <TooltippedIndicator
+          backgroundColor="transparent"
+          tooltipContent={tooltipText}
+          icon={<EditIcon />}
+        />
+      );
+    }
+    return <EditIcon />;
+  };
+
   return (
     <RootButton
       color={color}
@@ -58,7 +76,7 @@ const EditButton = ({
       theme={theme}
       width={width}
     >
-      {isEditing ? <CloseIcon /> : <EditIcon />}
+      {isEditing ? <CloseIcon /> : EditIconWithTooltip()}
     </RootButton>
   );
 };
