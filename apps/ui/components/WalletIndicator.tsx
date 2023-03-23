@@ -1,7 +1,6 @@
-import React, { ReactElement } from 'react';
+import React from 'react';
 import PowerSettingsNewIcon from '@material-ui/icons/PowerSettingsNew';
 import styled from 'styled-components';
-import { supportedChainIds, supportedChainMapping } from '../connectors';
 import { PrimaryButton, FONT_SERIF_BOLD } from '../themes';
 import { Tooltip } from './Tooltip';
 import ProfileLink from './ProfileLink';
@@ -35,19 +34,8 @@ const LogoutButton = styled(PrimaryButton)`
   }
 `;
 
-const OnlyOnDesktop = styled.div`
-  @media (max-width: 900px) {
-    display: none;
-  }
-`;
-
-const Item = styled.div`
-  margin-inline-end: 1rem;
-`;
-
 export interface WalletIndicatorProps {
   address: string | undefined | null;
-  chain: number | undefined | null;
   handleClick: () => void;
   showLoading: boolean;
   deactivate: () => void;
@@ -66,38 +54,21 @@ export const truncateAddress = (address: string) => {
 
 const WalletIndicator = ({
   address,
-  chain,
   handleClick,
   showLoading = false,
   deactivate,
 }: WalletIndicatorProps) => {
-  const getNetwork = (chain): ReactElement => {
-    if (chain) {
-      if (supportedChainIds.includes(chain)) {
-        return (
-          <OnlyOnDesktop>
-            <Item>{supportedChainMapping[chain]?.name}</Item>
-          </OnlyOnDesktop>
-        );
-      } else {
-        return <Item>{'False Network'}</Item>;
-      }
-    } else {
-      return (
-        <CTAButton data-testid={'modal-opener'} onClick={handleClick}>
-          Connect to wallet
-        </CTAButton>
-      );
-    }
-  };
-
   return (
     <Root>
       {showLoading ? (
         <span>Loading...</span>
       ) : (
         <>
-          <div>{getNetwork(chain)}</div>
+          {!address && (
+            <CTAButton data-testid={'modal-opener'} onClick={handleClick}>
+              Connect wallet
+            </CTAButton>
+          )}
           {address && <ProfileLink account={address} />}
           {address && (
             <Tooltip content="Disconnect wallet">

@@ -148,7 +148,7 @@ const WalletConnectionModal = ({ onClose }: WalletConnectionModalProps) => {
   return (
     <BaseModal onClose={onClose}>
       <ContentWrapper>
-        <Title size="m">Connect To Your Wallet</Title>
+        <Title size="m">Connect Your Wallet</Title>
         <TermsOfService theme={theme}>
           <Checkbox
             onChange={toggleTermsAccepted}
