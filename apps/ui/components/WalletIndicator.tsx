@@ -1,10 +1,9 @@
-import React, { ReactElement } from 'react';
+import React from 'react';
 import PowerSettingsNewIcon from '@material-ui/icons/PowerSettingsNew';
 import styled from 'styled-components';
-import AccountAvatar from './AccountAvatar';
-import { supportedChainIds, supportedChainMapping } from '../connectors';
 import { PrimaryButton, FONT_SERIF_BOLD } from '../themes';
 import { Tooltip } from './Tooltip';
+import ProfileLink from './ProfileLink';
 
 const Root = styled.div`
   display: flex;
@@ -31,23 +30,12 @@ const LogoutButton = styled(PrimaryButton)`
   padding: 0.3rem;
 
   @media (max-width: 900px) {
-    margin-inline: 0 1rem;
+    margin-inline: 1rem;
   }
-`;
-
-const OnlyOnDesktop = styled.div`
-  @media (max-width: 900px) {
-    display: none;
-  }
-`;
-
-const Item = styled.div`
-  margin-inline-end: 1rem;
 `;
 
 export interface WalletIndicatorProps {
   address: string | undefined | null;
-  chain: number | undefined | null;
   handleClick: () => void;
   showLoading: boolean;
   deactivate: () => void;
@@ -66,45 +54,22 @@ export const truncateAddress = (address: string) => {
 
 const WalletIndicator = ({
   address,
-  chain,
   handleClick,
   showLoading = false,
   deactivate,
 }: WalletIndicatorProps) => {
-  const getNetwork = (chain): ReactElement => {
-    if (chain) {
-      if (supportedChainIds.includes(chain)) {
-        return (
-          <OnlyOnDesktop>
-            <Item>{supportedChainMapping[chain]?.name}</Item>
-          </OnlyOnDesktop>
-        );
-      } else {
-        return <Item>{'False Network'}</Item>;
-      }
-    } else {
-      return (
-        <CTAButton data-testid={'modal-opener'} onClick={handleClick}>
-          Connect to wallet
-        </CTAButton>
-      );
-    }
-  };
-
   return (
     <Root>
       {showLoading ? (
         <span>Loading...</span>
       ) : (
         <>
-          <div>{getNetwork(chain)}</div>
-          {address && chain && supportedChainIds.includes(chain) && (
-            <Item>{truncateAddress(address)}</Item>
+          {!address && (
+            <CTAButton data-testid={'modal-opener'} onClick={handleClick}>
+              Connect wallet
+            </CTAButton>
           )}
-
-          {chain && supportedChainIds.includes(chain) && (
-            <AccountAvatar address={address} />
-          )}
+          {address && <ProfileLink account={address} />}
           {address && (
             <Tooltip content="Disconnect wallet">
               <LogoutButton onClick={deactivate}>

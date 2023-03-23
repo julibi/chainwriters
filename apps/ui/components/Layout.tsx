@@ -11,10 +11,10 @@ const Layout = ({ children }: LayoutProps) => {
   return (
     <div>
       <Navbar />
-      <Marquee gradient={false} speed={70}>
+      {/* <Marquee gradient={false} speed={70}>
         Start a vote regarding your project now! Go to your project's page and
         scroll down to the Voting section.
-      </Marquee>
+      </Marquee> */}
       {children}
 
       <Footer />

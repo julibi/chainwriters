@@ -13,7 +13,6 @@ import {
   ElementThemeProps,
 } from '../themes';
 import { useTheme } from '../hooks/theme';
-import { truncateAddress } from './WalletIndicator';
 import { getCoverImageUrl } from '../utils/getCoverImageUrl';
 import { Tooltip } from './Tooltip';
 import { formatEtherBigNumber } from '../utils/formatEtherBigNumber';

@@ -34,6 +34,10 @@ const Item = styled.div<ElementThemeProps>`
   box-shadow: ${({ theme }) => theme.BASE_BOX_SHADOW};
 `;
 
+const Project = styled.span`
+  padding: 1rem 0 1rem 0;
+`;
+
 const ButtonsWrapper = styled.div`
   display: flex;
 `;
@@ -59,13 +63,13 @@ const ContributorProject = ({
   const theme = useTheme();
   return (
     <Item theme={theme}>
-      <span>
-        <Title size="xs" color="POP" padding="1rem 0 1rem 1rem">
+      <Project>
+        <Title size="xs" color="POP" padding="0">
           {title}
         </Title>
         <span> - by </span>
         <ProfileLink account={creator} />
-      </span>
+      </Project>
       <span>{`${contributionSharePercentage}% for ${contributionRole}`}</span>
       <ButtonsWrapper>
         <DetailsButton onClick={onClickDetails}>Project</DetailsButton>

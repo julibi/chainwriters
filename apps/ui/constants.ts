@@ -29,3 +29,6 @@ export const GENRES = [
 export const VOTE_ENDING_TIMES = ['1 hour', '1 day', '1 week', '1 month'];
 export const DEFAULT_COVER_IMAGE_IPFS_HASH =
   'QmcfMQgmbwUUqhpagyKNwBQ4zMe6NpMuupASNfMhRh32zS';
+
+export const PINATA_GATE_URI = 'https://moonpage.mypinata.cloud/ipfs/';
+export const IPFS_BASE_URI = 'https://ipfs.io/ipfs/';

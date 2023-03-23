@@ -26,8 +26,6 @@ import Title from '../Title';
 import TooltippedIndicator from '../TooltippedIndicator';
 import { PriorityHigh } from '@material-ui/icons';
 import { useGetProjectIpfsHashes } from '../../hooks/projects/useGetProjectIpfsHashes';
-import { useBallotsFactory } from '../../hooks/ballotFactory/useBallotsFactory';
-import useBallot from '../../hooks/useBallot';
 
 const Root = styled.section<ElementThemeProps>`
   display: flex;

@@ -6,3 +6,4 @@ export * from './auctions-provider/auctions-provider';
 export * from './factory-provider/factory-provider';
 export * from './theme-provider/theme-provider';
 export * from './ballots-factory-provider/ballots-factory-provider';
+export * from './profiles-provider/profiles-provider';

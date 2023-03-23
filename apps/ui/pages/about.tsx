@@ -184,7 +184,7 @@ Become one of the first writers on the moon.`}</Text>
               </CoFounderImgWrapper>
               <FounderDescription>
                 <Name>Juli</Name>
-                <Field>Co-Founder</Field>
+                <Field>Founder</Field>
                 <Introduction>
                   Experienced software engineer specialising in Web3. As a
                   software engineer she has contributed to multiple well-known
@@ -201,53 +201,6 @@ Become one of the first writers on the moon.`}</Text>
                 </Introduction>
               </FounderDescription>
             </CoFounderWithMarginBottom>
-            <CoFounder>
-              <CoFounderImgWrapper>
-                <Image
-                  src="/Roxana.png"
-                  quality={65}
-                  layout="responsive"
-                  height={'100%'}
-                  width={'100%'}
-                  alt={'Roxana'}
-                  priority
-                />
-              </CoFounderImgWrapper>
-              <FounderDescription>
-                <Name>Roxana</Name>
-                <Field>Co-Founder</Field>
-                <Introduction>
-                  Entrepreneur with background in behavioural science, deeply
-                  motivated by purpose driven projects. Roxana entered web3 for
-                  the art and technology, and stayed for the community. She's
-                  active in the ReFi space, Digital Identity, Growth and Loyalty
-                  through NFTs.
-                </Introduction>
-              </FounderDescription>
-            </CoFounder>
-            <CoFounder>
-              <CoFounderImgWrapper>
-                <Image
-                  src="/Luki.png"
-                  quality={65}
-                  layout="responsive"
-                  height={'100%'}
-                  width={'100%'}
-                  alt={'Luki'}
-                  priority
-                />
-              </CoFounderImgWrapper>
-              <FounderDescription>
-                <Name>Luki</Name>
-                <Field>Co-Founder</Field>
-                <Introduction>
-                  Worked in finance for nine years, and developed a passion for
-                  Web3 in 2021. She went through DLT Talents Program and DeFi
-                  Talents Program through Frankfurt School of Finance and
-                  Management. She has been an advocate in the Web3 space.
-                </Introduction>
-              </FounderDescription>
-            </CoFounder>
             <CoFounder>
               <CoFounderImgWrapper>
                 <Image
