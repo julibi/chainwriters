@@ -1,4 +1,4 @@
-import React, { FormEvent } from 'react';
+import React, { FormEvent, ReactElement } from 'react';
 import styled from 'styled-components';
 import InfoRounded from '@material-ui/icons/InfoRounded';
 import { BaseInput, FONT_SERIF_REGULAR, POP } from '../themes';
@@ -42,7 +42,7 @@ interface InputFieldTypes {
   label?: string;
   type?: string;
   isErrorPossible?: boolean;
-  tooltipText?: string;
+  tooltipText?: string | ReactElement;
 }
 
 const InputField = ({
@@ -61,7 +61,7 @@ const InputField = ({
     <Root>
       <LabelWrapper>
         <StyledLabel>{label}</StyledLabel>
-        {tooltipText?.length && (
+        {tooltipText && (
           <Tooltip content={tooltipText}>
             <InfoRounded />
           </Tooltip>

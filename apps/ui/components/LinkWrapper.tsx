@@ -4,6 +4,7 @@ import { useTheme } from '../hooks/theme';
 import { Theme } from '../themes';
 
 interface LinkWrapperProps {
+  color?: string;
   underline?: boolean;
   flex?: boolean;
   children: ReactNode;
@@ -18,7 +19,7 @@ type RootProps = {
   passHref?: boolean;
 };
 const Root = styled.a<RootProps>`
-  color: ${({ theme }) => theme.MAIN_TEXT_COLOR};
+  color: ${({ theme, color }) => (color ? color : theme.MAIN_TEXT_COLOR)};
   display: ${({ flex }) => (flex ? 'flex' : 'inline-block')};
   text-decoration: ${({ underline }) => (underline ? 'underline' : 'none')};
 `;
@@ -30,11 +31,13 @@ const LinkWrapper = ({
   underline = true,
   flex = false,
   passHref = false,
+  color,
 }: LinkWrapperProps) => {
   const theme = useTheme();
 
   return (
     <Root
+      color={color}
       underline={underline}
       flex={flex}
       target={target}

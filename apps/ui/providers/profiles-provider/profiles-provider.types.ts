@@ -28,6 +28,8 @@ export type ProfilesApi = {
   configureProfileStatus: WriteActionStatus;
   resetProfile: (x: ResetProfileArgs) => Promise<void>;
   resetProfileStatus: WriteActionStatus;
+  configureSocials: (x: ConfigureSocialsArgs) => Promise<void>;
+  configureSocialsStatus: WriteActionStatus;
 };
 
 export type ProfilesProviderProps = {

@@ -32,3 +32,10 @@ export const DEFAULT_COVER_IMAGE_IPFS_HASH =
 
 export const PINATA_GATE_URI = 'https://moonpage.mypinata.cloud/ipfs/';
 export const IPFS_BASE_URI = 'https://ipfs.io/ipfs/';
+
+export const DISCORD_BASE_URI = 'https://discord.gg';
+export const INSTAGRAM_BASE_URI = 'https://instagram.com';
+export const PARAGRAPHXYZ_BASE_URI = 'https://paragraph.xyz';
+export const SUBSTACK_BASE_URI = 'substack.com';
+export const TWITTER_BASE_URI = 'https://twitter.com';
+export const YOUTUBE_BASE_URI = 'https://youtube.com';

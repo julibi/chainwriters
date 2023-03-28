@@ -1,8 +1,10 @@
-import React, { ReactElement, ReactNode, Ref } from 'react';
+import React, { ReactElement, Ref } from 'react';
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css';
 import 'tippy.js/themes/light.css';
 import { useDarkMode } from '../hooks/useDarkMode';
+import { isValidUrl } from '../utils/isValidUrl';
+import LinkWrapper from './LinkWrapper';
 
 const TOOLTIPTHEMES = ['light', 'dark'] as const;
 export const TooltipThemes = TOOLTIPTHEMES;
@@ -30,7 +32,7 @@ export type TooltipPlacementType = typeof TOOLTIPPLACEMENTTYPES[number];
 
 export interface TooltipProps {
   children?: ReactElement;
-  content?: ReactNode;
+  content?: string | ReactElement;
   className?: string;
   forwardedRef?: Ref<HTMLButtonElement>;
   placement?: TooltipPlacementType;
@@ -50,6 +52,19 @@ const TooltipComponent = ({
 }: TooltipProps) => {
   const isDarkMode = useDarkMode();
   const renderContent = () => {
+    if (typeof content === 'string') {
+      const splitString = content.split(' ');
+      const stringWithLink = splitString.map((morphem) =>
+        isValidUrl(morphem) ? (
+          <LinkWrapper url={morphem} color="#FFF">
+            {morphem}
+          </LinkWrapper>
+        ) : (
+          morphem + ' '
+        )
+      );
+      return <div>{stringWithLink}</div>;
+    }
     return <div>{content}</div>;
   };
 

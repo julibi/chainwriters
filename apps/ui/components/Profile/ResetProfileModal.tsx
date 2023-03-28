@@ -1,12 +1,9 @@
 import React, { useCallback } from 'react';
-
 import styled from 'styled-components';
 import { toast } from 'react-toastify';
 import BaseModal from '../BaseModal';
-
 import Title from '../Title';
 import ActionButton from '../ActionButton';
-import { useTheme } from '../../hooks/theme/useTheme';
 
 const FlexColumn = styled.div`
   display: flex;
