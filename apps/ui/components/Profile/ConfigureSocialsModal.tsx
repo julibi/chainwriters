@@ -92,6 +92,7 @@ const ConfigureSocialsModal = ({
             What is your social media?
           </Title>
           <InputField
+            disabled={pending}
             value={socialMedias.discord}
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
               handleTextChange(e.target.value, 'discord')
@@ -112,6 +113,7 @@ const ConfigureSocialsModal = ({
             }
           />
           <InputField
+            disabled={pending}
             value={socialMedias.instagram}
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
               handleTextChange(e.target.value, 'instagram')
@@ -120,6 +122,7 @@ const ConfigureSocialsModal = ({
             label="Instagram Name"
           />
           <InputField
+            disabled={pending}
             value={socialMedias.paragraphxyz}
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
               handleTextChange(e.target.value, 'paragraphxyz')
@@ -128,6 +131,7 @@ const ConfigureSocialsModal = ({
             label="Paragraph.xyz"
           />
           <InputField
+            disabled={pending}
             value={socialMedias.substack}
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
               handleTextChange(e.target.value, 'substack')
@@ -136,6 +140,7 @@ const ConfigureSocialsModal = ({
             label="Substack"
           />
           <InputField
+            disabled={pending}
             value={socialMedias.twitter}
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
               handleTextChange(e.target.value, 'twitter')
@@ -144,6 +149,7 @@ const ConfigureSocialsModal = ({
             label="Twitter Handle (without '@')"
           />
           <InputField
+            disabled={pending}
             value={socialMedias.youtube}
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
               handleTextChange(e.target.value, 'youtube')
