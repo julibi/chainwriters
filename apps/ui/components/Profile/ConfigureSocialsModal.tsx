@@ -7,6 +7,13 @@ import BaseModal from '../BaseModal';
 import Title from '../Title';
 import ActionButton from '../ActionButton';
 import InputField from '../InputField';
+import {
+  DISCORD_BASE_URI,
+  INSTAGRAM_BASE_URI,
+  PARAGRAPHXYZ_BASE_URI,
+  TWITTER_BASE_URI,
+  YOUTUBE_BASE_URI,
+} from '../../constants';
 
 const FlexColumn = styled.div`
   display: flex;
@@ -111,6 +118,7 @@ const ConfigureSocialsModal = ({
                 </DicsordExplanatoryLink>
               </span>
             }
+            leftHardCodedValue={`${DISCORD_BASE_URI}/`}
           />
           <InputField
             disabled={pending}
@@ -119,7 +127,8 @@ const ConfigureSocialsModal = ({
               handleTextChange(e.target.value, 'instagram')
             }
             type="text"
-            label="Instagram Name"
+            label="Instagram"
+            leftHardCodedValue={`${INSTAGRAM_BASE_URI}/`}
           />
           <InputField
             disabled={pending}
@@ -129,6 +138,8 @@ const ConfigureSocialsModal = ({
             }
             type="text"
             label="Paragraph.xyz"
+            tooltipText={`Account name. E.G. "janedoe" for "https://paragraph.xyz/@janedoe"`}
+            leftHardCodedValue={`${PARAGRAPHXYZ_BASE_URI}/@`}
           />
           <InputField
             disabled={pending}
@@ -138,6 +149,9 @@ const ConfigureSocialsModal = ({
             }
             type="text"
             label="Substack"
+            tooltipText={`Name of your profile. E.G. "janedoe" for "https://janedoe.substack.com".`}
+            leftHardCodedValue="https://"
+            rightHardCodedValue=".substack.com"
           />
           <InputField
             disabled={pending}
@@ -146,7 +160,8 @@ const ConfigureSocialsModal = ({
               handleTextChange(e.target.value, 'twitter')
             }
             type="text"
-            label="Twitter Handle (without '@')"
+            label="Twitter"
+            leftHardCodedValue={`${TWITTER_BASE_URI}/`}
           />
           <InputField
             disabled={pending}
@@ -156,6 +171,7 @@ const ConfigureSocialsModal = ({
             }
             type="text"
             label="Youtube Name"
+            leftHardCodedValue={`${YOUTUBE_BASE_URI}/@`}
           />
           <ActionButton
             disabled={pending}

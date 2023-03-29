@@ -219,7 +219,7 @@ const ProfileSection = ({ account, isMyProfile }: ProfileSectionProps) => {
         : null,
       twitter: twitter?.length ? `${TWITTER_BASE_URI}/${twitter}` : null,
       paragraphxyz: paragraphxyz?.length
-        ? `${PARAGRAPHXYZ_BASE_URI}/${paragraphxyz}`
+        ? `${PARAGRAPHXYZ_BASE_URI}/@${paragraphxyz}`
         : null,
       substack: substack?.length
         ? `https://${substack}.${SUBSTACK_BASE_URI}`
@@ -445,7 +445,7 @@ const ProfileSection = ({ account, isMyProfile }: ProfileSectionProps) => {
                 rel="noopener noreferrer"
                 href={profileSocialsLinks?.paragraphxyz}
               >
-                Paragraph.xyz Newsletter
+                Paragraph.xyz
               </a>
             ) : (
               <span>Not specified</span>
