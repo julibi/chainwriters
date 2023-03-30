@@ -109,7 +109,6 @@ const ImageWrapper = styled.div`
 
     img {
       object-fit: cover;
-      // filter: grayscale(100%);
     }
   }
 `;
