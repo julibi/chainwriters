@@ -14,7 +14,7 @@ import {
   TWITTER_BASE_URI,
   YOUTUBE_BASE_URI,
 } from '../../constants';
-import useLocalStorage from 'apps/ui/hooks/useLocalStorage';
+import useLocalStorage from '../../hooks/useLocalStorage';
 
 const FlexColumn = styled.div`
   display: flex;
@@ -32,7 +32,7 @@ const DicsordExplanatoryLink = styled.a`
   color: #fff;
 `;
 
-type Socials = {
+export type Socials = {
   discord: string | null;
   instagram: string | null;
   paragraphxyz: string | null;
@@ -61,30 +61,11 @@ const ConfigureSocialsModal = ({
   onConfigureSocials,
   pending,
 }: ConfigureSocialsModalProps) => {
-  const [storedDiscordValue, setDiscordValue] = useLocalStorage(
-    'discord',
-    currentSocials?.discord
+  const [storedValue, setValue] = useLocalStorage(
+    'profileSocials',
+    currentSocials
   );
-  const [storedInstagramValue, setInstagramValue] = useLocalStorage(
-    'instagram',
-    currentSocials?.instagram
-  );
-  const [storedParagraphxyzValue, setParagraphxyzValue] = useLocalStorage(
-    'paragraphxyz',
-    currentSocials?.paragraphxyz
-  );
-  const [storedSubstackValue, setSubstackValue] = useLocalStorage(
-    'stubstack',
-    currentSocials?.substack
-  );
-  const [storedTwitterValue, setTwitterValue] = useLocalStorage(
-    'twitter',
-    currentSocials?.twitter
-  );
-  const [storedYoutubeValue, setYoutubeValue] = useLocalStorage(
-    'youtube',
-    currentSocials?.youtube
-  );
+
   const [socialMedias, setSocialMedias] = useState(currentSocials);
 
   const handleTextChange = useCallback(
@@ -100,38 +81,11 @@ const ConfigureSocialsModal = ({
         ].includes(socialMediaName)
       )
         return;
-
-      setSocialMedias({ ...socialMedias, [socialMediaName]: value });
-      switch (socialMediaName) {
-        case 'discord':
-          setDiscordValue(value);
-          return;
-        case 'instagram':
-          setInstagramValue(value);
-          return;
-        case 'paragraphxyz':
-          setParagraphxyzValue(value);
-          return;
-        case 'substack':
-          setSubstackValue(value);
-          return;
-        case 'twitter':
-          setTwitterValue(value);
-          return;
-        case 'youtube':
-          setYoutubeValue(value);
-          return;
-      }
+      const newObject = { ...socialMedias, [socialMediaName]: value };
+      setSocialMedias(newObject);
+      setValue(newObject);
     },
-    [
-      setDiscordValue,
-      setInstagramValue,
-      setParagraphxyzValue,
-      setSubstackValue,
-      setTwitterValue,
-      setYoutubeValue,
-      socialMedias,
-    ]
+    [setValue, socialMedias]
   );
 
   const handleSubmit = useCallback(async () => {
@@ -146,17 +100,13 @@ const ConfigureSocialsModal = ({
 
   useEffect(() => {
     setSocialMedias({
-      discord: storedDiscordValue ?? currentSocials?.discord,
-      instagram: storedInstagramValue ?? currentSocials?.instagram,
-      paragraphxyz: storedParagraphxyzValue ?? currentSocials?.paragraphxyz,
-      substack: storedSubstackValue ?? currentSocials?.substack,
-      twitter: storedTwitterValue ?? currentSocials?.twitter,
-      youtube: storedYoutubeValue ?? currentSocials?.youtube,
+      discord: storedValue?.discord ?? currentSocials?.discord,
+      instagram: storedValue?.instagram ?? currentSocials?.instagram,
+      paragraphxyz: storedValue?.paragraphxyz ?? currentSocials?.paragraphxyz,
+      substack: storedValue?.substack ?? currentSocials?.substack,
+      twitter: storedValue?.twitter ?? currentSocials?.twitter,
+      youtube: storedValue?.youtube ?? currentSocials?.youtube,
     });
-    // do the removing on profile not on modal
-    // return () => {
-    //   localStorage.removeItem("");
-    // };
   }, []);
 
   return (

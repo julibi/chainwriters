@@ -316,6 +316,7 @@ const ProfileSection = ({ account, isMyProfile }: ProfileSectionProps) => {
         twitter,
         youtube,
         onSuccess: () => {
+          window?.localStorage.removeItem('profileSocials');
           setShowSocialsConfigureModal(false);
           // refetch
           fetchProfile();
@@ -332,6 +333,12 @@ const ProfileSection = ({ account, isMyProfile }: ProfileSectionProps) => {
   useEffect(() => {
     setHeight(ref?.current?.clientHeight);
   }, [ref]);
+
+  useEffect(() => {
+    return () => {
+      window.localStorage.removeItem('profileSocials');
+    };
+  }, []);
 
   const mainTextColor = (theme) => theme.MAIN_TEXT_COLOR;
 
