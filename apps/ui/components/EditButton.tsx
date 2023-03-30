@@ -35,6 +35,7 @@ const RootButton = styled(BaseButton)<ButtonTypes>`
   width: ${({ width }) => width ?? '60px'};
   margin: ${({ margin }) => margin ?? '1rem 1rem 0 0'};
   padding: 1rem;
+  z-index: 10;
 
   @media (max-width: 900px) {
     width: 60px;

@@ -60,7 +60,7 @@ const ProfileLink = ({ account }: ProfileLinkProps) => {
   const handleClick = useCallback(
     (e) => {
       e.preventDefault();
-      if (loggedInAccount.toLowerCase() === account.toLowerCase()) {
+      if (loggedInAccount?.toLowerCase() === account.toLowerCase()) {
         router.push(`/myprofile`);
       } else {
         router.push(`/profile/${account}`);

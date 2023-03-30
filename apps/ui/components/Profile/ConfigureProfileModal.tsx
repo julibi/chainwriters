@@ -1,4 +1,10 @@
-import React, { ChangeEvent, useCallback, useMemo, useState } from 'react';
+import React, {
+  ChangeEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import Image from 'next/image';
 import styled from 'styled-components';
 import { toast } from 'react-toastify';
@@ -18,6 +24,7 @@ import { useTheme } from '../../hooks/theme/useTheme';
 import { IPFS_BASE_URI } from '../../constants';
 import { utils } from 'ethers';
 import { isValidUrl } from '../../utils/isValidUrl';
+import useLocalStorage from '../../hooks/useLocalStorage';
 
 const ContentWrapper = styled.div`
   padding: 2rem;
@@ -31,13 +38,18 @@ const FlexColumn = styled.div`
   flex-direction: column;
 `;
 
+export type Profile = {
+  name: string | null;
+  description: string;
+  descriptionIPFSHash: string;
+  img: { imgurl: string | null; file: Blob | null; buffer: Buffer | null };
+  imageIPFSHash: string;
+  website: string;
+};
+
 interface ConfigureProfileModalProps {
   onClose: () => void;
-  currentName: string | null;
-  currentWebsite: string | null;
-  currentDescription: string | null;
-  currentDescriptionIPFSHash: string | null;
-  currentImageIPFSHash: string | null;
+  currentProfile: Profile;
   onConfigure: ({
     name,
     imageIPFSHash,
@@ -50,74 +62,105 @@ interface ConfigureProfileModalProps {
 }
 
 const ConfigureProfileModal = ({
-  currentName,
-  currentWebsite,
-  currentDescription,
-  currentDescriptionIPFSHash,
-  currentImageIPFSHash,
+  currentProfile,
   onClose,
   onConfigure,
   pending,
 }: ConfigureProfileModalProps) => {
   const theme = useTheme();
   const client = useIpfsClient();
-  const [imgBuffer, setImgBuffer] = useState<null | Buffer>(null);
-  const [imgFile, setImgFile] = useState(null);
-  const [name, setName] = useState<string | null>(currentName);
-  const [website, setWebsite] = useState<string | null>(currentWebsite);
-  const [description, setDescription] = useState<string | null>(
-    currentDescription
-  );
+  const [storedValue, setValue] = useLocalStorage('profile', currentProfile);
+  const [profile, setProfile] = useState(currentProfile);
   const [isUploadingToIPFS, setIsUploadingToIPFS] = useState<boolean>(false);
-  const captureFile = (file) => {
+  const captureFile = (file: Blob) => {
     const reader = new window.FileReader();
     reader.readAsArrayBuffer(file);
     reader.onloadend = () => {
       const buffer = Buffer.from(reader.result as ArrayBuffer);
-      setImgFile(file);
-      setImgBuffer(buffer);
+      const imgurl = URL.createObjectURL(file);
+      handleChange('img', { file, imgurl, buffer });
     };
   };
 
   const isValidName = useMemo(() => {
+    const { name } = profile;
     const nameLength = name?.trim().length;
     return !utils.isAddress(name) && nameLength > 2 && nameLength < 50;
-  }, [name]);
+  }, [profile]);
 
-  const isValidWebsite = useMemo(() => isValidUrl(website), [website]);
+  const isValidWebsite = useMemo(
+    () => isValidUrl(profile?.website),
+    [profile.website]
+  );
 
   const isValidDescription = useMemo(() => {
+    const { description } = profile;
     const descriptionLength = description?.trim().length;
     return descriptionLength > 2 && descriptionLength < 100;
-  }, [description]);
+  }, [profile]);
 
   const isSubmittable = useMemo(
-    () => isValidName || isValidWebsite || isValidDescription || imgFile,
-    [isValidName, isValidWebsite, isValidDescription, imgFile]
+    () =>
+      isValidName || isValidWebsite || isValidDescription || profile?.img?.file,
+    [isValidName, isValidWebsite, isValidDescription, profile?.img?.file]
+  );
+
+  const imageURL = useMemo(() => {
+    if (profile?.img?.file instanceof Blob) {
+      return URL.createObjectURL(profile?.img?.file);
+    } else if (profile?.img?.imgurl) {
+      return profile?.img?.imgurl;
+    } else if (currentProfile?.imageIPFSHash) {
+      return `${IPFS_BASE_URI}${currentProfile?.imageIPFSHash}`;
+    } else {
+      return '/ImgPlaceholder.png';
+    }
+  }, [currentProfile?.imageIPFSHash, profile?.img]);
+
+  const handleChange = useCallback(
+    (key: string, value: any) => {
+      if (
+        ![
+          'name',
+          'description',
+          'descriptionIPFSHash',
+          'img',
+          'imageIPFSHash',
+          'website',
+        ].includes(key)
+      )
+        return;
+      const newObject = { ...profile, [key]: value };
+      setProfile(newObject);
+      setValue(newObject);
+    },
+    [profile, setValue]
   );
 
   const handleClick = useCallback(async () => {
     try {
       setIsUploadingToIPFS(true);
-
+      const { description, img, name, website } = profile;
       let profileImgCID = '';
       let descriptionCID = '';
       let hasNewDescriptionHash = false;
       let hasNewImageHash = false;
-      if (imgBuffer) {
-        profileImgCID = (await client.add(imgBuffer)).path;
+
+      if (img.buffer) {
+        //@ts-ignore
+        profileImgCID = (await client.add(img.buffer.data)).path;
         hasNewImageHash = true;
       } else {
-        if (currentImageIPFSHash) {
-          profileImgCID = currentImageIPFSHash;
+        if (currentProfile?.imageIPFSHash) {
+          profileImgCID = currentProfile?.imageIPFSHash;
         }
       }
-      if (description && description !== currentDescription) {
+      if (description && description !== currentProfile?.description) {
         descriptionCID = (await client.add(description)).path;
         hasNewDescriptionHash = true;
       } else {
-        if (currentDescriptionIPFSHash) {
-          descriptionCID = currentDescriptionIPFSHash;
+        if (currentProfile?.descriptionIPFSHash) {
+          descriptionCID = currentProfile?.descriptionIPFSHash;
         }
       }
       setIsUploadingToIPFS(false);
@@ -137,14 +180,37 @@ const ConfigureProfileModal = ({
     }
   }, [
     client,
-    currentDescription,
-    currentDescriptionIPFSHash,
-    currentImageIPFSHash,
-    description,
-    imgBuffer,
-    name,
+    currentProfile?.description,
+    currentProfile?.descriptionIPFSHash,
+    currentProfile?.imageIPFSHash,
     onConfigure,
-    website,
+    profile,
+  ]);
+
+  useEffect(() => {
+    setProfile({
+      name: storedValue?.name ?? currentProfile?.name,
+      description: storedValue?.description ?? currentProfile?.description,
+      descriptionIPFSHash:
+        storedValue?.descriptionIPFSHash ?? currentProfile?.descriptionIPFSHash,
+      img: storedValue?.img ?? currentProfile?.img,
+      imageIPFSHash:
+        storedValue?.imageIPFSHash ?? currentProfile?.imageIPFSHash,
+      website: storedValue?.website ?? currentProfile?.website,
+    });
+  }, [
+    currentProfile?.description,
+    currentProfile?.descriptionIPFSHash,
+    currentProfile?.imageIPFSHash,
+    currentProfile?.img,
+    currentProfile?.name,
+    currentProfile?.website,
+    storedValue?.description,
+    storedValue?.descriptionIPFSHash,
+    storedValue?.imageIPFSHash,
+    storedValue?.img,
+    storedValue?.name,
+    storedValue?.website,
   ]);
 
   return (
@@ -157,9 +223,9 @@ const ConfigureProfileModal = ({
           <FlexColumn>
             <InputField
               label={'Name: '}
-              value={name}
+              value={profile.name}
               onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                setName(e.target.value);
+                handleChange('name', e.target.value);
               }}
               disabled={pending || isUploadingToIPFS}
               error={
@@ -170,27 +236,26 @@ const ConfigureProfileModal = ({
             />
             <InputField
               label={'Website: '}
-              value={website}
+              value={profile.website}
               onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                setWebsite(e.target.value);
+                handleChange('website', e.target.value);
               }}
               disabled={pending || isUploadingToIPFS}
-              error={website && !isValidWebsite && 'Not a valid url.'}
+              error={profile?.website && !isValidWebsite && 'Not a valid url.'}
             />
             <InputField
               label={'Description: '}
-              value={description}
+              value={profile?.description}
               onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                setDescription(e.target.value);
+                handleChange('description', e.target.value);
               }}
               disabled={pending || isUploadingToIPFS}
               error={
-                description &&
+                profile?.description &&
                 !isValidDescription &&
                 'Must be more than 2 and less than 100 characters.'
               }
             />
-
             <StyledImageForm>
               <DragNDrop
                 onDragOver={(e: any) => {
@@ -204,13 +269,7 @@ const ConfigureProfileModal = ({
                 theme={theme}
               >
                 <Image
-                  src={
-                    imgFile
-                      ? URL.createObjectURL(imgFile)
-                      : currentImageIPFSHash
-                      ? `${IPFS_BASE_URI}${currentImageIPFSHash}`
-                      : '/ImgPlaceholder.png'
-                  }
+                  src={imageURL}
                   height={'100%'}
                   width={'100%'}
                   alt={'ProfileImage'}
@@ -220,7 +279,9 @@ const ConfigureProfileModal = ({
               </DragNDrop>
               <FlexColumn>
                 <FileName>
-                  {imgFile ? shortenImageName(imgFile.name) : ''}
+                  {profile?.img?.file && Object.keys(profile?.img?.file)?.length
+                    ? shortenImageName(profile?.img?.file['name'])
+                    : ''}
                 </FileName>
                 <StyledFileInput
                   disabled={pending || isUploadingToIPFS}

@@ -4,6 +4,8 @@ import { WriteActionStatus } from '../manager-provider/manager-provider.types';
 export type Profile = {
   id: string;
   address: string;
+  imgFile?: Blob | null;
+  imgBuffer?: Buffer | null;
   imageIPFSHash: string;
   name: string;
   descriptionIPFSHash: string;
@@ -28,6 +30,8 @@ export type ProfilesApi = {
   configureProfileStatus: WriteActionStatus;
   resetProfile: (x: ResetProfileArgs) => Promise<void>;
   resetProfileStatus: WriteActionStatus;
+  configureSocials: (x: ConfigureSocialsArgs) => Promise<void>;
+  configureSocialsStatus: WriteActionStatus;
 };
 
 export type ProfilesProviderProps = {

@@ -22,6 +22,8 @@ import pinProfileToPinata from '../../utils/pinProfileToPinata';
 import unpinFromPinata from '../../utils/unpinFromPinata';
 
 const defaultContext: ProfilesApi = {
+  configureSocials: async () => undefined,
+  configureSocialsStatus: 'idle',
   configureProfile: async () => undefined,
   configureProfileStatus: 'idle',
   resetProfile: async () => undefined,
@@ -78,6 +80,7 @@ export function ProfilesProvider({ children }: ProfilesProviderProps) {
           { maxFeePerGas, maxPriorityFeePerGas }
         );
         const { hash } = Tx;
+
         setConfigureProfileStatus('waiting');
         toast.info(<ToastLink message={'Configuring profile...'} />);
         Profiles.provider.once(hash, async (transaction) => {
@@ -125,7 +128,7 @@ export function ProfilesProvider({ children }: ProfilesProviderProps) {
       onError,
     }: ConfigureSocialsArgs) => {
       try {
-        setConfigureProfileStatus('confirming');
+        setConfigureSocialsStatus('confirming');
         const { maxFeePerGas, maxPriorityFeePerGas } = await getGasMargin();
         const Tx = await Profiles.configureSocials(
           discord,
