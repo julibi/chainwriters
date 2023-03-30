@@ -264,6 +264,7 @@ const ProfileSection = ({ account, isMyProfile }: ProfileSectionProps) => {
       hasNewImageHash,
     }) => {
       setIsConfiguringProfile(true);
+
       await configureProfile({
         account,
         name,
@@ -278,6 +279,7 @@ const ProfileSection = ({ account, isMyProfile }: ProfileSectionProps) => {
         onSuccess: () => {
           setShowProfileConfigureModal(false);
           setIsConfiguringProfile(false);
+          window?.localStorage.removeItem('profile');
           // refetch
           fetchProfile();
         },
@@ -292,7 +294,6 @@ const ProfileSection = ({ account, isMyProfile }: ProfileSectionProps) => {
       account,
       onSuccess: () => {
         setShowProfileResetModal(false);
-
         // refetch
         fetchProfile();
       },
@@ -337,6 +338,7 @@ const ProfileSection = ({ account, isMyProfile }: ProfileSectionProps) => {
   useEffect(() => {
     return () => {
       window.localStorage.removeItem('profileSocials');
+      window.localStorage.removeItem('profile');
     };
   }, []);
 
@@ -496,11 +498,14 @@ const ProfileSection = ({ account, isMyProfile }: ProfileSectionProps) => {
       </SocialsWrapper>
       {showProfileConfigureModal && (
         <ConfigureProfileModal
-          currentName={utils.isAddress(name) ? null : name} // if plain address, name is null
-          currentDescription={description}
-          currentDescriptionIPFSHash={profile?.descriptionIPFSHash}
-          currentWebsite={profile?.website}
-          currentImageIPFSHash={profile?.imageIPFSHash}
+          currentProfile={{
+            name: utils.isAddress(name) ? null : name,
+            description,
+            descriptionIPFSHash: profile?.descriptionIPFSHash,
+            img: { imgurl: null, file: null, buffer: null },
+            imageIPFSHash: profile?.imageIPFSHash,
+            website: profile?.website,
+          }}
           onClose={() => setShowProfileConfigureModal(false)}
           onConfigure={handleConfigureProfile}
           pending={isConfiguringProfile}

@@ -80,6 +80,7 @@ export function ProfilesProvider({ children }: ProfilesProviderProps) {
           { maxFeePerGas, maxPriorityFeePerGas }
         );
         const { hash } = Tx;
+
         setConfigureProfileStatus('waiting');
         toast.info(<ToastLink message={'Configuring profile...'} />);
         Profiles.provider.once(hash, async (transaction) => {
