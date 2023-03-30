@@ -94,10 +94,6 @@ const InfoRight = styled.div<ElementThemeProps>`
   border-radius: ${BASE_BORDER_RADIUS};
   box-shadow: ${({ theme }) => theme.BASE_BOX_SHADOW};
   padding: 2rem;
-
-  @media (max-width: 900px) {
-    margin-block-end: 2rem;
-  }
 `;
 
 const ImageWrapper = styled.div`
@@ -105,7 +101,7 @@ const ImageWrapper = styled.div`
   height: 100%;
   border-radius: 50%;
   overflow: hidden;
-  margin-block-end: 3rem;
+  margin-block-end: 2rem;
 
   span {
     width: 100% !important;
@@ -291,7 +287,6 @@ export const CTAWrapper = styled.div`
 const VotingsWrapper = styled.div`
   width: 90%;
   max-width: 1200px;
-  margin-block-end: 2rem;
   animation: fadein 2s;
 
   @keyframes fadein {

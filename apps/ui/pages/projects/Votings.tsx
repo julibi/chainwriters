@@ -11,6 +11,7 @@ import useContract from '../../hooks/useContract';
 import ABI from '../../abis/Ballot.json';
 
 const Root = styled.div`
+  margin-block-end: 2rem;
   padding: 2rem;
   display: flex;
   flex-direction: column;

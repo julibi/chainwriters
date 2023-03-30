@@ -174,7 +174,6 @@ const ConfigureProfileModal = ({
         hasNewImageHash,
       });
     } catch (e: unknown) {
-      console.log({ e });
       toast.error(
         'Something went wrong while trying to uplod your data to IPFS.'
       );
