@@ -26,8 +26,12 @@ const ProfileSpan = styled.span`
   }
 `;
 
-const ImageWrapper = styled.div`
-  margin-inline-start: 10px;
+type ImageWrapperProps = {
+  isImageOnly?: boolean;
+};
+
+const ImageWrapper = styled.div<ImageWrapperProps>`
+  margin-inline-start: ${({ isImageOnly }) => (isImageOnly ? '-10px' : '10px')};
   width: 30px;
   height: 30px;
   border-radius: 50%;
@@ -47,9 +51,9 @@ const VerificationBadge = styled.div`
   margin-block-start: 3px;
 `;
 
-type ProfileLinkProps = { account: string };
+type ProfileLinkProps = { account: string; isImageOnly?: boolean };
 
-const ProfileLink = ({ account }: ProfileLinkProps) => {
+const ProfileLink = ({ account, isImageOnly = false }: ProfileLinkProps) => {
   const ref = useRef(null);
   const name = useName(account);
   const router = useRouter();
@@ -75,7 +79,7 @@ const ProfileLink = ({ account }: ProfileLinkProps) => {
 
   return (
     <Root onClick={handleClick}>
-      {profile?.isVerified && (
+      {profile?.isVerified && !isImageOnly && (
         <VerificationBadge>
           <TooltippedIndicator
             backgroundColor="transparent"
@@ -84,10 +88,12 @@ const ProfileLink = ({ account }: ProfileLinkProps) => {
           />
         </VerificationBadge>
       )}
-      <ProfileSpan>
-        {utils.isAddress(name) ? truncateAddress(name) : name}
-      </ProfileSpan>
-      <ImageWrapper ref={ref as any}>
+      {!isImageOnly && (
+        <ProfileSpan>
+          {utils.isAddress(name) ? truncateAddress(name) : name}
+        </ProfileSpan>
+      )}
+      <ImageWrapper ref={ref as any} isImageOnly={isImageOnly}>
         <ProfileImage
           account={account}
           imageIPFSHash={profile?.imageIPFSHash}

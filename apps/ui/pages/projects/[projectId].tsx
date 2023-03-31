@@ -51,7 +51,7 @@ import {
 import Votings from './Votings';
 import { useBallotsFactory } from '../../hooks/ballotFactory';
 import ProfileLink from '../../components/ProfileLink';
-import { useGetOwners } from 'apps/ui/hooks/useGetOwners';
+import OwnerSection from '../../components/ProjectDetails/OwnerSection';
 
 const Root = styled.div`
   display: flex;
@@ -110,14 +110,6 @@ const Minting = styled.div<ElementThemeProps>`
   align-items: center;
   justify-content: space-between;
   margin-block-end: 2rem;
-`;
-
-const Owners = styled.div`
-  height: 100%;
-  padding: 1rem !important;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
 `;
 
 const ImageWrapper = styled.div`
@@ -339,7 +331,6 @@ const ProjectDetailView = () => {
   const auctionsManager = useAuctionsManager();
   const mpManager = useMoonpageManager();
   const { retriggerAuction } = useAuctions();
-  const test = useGetOwners(projectId);
   const [coverImgLink, setCoverImgLink] = useState<string>(null);
   const [isGettingCurrentPrice, setIsGettingCurentPrice] =
     useState<boolean>(false);
@@ -351,7 +342,6 @@ const ProjectDetailView = () => {
     () => updatedProject || fetchedProject,
     [fetchedProject, updatedProject]
   );
-  console.log({ test });
 
   const scrollToVotings = useCallback(() => {
     const timeout = setTimeout(
@@ -626,7 +616,7 @@ const ProjectDetailView = () => {
                   />
                 )}
               </Minting>
-              <Owners>bhj</Owners>
+              <OwnerSection projectId={projectId} />
             </InfoRight>
           </MainInfoWrapper>
           <Blurb
