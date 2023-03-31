@@ -51,6 +51,7 @@ import {
 import Votings from './Votings';
 import { useBallotsFactory } from '../../hooks/ballotFactory';
 import ProfileLink from '../../components/ProfileLink';
+import { useGetOwners } from 'apps/ui/hooks/useGetOwners';
 
 const Root = styled.div`
   display: flex;
@@ -91,9 +92,32 @@ const InfoRight = styled.div<ElementThemeProps>`
   justify-content: space-between;
   font-family: ${FONT_SERIF_BOLD};
 
-  border-radius: ${BASE_BORDER_RADIUS};
-  box-shadow: ${({ theme }) => theme.BASE_BOX_SHADOW};
-  padding: 2rem;
+  > div {
+    padding: 2rem;
+    border-radius: ${BASE_BORDER_RADIUS};
+    box-shadow: ${({ theme }) => theme.BASE_BOX_SHADOW};
+  }
+
+  @media (max-width: 900px) {
+    margin-inline: 0;
+    margin-block-end: 2rem;
+  }
+`;
+
+const Minting = styled.div<ElementThemeProps>`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  margin-block-end: 2rem;
+`;
+
+const Owners = styled.div`
+  height: 100%;
+  padding: 1rem !important;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 `;
 
 const ImageWrapper = styled.div`
@@ -315,6 +339,7 @@ const ProjectDetailView = () => {
   const auctionsManager = useAuctionsManager();
   const mpManager = useMoonpageManager();
   const { retriggerAuction } = useAuctions();
+  const test = useGetOwners(projectId);
   const [coverImgLink, setCoverImgLink] = useState<string>(null);
   const [isGettingCurrentPrice, setIsGettingCurentPrice] =
     useState<boolean>(false);
@@ -326,6 +351,7 @@ const ProjectDetailView = () => {
     () => updatedProject || fetchedProject,
     [fetchedProject, updatedProject]
   );
+  console.log({ test });
 
   const scrollToVotings = useCallback(() => {
     const timeout = setTimeout(
@@ -581,23 +607,26 @@ const ProjectDetailView = () => {
               </Language>
             </InfoLeft>
             <InfoRight theme={theme}>
-              {project.editions?.length > 1 && (
-                <MintSection
-                  currentEdition={currentEdition}
-                  project={project}
-                  refetch={refetchCount}
-                />
-              )}
-              {project.editions?.length === 1 && (
-                <AuctionSection
-                  isAuthor={isAuthor}
-                  project={project}
-                  isGettingCurrentPrice={isGettingCurrentPrice}
-                  onFetchCurrentPrice={fetchCurrentPrice}
-                  onRetriggerAuction={handleRetriggerAuction}
-                  onStartAuctions={handleStartAuctions}
-                />
-              )}
+              <Minting>
+                {project.editions?.length > 1 && (
+                  <MintSection
+                    currentEdition={currentEdition}
+                    project={project}
+                    refetch={refetchCount}
+                  />
+                )}
+                {project.editions?.length === 1 && (
+                  <AuctionSection
+                    isAuthor={isAuthor}
+                    project={project}
+                    isGettingCurrentPrice={isGettingCurrentPrice}
+                    onFetchCurrentPrice={fetchCurrentPrice}
+                    onRetriggerAuction={handleRetriggerAuction}
+                    onStartAuctions={handleStartAuctions}
+                  />
+                )}
+              </Minting>
+              <Owners>bhj</Owners>
             </InfoRight>
           </MainInfoWrapper>
           <Blurb
