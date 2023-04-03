@@ -172,7 +172,7 @@ const AuctionSection = ({
       <PieChartWrapper>
         <PieChart part={Number(project.mintCount)} whole={Number(maxSupply)} />
       </PieChartWrapper>
-      <FlexWrapper style={{ marginBlockEnd: '0' }}>
+      <FlexWrapper style={{ marginBlockEnd: '0', width: '100%' }}>
         <InfoBlock theme={theme}>
           <Title size="xs">{`Minted: ${Number(totalSupply)}`}</Title>
           <Title size="xs">

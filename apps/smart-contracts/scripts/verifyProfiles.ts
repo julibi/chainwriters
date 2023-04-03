@@ -23,7 +23,7 @@ async function verifyProfiles() {
   const ContractAsDeployer = await contract.connect(deployer);
 
   const verifyingTX = await ContractAsDeployer.setIsVerified(
-    ["0xaD22d0779Da45A7144F49E1A25809cb274b143Ff"],
+    ["0xc5F490B1629f6D6580F33bF53CEe23eF52cEF89C"],
     [true]
   );
   console.log({ verifyingTX });
