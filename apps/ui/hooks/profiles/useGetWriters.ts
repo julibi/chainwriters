@@ -30,7 +30,9 @@ export const useGetWriters = () => {
             orderDirection: 'desc',
           },
         });
-      } catch (e) {}
+      } catch (e) {
+        console.log({ e });
+      }
     });
   }, [profiles]);
 
