@@ -57,7 +57,7 @@ export interface UpdateTranslationHashArgs {
   projectId: string;
   translation: Node[];
   translationIpfsHash: string;
-  oldTranslationIpfsHash: string;
+  oldTranslationIpfsHash?: string;
   onSuccess?: () => void;
   onError?: (e: any) => void;
 }
