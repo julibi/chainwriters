@@ -149,7 +149,12 @@ const Read = () => {
   const theme = useTheme();
   const projectId = useGetProjectId();
   const { uploadText } = useUploadTextToIpfs();
-  const { updateText, updateTextStatus } = useManager();
+  const {
+    updateText,
+    updateTextStatus,
+    updateTranslation,
+    updateTranslationStatus,
+  } = useManager();
   const {
     allowedToRead,
     isAuthor,
@@ -157,6 +162,7 @@ const Read = () => {
     project,
     text,
     textIpfsHash: originalTextIpfsHash,
+    translationIpfsHash: originalTranslationIpfsHash,
     pending,
     translation,
     hasTranslation,
@@ -164,11 +170,18 @@ const Read = () => {
   const [translationOn, setTranslationOn] = useState<boolean>(false);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [currentText, setCurrentText] = useState<Node[] | undefined>();
+  const [currentTranslation, setCurrentTranslation] = useState<
+    Node[] | undefined
+  >();
   const [shouldResetToOriginal, setShouldResetToOriginal] =
     useState<boolean>(true);
   const textShownInEditor = useMemo(
     () => currentText ?? text,
     [text, currentText]
+  );
+  const translationShownInEditor = useMemo(
+    () => currentTranslation ?? translation,
+    [translation, currentTranslation]
   );
 
   const handleClickGoBack = useCallback(
@@ -185,10 +198,14 @@ const Read = () => {
 
   const handleToggleEditing = useCallback(() => {
     if (isEditing && shouldResetToOriginal) {
-      setCurrentText(undefined);
+      if (translationOn) {
+        setCurrentTranslation(undefined);
+      } else {
+        setCurrentText(undefined);
+      }
     }
     setIsEditing(!isEditing);
-  }, [isEditing, shouldResetToOriginal]);
+  }, [isEditing, shouldResetToOriginal, translationOn]);
 
   const handleUpdateText = useCallback(async () => {
     if (!text || !originalTextIpfsHash || !projectId) return null;
@@ -210,6 +227,30 @@ const Read = () => {
     projectId,
     text,
     updateText,
+    uploadText,
+  ]);
+
+  const handleUpdateTranslation = useCallback(async () => {
+    if (!translation || !originalTranslationIpfsHash || !projectId) return null;
+    const hash = await uploadText(currentTranslation);
+
+    await updateTranslation({
+      projectId,
+      translation: currentTranslation,
+      translationIpfsHash: hash,
+      oldTranslationIpfsHash: originalTranslationIpfsHash,
+      onSuccess: () => {
+        setShouldResetToOriginal(false);
+        setIsEditing(false);
+      },
+      onError: undefined,
+    });
+  }, [
+    currentTranslation,
+    originalTranslationIpfsHash,
+    projectId,
+    translation,
+    updateTranslation,
     uploadText,
   ]);
 
@@ -251,11 +292,45 @@ const Read = () => {
   const correctTranslation = useCallback(() => {
     if (translation && translationOn) {
       if (isAuthor && isEditing) {
-        return <RichText text={translation} onKeyDown={() => {}} />;
+        return (
+          <RichTextWrapper>
+            <RichText
+              text={translationShownInEditor}
+              onKeyDown={(val: Node[]) => setCurrentTranslation(val)}
+              isDisabled={['confirming', 'waiting'].includes(
+                updateTranslationStatus
+              )}
+            />
+            <ActionButton
+              onClick={handleUpdateTranslation}
+              text="Update"
+              loading={['confirming', 'waiting'].includes(
+                updateTranslationStatus
+              )}
+              disabled={['confirming', 'waiting'].includes(
+                updateTranslationStatus
+              )}
+              margin="1rem 0 0 0"
+            />
+          </RichTextWrapper>
+        );
       }
-      return <RichTextRead text={translation} />;
+      return (
+        <RichTextRead
+          text={shouldResetToOriginal ? translation : translationShownInEditor}
+        />
+      );
     }
-  }, [isAuthor, isEditing, translation, translationOn]);
+  }, [
+    handleUpdateTranslation,
+    isAuthor,
+    isEditing,
+    shouldResetToOriginal,
+    translation,
+    translationOn,
+    translationShownInEditor,
+    updateTranslationStatus,
+  ]);
 
   if (!project || isDeleted) {
     return (

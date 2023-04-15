@@ -214,6 +214,7 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
       projectId,
       translation,
       translationIpfsHash,
+      oldTranslationIpfsHash,
       onError,
       onSuccess,
     }: UpdateTranslationHashArgs) => {
@@ -255,6 +256,7 @@ export function ManagerProvider({ children }: ManagerProviderProps) {
 
           // then pin it with Pinata
           try {
+            // await unpinFromPinata(oldTranslationIpfsHash);
             await pinToPinata(translationIpfsHash, projectId, 'translation');
           } catch (e) {
             // do nothing

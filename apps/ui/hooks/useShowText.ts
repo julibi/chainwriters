@@ -170,6 +170,7 @@ const useShowText = (projectId: string) => {
       hasTranslation,
       fetchTranslation,
       textIpfsHash: project?.textIpfsHash,
+      translationIpfsHash: project?.translationIpfsHash,
     }),
     [
       allowedToRead,
