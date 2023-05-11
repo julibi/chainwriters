@@ -137,60 +137,70 @@ describe("TheRetreat", function () {
       await TRAsAdminA.setupCharacter(
         "Justus Jonas",
         "_initialTextIPFSHash",
+        "_initialTranslationIPFSHash",
         "_initialImageIPFSHash"
       );
 
       await TRAsAdminA.setupCharacter(
         "Peter Shaw",
         "_initialTextIPFSHash",
+        "_initialTranslationIPFSHash",
         "_initialImageIPFSHash"
       );
 
       await TRAsAdminA.setupCharacter(
         "Bob Andrews",
         "_initialTextIPFSHash",
+        "_initialTranslationIPFSHash",
         "_initialImageIPFSHash"
       );
 
       await TRAsAdminA.setupCharacter(
         "Morten",
         "_initialTextIPFSHash",
+        "_initialTranslationIPFSHash",
         "_initialImageIPFSHash"
       );
 
       await TRAsAdminA.setupCharacter(
         "Skinny Norris",
         "_initialTextIPFSHash",
+        "_initialTranslationIPFSHash",
         "_initialImageIPFSHash"
       );
 
       await TRAsAdminA.setupCharacter(
         "Inspector Reynolds",
         "_initialTextIPFSHash",
+        "_initialTranslationIPFSHash",
         "_initialImageIPFSHash"
       );
 
       await TRAsAdminA.setupCharacter(
         "Tante Matilda",
         "_initialTextIPFSHash",
+        "_initialTranslationIPFSHash",
         "_initialImageIPFSHash"
       );
 
       await TRAsAdminA.setupCharacter(
         "Titus Jonas",
         "_initialTextIPFSHash",
+        "_initialTranslationIPFSHash",
         "_initialImageIPFSHash"
       );
 
       await TRAsAdminA.setupCharacter(
         "Kelly",
         "_initialTextIPFSHash",
+        "_initialTranslationIPFSHash",
         "_initialImageIPFSHash"
       );
 
       await TRAsAdminA.setupCharacter(
         "Blacky",
         "_initialTextIPFSHash",
+        "_initialTranslationIPFSHash",
         "_initialImageIPFSHash"
       );
     };
@@ -231,6 +241,7 @@ describe("TheRetreat", function () {
         TRAsDeployer.setupCharacter(
           "Justus Jonas",
           "_initialTextIPFSHash",
+          "_initialTranslationIPFSHash",
           "_initialImageIPFSHash"
         )
       ).to.revertedWith("Only for admins");
@@ -238,6 +249,7 @@ describe("TheRetreat", function () {
         TRAsUserA.setupCharacter(
           "Justus Jonas",
           "_initialTextIPFSHash",
+          "_initialTranslationIPFSHash",
           "_initialImageIPFSHash"
         )
       ).to.revertedWith("Only for admins");
@@ -250,6 +262,7 @@ describe("TheRetreat", function () {
         TRAsAdminA.setupCharacter(
           "FAKE!",
           "_initialTextIPFSHash",
+          "_initialTranslationIPFSHash",
           "_initialImageIPFSHash"
         )
       ).to.revertedWith("All characters already set");
@@ -262,11 +275,13 @@ describe("TheRetreat", function () {
       await TRAsAdminA.setupCharacter(
         "Justus Jonas",
         "_initialTextIPFSHash",
+        "_initialTranslationIPFSHash",
         "_initialImageIPFSHash"
       );
       await TRAsAdminB.setupCharacter(
         "Peter Shaw",
         "_initialTextIPFSHash",
+        "_initialTranslationIPFSHash",
         "_initialImageIPFSHash"
       );
 
@@ -275,6 +290,7 @@ describe("TheRetreat", function () {
         TRAsDeployer.configureCharacter(
           1,
           "_randomTextIPFSHash",
+          "_initialTranslationIPFSHash",
           "_randomImageIPFSHash"
         )
       ).to.revertedWith("Only for admins");
@@ -282,6 +298,7 @@ describe("TheRetreat", function () {
         TRAsUserA.configureCharacter(
           1,
           "_randomTextIPFSHash",
+          "_initialTranslationIPFSHash",
           "_randomImageIPFSHash"
         )
       ).to.revertedWith("Only for admins");
@@ -289,6 +306,7 @@ describe("TheRetreat", function () {
       await TRAsAdminA.configureCharacter(
         1,
         "_randomTextIPFSHash",
+        "_initialTranslationIPFSHash",
         "_randomImageIPFSHash"
       );
     });
@@ -378,22 +396,28 @@ describe("TheRetreat", function () {
       expect(await MPCollection.ownerOf(1002)).to.equal(adminB.address);
 
       // cannot write with non-TheRetreat NFT from Moonpage
-      await expect(TRAsAdminB.write("somehash", 1002)).to.revertedWith(
-        "Not a TheRetreat NFT"
-      );
+      await expect(
+        TRAsAdminB.write("somehash", "_initialTranslationIPFSHash", 1002)
+      ).to.revertedWith("Not a TheRetreat NFT");
       // cannot write with an NFT you don't own
-      await expect(TRAsAdminA.write("somehash", 1)).to.revertedWith(
-        "Not authorized"
-      );
+      await expect(
+        TRAsAdminA.write("somehash", "_initialTranslationIPFSHash", 1)
+      ).to.revertedWith("Not authorized");
       // can write with NFT
-      await expect(TRAsAdminA.write("somehash", 2)).not.to.reverted;
+      await expect(
+        TRAsAdminA.write("somehash", "_initialTranslationIPFSHash", 2)
+      ).not.to.reverted;
       // cannot use same NFT to write twice
-      await expect(TRAsAdminA.write("somehash", 2)).to.revertedWith(
-        "NFT already used"
-      );
+      await expect(
+        TRAsAdminA.write("somehash", "_initialTranslationIPFSHash", 2)
+      ).to.revertedWith("NFT already used");
       // admin B uses both his 2ish NFTs to continue writing at Peter Shaw
-      await expect(TRAsAdminB.write("somehash", 12)).not.to.reverted;
-      await expect(TRAsAdminB.write("somehash", 22)).not.to.reverted;
+      await expect(
+        TRAsAdminB.write("somehash", "_initialTranslationIPFSHash", 12)
+      ).not.to.reverted;
+      await expect(
+        TRAsAdminB.write("somehash", "_initialTranslationIPFSHash", 22)
+      ).not.to.reverted;
 
       // snippets of characters work as expected
       const snippetsOfPeterShaw = await TR.snippetsOfCharacter(2);
@@ -403,9 +427,15 @@ describe("TheRetreat", function () {
       expect(result1.length).to.equal(3);
 
       // userA and adminB write with 6ish NFTs (Inspector Reynolds)
-      await expect(TRAsUserA.write("somehash", 6)).not.to.reverted;
-      await expect(TRAsAdminB.write("somehash", 16)).not.to.reverted;
-      await expect(TRAsAdminB.write("somehash", 26)).not.to.reverted;
+      await expect(
+        TRAsUserA.write("somehash", "_initialTranslationIPFSHash", 6)
+      ).not.to.reverted;
+      await expect(
+        TRAsAdminB.write("somehash", "_initialTranslationIPFSHash", 16)
+      ).not.to.reverted;
+      await expect(
+        TRAsAdminB.write("somehash", "_initialTranslationIPFSHash", 26)
+      ).not.to.reverted;
       const snippetsOfInspectorReynolds = await TR.snippetsOfCharacter(6);
       const result2 = snippetsOfInspectorReynolds.filter(
         (snippet: any) => snippet.written

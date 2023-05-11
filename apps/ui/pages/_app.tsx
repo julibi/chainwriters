@@ -10,7 +10,7 @@ import {
   JsonRpcFetchFunc,
   Web3Provider,
 } from '@ethersproject/providers';
-import { createGlobalStyle } from 'styled-components';
+import {  } from 'styled-components';
 import { hotjar } from 'react-hotjar';
 import Layout from '../components/Layout';
 import {

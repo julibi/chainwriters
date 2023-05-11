@@ -14,7 +14,7 @@ async function deployClassroom() {
   console.log("Account balance:", (await deployer.getBalance()).toString());
 
   // deploy MoonpageManager
-  const TCRFactory = await hre.ethers.getContractFactory("TCR");
+  const TCRFactory = await hre.ethers.getContractFactory("TheRetreat");
   const TCRProxy = await hre.upgrades.deployProxy(
     TCRFactory,
     [moonpageCollectionAddr, moonpageManagerAddr, 37],

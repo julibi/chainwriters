@@ -26,6 +26,7 @@ contract TheRetreat is
     struct Snippet {
         address writer;
         string textIPFSHash;
+        string translationIPFSHash;
         uint256 writtenAt;
         bool written;
         uint256 character;
@@ -35,6 +36,7 @@ contract TheRetreat is
     struct Character {
         string name;
         string textIPFSHash;
+        string translationIPFSHash;
         string imageIPFSHash;
     }
 
@@ -93,28 +95,33 @@ contract TheRetreat is
     function configureCharacter(
         uint256 _index,
         string memory _textIPFSHash,
+        string memory _translationIPFSHash,
         string memory _imageIPFSHash
     ) external whenNotPaused {
         require(admins[msg.sender], "Only for admins");
         characters[_index].textIPFSHash = _textIPFSHash;
+        characters[_index].translationIPFSHash = _translationIPFSHash;
         characters[_index].imageIPFSHash = _imageIPFSHash;
     }
 
     function setupCharacter(
         string memory _name,
         string memory _textIPFSHash,
+        string memory _translationIPFSHash,
         string memory _imageIPFSHash
     ) external whenNotPaused {
         require(characterIndex <= 10, "All characters already set");
         require(admins[msg.sender], "Only for admins");
         characters[characterIndex].name = _name;
         characters[characterIndex].textIPFSHash = _textIPFSHash;
+        characters[characterIndex].translationIPFSHash = _translationIPFSHash;
         characters[characterIndex].imageIPFSHash = _imageIPFSHash;
         characterIndex++;
     }
 
     function write(
         string memory _textIPFSHash,
+        string memory _translationIPFSHash,
         uint256 _tokenId
     ) external whenNotPaused {
         (
@@ -139,6 +146,7 @@ contract TheRetreat is
         uint256 character = this.characterOfToken(_tokenId);
         snippets[index].writer = msg.sender;
         snippets[index].textIPFSHash = _textIPFSHash;
+        snippets[index].translationIPFSHash = _translationIPFSHash;
         snippets[index].writtenAt = block.timestamp;
         snippets[index].written = true;
         snippets[index].character = character;
@@ -155,6 +163,7 @@ contract TheRetreat is
             if (snippets[i].character == _characterId) {
                 array[i].writer = snippets[i].writer;
                 array[i].textIPFSHash = snippets[i].textIPFSHash;
+                array[i].translationIPFSHash = snippets[i].translationIPFSHash;
                 array[i].writtenAt = snippets[i].writtenAt;
                 array[i].written = snippets[i].written;
                 array[i].character = snippets[i].character;

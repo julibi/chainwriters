@@ -758,107 +758,107 @@
     },
     {
       "address": "0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0",
-      "txHash": "0x292c379f7a39af51bbcdd7d2d1c38444d6112c40b4ccc7af9074e57b3d9bcab0",
+      "txHash": "0x5678750e1860239c28632f4c0a682e7dfe0ad830bc93bec77c6158d255cec02c",
       "kind": "uups"
     },
     {
       "address": "0x9A676e781A523b5d0C0e43731313A708CB607508",
-      "txHash": "0x65698b6e1afe786c4af71fe93a745ded5b8808e6447008e7384c3939a7be5db2",
+      "txHash": "0x7b0a59fae301624343ed270dc6a7b1a4f552a6a83e385b59563037a0183c8d26",
       "kind": "uups"
     },
     {
       "address": "0x0B306BF915C4d645ff596e518fAf3F9669b97016",
-      "txHash": "0x0e90489bb078162a6711839841371a49c320525b3f5ace744f719069f5827888",
+      "txHash": "0x669ec0b082745aa12e311d7d683b52bf816bbb567c0a648804489561eb381c26",
       "kind": "uups"
     },
     {
       "address": "0x959922bE3CAee4b8Cd9a407cc3ac1C251C2007B1",
-      "txHash": "0x93c2ccd3071fef8663b9d4cf0540f1c3bba037faa3e8c821c9f6149f977477f1",
+      "txHash": "0x94664de70d92326d7d6c2889acfc65b38e2aaa7a2b62c2cb77d32c6d3f720410",
       "kind": "uups"
     },
     {
       "address": "0x59b670e9fA9D0A427751Af201D676719a970857b",
-      "txHash": "0xc937bccdc20078e5087b8cc215846fb8d2f0d8d02ed83f8942956c0a12808efd",
+      "txHash": "0x87065e60f1789724d7077bde34237e06b2ad5d20910315fb05b75b55cf76ca8c",
       "kind": "uups"
     },
     {
       "address": "0x7a2088a1bFc9d81c55368AE168C2C02570cB814F",
-      "txHash": "0xdd5a97e4439e0cbadfa3e52759dcfd9cd125fa1b993b4ccb1f932b7bfde26daf",
+      "txHash": "0x6cb655da866733914f5b902a25d442de9c78bdc8eeee49b65fa5d7c5a7a8a28a",
       "kind": "uups"
     },
     {
       "address": "0x09635F643e140090A9A8Dcd712eD6285858ceBef",
-      "txHash": "0xa3f3c3ebf38bcefdbd49893b02598c1cceb98c1f875225b9244e832c99f24438",
+      "txHash": "0xb6704315b21c968405105e4ca9b4e4f7042834c7d575679af9ae0f2409519014",
       "kind": "uups"
     },
     {
       "address": "0xc5a5C42992dECbae36851359345FE25997F5C42d",
-      "txHash": "0x86b4b53851d41b08504ea89301886c43d772d686fdea4018ae054941a49f18d4",
+      "txHash": "0xc2e08c77234037a416d51c4f8f94e52cba0da3a495d453a10df5b0837e38f7c6",
       "kind": "uups"
     },
     {
       "address": "0x9E545E3C0baAB3E08CdfD552C960A1050f373042",
-      "txHash": "0x73f342977843fdebde6b8e3fe7821bfd24ef227bd0acb74e65390db9843fe4f9",
+      "txHash": "0xa44abd54503fcf5861626cde858b5ca59042335773154a6e5ea457f7f08bc3a9",
       "kind": "uups"
     },
     {
       "address": "0x95401dc811bb5740090279Ba06cfA8fcF6113778",
-      "txHash": "0x1a437cd2a78786e4a0b0d5059855516c24933a7fb20363774158374a42b4e7b0",
+      "txHash": "0x0d41efaad3f0b193885cbc225319dbd4accf4311d361611390ce4d344a74142a",
       "kind": "uups"
     },
     {
       "address": "0x998abeb3E57409262aE5b751f60747921B33613E",
-      "txHash": "0x1ef753de56240491634006071a4c5cf6819fea924a12c5802fb5809a85a003ad",
+      "txHash": "0x794b7657394221e5856f01134611dd787daca9add7d233f1b868c57f48a96e0a",
       "kind": "uups"
     },
     {
       "address": "0x70e0bA845a1A0F2DA3359C97E0285013525FFC49",
-      "txHash": "0xb84d30a92e340e8b7b808c46d91b0f153a47a4b4c29bd8e51ada78cb5cefac56",
+      "txHash": "0x1a6d557cb6576c76468f3753d6775add3fb6fccbc6994c8c926621806963714c",
       "kind": "uups"
     },
     {
       "address": "0x9d4454B023096f34B160D6B654540c56A1F81688",
-      "txHash": "0x6f1e8d57ddf73a82732d979d598558886c8aa24b9b71b3e1a9b734ad7cda0488",
+      "txHash": "0x04927a5419436d1bf76225c0382505242ec3fd2bd6f304be2e97eaf548598fce",
       "kind": "uups"
     },
     {
       "address": "0x1291Be112d480055DaFd8a610b7d1e203891C274",
-      "txHash": "0x161cc9bac14d5e9c1b71d1cbcd2d62157951bbfa06b45775fa8caba8116b919f",
+      "txHash": "0xeda9baada015770e2ecdb011cbe7b6c1c122652aec2d18eaca4a629a9b26e3b0",
       "kind": "uups"
     },
     {
       "address": "0x5f3f1dBD7B74C6B46e8c44f98792A1dAf8d69154",
-      "txHash": "0xf8e5e4c31e6597acf94c77a65ae2c9c0b2367be3b717226defce1ba4e2356cb3",
+      "txHash": "0x9a52809c6d57808e8400996cd8c7a6bdce10d23582f2d6123fde2ebf394dc1e3",
       "kind": "uups"
     },
     {
       "address": "0xb7278A61aa25c888815aFC32Ad3cC52fF24fE575",
-      "txHash": "0xea847467fc17ade9a46a4fe5991540e855329a34ef29be613ec28e109bca8a71",
+      "txHash": "0xa39d1c7fa49cb332f23bc52ac0ab685f27e8947989ee1c2ca2a1cc5b423290f3",
       "kind": "uups"
     },
     {
       "address": "0x7bc06c482DEAd17c0e297aFbC32f6e63d3846650",
-      "txHash": "0x4ae8867ba84d51803787b5fa21aa0dd7c30fe7f6cf799031bb4af202fb146c3a",
+      "txHash": "0x501930f458fc3d9a8ce388750703e03b62db1117e3ff2a82dc037330c34264dc",
       "kind": "uups"
     },
     {
       "address": "0xFD471836031dc5108809D173A067e8486B9047A3",
-      "txHash": "0x91de4d5e373469ecc5c753ff2c4d0ca4ef8d80c954487e684046d319f34a26a9",
+      "txHash": "0x0f38aa5605a86267919bdd7686319aae788f8bba1c95e2ca44e0ccac4be52f92",
       "kind": "uups"
     },
     {
       "address": "0xcbEAF3BDe82155F56486Fb5a1072cb8baAf547cc",
-      "txHash": "0x76143b8e5dbe894d5686c92c440de60224b8751f2c9ccffca172799359e0dd9a",
+      "txHash": "0x310b4f3e88d94b5d0924ccde7517f4ea88475135712d198a5e8811c1c597ca20",
       "kind": "uups"
     },
     {
       "address": "0x1429859428C0aBc9C2C47C8Ee9FBaf82cFA0F20f",
-      "txHash": "0x58e770fdecda747caff6a9e8500ab13e3fcd89901ead499fddc5ee203f16ece7",
+      "txHash": "0xd84c9797ba3d209e1d26bf79b1a877c77db622f9f695461f1ef192d545c31a64",
       "kind": "uups"
     },
     {
       "address": "0x1fA02b2d6A771842690194Cf62D91bdd92BfE28d",
-      "txHash": "0xaa860dc7c6553083e89747e17098a9b4e87aa42776b6e98822650074df7ed2a9",
+      "txHash": "0xf3ea861fc1c28cb0340838a9a8ca73bca487ad36c0111e65921c2398a2c7dce4",
       "kind": "uups"
     }
   ],
@@ -1001,7 +1001,7 @@
             "label": "collection",
             "offset": 0,
             "slot": "307",
-            "type": "t_contract(IMoonpageCollection)15427",
+            "type": "t_contract(IMoonpageCollection)15468",
             "contract": "MoonpageManager",
             "src": "contracts/MoonpageManager.sol:26"
           },
@@ -1123,7 +1123,7 @@
             "label": "bytes32",
             "numberOfBytes": "32"
           },
-          "t_contract(IMoonpageCollection)15427": {
+          "t_contract(IMoonpageCollection)15468": {
             "label": "contract IMoonpageCollection",
             "numberOfBytes": "20"
           },
@@ -1466,7 +1466,7 @@
             "label": "moonpageManager",
             "offset": 0,
             "slot": "301",
-            "type": "t_contract(IMoonpageManager)15653",
+            "type": "t_contract(IMoonpageManager)15694",
             "contract": "AuctionsManager",
             "src": "contracts/AuctionsManager.sol:21"
           },
@@ -1474,7 +1474,7 @@
             "label": "moonpageFactory",
             "offset": 0,
             "slot": "302",
-            "type": "t_contract(IMoonpageFactory)15486",
+            "type": "t_contract(IMoonpageFactory)15527",
             "contract": "AuctionsManager",
             "src": "contracts/AuctionsManager.sol:22"
           },
@@ -1482,7 +1482,7 @@
             "label": "moonpageCollection",
             "offset": 0,
             "slot": "303",
-            "type": "t_contract(IMoonpageCollection)15427",
+            "type": "t_contract(IMoonpageCollection)15468",
             "contract": "AuctionsManager",
             "src": "contracts/AuctionsManager.sol:23"
           },
@@ -1516,15 +1516,15 @@
             "label": "bytes32",
             "numberOfBytes": "32"
           },
-          "t_contract(IMoonpageCollection)15427": {
+          "t_contract(IMoonpageCollection)15468": {
             "label": "contract IMoonpageCollection",
             "numberOfBytes": "20"
           },
-          "t_contract(IMoonpageFactory)15486": {
+          "t_contract(IMoonpageFactory)15527": {
             "label": "contract IMoonpageFactory",
             "numberOfBytes": "20"
           },
-          "t_contract(IMoonpageManager)15653": {
+          "t_contract(IMoonpageManager)15694": {
             "label": "contract IMoonpageManager",
             "numberOfBytes": "20"
           },
@@ -1739,7 +1739,7 @@
             "label": "moonpageManager",
             "offset": 0,
             "slot": "305",
-            "type": "t_contract(IMoonpageManager)15653",
+            "type": "t_contract(IMoonpageManager)15694",
             "contract": "MoonpageFactory",
             "src": "contracts/MoonpageFactory.sol:24"
           },
@@ -1747,7 +1747,7 @@
             "label": "auctionsManager",
             "offset": 0,
             "slot": "306",
-            "type": "t_contract(IAuctionsManager)15374",
+            "type": "t_contract(IAuctionsManager)15415",
             "contract": "MoonpageFactory",
             "src": "contracts/MoonpageFactory.sol:25"
           },
@@ -1797,11 +1797,11 @@
             "label": "bytes32",
             "numberOfBytes": "32"
           },
-          "t_contract(IAuctionsManager)15374": {
+          "t_contract(IAuctionsManager)15415": {
             "label": "contract IAuctionsManager",
             "numberOfBytes": "20"
           },
-          "t_contract(IMoonpageManager)15653": {
+          "t_contract(IMoonpageManager)15694": {
             "label": "contract IMoonpageManager",
             "numberOfBytes": "20"
           },
@@ -2785,9 +2785,9 @@
         }
       }
     },
-    "6dbe771ff23ba54865f9ba4f0c2c8ff9403565efbe8af92ec67ae94538ace85a": {
+    "9bf32658691e14d48d556802ed4c7bc659a35dda2b840f9e4a42411572928c86": {
       "address": "0xB7f8BC63BbcaD18155201308C8f3540b07f84F5e",
-      "txHash": "0xa808cdebad7fee06802df2aba042d981b13993288dcb08a20846d7ce94480564",
+      "txHash": "0x14ffd0ad9abcf7dba8c8753643c3a1008cb655ba9e5280367e64c2cd42a6dfad",
       "layout": {
         "storage": [
           {
@@ -2875,7 +2875,7 @@
             "label": "moonpageCollection",
             "offset": 0,
             "slot": "301",
-            "type": "t_contract(IMoonpageCollection)15427",
+            "type": "t_contract(IMoonpageCollection)15468",
             "contract": "TheRetreat",
             "src": "contracts/TheRetreat.sol:20"
           },
@@ -2883,7 +2883,7 @@
             "label": "moonpageManager",
             "offset": 0,
             "slot": "302",
-            "type": "t_contract(IMoonpageManager)15653",
+            "type": "t_contract(IMoonpageManager)15694",
             "contract": "TheRetreat",
             "src": "contracts/TheRetreat.sol:21"
           },
@@ -2915,17 +2915,17 @@
             "label": "snippets",
             "offset": 0,
             "slot": "306",
-            "type": "t_mapping(t_uint256,t_struct(Snippet)14829_storage)",
+            "type": "t_mapping(t_uint256,t_struct(Snippet)14831_storage)",
             "contract": "TheRetreat",
-            "src": "contracts/TheRetreat.sol:41"
+            "src": "contracts/TheRetreat.sol:43"
           },
           {
             "label": "characters",
             "offset": 0,
             "slot": "307",
-            "type": "t_mapping(t_uint256,t_struct(Character)14836_storage)",
+            "type": "t_mapping(t_uint256,t_struct(Character)14840_storage)",
             "contract": "TheRetreat",
-            "src": "contracts/TheRetreat.sol:42"
+            "src": "contracts/TheRetreat.sol:44"
           },
           {
             "label": "admins",
@@ -2933,7 +2933,7 @@
             "slot": "308",
             "type": "t_mapping(t_address,t_bool)",
             "contract": "TheRetreat",
-            "src": "contracts/TheRetreat.sol:43"
+            "src": "contracts/TheRetreat.sol:45"
           },
           {
             "label": "usedNFTs",
@@ -2941,7 +2941,7 @@
             "slot": "309",
             "type": "t_mapping(t_uint256,t_bool)",
             "contract": "TheRetreat",
-            "src": "contracts/TheRetreat.sol:44"
+            "src": "contracts/TheRetreat.sol:46"
           }
         ],
         "types": {
@@ -2965,11 +2965,11 @@
             "label": "bytes32",
             "numberOfBytes": "32"
           },
-          "t_contract(IMoonpageCollection)15427": {
+          "t_contract(IMoonpageCollection)15468": {
             "label": "contract IMoonpageCollection",
             "numberOfBytes": "20"
           },
-          "t_contract(IMoonpageManager)15653": {
+          "t_contract(IMoonpageManager)15694": {
             "label": "contract IMoonpageManager",
             "numberOfBytes": "20"
           },
@@ -2985,11 +2985,11 @@
             "label": "mapping(uint256 => bool)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_uint256,t_struct(Character)14836_storage)": {
+          "t_mapping(t_uint256,t_struct(Character)14840_storage)": {
             "label": "mapping(uint256 => struct TheRetreat.Character)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_uint256,t_struct(Snippet)14829_storage)": {
+          "t_mapping(t_uint256,t_struct(Snippet)14831_storage)": {
             "label": "mapping(uint256 => struct TheRetreat.Snippet)",
             "numberOfBytes": "32"
           },
@@ -2997,7 +2997,7 @@
             "label": "string",
             "numberOfBytes": "32"
           },
-          "t_struct(Character)14836_storage": {
+          "t_struct(Character)14840_storage": {
             "label": "struct TheRetreat.Character",
             "members": [
               {
@@ -3013,13 +3013,19 @@
                 "slot": "1"
               },
               {
-                "label": "imageIPFSHash",
+                "label": "translationIPFSHash",
                 "type": "t_string_storage",
                 "offset": 0,
                 "slot": "2"
+              },
+              {
+                "label": "imageIPFSHash",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "3"
               }
             ],
-            "numberOfBytes": "96"
+            "numberOfBytes": "128"
           },
           "t_struct(RoleData)34_storage": {
             "label": "struct AccessControlUpgradeable.RoleData",
@@ -3039,7 +3045,7 @@
             ],
             "numberOfBytes": "64"
           },
-          "t_struct(Snippet)14829_storage": {
+          "t_struct(Snippet)14831_storage": {
             "label": "struct TheRetreat.Snippet",
             "members": [
               {
@@ -3055,31 +3061,37 @@
                 "slot": "1"
               },
               {
+                "label": "translationIPFSHash",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
                 "label": "writtenAt",
                 "type": "t_uint256",
                 "offset": 0,
-                "slot": "2"
+                "slot": "3"
               },
               {
                 "label": "written",
                 "type": "t_bool",
                 "offset": 0,
-                "slot": "3"
+                "slot": "4"
               },
               {
                 "label": "character",
                 "type": "t_uint256",
                 "offset": 0,
-                "slot": "4"
+                "slot": "5"
               },
               {
                 "label": "tokenId",
                 "type": "t_uint256",
                 "offset": 0,
-                "slot": "5"
+                "slot": "6"
               }
             ],
-            "numberOfBytes": "192"
+            "numberOfBytes": "224"
           },
           "t_uint256": {
             "label": "uint256",
