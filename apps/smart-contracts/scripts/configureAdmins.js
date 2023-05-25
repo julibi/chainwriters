@@ -9,7 +9,7 @@ async function configureAdmins() {
 
   const TCRContract = await hre.ethers.getContractFactory("TheRetreat");
   const contract = TCRContract.attach(
-    "0x8F8F4e3cfcd89Dc2020E8d2615d96C8d19383F22"
+    "0x4D4243567413C47665e33b4EafFf58b934D23e41"
   );
 
   const ContractAsDeployer = contract.connect(deployer);

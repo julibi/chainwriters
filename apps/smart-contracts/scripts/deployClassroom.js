@@ -5,8 +5,8 @@ async function deployClassroom() {
   await hre.run("compile");
 
   const [deployer] = await hre.ethers.getSigners();
-  const moonpageManagerAddr = "0x5fce69239815e7a409615426e73FDD9909E8a931";
-  const moonpageCollectionAddr = "0xa5a234aa62c9411a717d349d4229caf577fa7d19";
+  const moonpageManagerAddr = "0xb506f8587cdb61ce205fa88bdcccfbd90c588a6e";
+  const moonpageCollectionAddr = "0x0eC473B1BD821D386cd7209203Ba6826Fd653B96";
   const provider = hre.ethers.provider;
   console.log("Deployer account:", deployer.address);
   console.log("MP Manager account:", moonpageManagerAddr);
