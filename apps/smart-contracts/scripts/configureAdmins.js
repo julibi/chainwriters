@@ -7,9 +7,9 @@ async function configureAdmins() {
   console.log("Deployer account:", deployer.address);
   console.log("Account balance:", (await deployer.getBalance()).toString());
 
-  const TCRContract = await hre.ethers.getContractFactory("TCR");
+  const TCRContract = await hre.ethers.getContractFactory("TheRetreat");
   const contract = TCRContract.attach(
-    "0x5e3f3Df0AF40E7625470c4dE693E06F2d249b903"
+    "0x8F8F4e3cfcd89Dc2020E8d2615d96C8d19383F22"
   );
 
   const ContractAsDeployer = contract.connect(deployer);

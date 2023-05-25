@@ -45,6 +45,14 @@ contract TheRetreat is
     mapping(address => bool) public admins;
     mapping(uint256 => bool) public usedNFTs;
 
+    event CharacterSet(address account, uint256 characterId, string name);
+    event Written(
+        address account,
+        uint256 tokenId,
+        uint256 character,
+        uint256 index
+    );
+
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
         _disableInitializers();
@@ -102,6 +110,7 @@ contract TheRetreat is
         characters[_index].textIPFSHash = _textIPFSHash;
         characters[_index].translationIPFSHash = _translationIPFSHash;
         characters[_index].imageIPFSHash = _imageIPFSHash;
+        emit CharacterSet(msg.sender, _index, characters[_index].name);
     }
 
     function setupCharacter(
@@ -116,6 +125,7 @@ contract TheRetreat is
         characters[characterIndex].textIPFSHash = _textIPFSHash;
         characters[characterIndex].translationIPFSHash = _translationIPFSHash;
         characters[characterIndex].imageIPFSHash = _imageIPFSHash;
+        emit CharacterSet(msg.sender, characterIndex, _name);
         characterIndex++;
     }
 
@@ -152,6 +162,7 @@ contract TheRetreat is
         snippets[index].character = character;
         snippets[index].tokenId = _tokenId;
         usedNFTs[_tokenId] = true;
+        emit Written(msg.sender, _tokenId, character, index);
         index++;
     }
 

@@ -100,6 +100,11 @@
       "address": "0xEbC143fcBF8F886369882F815c7e6b396e34BFF2",
       "txHash": "0x56217fb6daf35e9d93ffbfe53e8e2c16cc6287b81a7fe5012c889d7f755a4650",
       "kind": "uups"
+    },
+    {
+      "address": "0x8F8F4e3cfcd89Dc2020E8d2615d96C8d19383F22",
+      "txHash": "0xfc35b0da0f7c5c3e0b2713b8893f4ae1b26714e356e8eea503316b411bb3a0c6",
+      "kind": "uups"
     }
   ],
   "impls": {
@@ -3901,6 +3906,325 @@
             "numberOfBytes": "20"
           },
           "t_contract(IMoonpageManager)15694": {
+            "label": "contract IMoonpageManager",
+            "numberOfBytes": "20"
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_bytes32,t_struct(RoleData)34_storage)": {
+            "label": "mapping(bytes32 => struct AccessControlUpgradeable.RoleData)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_bool)": {
+            "label": "mapping(uint256 => bool)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_struct(Character)14840_storage)": {
+            "label": "mapping(uint256 => struct TheRetreat.Character)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_struct(Snippet)14831_storage)": {
+            "label": "mapping(uint256 => struct TheRetreat.Snippet)",
+            "numberOfBytes": "32"
+          },
+          "t_string_storage": {
+            "label": "string",
+            "numberOfBytes": "32"
+          },
+          "t_struct(Character)14840_storage": {
+            "label": "struct TheRetreat.Character",
+            "members": [
+              {
+                "label": "name",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "textIPFSHash",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "translationIPFSHash",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "imageIPFSHash",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "3"
+              }
+            ],
+            "numberOfBytes": "128"
+          },
+          "t_struct(RoleData)34_storage": {
+            "label": "struct AccessControlUpgradeable.RoleData",
+            "members": [
+              {
+                "label": "members",
+                "type": "t_mapping(t_address,t_bool)",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "adminRole",
+                "type": "t_bytes32",
+                "offset": 0,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_struct(Snippet)14831_storage": {
+            "label": "struct TheRetreat.Snippet",
+            "members": [
+              {
+                "label": "writer",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "textIPFSHash",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "translationIPFSHash",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "writtenAt",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "3"
+              },
+              {
+                "label": "written",
+                "type": "t_bool",
+                "offset": 0,
+                "slot": "4"
+              },
+              {
+                "label": "character",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "5"
+              },
+              {
+                "label": "tokenId",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "6"
+              }
+            ],
+            "numberOfBytes": "224"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "8f965d8047d1503af556b53d676e576c85675aaf36d4319aa11418448e5647db": {
+      "address": "0xc78890F026e7e780ff808eC016Ed42BE9d7153aB",
+      "txHash": "0x2a9d9304a1d5e6031c5d128354a8e8e8a53b47eef96b9797215dca1eb51c70eb",
+      "layout": {
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_paused",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_bool",
+            "contract": "PausableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol:29"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "PausableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol:116"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ERC165Upgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeable.sol:41"
+          },
+          {
+            "label": "_roles",
+            "offset": 0,
+            "slot": "151",
+            "type": "t_mapping(t_bytes32,t_struct(RoleData)34_storage)",
+            "contract": "AccessControlUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol:61"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "152",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "AccessControlUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol:259"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "201",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ERC1967UpgradeUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/ERC1967/ERC1967UpgradeUpgradeable.sol:211"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "251",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "UUPSUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol:107"
+          },
+          {
+            "label": "moonpageCollection",
+            "offset": 0,
+            "slot": "301",
+            "type": "t_contract(IMoonpageCollection)15511",
+            "contract": "TheRetreat",
+            "src": "contracts/TheRetreat.sol:20"
+          },
+          {
+            "label": "moonpageManager",
+            "offset": 0,
+            "slot": "302",
+            "type": "t_contract(IMoonpageManager)15737",
+            "contract": "TheRetreat",
+            "src": "contracts/TheRetreat.sol:21"
+          },
+          {
+            "label": "projectId",
+            "offset": 0,
+            "slot": "303",
+            "type": "t_uint256",
+            "contract": "TheRetreat",
+            "src": "contracts/TheRetreat.sol:22"
+          },
+          {
+            "label": "characterIndex",
+            "offset": 0,
+            "slot": "304",
+            "type": "t_uint256",
+            "contract": "TheRetreat",
+            "src": "contracts/TheRetreat.sol:23"
+          },
+          {
+            "label": "index",
+            "offset": 0,
+            "slot": "305",
+            "type": "t_uint256",
+            "contract": "TheRetreat",
+            "src": "contracts/TheRetreat.sol:24"
+          },
+          {
+            "label": "snippets",
+            "offset": 0,
+            "slot": "306",
+            "type": "t_mapping(t_uint256,t_struct(Snippet)14831_storage)",
+            "contract": "TheRetreat",
+            "src": "contracts/TheRetreat.sol:43"
+          },
+          {
+            "label": "characters",
+            "offset": 0,
+            "slot": "307",
+            "type": "t_mapping(t_uint256,t_struct(Character)14840_storage)",
+            "contract": "TheRetreat",
+            "src": "contracts/TheRetreat.sol:44"
+          },
+          {
+            "label": "admins",
+            "offset": 0,
+            "slot": "308",
+            "type": "t_mapping(t_address,t_bool)",
+            "contract": "TheRetreat",
+            "src": "contracts/TheRetreat.sol:45"
+          },
+          {
+            "label": "usedNFTs",
+            "offset": 0,
+            "slot": "309",
+            "type": "t_mapping(t_uint256,t_bool)",
+            "contract": "TheRetreat",
+            "src": "contracts/TheRetreat.sol:46"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_bytes32": {
+            "label": "bytes32",
+            "numberOfBytes": "32"
+          },
+          "t_contract(IMoonpageCollection)15511": {
+            "label": "contract IMoonpageCollection",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IMoonpageManager)15737": {
             "label": "contract IMoonpageManager",
             "numberOfBytes": "20"
           },
